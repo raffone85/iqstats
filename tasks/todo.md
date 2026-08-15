@@ -1193,3 +1193,59 @@ riavviato sulla 3200.
 **Nota sul rilascio:** il primo tentativo ha risposto «Not authorized» e il secondo, identico, è
 andato a buon fine. Sembra un intoppo momentaneo della CLI, non un problema di credenziali: se
 ricapita, ripetere prima di indagare.
+
+### Il ritmo della porta d'ingresso esteso a tutto il prodotto — 15 agosto 2026, sera
+
+Questa sezione è stata scritta il 16 agosto ricostruendo la sessione delle 19:55-21:26, che si
+è interrotta da sola prima di poterla registrare. Il transcript è stato riletto per intero: i
+fatti qui sotto vengono da lì e dalle misure rifatte adesso, non dalla memoria.
+
+**Come si è interrotta.** La sessione è stata terminata dal sistema operativo (codice 137,
+memoria esaurita) mentre lanciava la sonda di QA su `/squadre/2817`. Nessuna scrittura era in
+corso: `typecheck`, `lint` e tutte le rotte sono risultati verdi al controllo successivo. Non è
+andato perso lavoro, solo il racconto di quel lavoro.
+
+**Le cinque decisioni chiuse in quella sessione.**
+
+1. **Riquadri e azioni al ritmo del gate, righe di elenco compatte.** Il respiro si prende
+   attorno alla lista, non dentro ogni riga: con oltre centocinquanta gare al giorno gonfiare
+   la riga significherebbe perdere la pagina. Nascono qui i sei token del ritmo in
+   `globals.css`: `--r-panel` 20 px, `--r-control` 14 px, `--r-inset` 10 px, `--h-action` 56 px,
+   `--h-control` 44 px e `--pad-panel`.
+2. **Sigla del paese a tre lettere** — ESP, ENG, NED — presa dalla stessa tabella chiusa di
+   `country-names.ts`, con EUR e MON dove il paese non esiste. Un paese fuori tabella resta
+   senza sigla invece di prenderne una inventata.
+3. **Pulizia del CSS morto.** Le classi delle tre generazioni precedenti — `marketing-*`,
+   `dashboard-*`, `intro-panel`, `metric-card`, `evidence-panel`, `principle-*`, `workflow-*`,
+   `method-strip`, `detail-hero`, `auth-layout`, `auth-card`, `access-gate` — sono risultate a
+   **zero occorrenze** in tutto il JSX. Con loro se ne sono andate le ombre blu vietate dal
+   sistema. Il foglio è passato da **1.244 a 993 righe**.
+4. **Stemmi e loghi di campionato su tutte le superfici**, riusando il proxy `/api/media/`
+   e `VerifiedMediaImage` già esistenti: cinque buchi chiusi (home, pronostici, dossier,
+   scheda squadra, elenco), nessuna dipendenza nuova.
+5. **Un solo blocco ad alto contrasto per pagina.** Regola nata guardando `/metodo`, dove il
+   pannello ripetuto affaticava la lettura: il blocco «Cosa non fa IQstatS» resta pieno perché
+   è il protagonista di quella pagina, gli altri tornano su carta.
+
+**Superfici portate al ritmo nuovo**, in quest'ordine: `/partite`, la home, `/pronostici`, il
+dossier `/match/[id]`, `/oggi`, la scheda squadra, i piani in `/account/billing` e `/metodo`.
+Su piani e metodo è stato corretto anche il gergo tecnico, che era il difetto più serio del
+colore.
+
+**Verifiche.** `typecheck` e `lint` verdi. Sonda ai quattro viewport, rifatta adesso su tutto
+ciò che non era stato chiuso: **home, `/oggi`, `/pronostici` e scheda squadra a zero overflow,
+zero controlli sotto 44 px, zero contrasti sotto AA**. Sul dossier i cinque contrasti trovati
+ieri erano veri ed erano stati corretti alla radice — testo chiaro che ereditava i token
+invertiti della hero fuori dal suo blocco — e la misura successiva è tornata a zero. Restano i
+tre falsi positivi noti: i «25 elementi senza focus» della scheda squadra, gli «animati sotto
+reduce» che durano 0,01 ms, e il contrasto sul gradiente della hero.
+
+**Commit di sicurezza.** Il repository non aveva alcun commit: tutto il prodotto viveva come
+file non tracciati, senza rete di sicurezza. Primo commit `1e5a12bc`, 761 file, con fuori i
+dataset generati di `scripts/calibration` e la cache dei plugin perché rigenerabili. Controllo
+esplicito prima di scrivere: nessun segreto nel commit, `.env.example` contiene solo nomi di
+variabili vuoti.
+
+**Non ancora fatto:** la sonda su `/partite`, `/metodo`, `/accedi` e i piani; la build di
+produzione dopo l'estensione; la pubblicazione online. Il prodotto online è quindi ancora
+quello di ieri sera alle 19:40, con la sola porta d'ingresso nuova.
