@@ -13,7 +13,12 @@ import {
   type ManagerInfo,
   type MatchWeather,
 } from "@/server/iqstats/match-context";
-import { getMatchRefereeReading } from "@/server/iqstats/team-page";
+import { MatchStandingsSection } from "@/components/match-standings-section";
+import {
+  getMatchRefereeReading,
+  getMatchStandingRows,
+  getTeamForm,
+} from "@/server/iqstats/team-page";
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
@@ -283,6 +288,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ]);
   const league = detail.leagueId === null ? undefined : leagueIndex.get(detail.leagueId);
 
+  // Terza ondata: dove stanno le due squadre e come ci sono arrivate. Tre richieste, mai
+  // in parallelo con le cinque di prima — il tetto è dieci al secondo per indirizzo.
+  const [standings, homeForm, awayForm] = await Promise.all([
+    detail.leagueId !== null &&
+    detail.seasonId !== null &&
+    detail.homeTeamId !== null &&
+    detail.awayTeamId !== null
+      ? getMatchStandingRows(
+          String(detail.leagueId),
+          String(detail.seasonId),
+          String(detail.homeTeamId),
+          String(detail.awayTeamId),
+        )
+      : Promise.resolve(null),
+    detail.homeTeamId !== null ? getTeamForm(String(detail.homeTeamId)) : Promise.resolve(null),
+    detail.awayTeamId !== null ? getTeamForm(String(detail.awayTeamId)) : Promise.resolve(null),
+  ]);
+
   // Motore statistico: lettura sincrona dell'artefatto generato, nessuna chiamata al provider.
   const engineReading = getStatEngineReading({
     leagueId: detail.leagueId,
@@ -323,6 +346,18 @@ export default async function MatchPage({ params }: MatchPageProps) {
       ? await getMatchRefereeReading(String(detail.leagueId), String(detail.refereeId))
       : null;
   const weatherLabel = weatherText(detail.weather);
+  // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
+  // è vecchia la previsione.
+  const lineupsUpdatedAt = (() => {
+    if (!lineups?.updatedAt) return null;
+    const moment = new Date(lineups.updatedAt);
+    if (Number.isNaN(moment.getTime())) return null;
+    return moment.toLocaleTimeString("it-IT", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Rome",
+    });
+  })();
 
   // Favorito derivato dal massimo 1X2 (l'endpoint singolo può non esporre `favorite`).
   const verdictFav = prediction
@@ -448,7 +483,9 @@ export default async function MatchPage({ params }: MatchPageProps) {
                     {pick.note}
                     {pick.marketProbability !== null ? (
                       <> · il mercato lo dà al {Math.round(pick.marketProbability)}%</>
-                    ) : null}
+                    ) : pick.marketQuoted ? null : (
+                      <> · su questo esito non esiste un mercato con cui confrontarsi</>
+                    )}
                   </span>
                 </li>
               ))}
@@ -507,6 +544,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayTeam={detail.awayTeam}
         />
 
+        {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
+        <MatchStandingsSection
+          standings={standings}
+          homeTeam={detail.homeTeam}
+          awayTeam={detail.awayTeam}
+          homeForm={homeForm}
+          awayForm={awayForm}
+        />
+
         {/* Chi gioca: previsto o confermato, e la differenza si dice */}
         {lineups && (lineups.home || lineups.away) ? (
           <section className="dossier-panel" aria-labelledby="lineups-title">
@@ -514,9 +560,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <h2 id="lineups-title" className="sr-only-heading">Formazioni</h2>
             <p className="dossier-verdict-lead">
               {lineups.confirmed
-                ? "Formazioni ufficiali."
+                ? "Formazioni ufficiali: sono gli undici scesi in campo."
                 : "Formazioni previste, non ancora ufficiali: possono cambiare fino al fischio d'inizio."}
             </p>
+            {/* Quando un dato cambia da un momento all'altro, l'ora dice quanto vale. */}
+            {lineupsUpdatedAt ? (
+              <p className="dossier-src">
+                {lineups.confirmed ? "Ufficiali dalle " : "Ultimo aggiornamento delle "}
+                {lineupsUpdatedAt}
+                {lineups.confirmed ? "." : ", rilette ogni dieci minuti fino all'ufficialità."}
+              </p>
+            ) : null}
             <div className="bench-grid">
               <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
               <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />

@@ -26,6 +26,12 @@ export interface MatchPick {
   readonly probability: number;
   /** Il confronto con il mercato, quando quel mercato è quotato. */
   readonly marketProbability: number | null;
+  /**
+   * Falso quando su questo esito **non esiste** un mercato con cui confrontarsi: le
+   * ammonizioni, per dire, non sono quotate da nessuno — dei cartellini si quotano solo
+   * i rossi. È diverso da `marketProbability` nullo, che è un'assenza di questa gara.
+   */
+  readonly marketQuoted: boolean;
   readonly note: string;
 }
 
@@ -59,10 +65,20 @@ function bestLine(lines: readonly StatLine[]): LineChoice | null {
   return best;
 }
 
+/**
+ * Le metriche del motore che hanno un mercato con cui confrontarsi. Dei cartellini la
+ * fonte quota solo i rossi, che il motore non proietta: le ammonizioni e i falli restano
+ * fuori, e la pagina lo dichiara invece di accostare numeri di esiti diversi.
+ */
+const METRIC_MARKET: Partial<Record<StatMetric, string>> = {
+  corners: "total_corners",
+};
+
 function pickFromMetrics(
   metrics: readonly MetricProjection[],
   candidates: readonly StatMetric[],
   area: PickArea,
+  odds: MatchOdds | null,
 ): MatchPick | null {
   let best: { pick: MatchPick; distance: number } | null = null;
 
@@ -72,6 +88,10 @@ function pickFromMetrics(
     if (choice === null) continue;
 
     const name = METRIC_LABEL[metric.metric];
+    // Le soglie del motore sono sempre .5, le stesse che la fonte quota: la chiave
+    // dell'esito combacia senza conversioni.
+    const market = METRIC_MARKET[metric.metric];
+    const outcomeKey = (choice.over ? "over@" : "under@").concat(String(choice.line));
     const pick: MatchPick = {
       area,
       label: (choice.over ? "Più di " : "Meno di ").concat(
@@ -80,7 +100,8 @@ function pickFromMetrics(
         name,
       ),
       probability: choice.probability,
-      marketProbability: null,
+      marketProbability: market === undefined ? null : marketProb(odds, market, outcomeKey),
+      marketQuoted: market !== undefined,
       note: "Attesi ".concat(
         metric.expectedTotal.toFixed(1).replace(".", ","),
         " ",
@@ -128,6 +149,7 @@ export function buildMatchPicks(
         label: top.label === "Pareggio" ? "Pareggio" : top.label.concat(" avanti"),
         probability: top.prob,
         marketProbability: top.market,
+        marketQuoted: true,
         note: "L'esito più probabile fra i tre",
       });
     }
@@ -146,6 +168,7 @@ export function buildMatchPicks(
         marketProbability: over
           ? marketProb(odds, "over_under_25", "over@2.5")
           : marketProb(odds, "over_under_25", "under@2.5"),
+        marketQuoted: true,
         note: "Il totale dei gol della gara",
       });
     }
@@ -153,9 +176,9 @@ export function buildMatchPicks(
 
   // 3 e 4 — le due letture statistiche, solo dove il motore copre la competizione
   if (engine.available) {
-    const play = pickFromMetrics(engine.metrics, ["corners", "shots", "sot"], "gioco");
+    const play = pickFromMetrics(engine.metrics, ["corners", "shots", "sot"], "gioco", odds);
     if (play) picks.push(play);
-    const discipline = pickFromMetrics(engine.metrics, ["yellows", "fouls"], "disciplina");
+    const discipline = pickFromMetrics(engine.metrics, ["yellows", "fouls"], "disciplina", odds);
     if (discipline) picks.push(discipline);
   }
 

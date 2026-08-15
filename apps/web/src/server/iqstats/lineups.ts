@@ -3,11 +3,13 @@
 // non si nasconde: una previsione non è una formazione.
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import { ProviderClient } from "./provider-client.ts";
-import { GatewayError } from "./errors.ts";
 
 const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
-const CACHE_TTL_MS = 300_000;
+/** Cinque minuti: a ridosso del fischio le formazioni cambiano, più in là no. */
+const CACHE_TTL_SECONDS = 300;
 
 export interface LineupPlayer {
   readonly id: number | null;
@@ -93,15 +95,19 @@ function normalizeSide(row: unknown, unavailableRow: unknown): TeamLineup | null
   };
 }
 
-const cache = new Map<number, { value: MatchLineups | null; expiresAt: number }>();
+/**
+ * Il nome della voce di cache di questa gara.
+ *
+ * La cache è quella condivisa di Next, non una mappa in memoria: su più istanze una
+ * mappa vale solo per l'istanza che l'ha riempita, e il lavoro pianificato che rinfresca
+ * le formazioni gira quasi sempre altrove. Con un nome condiviso, invece, ciò che la
+ * sveglia rilegge lo trova anche chi apre la pagina.
+ */
+export function lineupsCacheTag(eventId: number): string {
+  return "lineups:".concat(String(eventId));
+}
 
-/** Formazioni della gara. Fail-closed → null: un undici inventato non esiste. */
-export async function getMatchLineups(eventId: number): Promise<MatchLineups | null> {
-  if (!Number.isInteger(eventId) || eventId <= 0) return null;
-  const now = Date.now();
-  const cached = cache.get(eventId);
-  if (cached && cached.expiresAt > now) return cached.value;
-
+async function loadLineups(eventId: number): Promise<MatchLineups | null> {
   const config = resolveProviderConfig();
   if (!config) return null;
 
@@ -109,10 +115,7 @@ export async function getMatchLineups(eventId: number): Promise<MatchLineups | n
   try {
     const client = new ProviderClient({ baseUrl: config.baseUrl, token: config.token });
     payload = await client.getJson("/api/v2/events/".concat(String(eventId), "/lineups/"));
-  } catch (reason) {
-    if (reason instanceof GatewayError && reason.code === "not_found") {
-      cache.set(eventId, { value: null, expiresAt: now + CACHE_TTL_MS });
-    }
+  } catch {
     return null;
   }
 
@@ -123,17 +126,23 @@ export async function getMatchLineups(eventId: number): Promise<MatchLineups | n
 
   const home = normalizeSide(sides.home, unavailable.home);
   const away = normalizeSide(sides.away, unavailable.away);
-  if (home === null && away === null) {
-    cache.set(eventId, { value: null, expiresAt: now + CACHE_TTL_MS });
-    return null;
-  }
+  if (home === null && away === null) return null;
 
-  const value: MatchLineups = {
+  return {
     confirmed: asString(root.lineup_status) === "confirmed",
     home,
     away,
     updatedAt: asString(root.updated_at),
   };
-  cache.set(eventId, { value, expiresAt: now + CACHE_TTL_MS });
-  return value;
+}
+
+/** Formazioni della gara. Fail-closed → null: un undici inventato non esiste. */
+export async function getMatchLineups(eventId: number): Promise<MatchLineups | null> {
+  if (!Number.isInteger(eventId) || eventId <= 0) return null;
+  const load = unstable_cache(
+    () => loadLineups(eventId),
+    ["iqstats-lineups", String(eventId)],
+    { tags: [lineupsCacheTag(eventId)], revalidate: CACHE_TTL_SECONDS },
+  );
+  return load();
 }

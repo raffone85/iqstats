@@ -1,0 +1,49 @@
+# Tiene calda la cache delle formazioni anche quando nessuno è collegato.
+#
+# Perché la fascia oraria è limitata: GitHub arrotonda ogni esecuzione a un minuto intero,
+# e il piano gratuito dà 2000 minuti al mese sui repository privati. Una sveglia ogni dieci
+# minuti su tutte le ventiquattro ore ne consumerebbe 4320, più del doppio del disponibile.
+# Undici ore al giorno fanno 66 esecuzioni, cioè circa 1980 minuti al mese: dentro il
+# limite, ma appena. Se un mese si arriva al tetto, le strade sono tre — restringere la
+# fascia, passare a un intervallo di quindici minuti, oppure spostare la sveglia altrove.
+#
+# Gli orari sono in UTC. La fascia 11–21 UTC copre le 13:00–23:59 italiane d'estate e le
+# 12:00–22:59 d'inverno: sono le ore in cui si gioca.
+name: Sveglia formazioni
+
+on:
+  schedule:
+    - cron: "*/10 11-21 * * *"
+  # Serve anche a provarla a mano, senza aspettare il turno.
+  workflow_dispatch:
+
+# Se un'esecuzione è ancora in corso, la successiva non si accavalla.
+concurrency:
+  group: sveglia-formazioni
+  cancel-in-progress: false
+
+jobs:
+  rinfresca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Chiede il rinfresco delle formazioni imminenti
+        env:
+          SEGRETO: ${{ secrets.IQSTATS_REFRESH_SECRET }}
+        run: |
+          if [ -z "$SEGRETO" ]; then
+            echo "::error::manca il segreto IQSTATS_REFRESH_SECRET fra i secrets del repository"
+            exit 1
+          fi
+          codice=$(curl --silent --show-error --max-time 120 \
+            --output risposta.json --write-out "%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer $SEGRETO" \
+            https://iqstats-indol.vercel.app/api/interno/rinfresca)
+          echo "risposta $codice"
+          cat risposta.json || true
+          echo ""
+          if [ "$codice" != "200" ]; then
+            echo "::error::la rotta di rinfresco ha risposto $codice"
+            exit 1
+          fi

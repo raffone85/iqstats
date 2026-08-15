@@ -1249,3 +1249,75 @@ variabili vuoti.
 **Non ancora fatto:** la sonda su `/partite`, `/metodo`, `/accedi` e i piani; la build di
 produzione dopo l'estensione; la pubblicazione online. Il prodotto online è quindi ancora
 quello di ieri sera alle 19:40, con la sola porta d'ingresso nuova.
+
+### QA chiusa, dossier ampliato e la sveglia delle formazioni — 16 agosto 2026
+
+**Il giro di QA è chiuso, tutto verde.** Sonda ai quattro viewport su `/metodo`, `/accedi`,
+i piani e `/partite` — quest'ultima lanciata da sola, e si è chiusa in tre minuti invece di
+non chiudersi in dieci. Zero overflow, zero controlli sotto 44 px, zero contrasti sotto AA,
+zero elementi senza anello di focus. **Nessuna correzione di layout è risultata necessaria.**
+L'unico rilievo su `/accedi` è il falso positivo noto: `.gate` ha solo un `linear-gradient`
+e nessun `background-color`, quindi la sonda risale fino alla carta e misura 1,01 dove il
+valore vero — ricalcolato a mano sul punto più chiaro del gradiente — è **8,3:1**.
+
+**`MASTER.md` aggiornato.** Aggiunta la sezione «Un solo blocco ad alto contrasto per
+pagina» (con la definizione di cosa sia un blocco pieno e il corollario: sceglierlo
+significa decidere il protagonista della pagina) e la sezione «Il ritmo — sei token», con
+la tabella dei sei token e la regola dei tre gradini di raggio. Corretto il paragrafo della
+porta d'ingresso, che diceva «il secondo blocco del sistema»: ora dice che esaurisce la
+quota della sua pagina. Due voci nuove negli anti-pattern.
+
+**Censimento degli endpoint** in `docs/architecture/mappa-endpoint-sezioni.md`: per ognuno,
+se è già in pagina, dove va, quanto costa. Due scoperte che cambiano il conto in meglio:
+`/events/{id}/stats/` è **una richiesta** e porta anche mappa dei tiri, momentum, xG per
+minuto e posizioni medie; `/odds/comparison/` è **una richiesta** e porta undici mercati,
+di cui oggi ne usavamo due.
+
+**Dossier — confronto con i mercati statistici.** La lettura «Il gioco» ora si confronta
+con `total_corners`, che la fonte quota su diciassette linee: le soglie del motore sono
+sempre `.5` e combaciano senza conversioni. Sulla disciplina il confronto **non si fa e si
+dichiara**: dei cartellini esiste solo il mercato dei rossi, che il motore non proietta, e
+accostare gialli a rossi sarebbe fuorviante. Costo: **zero richieste**, le quote erano già
+in casa. Verificato sulla gara 210813: «Più di 8,5 corner · Attesi 10,8 · il mercato lo dà
+al 70%», e sulla disciplina «su questo esito non esiste un mercato con cui confrontarsi».
+
+**Correzione di correttezza in `odds.ts`:** la probabilità implicita si normalizzava
+sull'intero mercato. Su un mercato a soglie come i corner, con diciassette linee insieme,
+quella somma non è un insieme chiuso e il risultato conteneva il margine. Ora si normalizza
+**per coppia di linea** (sopra e sotto la stessa soglia). Sui mercati a due o tre esiti il
+comportamento è identico a prima.
+
+**Dossier — classifica e forma.** Nuova sezione fra «Modello e mercato» e «Chi gioca»:
+posizione su quante squadre, punti, giocate, V/N/P, reti, differenza (l'unico verso del
+blocco, lo zero è il riferimento) e la forma come cinque gettoni.
+**La stringa `form` della classifica non si usa:** il 16 agosto è risultata non allineata al
+giocato — l'Alavés, reduce da un 3-0 vinto, la mostrava come `LWWDL`, e il Rayo, reduce da
+una sconfitta, come `WWDDW` — e il suo ordine non è dichiarato. La forma viene dalle gare
+davvero concluse (`getTeamForm`), dove ogni gettone porta data, avversario e punteggio.
+Costo: **tre richieste in una terza ondata**, il dossier passa da otto a dodici, mai più di
+sei per ondata.
+
+**La sveglia delle formazioni.** Decisione: la rivalidazione lato server si innesca solo
+quando arriva una visita, quindi da sola non basta a «essere già aggiornati quando ti
+colleghi». Serve una sveglia esterna.
+- `lineups.ts` è passato dalla mappa in memoria alla **cache condivisa di Next**: su più
+  istanze una mappa vale solo per l'istanza che l'ha riempita, e il lavoro pianificato gira
+  quasi sempre altrove.
+- Nuova rotta di servizio `POST /api/interno/rinfresca`, protetta da segreto con confronto
+  a tempo costante, chiusa se il segreto non è configurato. Rinfresca le gare che iniziano
+  entro due ore (più mezz'ora indietro), a gruppi di cinque con pausa, tetto di sessanta.
+- `.github/workflows/sveglia-formazioni.yml`, ogni dieci minuti nella fascia 11–21 UTC.
+  **La fascia è limitata per una ragione di costo:** GitHub arrotonda ogni esecuzione a un
+  minuto e il piano gratuito dà 2000 minuti al mese sui repository privati; ventiquattr'ore
+  ne consumerebbero 4320.
+- **Verificato:** 19 gare nella finestra, 19 rinfrescate, 13 già ufficiali. Segreto
+  sbagliato 401, segreto assente 503.
+
+**Verifiche:** `typecheck` verde, `lint` verde, **build di produzione verde**
+(`BUILD_ID` `ks_WfWGDpC5vIg8oT9Lll`, dev fermato prima).
+
+**Non ancora fatto:** il riquadro delle formazioni che si rinfresca da solo nel browser
+(attenzione: `router.refresh()` rifà tutte le letture della pagina, non solo le formazioni
+— serve una rotta che restituisca il solo blocco); le statistiche della gara conclusa con
+mappa dei tiri e cronologia (la domanda sul disegno della mappa è rimasta aperta); il
+pannello giocatore con filtraggio profondo; la sezione riscontri.
