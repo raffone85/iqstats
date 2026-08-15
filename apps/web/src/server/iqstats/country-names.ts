@@ -1,0 +1,147 @@
+// Server-only: i nomi dei paesi arrivano in inglese e il prodotto parla italiano.
+// Tabella chiusa: un paese che non è qui resta com'è, perché tradurre a caso è peggio
+// che non tradurre. Copre i paesi e le aree delle competizioni servite oggi.
+import "server-only";
+
+const COUNTRY_IT: Record<string, string> = {
+  africa: "Africa",
+  argentina: "Argentina",
+  asia: "Asia",
+  australia: "Australia",
+  austria: "Austria",
+  belgium: "Belgio",
+  brazil: "Brasile",
+  bulgaria: "Bulgaria",
+  chile: "Cile",
+  china: "Cina",
+  colombia: "Colombia",
+  croatia: "Croazia",
+  "czech republic": "Repubblica Ceca",
+  denmark: "Danimarca",
+  ecuador: "Ecuador",
+  egypt: "Egitto",
+  england: "Inghilterra",
+  europe: "Europa",
+  finland: "Finlandia",
+  france: "Francia",
+  germany: "Germania",
+  greece: "Grecia",
+  hungary: "Ungheria",
+  international: "Internazionale",
+  ireland: "Irlanda",
+  israel: "Israele",
+  italy: "Italia",
+  japan: "Giappone",
+  mexico: "Messico",
+  morocco: "Marocco",
+  netherlands: "Paesi Bassi",
+  nigeria: "Nigeria",
+  "north america": "Nord America",
+  "northern ireland": "Irlanda del Nord",
+  norway: "Norvegia",
+  oceania: "Oceania",
+  paraguay: "Paraguay",
+  peru: "Perù",
+  poland: "Polonia",
+  portugal: "Portogallo",
+  romania: "Romania",
+  russia: "Russia",
+  "saudi arabia": "Arabia Saudita",
+  scotland: "Scozia",
+  serbia: "Serbia",
+  "south africa": "Sudafrica",
+  "south america": "Sud America",
+  "south korea": "Corea del Sud",
+  spain: "Spagna",
+  sweden: "Svezia",
+  switzerland: "Svizzera",
+  tunisia: "Tunisia",
+  turkey: "Turchia",
+  ukraine: "Ucraina",
+  uruguay: "Uruguay",
+  usa: "Stati Uniti",
+  "united states": "Stati Uniti",
+  wales: "Galles",
+  world: "Mondo",
+};
+
+// Sigla di tre lettere accanto al nome della competizione: sono i codici usati nello
+// sport internazionale, non abbreviazioni italiane. Le aree — Europa, mondo, amichevoli
+// internazionali — non hanno un codice ufficiale: quelle quattro sono una scelta nostra,
+// dichiarata qui. Tabella chiusa come l'altra: fuori da qui nessuna sigla, perché una
+// sigla inventata si legge come un dato.
+const COUNTRY_CODE: Record<string, string> = {
+  africa: "AFR",
+  argentina: "ARG",
+  asia: "ASI",
+  australia: "AUS",
+  austria: "AUT",
+  belgium: "BEL",
+  brazil: "BRA",
+  bulgaria: "BUL",
+  chile: "CHI",
+  china: "CHN",
+  colombia: "COL",
+  croatia: "CRO",
+  "czech republic": "CZE",
+  denmark: "DEN",
+  ecuador: "ECU",
+  egypt: "EGY",
+  england: "ENG",
+  europe: "EUR",
+  finland: "FIN",
+  france: "FRA",
+  germany: "GER",
+  greece: "GRE",
+  hungary: "HUN",
+  international: "INT",
+  ireland: "IRL",
+  israel: "ISR",
+  italy: "ITA",
+  japan: "JPN",
+  mexico: "MEX",
+  morocco: "MAR",
+  netherlands: "NED",
+  nigeria: "NGA",
+  "north america": "NAM",
+  "northern ireland": "NIR",
+  norway: "NOR",
+  oceania: "OCE",
+  paraguay: "PAR",
+  peru: "PER",
+  poland: "POL",
+  portugal: "POR",
+  romania: "ROU",
+  russia: "RUS",
+  "saudi arabia": "KSA",
+  scotland: "SCO",
+  serbia: "SRB",
+  "south africa": "RSA",
+  "south america": "SUD",
+  "south korea": "KOR",
+  spain: "ESP",
+  sweden: "SWE",
+  switzerland: "SUI",
+  tunisia: "TUN",
+  turkey: "TUR",
+  ukraine: "UKR",
+  uruguay: "URU",
+  usa: "USA",
+  "united states": "USA",
+  wales: "WAL",
+  // La fonte marca «World» anche le amichevoli per club: «MON» si leggerebbe come
+  // «mondiale», quindi qui e per le competizioni internazionali la sigla è la stessa.
+  world: "INT",
+};
+
+/** Nome italiano del paese quando lo conosciamo, altrimenti quello ricevuto. */
+export function countryInItalian(name: string | null): string | null {
+  if (name === null) return null;
+  return COUNTRY_IT[name.trim().toLowerCase()] ?? name;
+}
+
+/** Sigla di tre lettere quando il paese è in tabella, altrimenti niente. */
+export function countryCode(name: string | null): string | null {
+  if (name === null) return null;
+  return COUNTRY_CODE[name.trim().toLowerCase()] ?? null;
+}

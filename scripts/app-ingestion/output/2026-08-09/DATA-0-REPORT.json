@@ -1,0 +1,411 @@
+{
+  "schemaVersion": "iqstats.data0.report.v1",
+  "generatedAt": "2026-08-09T05:55:58.458Z",
+  "status": "completed-awaiting-local-schema-review",
+  "scope": {
+    "regularLeaguePolicyCount": 36,
+    "catalogRowsReturned": 79,
+    "catalogMissing": 0,
+    "policyUnavailable": 0,
+    "currentSeasonEligibleCount": 36,
+    "scheduleRequests": 36,
+    "emptySchedules": 0,
+    "seasonClasses": {
+      "crossYear2026_27": 21,
+      "calendar2026": 12,
+      "otherCurrent": 3,
+      "unknown": 0
+    },
+    "providerCurrentSeasonCount": 36,
+    "productFreshSeasonEligibleCount": 33,
+    "heldForSeasonRollover": 3
+  },
+  "requests": {
+    "method": "GET",
+    "started": 50,
+    "completed": 50,
+    "limit": 50,
+    "requestsPerSecondMax": 2,
+    "remoteWrites": 0
+  },
+  "endpointInventory": {
+    "totalGetOperations": 145,
+    "byDomain": {
+      "other": 46,
+      "matches": 27,
+      "headToHead": 2,
+      "lineups": 1,
+      "odds": 7,
+      "statistics": 5,
+      "competitions": 6,
+      "seasons": 4,
+      "venues": 7,
+      "standings": 2,
+      "managers": 7,
+      "players": 14,
+      "transfers": 2,
+      "referees": 3,
+      "teams": 12
+    },
+    "rawPathsPersisted": 0
+  },
+  "volume": {
+    "currentSeasonMatches": 10361,
+    "observedEventSampleCount": 36,
+    "averageObservedEventBytes": 1719,
+    "coreStorageMiBLow": 20.2,
+    "coreStorageMiBHigh": 60.7,
+    "estimateBasis": "engineering range of 2-6 KiB per normalized match including core indexes",
+    "volatileDomainProjection": null
+  },
+  "contracts": {
+    "contractCatalog": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": true,
+        "season": true,
+        "kickoff": true,
+        "status": true,
+        "teams": true,
+        "score": true,
+        "venue": true,
+        "referee": true,
+        "manager": true,
+        "player": true,
+        "lineup": true,
+        "statistics": true,
+        "odds": true,
+        "transfer": true
+      }
+    },
+    "competitions": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 79,
+      "semantics": {
+        "competition": false,
+        "season": true,
+        "kickoff": true,
+        "status": false,
+        "teams": false,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "matches": {
+      "status": "sampled",
+      "requests": 36,
+      "successfulResponses": 36,
+      "explicitRows": 10361,
+      "semantics": {
+        "competition": true,
+        "season": true,
+        "kickoff": true,
+        "status": true,
+        "teams": true,
+        "score": true,
+        "venue": true,
+        "referee": true,
+        "manager": true,
+        "player": false,
+        "lineup": false,
+        "statistics": true,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "standings": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 18,
+      "semantics": {
+        "competition": true,
+        "season": true,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "matchDetail": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": true,
+        "season": true,
+        "kickoff": true,
+        "status": true,
+        "teams": true,
+        "score": true,
+        "venue": true,
+        "referee": true,
+        "manager": true,
+        "player": false,
+        "lineup": false,
+        "statistics": true,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "statistics": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 31,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": true,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": true,
+        "lineup": false,
+        "statistics": true,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "headToHead": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 10,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": true,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "oddsCurrent": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": false,
+        "status": false,
+        "teams": true,
+        "score": true,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "oddsComparison": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": true,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": true,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "lineups": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": true,
+        "teams": true,
+        "score": true,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": true,
+        "lineup": true,
+        "statistics": true,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "oddsDetailed": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 368,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": false,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "players": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 43,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "playerDetail": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": false,
+        "statistics": false,
+        "odds": true,
+        "transfer": false
+      }
+    },
+    "managerDetail": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 1,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": true,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": false,
+        "lineup": true,
+        "statistics": true,
+        "odds": false,
+        "transfer": false
+      }
+    },
+    "transfers": {
+      "status": "sampled",
+      "requests": 1,
+      "successfulResponses": 1,
+      "explicitRows": 46,
+      "semantics": {
+        "competition": false,
+        "season": false,
+        "kickoff": true,
+        "status": false,
+        "teams": true,
+        "score": false,
+        "venue": false,
+        "referee": false,
+        "manager": false,
+        "player": true,
+        "lineup": false,
+        "statistics": false,
+        "odds": false,
+        "transfer": true
+      }
+    }
+  },
+  "verification": {
+    "withinRequestLimit": true,
+    "onlyGet": true,
+    "rateLimitMilliseconds": 550,
+    "remoteWrites": 0,
+    "rawResponsesPersisted": 0,
+    "remoteIdentifiersPersisted": 0,
+    "appFilesModified": 0,
+    "databaseTouched": false,
+    "offlineReaudit": true
+  },
+  "decision": {
+    "database": "normalized PostgreSQL",
+    "ingestion": "idempotent batch upsert with adaptive freshness and change-only snapshots",
+    "partitioning": "defer until measured snapshot volume requires it",
+    "nextGate": "review local SQL contract and DATA-1 ingest plan before any remote database action",
+    "ingestScope": "only cross-year 2026/27 and calendar-year 2026; hold other current windows"
+  }
+}

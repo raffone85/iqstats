@@ -1,0 +1,3230 @@
+{
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/v2/teams/": {
+      "get": {
+        "operationId": "api_v2_teams_list",
+        "description": "Paginated teams list. Filter by country (ISO-2), league, season, name, or competition status. Spatial / squad data is not in this list — fetch it from `/teams/{id}/squad/` or `/teams/{id}/fixtures/`.",
+        "summary": "List teams (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country_code",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "description": "ISO 3166-1 alpha-2 country code (e.g. PT, ES, BR). Unknown codes return an empty list."
+          },
+          {
+            "in": "query",
+            "name": "in_competition",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Set true for teams with upcoming matches in the league. Requires `league_id`; otherwise responds 400."
+          },
+          {
+            "in": "query",
+            "name": "is_women",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Filter by women / men competitions (requires `league_id` or `season_id` to apply)."
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Teams that have at least one event in this league."
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size (default 50, max 200)."
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Partial, case-insensitive match on team name."
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Teams that participated in this season."
+          }
+        ],
+        "tags": [
+          "v2 / Teams"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamDetailV2Schema"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/teams/{id}/": {
+      "get": {
+        "operationId": "api_v2_teams_retrieve",
+        "summary": "Team detail (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Teams"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetailV2Schema"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/teams/{id}/squad/": {
+      "get": {
+        "operationId": "api_v2_teams_squad_retrieve",
+        "description": "Active players currently linked to this team via `current_team`. Final shape will be defined in the players-schema pass.",
+        "summary": "Team squad (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Teams"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/teams/{id}/fixtures/": {
+      "get": {
+        "operationId": "api_v2_teams_fixtures_list",
+        "description": "Matches for this team. Defaults to a window of `now - 3h` to `now + 7d` when no date filters are provided. Final response shape will be aligned with `/api/v2/events/` in the schema pass.",
+        "summary": "Team fixtures (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date_from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC, e.g. 2026-04-30T00:00:00Z."
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC, e.g. 2026-04-30T23:59:59Z."
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Restrict to fixtures in this league."
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size (default 50, max 200)."
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1st_half",
+                "2nd_half",
+                "aet",
+                "cancelled",
+                "delayed",
+                "extratime",
+                "finished",
+                "halftime",
+                "inprogress",
+                "notstarted",
+                "penalties",
+                "postponed"
+              ]
+            },
+            "description": "Filter by match status."
+          }
+        ],
+        "tags": [
+          "v2 / Teams"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDetailV2Schema"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/teams/{id}/social/": {
+      "get": {
+        "operationId": "v2_teams_social_list",
+        "description": "Paginated tweets and video highlights linked to this team. Cached 15 min.",
+        "summary": "Social items for a team (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "account_verified",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "published_after",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "published_before",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tweet",
+                "video"
+              ]
+            }
+          }
+        ],
+        "tags": [
+          "v2 / Teams"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/leagues/{id}/standings/": {
+      "get": {
+        "operationId": "api_v2_leagues_standings_retrieve",
+        "description": "Standings for one season (defaults to current). Cup competitions return a `groups` map; league competitions return a flat `standings` array.",
+        "summary": "League standings (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Season ID. Defaults to the league's current season."
+          }
+        ],
+        "tags": [
+          "v2 / Leagues"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/leagues/{id}/top/{stat}/": {
+      "get": {
+        "operationId": "api_v2_leagues_top_retrieve",
+        "description": "Top players in one season for a given stat: `scorers` (goals), `assists`, `yellowcards`, `redcards`, or `fouls`. Defaults to the league's current season.",
+        "summary": "League stat leaderboard (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of players to return (default 20, max 50)."
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Season ID. Defaults to the league's current season."
+          },
+          {
+            "in": "path",
+            "name": "stat",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "stat",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "assists",
+                "fouls",
+                "redcards",
+                "scorers",
+                "yellowcards"
+              ]
+            },
+            "description": "Which leaderboard to return.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Leagues"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeaderboardResponseSchema"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/managers/{id}/": {
+      "get": {
+        "operationId": "api_v2_managers_retrieve",
+        "summary": "Manager detail (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Managers"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagerDetailV2Schema"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/players/{id}/stats/": {
+      "get": {
+        "operationId": "api_v2_players_stats_retrieve",
+        "description": "Per-match player statistics for one player. Filter by season, team, league or date range. To get stats for one specific event use `/api/v2/events/{id}/player-stats/` (the canonical path); passing `event_id` here is rejected with 400.",
+        "summary": "Player per-match stats (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date_from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC."
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC."
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size (default 50, max 200)."
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "team_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Stats logged with this team (handles transfers)."
+          }
+        ],
+        "tags": [
+          "v2 / Players"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/events/{id}/stats/": {
+      "get": {
+        "operationId": "api_v2_events_stats_retrieve",
+        "description": "Per-team merged stats (live + provider-only counters), shotmap, momentum, average positions, per-minute xG.",
+        "summary": "Event stats (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BestXIPlayerSchema": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "integer"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "team_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "team_name": {
+            "type": "string"
+          },
+          "avg_rating": {
+            "type": "number",
+            "format": "double",
+            "description": "Average match rating (0-10 scale) over the qualifying matches."
+          },
+          "matches": {
+            "type": "integer"
+          },
+          "goals": {
+            "type": "integer"
+          },
+          "assists": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "assists",
+          "avg_rating",
+          "goals",
+          "matches",
+          "player_id",
+          "player_name",
+          "team_id",
+          "team_name"
+        ]
+      },
+      "DartsMatchStatsSchema": {
+        "type": "object",
+        "properties": {
+          "player1": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "average, checkout_pct, 180s, 140_plus, 100_plus, highest_checkout for player 1."
+          },
+          "player2": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "average, checkout_pct, 180s, 140_plus, 100_plus, highest_checkout for player 2."
+          }
+        },
+        "required": [
+          "player1",
+          "player2"
+        ]
+      },
+      "DartsPlayerBriefSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal player ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated name used in compact displays. Null when not set."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code (e.g. GB)."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name in English."
+          },
+          "elo_overall": {
+            "type": "number",
+            "format": "double",
+            "description": "Overall ELO rating across all tournament formats."
+          }
+        },
+        "required": [
+          "country_code",
+          "country_name",
+          "elo_overall",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "HockeyTeamBriefSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full official team name."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated name used in compact views. Null when not set."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code of the team."
+          },
+          "elo_rating": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Current ELO rating (higher = stronger). Null when not calculated."
+          }
+        },
+        "required": [
+          "country_code",
+          "elo_rating",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "Manager": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Manager ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Manager full name",
+            "maxLength": 200
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"P. Guardiola\")",
+            "maxLength": 100
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of origin",
+            "maxLength": 100
+          },
+          "current_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ManagerCurrentTeam"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true
+          },
+          "preferred_formation": {
+            "type": "string",
+            "description": "Most frequently used formation (e.g. \"4-3-3\")",
+            "maxLength": 20
+          },
+          "formations_used": {
+            "nullable": true,
+            "description": "JSON object mapping formation strings to usage counts (e.g. {\"4-3-3\": 12, \"4-2-3-1\": 5})"
+          },
+          "profile": {
+            "enum": [
+              "attacking",
+              "defensive",
+              "balanced",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "a66c70ff3b3b88be",
+            "description": "Tactical profile: attacking, defensive, or balanced (null if not yet determined)\n\n* `attacking` - Attacking\n* `defensive` - Defensive\n* `balanced` - Balanced"
+          },
+          "team_style": {
+            "enum": [
+              "hard",
+              "soft",
+              "neutral",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "0ff8853990dcdb53",
+            "description": "Tactical style code: possession, counter, pressing, defensive, direct, mixed\n\n* `hard` - Hard\n* `soft` - Soft\n* `neutral` - Neutral"
+          },
+          "pressing_intensity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Pressing intensity 0-1 (derived from defensive-action rate and opponent pass disruption)"
+          },
+          "defensive_line": {
+            "enum": [
+              "low",
+              "mid",
+              "high",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "b336ec73543efac3",
+            "description": "Low / Mid / High — bucketed from average Y position of the back line\n\n* `low` - Low\n* `mid` - Mid\n* `high` - High"
+          },
+          "tactical_styles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManagerTacticalStyle"
+            },
+            "readOnly": true,
+            "description": "Top tactical styles derived from match data (rank 1-4), empty if <5 matches with full stats"
+          },
+          "matches_total": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total matches managed (in the current dataset)"
+          },
+          "wins": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total wins"
+          },
+          "draws": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total draws"
+          },
+          "losses": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total losses"
+          },
+          "win_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Win percentage (0–100)"
+          },
+          "avg_goals_scored": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals scored per match"
+          },
+          "avg_goals_conceded": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals conceded per match"
+          },
+          "avg_possession": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average ball possession percentage"
+          },
+          "avg_shots": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average total shots per match"
+          },
+          "avg_shots_on_target": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average shots on target per match"
+          },
+          "avg_xg_for": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average expected goals (xG) for per match"
+          },
+          "avg_xg_against": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average expected goals (xG) against per match"
+          },
+          "avg_corners": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average corners per match"
+          },
+          "avg_yellow_cards": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average yellow cards per match"
+          },
+          "avg_red_cards": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average red cards per match"
+          },
+          "avg_fouls": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average fouls committed per match"
+          },
+          "clean_sheet_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches with a clean sheet (0–100)"
+          },
+          "btts_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches where both teams scored (0–100)"
+          },
+          "over_25_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches with over 2.5 goals (0–100)"
+          },
+          "over_15_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches with over 1.5 goals (0–100)"
+          },
+          "fail_to_score_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches where the team failed to score (0–100)"
+          },
+          "avg_goals_scored_1h": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals scored in the first half per match"
+          },
+          "avg_goals_conceded_1h": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals conceded in the first half per match"
+          }
+        },
+        "required": [
+          "current_team",
+          "id",
+          "name",
+          "tactical_styles"
+        ]
+      },
+      "ManagerBrief": {
+        "type": "object",
+        "description": "Compact manager object embedded in Event responses (home_coach / away_coach fields).",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Manager ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Manager full name",
+            "maxLength": 200
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"P. Guardiola\")",
+            "maxLength": 100
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of origin",
+            "maxLength": 100
+          },
+          "profile": {
+            "enum": [
+              "attacking",
+              "defensive",
+              "balanced",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "a66c70ff3b3b88be",
+            "description": "Tactical profile: attacking, defensive, or balanced (null if not yet determined)\n\n* `attacking` - Attacking\n* `defensive` - Defensive\n* `balanced` - Balanced"
+          },
+          "preferred_formation": {
+            "type": "string",
+            "description": "Most frequently used formation (e.g. \"4-3-3\")",
+            "maxLength": 20
+          },
+          "pressing_intensity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Pressing intensity 0-1"
+          },
+          "defensive_line": {
+            "enum": [
+              "low",
+              "mid",
+              "high",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "b336ec73543efac3",
+            "description": "Low / Mid / High\n\n* `low` - Low\n* `mid` - Mid\n* `high` - High"
+          },
+          "top_styles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true,
+            "description": "Top 2 tactical style codes for at-a-glance comparison, e.g. [\"positional\",\"tiki_taka\"]"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "top_styles"
+        ]
+      },
+      "ManagerCurrentTeam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ManagerDetailV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal manager ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the manager."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated name used in compact views. Empty string when not set."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of nationality. Empty string when not set."
+          },
+          "tactical_profile": {
+            "type": "string",
+            "description": "Broad tactical label: attacking, defensive, or balanced. Empty string when not profiled."
+          },
+          "preferred_formation": {
+            "type": "string",
+            "description": "Most commonly deployed formation (e.g. \"4-3-3\"). Empty string when not recorded."
+          },
+          "current_team_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Internal ID of the club where the manager currently has an active tenure. Null if unemployed or unknown."
+          },
+          "matches_total": {
+            "type": "integer",
+            "description": "Total matches managed across all counted tenures."
+          },
+          "wins": {
+            "type": "integer",
+            "description": "Total wins across all counted matches."
+          },
+          "draws": {
+            "type": "integer",
+            "description": "Total draws across all counted matches."
+          },
+          "losses": {
+            "type": "integer",
+            "description": "Total losses across all counted matches."
+          },
+          "win_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Win percentage (0–100). Null when no matches managed."
+          },
+          "avg_goals_scored": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals scored per match by the manager's team. Null when no data."
+          },
+          "avg_goals_conceded": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average goals conceded per match. Null when no data."
+          },
+          "avg_possession": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average ball possession percentage across tracked matches. Null when possession data unavailable."
+          },
+          "clean_sheet_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches where the managed team kept a clean sheet. Null when no data."
+          },
+          "btts_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches where both teams scored (BTTS). Null when no data."
+          },
+          "over_25_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of matches with more than 2.5 total goals. Null when no data."
+          },
+          "stats_updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "UTC timestamp when aggregated stats were last recomputed. Null if never computed."
+          }
+        },
+        "required": [
+          "avg_goals_conceded",
+          "avg_goals_scored",
+          "avg_possession",
+          "btts_pct",
+          "clean_sheet_pct",
+          "country",
+          "current_team_id",
+          "draws",
+          "id",
+          "losses",
+          "matches_total",
+          "name",
+          "over_25_pct",
+          "preferred_formation",
+          "short_name",
+          "stats_updated_at",
+          "tactical_profile",
+          "win_pct",
+          "wins"
+        ]
+      },
+      "ManagerTacticalStyle": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "emoji": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "category",
+          "code",
+          "description",
+          "emoji",
+          "name",
+          "rank",
+          "score"
+        ]
+      },
+      "PaginatedManagerList": {
+        "type": "object",
+        "required": [
+          "count",
+          "results"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=4"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=2"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Manager"
+            }
+          }
+        }
+      },
+      "PaginatedPlayerList": {
+        "type": "object",
+        "required": [
+          "count",
+          "results"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=4"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=2"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            }
+          }
+        }
+      },
+      "PaginatedPlayerStatList": {
+        "type": "object",
+        "required": [
+          "count",
+          "results"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=4"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=2"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerStat"
+            }
+          }
+        }
+      },
+      "PaginatedTeamListList": {
+        "type": "object",
+        "required": [
+          "count",
+          "results"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 123
+          },
+          "next": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=4"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true,
+            "format": "uri",
+            "example": "http://api.example.org/accounts/?page=2"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamList"
+            }
+          }
+        }
+      },
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Player ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name",
+            "maxLength": 200
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"M. Salah\")",
+            "maxLength": 100
+          },
+          "position": {
+            "enum": [
+              "G",
+              "D",
+              "M",
+              "F",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "25c1586e9a6c8add",
+            "description": "Generic position: G (Goalkeeper), D (Defender), M (Midfielder), F (Forward)\n\n* `G` - Portero\n* `D` - Defensa\n* `M` - Centrocampista\n* `F` - Delantero"
+          },
+          "specific_position": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true,
+            "description": "Primary detailed position: GK, CB, LB, RB, LWB, RWB, DM, CM, AM, LW, RW, ST. Falls back to generic label (GK/DEF/MID/FWD) when not yet determined."
+          },
+          "positions_detailed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true,
+            "description": "All known specific positions for this player (e.g. [\"CB\",\"LB\"]) — usually a primary + secondary. Empty list if not yet synced."
+          },
+          "attributes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerAttributes"
+              }
+            ],
+            "nullable": true,
+            "readOnly": true,
+            "description": "Overall skill breakdown on a 0-100 scale: {attacking, technical, tactical, defending, creativity}. Empty object when not yet synced."
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true,
+            "description": "Ordered list of the player's top strengths (e.g. [\"Long balls\", \"Playmaking\"])."
+          },
+          "weaknesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true,
+            "description": "Ordered list of the player's notable weaknesses."
+          },
+          "jersey_number": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "nullable": true,
+            "description": "Shirt number"
+          },
+          "height": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "nullable": true,
+            "description": "Height in cm"
+          },
+          "weight": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "nullable": true,
+            "description": "Weight in kg"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Date of birth (YYYY-MM-DD)"
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Country of nationality",
+            "maxLength": 100
+          },
+          "preferred_foot": {
+            "enum": [
+              "R",
+              "L",
+              "B",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "946269200fdc2417",
+            "description": "Preferred foot: R (Right), L (Left), B (Both)\n\n* `R` - Right\n* `L` - Left\n* `B` - Both"
+          },
+          "contract_until": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Contract end date (YYYY-MM-DD)"
+          },
+          "market_value": {
+            "type": "integer",
+            "maximum": 9223372036854776000,
+            "minimum": -9223372036854776000,
+            "format": "int64",
+            "nullable": true,
+            "description": "Market value in EUR"
+          },
+          "current_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "readOnly": true
+          },
+          "national_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "readOnly": true
+          },
+          "availability": {
+            "enum": [
+              "available",
+              "injured",
+              "doubtful",
+              "suspended"
+            ],
+            "type": "string",
+            "x-spec-enum-id": "f6e240d625c948dc",
+            "description": "Current availability: available, injured, doubtful, suspended\n\n* `available` - Available\n* `injured` - Injured\n* `doubtful` - Doubtful\n* `suspended` - Suspended"
+          },
+          "injury_type": {
+            "type": "string",
+            "description": "Injury/suspension description (e.g. Hamstring Injury, Red card suspension)",
+            "maxLength": 200
+          },
+          "injury_expected_return": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Expected return date (YYYY-MM-DD)"
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerTransfer"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "attributes",
+          "current_team",
+          "id",
+          "name",
+          "national_team",
+          "positions_detailed",
+          "specific_position",
+          "strengths",
+          "transfers",
+          "weaknesses"
+        ]
+      },
+      "PlayerAttributes": {
+        "type": "object",
+        "properties": {
+          "attacking": {
+            "type": "integer",
+            "nullable": true
+          },
+          "technical": {
+            "type": "integer",
+            "nullable": true
+          },
+          "tactical": {
+            "type": "integer",
+            "nullable": true
+          },
+          "defending": {
+            "type": "integer",
+            "nullable": true
+          },
+          "creativity": {
+            "type": "integer",
+            "nullable": true
+          },
+          "position": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "attacking",
+          "creativity",
+          "defending",
+          "position",
+          "tactical",
+          "technical"
+        ]
+      },
+      "PlayerAttributesV2Schema": {
+        "type": "object",
+        "properties": {
+          "attacking": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Attacking attribute score (0–20 FM scale). Null when not available."
+          },
+          "technical": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Technical attribute score (0–20 FM scale)."
+          },
+          "tactical": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Tactical/positioning attribute score (0–20 FM scale)."
+          },
+          "defending": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Defending attribute score (0–20 FM scale)."
+          },
+          "creativity": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Creativity/vision attribute score (0–20 FM scale)."
+          },
+          "position": {
+            "type": "string",
+            "nullable": true,
+            "description": "Primary position from the scouting model (e.g. \"Striker\", \"Centre Back\")."
+          }
+        },
+        "required": [
+          "attacking",
+          "creativity",
+          "defending",
+          "position",
+          "tactical",
+          "technical"
+        ]
+      },
+      "PlayerBriefV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "jersey_number": {
+            "type": "string"
+          },
+          "height_cm": {
+            "type": "integer",
+            "nullable": true
+          },
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "team": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "country",
+          "country_code",
+          "date_of_birth",
+          "height_cm",
+          "id",
+          "jersey_number",
+          "name",
+          "position",
+          "short_name",
+          "team"
+        ]
+      },
+      "PlayerDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal database ID of the player."
+          },
+          "api_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "External API ID for the player, null if not synced."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated name used in compact displays."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code of the player."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name of the player."
+          },
+          "elo_overall": {
+            "type": "number",
+            "format": "double",
+            "description": "Overall ELO rating across all tournament formats."
+          },
+          "elo_major": {
+            "type": "number",
+            "format": "double",
+            "description": "ELO rating computed from major PDC events only."
+          },
+          "elo_protour": {
+            "type": "number",
+            "format": "double",
+            "description": "ELO rating computed from ProTour events only."
+          },
+          "avg_average": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Three-dart average scored per visit, null if insufficient data."
+          },
+          "avg_checkout_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Checkout (double-out) success percentage, null if insufficient data."
+          },
+          "avg_180s": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Average number of 180s scored per leg, null if insufficient data."
+          },
+          "legs_won_pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Percentage of legs won over all recorded matches, null if insufficient data."
+          }
+        },
+        "required": [
+          "api_id",
+          "avg_180s",
+          "avg_average",
+          "avg_checkout_pct",
+          "country_code",
+          "country_name",
+          "elo_major",
+          "elo_overall",
+          "elo_protour",
+          "id",
+          "legs_won_pct",
+          "name",
+          "short_name"
+        ]
+      },
+      "PlayerDetailV2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal player ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated name (e.g. N. Djokovic). Null when not set."
+          },
+          "gender": {
+            "type": "string",
+            "description": "Player gender: M (male) or F (female)."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code (e.g. RS)."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name in English."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Player date of birth (ISO-8601 date). Null when not available."
+          },
+          "height": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Player height in centimetres. Null when not available."
+          },
+          "weight": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Player weight in kilograms. Null when not available."
+          },
+          "plays": {
+            "type": "string",
+            "nullable": true,
+            "description": "Dominant hand: right-handed or left-handed. Null when not recorded."
+          },
+          "turned_pro": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Year the player turned professional. Null when not recorded."
+          },
+          "birthplace": {
+            "type": "string",
+            "nullable": true,
+            "description": "Birthplace (city, country). Null when not recorded."
+          },
+          "residence": {
+            "type": "string",
+            "nullable": true,
+            "description": "Current residence (city, country). Null when not recorded."
+          },
+          "prize_current_usd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Prize money won in the current season, in USD. Null when not recorded."
+          },
+          "prize_total_usd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Career prize money, in USD. Null when not recorded."
+          },
+          "current_ranking": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true,
+            "description": "Latest ranking snapshot (position, points, type). Null when no ranking is on record."
+          }
+        },
+        "required": [
+          "birthplace",
+          "country_code",
+          "country_name",
+          "current_ranking",
+          "date_of_birth",
+          "gender",
+          "height",
+          "id",
+          "name",
+          "plays",
+          "prize_current_usd",
+          "prize_total_usd",
+          "residence",
+          "short_name",
+          "turned_pro",
+          "weight"
+        ]
+      },
+      "PlayerDetailV2List": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal player ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated name (e.g. N. Djokovic). Null when not set."
+          },
+          "gender": {
+            "type": "string",
+            "description": "Player gender: M (male) or F (female)."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code (e.g. RS)."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name in English."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Player date of birth (ISO-8601 date). Null when not available."
+          },
+          "height": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Player height in centimetres. Null when not available."
+          },
+          "weight": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Player weight in kilograms. Null when not available."
+          },
+          "plays": {
+            "type": "string",
+            "nullable": true,
+            "description": "Dominant hand: right-handed or left-handed. Null when not recorded."
+          },
+          "turned_pro": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Year the player turned professional. Null when not recorded."
+          },
+          "birthplace": {
+            "type": "string",
+            "nullable": true,
+            "description": "Birthplace (city, country). Null when not recorded."
+          },
+          "residence": {
+            "type": "string",
+            "nullable": true,
+            "description": "Current residence (city, country). Null when not recorded."
+          },
+          "prize_current_usd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Prize money won in the current season, in USD. Null when not recorded."
+          },
+          "prize_total_usd": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Career prize money, in USD. Null when not recorded."
+          },
+          "current_ranking": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true,
+            "description": "Latest ranking snapshot (position, points, type). Null when no ranking is on record."
+          }
+        },
+        "required": [
+          "birthplace",
+          "country_code",
+          "country_name",
+          "current_ranking",
+          "date_of_birth",
+          "gender",
+          "height",
+          "id",
+          "name",
+          "plays",
+          "prize_current_usd",
+          "prize_total_usd",
+          "residence",
+          "short_name",
+          "turned_pro",
+          "weight"
+        ]
+      },
+      "PlayerDetailV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal player ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated name (e.g. \"V. Gyökeres\"). Empty string when not set."
+          },
+          "position": {
+            "type": "string",
+            "description": "Generic position code: G (Goalkeeper), D (Defender), M (Midfielder), F (Forward). Empty string when unknown."
+          },
+          "specific_position": {
+            "type": "string",
+            "description": "Specific position label (e.g. \"Centre Back\", \"Attacking Midfielder\"). Empty string when not set."
+          },
+          "jersey_number": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Shirt number at the current club. Null when not available."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Player date of birth (ISO 8601). Null when not available."
+          },
+          "height_cm": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Height in centimetres. Null when not available."
+          },
+          "weight_kg": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Weight in kilograms. Null when not available."
+          },
+          "preferred_foot": {
+            "type": "string",
+            "description": "Preferred foot: \"left\", \"right\", or \"both\". Empty string when unknown."
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Player nationality (country name in English). Empty string when unknown."
+          },
+          "current_team_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of the player's current club. Use /api/v2/teams/{id}/ for details. Null when unattached."
+          },
+          "national_team_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of the player's national team. Null when not capped."
+          },
+          "current_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_TeamRefSchema"
+              }
+            ],
+            "nullable": true,
+            "description": "The player's current club as {id, name, short_name}. Null when unattached."
+          },
+          "national_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/_TeamRefSchema"
+              }
+            ],
+            "nullable": true,
+            "description": "The player's national team as {id, name, short_name}. Null when not capped."
+          },
+          "market_value_eur": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Estimated market value in EUR. Null when not available."
+          },
+          "contract_until": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Contract expiry date (ISO 8601). Null when unknown or out of contract."
+          },
+          "availability": {
+            "type": "string",
+            "description": "Player availability status: \"available\", \"injured\", \"suspended\", or \"doubtful\"."
+          },
+          "attributes": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerAttributesV2Schema"
+              }
+            ],
+            "nullable": true,
+            "description": "FM-sourced scouting attribute scores (0–20 per category). Null when no scouting data exists."
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of identified strength labels (e.g. [\"Aerial Threat\", \"Dribbling\"]). Empty list when not available."
+          },
+          "weaknesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of identified weakness labels. Empty list when not available."
+          },
+          "rating": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Overall FM scouting ability rating (0–200). Higher is better. Null when not available."
+          },
+          "potential": {
+            "type": "string",
+            "nullable": true,
+            "description": "FM potential label (e.g. \"Can Still Improve\", \"Reached Potential\"). Null when not available."
+          },
+          "injury_risk": {
+            "type": "string",
+            "nullable": true,
+            "description": "FM injury proneness label (e.g. \"Unlikely\", \"Sometimes\", \"Often\"). Null when not available."
+          },
+          "wage_eur_annual": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Estimated annual gross wage in EUR. Null when not available."
+          }
+        },
+        "required": [
+          "attributes",
+          "availability",
+          "contract_until",
+          "current_team",
+          "current_team_id",
+          "date_of_birth",
+          "height_cm",
+          "id",
+          "injury_risk",
+          "jersey_number",
+          "market_value_eur",
+          "name",
+          "national_team",
+          "national_team_id",
+          "nationality",
+          "position",
+          "potential",
+          "preferred_foot",
+          "rating",
+          "short_name",
+          "specific_position",
+          "strengths",
+          "wage_eur_annual",
+          "weaknesses",
+          "weight_kg"
+        ]
+      },
+      "PlayerStat": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerStatEvent"
+              }
+            ],
+            "readOnly": true,
+            "description": "Match info: id, home_team, away_team, event_date, scores"
+          },
+          "player": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerStatPlayer"
+              }
+            ],
+            "readOnly": true,
+            "description": "Player info: id, name, position, team"
+          },
+          "minutes_played": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Minutes played in the match"
+          },
+          "rating": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Match rating (1.0–10.0)"
+          },
+          "goals": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Goals scored"
+          },
+          "goal_assist": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Assists (goal-contributing passes)"
+          },
+          "expected_goals": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Expected goals (xG) — sum of shot quality"
+          },
+          "expected_assists": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Expected assists (xA) — sum of pass-to-shot quality"
+          },
+          "total_shots": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total shots (on target + off target + blocked)"
+          },
+          "shots_on_target": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Shots on target (forcing a save or resulting in a goal)"
+          },
+          "total_pass": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total passes attempted"
+          },
+          "accurate_pass": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Accurate passes completed"
+          },
+          "key_pass": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Key passes — passes leading directly to a shot"
+          },
+          "total_cross": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total crosses attempted"
+          },
+          "accurate_cross": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Accurate crosses completed"
+          },
+          "total_long_balls": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total long balls attempted"
+          },
+          "accurate_long_balls": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Accurate long balls completed"
+          },
+          "touches": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total touches on the ball"
+          },
+          "dribble_attempted": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Dribbles attempted (total contests)"
+          },
+          "dribble_won": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Successful dribbles (contests won)"
+          },
+          "duel_won": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Ground duels won"
+          },
+          "duel_lost": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Ground duels lost"
+          },
+          "aerial_won": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Aerial duels won"
+          },
+          "aerial_lost": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Aerial duels lost"
+          },
+          "total_tackle": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Total tackle attempts"
+          },
+          "won_tackle": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Successful tackles"
+          },
+          "total_clearance": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Clearances made"
+          },
+          "interception": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Interceptions"
+          },
+          "ball_recovery": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Loose ball recoveries"
+          },
+          "dispossessed": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Times dispossessed (lost ball under pressure)"
+          },
+          "possession_lost": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Times possession lost (bad touch or pass)"
+          },
+          "was_fouled": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Fouls suffered"
+          },
+          "fouls": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Fouls committed"
+          },
+          "yellow_card": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Yellow cards received (0 or 1)"
+          },
+          "red_card": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Red cards received (0 or 1; counts straight reds and second yellows)"
+          },
+          "saves": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Goalkeeper saves (null for outfield players)"
+          },
+          "goals_conceded": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Goals conceded (null for outfield players)"
+          },
+          "penalty_won": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Penalties won"
+          },
+          "penalty_miss": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Penalties missed"
+          },
+          "penalty_conceded": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Penalties conceded (fouls in the box)"
+          },
+          "penalty_save": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Penalties saved (goalkeeper only)"
+          },
+          "penalty_faced": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": -2147483648,
+            "description": "Penalties faced (goalkeeper only)"
+          },
+          "heatmap": {
+            "nullable": true,
+            "description": "Pitch heatmap — list of {x, y} touch coordinates (0–100 scale, origin top-left)"
+          }
+        },
+        "required": [
+          "dribble_attempted",
+          "dribble_won",
+          "event",
+          "player"
+        ]
+      },
+      "PlayerStatEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Event ID"
+          },
+          "home_team": {
+            "type": "string",
+            "description": "Home team name"
+          },
+          "away_team": {
+            "type": "string",
+            "description": "Away team name"
+          },
+          "event_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Kick-off time (ISO 8601)"
+          },
+          "home_score": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Home goals"
+          },
+          "away_score": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Away goals"
+          }
+        },
+        "required": [
+          "away_score",
+          "away_team",
+          "event_date",
+          "home_score",
+          "home_team",
+          "id"
+        ]
+      },
+      "PlayerStatPlayer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Player ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Player full name"
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"M. Salah\")"
+          },
+          "position": {
+            "type": "string",
+            "description": "Generic position: G, D, M, F"
+          },
+          "specific_position": {
+            "type": "string",
+            "description": "Primary detailed position: GK, CB, LB, RB, LWB, RWB, DM, CM, AM, LW, RW, ST"
+          },
+          "positions_detailed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "All detailed positions for this player (e.g. [\"CB\",\"LB\"]). Empty if not yet synced."
+          },
+          "team": {
+            "type": "string",
+            "nullable": true,
+            "description": "Team name for this match"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "position",
+          "positions_detailed",
+          "short_name",
+          "specific_position",
+          "team"
+        ]
+      },
+      "PlayerTransfer": {
+        "type": "object",
+        "properties": {
+          "transfer_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Date the transfer was completed (YYYY-MM-DD)"
+          },
+          "from_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "readOnly": true
+          },
+          "to_team": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Team"
+              }
+            ],
+            "readOnly": true
+          },
+          "from_team_name": {
+            "type": "string",
+            "description": "Selling club name (string fallback if from_team object is null)",
+            "maxLength": 200
+          },
+          "to_team_name": {
+            "type": "string",
+            "description": "Buying club name (string fallback if to_team object is null)",
+            "maxLength": 200
+          },
+          "fee": {
+            "type": "integer",
+            "maximum": 9223372036854776000,
+            "minimum": -9223372036854776000,
+            "format": "int64",
+            "nullable": true,
+            "description": "Transfer fee in EUR (null if undisclosed or free)"
+          },
+          "fee_description": {
+            "type": "string",
+            "description": "Human-readable fee label (e.g. \"Free transfer\", \"Loan\", \"€45M\")",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "from_team",
+          "to_team"
+        ]
+      },
+      "SocialLinkedTeamSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Team display name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "SquadRowV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "team_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "jersey_number": {
+            "type": "integer",
+            "nullable": true
+          },
+          "position": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "official",
+              "preliminary",
+              "projected",
+              "dropped"
+            ],
+            "type": "string",
+            "description": "* `official` - official\n* `preliminary` - preliminary\n* `projected` - projected\n* `dropped` - dropped",
+            "x-spec-enum-id": "44ffb05f641bddb8"
+          },
+          "call_up_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "club": {
+            "type": "string"
+          },
+          "club_country": {
+            "type": "string"
+          },
+          "caps": {
+            "type": "integer",
+            "nullable": true
+          },
+          "goals": {
+            "type": "integer",
+            "nullable": true
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "age": {
+            "type": "integer",
+            "nullable": true
+          },
+          "player_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Internal Player id if the call-up resolved to an existing player record. null when the player is not yet in our Player table — name + club + caps + age remain populated from the source announcement."
+          }
+        },
+        "required": [
+          "age",
+          "call_up_date",
+          "caps",
+          "club",
+          "club_country",
+          "date_of_birth",
+          "goals",
+          "id",
+          "jersey_number",
+          "name",
+          "player_id",
+          "position",
+          "status",
+          "team_id"
+        ]
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Team ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full team name",
+            "maxLength": 200
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"FCB\")",
+            "maxLength": 50
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of origin",
+            "maxLength": 100
+          },
+          "coach": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true,
+            "readOnly": true,
+            "description": "Current head coach: name, shortName (from most recent match, null if unavailable)"
+          },
+          "venue": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VenueBrief"
+              }
+            ],
+            "readOnly": true,
+            "description": "Home venue/stadium (null if unknown)"
+          }
+        },
+        "required": [
+          "coach",
+          "id",
+          "name",
+          "venue"
+        ]
+      },
+      "TeamDetailFullV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full team name."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated team name, null if not set."
+          },
+          "country": {
+            "type": "string",
+            "description": "Full country name of the team."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code."
+          },
+          "elo_rating": {
+            "type": "integer",
+            "description": "Current ELO rating (1500 = average)."
+          },
+          "elo_peak": {
+            "type": "integer",
+            "description": "Highest ELO ever reached."
+          },
+          "map_stats": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamMapStatsV2Schema"
+              }
+            ],
+            "nullable": true,
+            "description": "Latest map and round winrate statistics; null when no data is available."
+          }
+        },
+        "required": [
+          "country",
+          "country_code",
+          "elo_peak",
+          "elo_rating",
+          "id",
+          "map_stats",
+          "name",
+          "short_name"
+        ]
+      },
+      "TeamDetailV2List": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal database ID of the team."
+          },
+          "api_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "External API provider ID for the team."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full official name of the team."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated or short name of the team."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country the team represents, empty string if unknown."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO country code for the team country, empty string if unknown."
+          },
+          "elo_rating": {
+            "type": "number",
+            "format": "double",
+            "description": "Current ELO rating reflecting the team strength relative to opponents."
+          }
+        },
+        "required": [
+          "api_id",
+          "country",
+          "country_code",
+          "elo_rating",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "TeamDetailV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full official team name (e.g. \"Manchester City\")."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated name (e.g. \"Man City\"). Empty string when not set."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country the team represents (e.g. \"England\"). Empty string when unknown."
+          },
+          "venue_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "ID of the team's home stadium. Use /api/v2/venues/{id}/ for details. Null when no venue is linked."
+          }
+        },
+        "required": [
+          "country",
+          "id",
+          "name",
+          "short_name",
+          "venue_id"
+        ]
+      },
+      "TeamDetailV2Single": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal database ID of the team."
+          },
+          "api_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "External API provider ID for the team."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full official name of the team."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated or short name of the team."
+          },
+          "country": {
+            "type": "string",
+            "description": "Country the team represents, empty string if unknown."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO country code for the team country, empty string if unknown."
+          },
+          "elo_rating": {
+            "type": "number",
+            "format": "double",
+            "description": "Current ELO rating reflecting the team strength relative to opponents."
+          }
+        },
+        "required": [
+          "api_id",
+          "country",
+          "country_code",
+          "elo_rating",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "TeamList": {
+        "type": "object",
+        "description": "Lightweight serializer for list endpoint — no per-team DB queries.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Team ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full team name",
+            "maxLength": 200
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Short name (e.g. \"FCB\")",
+            "maxLength": 50
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of origin",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "TeamMapStatsV2Schema": {
+        "type": "object",
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Timestamp of the most recent match used for this snapshot."
+          },
+          "maps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/_MapWinrateV2Schema"
+            },
+            "description": "Recent winrate (%) per picked map."
+          },
+          "sample_size": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Number of maps included in the statistical sample."
+          },
+          "map_winrate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Overall map winrate (%) across all maps in the sample."
+          },
+          "round_winrate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Overall round winrate (%) across all rounds in the sample."
+          },
+          "round_winrate_t": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Round winrate (%) when playing as the Terrorist side."
+          },
+          "round_winrate_ct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Round winrate (%) when playing as the Counter-Terrorist side."
+          }
+        },
+        "required": [
+          "as_of",
+          "map_winrate",
+          "maps",
+          "round_winrate",
+          "round_winrate_ct",
+          "round_winrate_t",
+          "sample_size"
+        ]
+      },
+      "TeamV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          },
+          "elo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "games_played": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "country",
+          "country_code",
+          "elo",
+          "games_played",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "UnavailablePlayer": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Player name"
+          },
+          "status": {
+            "type": "string",
+            "description": "Availability: injured, suspended, doubtful"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Injury or suspension description"
+          },
+          "expected_return": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Expected return date (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "expected_return",
+          "name",
+          "reason",
+          "status"
+        ]
+      },
+      "UnavailablePlayerAway": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Player name"
+          },
+          "status": {
+            "type": "string",
+            "description": "Availability: injured, suspended, doubtful"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Injury or suspension description"
+          },
+          "expected_return": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Expected return date (YYYY-MM-DD)"
+          }
+        },
+        "required": [
+          "expected_return",
+          "name",
+          "reason",
+          "status"
+        ]
+      },
+      "UnavailablePlayers": {
+        "type": "object",
+        "properties": {
+          "home": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnavailablePlayer"
+            },
+            "description": "Unavailable home team players"
+          },
+          "away": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnavailablePlayerAway"
+            },
+            "description": "Unavailable away team players"
+          }
+        },
+        "required": [
+          "away",
+          "home"
+        ]
+      },
+      "VenueTeam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "_LineupPlayerV2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "jersey_number": {
+            "type": "integer",
+            "nullable": true
+          },
+          "ai_score": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "AI confidence score 0–1, four decimals. Always null when `lineup_status` is `confirmed`."
+          }
+        },
+        "required": [
+          "ai_score",
+          "id",
+          "jersey_number",
+          "name",
+          "position",
+          "short_name"
+        ]
+      },
+      "_PlayerBriefSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal player ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full display name of the player."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated name. Null when not set."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code (e.g. GB)."
+          },
+          "country_name": {
+            "type": "string",
+            "description": "Full country name in English."
+          },
+          "elo_overall": {
+            "type": "number",
+            "format": "double",
+            "description": "Overall ELO rating across all tournament formats."
+          }
+        },
+        "required": [
+          "country_code",
+          "country_name",
+          "elo_overall",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "_TeamBriefSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full team name."
+          },
+          "short_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Abbreviated team name, null if not set."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code."
+          },
+          "country": {
+            "type": "string",
+            "description": "Full country name."
+          }
+        },
+        "required": [
+          "country",
+          "country_code",
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "_TeamRefSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal team ID — use with /api/v2/teams/{id}/."
+          },
+          "name": {
+            "type": "string",
+            "description": "Team name."
+          },
+          "short_name": {
+            "type": "string",
+            "description": "Abbreviated team name. Empty string when not set."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "short_name"
+        ]
+      },
+      "_UnavailablePlayerV2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "short_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "Availability status — e.g. `injured`, `suspended`, `doubtful`."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Free-text reason — e.g. `Muscle Injury`, `5 yellow cards`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "reason",
+          "short_name",
+          "status"
+        ]
+      }
+    }
+  },
+  "missing": []
+}

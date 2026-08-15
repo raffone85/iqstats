@@ -1,0 +1,55 @@
+{
+  "name": "iqstats-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "dev:data1-local": "node scripts/with-local-data1.mjs dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "typecheck:gateway": "tsc -p tsconfig.gateway.json",
+    "test:gateway": "node --experimental-strip-types --test test/iqstats-gateway.test.ts test/iqstats-database-gateway.test.ts",
+    "test:database-integration": "node --conditions=react-server --experimental-strip-types --test test/iqstats-database-integration.test.ts",
+    "test:database-integration:local": "node scripts/with-local-data1.mjs test",
+    "test:media": "node --experimental-strip-types --test test/iqstats-media.test.ts",
+    "test:stat-engine": "node --conditions=react-server --experimental-strip-types --test test/iqstats-stat-engine.test.ts",
+    "test:auth": "node --experimental-strip-types --test test/auth-authorization.test.ts test/auth-email-code.test.ts",
+    "test:billing": "node --experimental-strip-types --test test/billing-state.test.ts",
+    "verify:auth-entitlements": "node scripts/verification/auth-entitlements.mjs",
+    "verify:billing-webhook": "node scripts/verification/billing-webhook.mjs",
+    "verify:product-happy-path": "node scripts/verification/product-happy-path.mjs",
+    "verify:team-gateway": "node --env-file=.env.local --experimental-strip-types scripts/verification/team-gateway-smoke.ts",
+    "stripe:catalog:check": "node scripts/stripe/sync-test-catalog.mjs",
+    "stripe:catalog:apply": "node scripts/stripe/sync-test-catalog.mjs --apply",
+    "stripe:webhook-secret:sync": "node scripts/stripe/sync-listener-secret.mjs"
+  },
+  "dependencies": {
+    "@iqstats/shared": "file:../../packages/shared",
+    "@supabase/ssr": "0.12.4",
+    "@supabase/supabase-js": "2.112.2",
+    "next": "16.3.0",
+    "postgres": "3.4.9",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "0.0.1",
+    "stripe": "22.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "nanoid": "3.3.17",
+    "postcss": "8.5.25",
+    "sharp": "0.35.3"
+  }
+}

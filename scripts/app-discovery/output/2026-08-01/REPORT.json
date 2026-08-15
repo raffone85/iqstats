@@ -1,0 +1,489 @@
+{
+  "schemaVersion": "iqstats.app-discovery.report.v1",
+  "generatedAt": "2026-08-01T17:45:17.602Z",
+  "status": "completed-awaiting-human-review",
+  "nextGate": "human-review-before-APP-1",
+  "scope": {
+    "preflightRequests": 10,
+    "canonicalRequests": 18,
+    "totalRequests": 28,
+    "requestLimit": 30,
+    "sampleEvents": [
+      7198,
+      7208
+    ],
+    "appModified": false,
+    "calibrationRerun": false
+  },
+  "requests": {
+    "statusCounts": {
+      "200": 16,
+      "404": 2
+    },
+    "completed": 18,
+    "allowedMethod": "GET"
+  },
+  "contracts": {
+    "matchList": {
+      "status": "verified-local",
+      "endpoint": "/api/v2/events/",
+      "explicitFields": [
+        "id",
+        "league_id",
+        "season_id",
+        "home_team_id",
+        "home_team",
+        "away_team_id",
+        "away_team",
+        "home_coach_id",
+        "away_coach_id",
+        "referee_id",
+        "venue_id",
+        "event_date",
+        "status",
+        "replaced_by",
+        "round_number",
+        "round_name",
+        "group_name",
+        "period",
+        "current_minute",
+        "home_score",
+        "away_score",
+        "home_score_ht",
+        "away_score_ht",
+        "penalty_shootout",
+        "extra_time_score",
+        "is_local_derby",
+        "is_neutral_ground",
+        "travel_distance_km",
+        "weather",
+        "pitch_condition",
+        "attendance",
+        "live_websocket",
+        "websocket_plus",
+        "highlights",
+        "head_to_head"
+      ],
+      "filtersVerified": [
+        "league_id",
+        "date_from",
+        "date_to",
+        "status",
+        "limit"
+      ]
+    },
+    "matchDetail": {
+      "status": "verified-local",
+      "endpoint": "/api/v2/events/{id}/",
+      "explicitFields": [
+        "id",
+        "league_id",
+        "season_id",
+        "home_team_id",
+        "home_team",
+        "away_team_id",
+        "away_team",
+        "home_coach_id",
+        "away_coach_id",
+        "referee_id",
+        "venue_id",
+        "event_date",
+        "status",
+        "replaced_by",
+        "round_number",
+        "round_name",
+        "group_name",
+        "period",
+        "current_minute",
+        "home_score",
+        "away_score",
+        "home_score_ht",
+        "away_score_ht",
+        "penalty_shootout",
+        "extra_time_score",
+        "is_local_derby",
+        "is_neutral_ground",
+        "travel_distance_km",
+        "weather",
+        "pitch_condition",
+        "attendance",
+        "live_websocket",
+        "websocket_plus",
+        "highlights",
+        "head_to_head"
+      ]
+    },
+    "odds": {
+      "status": "partial",
+      "endpointCurrentSummary": "/api/v2/events/{id}/odds/",
+      "endpointComparison": "/api/v2/events/{id}/odds/comparison/",
+      "endpointDetailedList": "/api/v2/odds/?event_id={id}",
+      "finishedSample": {
+        "eventId": 7198,
+        "records": 448,
+        "bookmakers": 16,
+        "markets": [
+          "double_chance",
+          "over_under_15",
+          "over_under_25",
+          "over_under_35",
+          "btts",
+          "red_card",
+          "1x2",
+          "draw_no_bet",
+          "total_corners",
+          "corners_1x2",
+          "total_red_cards"
+        ],
+        "perMarket": {
+          "double_chance": {
+            "records": 48,
+            "outcomes": [
+              "12",
+              "1X",
+              "X2"
+            ],
+            "lines": [],
+            "bookmakers": 16,
+            "currentPricePresent": 48,
+            "previousObservationPresent": 48,
+            "movementFieldPresent": 48,
+            "movementObserved": 48,
+            "updatedAtPresent": 48,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "over_under_15": {
+            "records": 32,
+            "outcomes": [
+              "over",
+              "under"
+            ],
+            "lines": [
+              1.5
+            ],
+            "bookmakers": 16,
+            "currentPricePresent": 32,
+            "previousObservationPresent": 32,
+            "movementFieldPresent": 32,
+            "movementObserved": 32,
+            "updatedAtPresent": 32,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "over_under_25": {
+            "records": 32,
+            "outcomes": [
+              "over",
+              "under"
+            ],
+            "lines": [
+              2.5
+            ],
+            "bookmakers": 16,
+            "currentPricePresent": 32,
+            "previousObservationPresent": 32,
+            "movementFieldPresent": 32,
+            "movementObserved": 32,
+            "updatedAtPresent": 32,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "over_under_35": {
+            "records": 32,
+            "outcomes": [
+              "over",
+              "under"
+            ],
+            "lines": [
+              3.5
+            ],
+            "bookmakers": 16,
+            "currentPricePresent": 32,
+            "previousObservationPresent": 32,
+            "movementFieldPresent": 32,
+            "movementObserved": 32,
+            "updatedAtPresent": 32,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "btts": {
+            "records": 32,
+            "outcomes": [
+              "no",
+              "yes"
+            ],
+            "lines": [],
+            "bookmakers": 16,
+            "currentPricePresent": 32,
+            "previousObservationPresent": 32,
+            "movementFieldPresent": 32,
+            "movementObserved": 32,
+            "updatedAtPresent": 32,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "red_card": {
+            "records": 6,
+            "outcomes": [
+              "no",
+              "yes"
+            ],
+            "lines": [],
+            "bookmakers": 3,
+            "currentPricePresent": 6,
+            "previousObservationPresent": 6,
+            "movementFieldPresent": 6,
+            "movementObserved": 6,
+            "updatedAtPresent": 6,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "1x2": {
+            "records": 45,
+            "outcomes": [
+              "AWAY",
+              "DRAW",
+              "HOME"
+            ],
+            "lines": [],
+            "bookmakers": 15,
+            "currentPricePresent": 45,
+            "previousObservationPresent": 45,
+            "movementFieldPresent": 45,
+            "movementObserved": 45,
+            "updatedAtPresent": 45,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "draw_no_bet": {
+            "records": 26,
+            "outcomes": [
+              "AWAY",
+              "HOME"
+            ],
+            "lines": [],
+            "bookmakers": 13,
+            "currentPricePresent": 26,
+            "previousObservationPresent": 26,
+            "movementFieldPresent": 26,
+            "movementObserved": 26,
+            "updatedAtPresent": 26,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "total_corners": {
+            "records": 154,
+            "outcomes": [
+              "over",
+              "under"
+            ],
+            "lines": [
+              4.5,
+              5.5,
+              6.5,
+              7.5,
+              8.5,
+              9,
+              9.5,
+              10,
+              10.5,
+              11,
+              11.5,
+              12.5,
+              13.5,
+              14.5,
+              15.5,
+              16.5,
+              17.5
+            ],
+            "bookmakers": 12,
+            "currentPricePresent": 154,
+            "previousObservationPresent": 70,
+            "movementFieldPresent": 154,
+            "movementObserved": 70,
+            "updatedAtPresent": 154,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "corners_1x2": {
+            "records": 33,
+            "outcomes": [
+              "AWAY",
+              "DRAW",
+              "HOME"
+            ],
+            "lines": [],
+            "bookmakers": 11,
+            "currentPricePresent": 33,
+            "previousObservationPresent": 24,
+            "movementFieldPresent": 33,
+            "movementObserved": 24,
+            "updatedAtPresent": 33,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          },
+          "total_red_cards": {
+            "records": 8,
+            "outcomes": [
+              "over",
+              "under"
+            ],
+            "lines": [
+              0.5,
+              1.5
+            ],
+            "bookmakers": 2,
+            "currentPricePresent": 8,
+            "previousObservationPresent": 0,
+            "movementFieldPresent": 8,
+            "movementObserved": 0,
+            "updatedAtPresent": 8,
+            "explicitOpeningAvailable": false,
+            "explicitClosingAvailable": false
+          }
+        }
+      },
+      "upcomingSample": {
+        "eventId": 7208,
+        "records": 0,
+        "comparisonMarkets": [],
+        "compactFields": 11,
+        "compactNonNull": 0
+      },
+      "temporalSemantics": {
+        "currentPrice": "decimal_odds is explicit",
+        "previousObservation": "previous_decimal_odds is explicit when present and is only the observation before the last change",
+        "latestMovement": "movement is explicit as SHORTENING, DRIFTING or empty; updated_at is the timestamp of the last change",
+        "openingPrice": "unavailable: no explicit opening/initial field",
+        "closingPrice": "unavailable: no explicit closing field; the last value of a finished match is not labelled as closing"
+      },
+      "idCaveat": {
+        "requestedInternalEventId": 7198,
+        "eventSpecificResponseIds": [
+          7198,
+          7198
+        ],
+        "detailedListResponseEventIds": [
+          43194
+        ],
+        "recordsReconciledByMarketOutcomeLineBookmaker": true,
+        "rule": "Do not expose or join the detailed-list event_id as the IQstatS match ID; preserve the requested match context server-side."
+      }
+    },
+    "standings": {
+      "status": "verified-local",
+      "endpoint": "/api/v2/leagues/{id}/standings/?season_id={seasonId}",
+      "leagueId": 9,
+      "seasonId": 28,
+      "rows": 20,
+      "explicitFields": [
+        "position",
+        "team_id",
+        "team_name",
+        "played",
+        "won",
+        "drawn",
+        "lost",
+        "gf",
+        "ga",
+        "gd",
+        "pts",
+        "xgf",
+        "xga",
+        "xgd",
+        "xg_games",
+        "form",
+        "live"
+      ]
+    },
+    "form": {
+      "status": "partial",
+      "source": "standings.form",
+      "rowsWithExplicitSequence": 20,
+      "rows": 20,
+      "semantics": "compact W/D/L sequence only; no dates, opponents or home/away filter",
+      "dedicatedFootballEndpointVerified": false
+    },
+    "headToHead": {
+      "status": "verified-local",
+      "endpoint": "/api/v2/events/{id}/h2h/",
+      "explicitFields": [
+        "total_matches",
+        "home_wins",
+        "draws",
+        "away_wins",
+        "home_goals",
+        "away_goals",
+        "avg_total_goals",
+        "home_win_rate",
+        "away_win_rate",
+        "recent_matches"
+      ],
+      "finishedSample": {
+        "totalMatches": 4,
+        "recentMatches": 4,
+        "identicalToDetail": true
+      },
+      "upcomingSample": {
+        "totalMatches": 7,
+        "recentMatches": 7,
+        "identicalToDetail": true
+      }
+    },
+    "unsupportedCandidates": {
+      "pregame": {
+        "status": 404,
+        "detail": "Not found"
+      },
+      "teamStats": {
+        "status": 404,
+        "detail": "Not found"
+      }
+    }
+  },
+  "verification": {
+    "allFixturesParse": true,
+    "oddsPages": [
+      {
+        "count": 448,
+        "returned": 200,
+        "hasNext": true,
+        "hasPrevious": false
+      },
+      {
+        "count": 448,
+        "returned": 200,
+        "hasNext": true,
+        "hasPrevious": true
+      },
+      {
+        "count": 448,
+        "returned": 48,
+        "hasNext": false,
+        "hasPrevious": true
+      }
+    ],
+    "oddsUniqueRecords": 448,
+    "oddsComparisonReconciled": true,
+    "sensitiveFindings": [],
+    "appModified": false
+  },
+  "decision": {
+    "safeForAPP1": [
+      "matchList",
+      "matchDetail",
+      "standings",
+      "headToHead"
+    ],
+    "partialForAPP1": [
+      "oddsCurrentPreviousMovement",
+      "compactStandingForm"
+    ],
+    "unavailableForAPP1": [
+      "oddsOpening",
+      "oddsClosing",
+      "detailedTeamForm"
+    ]
+  }
+}

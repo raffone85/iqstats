@@ -1,0 +1,617 @@
+{
+  "schemaVersion": "iqstats.app-discovery.manifest.v1",
+  "runDate": "2026-08-01",
+  "status": "completed",
+  "policy": {
+    "method": "GET",
+    "sampleEventIds": [
+      7198,
+      7208
+    ],
+    "maxSampleEvents": 3,
+    "plannedRequests": 16,
+    "maxRequests": 18,
+    "requestsPerSecondMax": 2,
+    "followsPagination": "two-fixed-odds-pages-only",
+    "appModified": false,
+    "oddsPaginationFollowUps": 2
+  },
+  "requestsStarted": 18,
+  "requestsCompleted": 18,
+  "entries": [
+    {
+      "label": "openapi-relevant-contracts",
+      "requestPath": "/openapi.json",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:37.342Z",
+      "contentType": "application/vnd.oai.openapi+json",
+      "file": "openapi-relevant-contracts.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "openapi",
+          "paths",
+          "components",
+          "missing"
+        ],
+        "count": 2,
+        "arrayField": "missing",
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "events-finished-sample",
+      "requestPath": "/api/v2/events/?league_id=9&date_from=2026-07-25&date_to=2026-08-01&status=finished&limit=10",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:37.551Z",
+      "contentType": "application/json",
+      "file": "events-finished-sample.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 16,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "league_id",
+          "season_id",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "home_coach_id",
+          "away_coach_id",
+          "referee_id",
+          "venue_id",
+          "event_date",
+          "status",
+          "replaced_by",
+          "round_number",
+          "round_name",
+          "group_name",
+          "period",
+          "current_minute",
+          "home_score",
+          "away_score",
+          "home_score_ht",
+          "away_score_ht",
+          "penalty_shootout",
+          "extra_time_score",
+          "is_local_derby",
+          "is_neutral_ground",
+          "travel_distance_km",
+          "weather",
+          "pitch_condition",
+          "attendance",
+          "live_websocket",
+          "websocket_plus",
+          "highlights",
+          "head_to_head"
+        ]
+      }
+    },
+    {
+      "label": "events-upcoming-sample",
+      "requestPath": "/api/v2/events/?league_id=9&date_from=2026-08-01&date_to=2026-08-10&limit=10",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:38.115Z",
+      "contentType": "application/json",
+      "file": "events-upcoming-sample.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 10,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "league_id",
+          "season_id",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "home_coach_id",
+          "away_coach_id",
+          "referee_id",
+          "venue_id",
+          "event_date",
+          "status",
+          "replaced_by",
+          "round_number",
+          "round_name",
+          "group_name",
+          "period",
+          "current_minute",
+          "home_score",
+          "away_score",
+          "home_score_ht",
+          "away_score_ht",
+          "penalty_shootout",
+          "extra_time_score",
+          "is_local_derby",
+          "is_neutral_ground",
+          "travel_distance_km",
+          "weather",
+          "pitch_condition",
+          "attendance",
+          "live_websocket",
+          "websocket_plus",
+          "highlights",
+          "head_to_head"
+        ]
+      }
+    },
+    {
+      "label": "event-finished-detail",
+      "requestPath": "/api/v2/events/7198/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:38.643Z",
+      "contentType": "application/json",
+      "file": "event-finished-detail.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "id",
+          "league_id",
+          "season_id",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "home_coach_id",
+          "away_coach_id",
+          "referee_id",
+          "venue_id",
+          "event_date",
+          "status",
+          "replaced_by",
+          "round_number",
+          "round_name",
+          "group_name",
+          "period",
+          "current_minute",
+          "home_score",
+          "away_score",
+          "home_score_ht",
+          "away_score_ht",
+          "penalty_shootout",
+          "extra_time_score",
+          "is_local_derby",
+          "is_neutral_ground",
+          "travel_distance_km",
+          "weather",
+          "pitch_condition",
+          "attendance",
+          "live_websocket",
+          "websocket_plus",
+          "highlights",
+          "head_to_head"
+        ],
+        "count": 1,
+        "arrayField": "highlights",
+        "itemKeys": [
+          "kind",
+          "title",
+          "url",
+          "thumbnail",
+          "published_at"
+        ]
+      }
+    },
+    {
+      "label": "event-upcoming-detail",
+      "requestPath": "/api/v2/events/7208/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:39.265Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-detail.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "id",
+          "league_id",
+          "season_id",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "home_coach_id",
+          "away_coach_id",
+          "referee_id",
+          "venue_id",
+          "event_date",
+          "status",
+          "replaced_by",
+          "round_number",
+          "round_name",
+          "group_name",
+          "period",
+          "current_minute",
+          "home_score",
+          "away_score",
+          "home_score_ht",
+          "away_score_ht",
+          "penalty_shootout",
+          "extra_time_score",
+          "is_local_derby",
+          "is_neutral_ground",
+          "travel_distance_km",
+          "weather",
+          "pitch_condition",
+          "attendance",
+          "live_websocket",
+          "websocket_plus",
+          "highlights",
+          "head_to_head"
+        ],
+        "count": 0,
+        "arrayField": "highlights",
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-finished-odds",
+      "requestPath": "/api/v2/events/7198/odds/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:40.154Z",
+      "contentType": "application/json",
+      "file": "event-finished-odds.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "odds"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-upcoming-odds",
+      "requestPath": "/api/v2/events/7208/odds/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:40.352Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-odds.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "odds"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-finished-odds-comparison",
+      "requestPath": "/api/v2/events/7198/odds/comparison/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:41.790Z",
+      "contentType": "application/json",
+      "file": "event-finished-odds-comparison.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "event_date",
+          "league_id",
+          "league_name",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "bookmakers_count",
+          "total_odds",
+          "markets"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-upcoming-odds-comparison",
+      "requestPath": "/api/v2/events/7208/odds/comparison/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:41.999Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-odds-comparison.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "event_date",
+          "league_id",
+          "league_name",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "bookmakers_count",
+          "total_odds",
+          "markets"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-finished-odds-list",
+      "requestPath": "/api/v2/odds/?event_id=7198&limit=500&offset=0",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:42.661Z",
+      "contentType": "application/json",
+      "file": "event-finished-odds-list.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 448,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "event_id",
+          "market",
+          "outcome",
+          "line",
+          "outcome_name",
+          "bookmaker_slug",
+          "bookmaker_name",
+          "decimal_odds",
+          "previous_decimal_odds",
+          "implied_probability",
+          "movement",
+          "is_max_quote",
+          "updated_at"
+        ]
+      }
+    },
+    {
+      "label": "event-upcoming-odds-list",
+      "requestPath": "/api/v2/odds/?event_id=7208&limit=500&offset=0",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:43.112Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-odds-list.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 0,
+        "arrayField": "results",
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-finished-h2h",
+      "requestPath": "/api/v2/events/7198/h2h/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:43.682Z",
+      "contentType": "application/json",
+      "file": "event-finished-h2h.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "total_matches",
+          "home_wins",
+          "draws",
+          "away_wins",
+          "home_goals",
+          "away_goals",
+          "avg_total_goals",
+          "home_win_rate",
+          "away_win_rate",
+          "recent_matches"
+        ],
+        "count": 4,
+        "arrayField": "recent_matches",
+        "itemKeys": [
+          "away",
+          "date",
+          "home",
+          "score"
+        ]
+      }
+    },
+    {
+      "label": "event-upcoming-h2h",
+      "requestPath": "/api/v2/events/7208/h2h/",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:44.255Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-h2h.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "total_matches",
+          "home_wins",
+          "draws",
+          "away_wins",
+          "home_goals",
+          "away_goals",
+          "avg_total_goals",
+          "home_win_rate",
+          "away_win_rate",
+          "recent_matches"
+        ],
+        "count": 7,
+        "arrayField": "recent_matches",
+        "itemKeys": [
+          "away",
+          "date",
+          "home",
+          "score"
+        ]
+      }
+    },
+    {
+      "label": "league-standings",
+      "requestPath": "/api/v2/leagues/9/standings/?season_id=28",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:38:44.781Z",
+      "contentType": "application/json",
+      "file": "league-standings.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "league_id",
+          "season",
+          "grouped",
+          "standings"
+        ],
+        "count": 20,
+        "arrayField": "standings",
+        "itemKeys": [
+          "position",
+          "team_id",
+          "team_name",
+          "played",
+          "won",
+          "drawn",
+          "lost",
+          "gf",
+          "ga",
+          "gd",
+          "pts",
+          "xgf",
+          "xga",
+          "xgd",
+          "xg_games",
+          "form",
+          "live"
+        ]
+      }
+    },
+    {
+      "label": "event-upcoming-pregame",
+      "requestPath": "/api/v2/events/7208/pregame/",
+      "status": 404,
+      "capturedAt": "2026-08-01T17:38:45.352Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-pregame.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "error",
+          "status",
+          "detail"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-upcoming-team-stats",
+      "requestPath": "/api/v2/events/7208/team-stats/",
+      "status": 404,
+      "capturedAt": "2026-08-01T17:38:45.917Z",
+      "contentType": "application/json",
+      "file": "event-upcoming-team-stats.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "error",
+          "status",
+          "detail"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-finished-odds-list-offset-200",
+      "requestPath": "/api/v2/odds/?event_id=7198&limit=200&offset=200",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:41:15.039Z",
+      "contentType": "application/json",
+      "file": "event-finished-odds-list-offset-200.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 448,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "event_id",
+          "market",
+          "outcome",
+          "line",
+          "outcome_name",
+          "bookmaker_slug",
+          "bookmaker_name",
+          "decimal_odds",
+          "previous_decimal_odds",
+          "implied_probability",
+          "movement",
+          "is_max_quote",
+          "updated_at"
+        ]
+      }
+    },
+    {
+      "label": "event-finished-odds-list-offset-400",
+      "requestPath": "/api/v2/odds/?event_id=7198&limit=200&offset=400",
+      "status": 200,
+      "capturedAt": "2026-08-01T17:41:15.259Z",
+      "contentType": "application/json",
+      "file": "event-finished-odds-list-offset-400.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 448,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "event_id",
+          "market",
+          "outcome",
+          "line",
+          "outcome_name",
+          "bookmaker_slug",
+          "bookmaker_name",
+          "decimal_odds",
+          "previous_decimal_odds",
+          "implied_probability",
+          "movement",
+          "is_max_quote",
+          "updated_at"
+        ]
+      }
+    }
+  ],
+  "completedAt": "2026-08-01T17:41:15.262Z"
+}

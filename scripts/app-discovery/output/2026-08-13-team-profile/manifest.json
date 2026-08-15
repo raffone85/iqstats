@@ -1,0 +1,613 @@
+{
+  "schemaVersion": "iqstats.app-discovery.manifest.v1",
+  "runDate": "2026-08-13",
+  "scope": "team-profile",
+  "status": "completed",
+  "policy": {
+    "method": "GET",
+    "sampleTeamId": 63,
+    "sampleLeagueId": 4,
+    "maxRequests": 30,
+    "requestsPerSecondMax": 2,
+    "appModified": false,
+    "writesToProvider": false
+  },
+  "requestsStarted": 15,
+  "requestsCompleted": 15,
+  "entries": [
+    {
+      "label": "standings-current-season",
+      "requestPath": "/api/v2/leagues/4/standings/?season_id=1375",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:11.745Z",
+      "contentType": "application/json",
+      "file": "standings-current-season.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "league_id",
+          "season",
+          "grouped",
+          "standings"
+        ],
+        "count": 0,
+        "arrayField": "standings",
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "standings-previous-season",
+      "requestPath": "/api/v2/leagues/4/standings/?season_id=358",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:12.466Z",
+      "contentType": "application/json",
+      "file": "standings-previous-season.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "league_id",
+          "season",
+          "grouped",
+          "standings"
+        ],
+        "count": 20,
+        "arrayField": "standings",
+        "itemKeys": [
+          "position",
+          "team_id",
+          "team_name",
+          "played",
+          "won",
+          "drawn",
+          "lost",
+          "gf",
+          "ga",
+          "gd",
+          "pts",
+          "xgf",
+          "xga",
+          "xgd",
+          "xg_games",
+          "form",
+          "live"
+        ]
+      }
+    },
+    {
+      "label": "league-top-scorers-previous-season",
+      "requestPath": "/api/v2/leagues/4/top/scorers/?season_id=358",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:12.836Z",
+      "contentType": "application/json",
+      "file": "league-top-scorers-previous-season.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "league_id",
+          "season",
+          "stat",
+          "label",
+          "leaders"
+        ],
+        "count": 20,
+        "arrayField": "leaders",
+        "itemKeys": [
+          "rank",
+          "player_id",
+          "player_name",
+          "position",
+          "team_id",
+          "team_name",
+          "value",
+          "matches"
+        ]
+      }
+    },
+    {
+      "label": "events-by-team-previous-season",
+      "requestPath": "/api/v2/events/?team_id=63&season_id=358&status=finished&limit=50",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:14.037Z",
+      "contentType": "application/json",
+      "file": "events-by-team-previous-season.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 38,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "league_id",
+          "season_id",
+          "home_team_id",
+          "home_team",
+          "away_team_id",
+          "away_team",
+          "home_coach_id",
+          "away_coach_id",
+          "referee_id",
+          "venue_id",
+          "event_date",
+          "status",
+          "replaced_by",
+          "round_number",
+          "round_name",
+          "group_name",
+          "period",
+          "current_minute",
+          "home_score",
+          "away_score",
+          "home_score_ht",
+          "away_score_ht",
+          "penalty_shootout",
+          "extra_time_score",
+          "is_local_derby",
+          "is_neutral_ground",
+          "travel_distance_km",
+          "weather",
+          "pitch_condition",
+          "attendance",
+          "live_websocket",
+          "websocket_plus",
+          "highlights",
+          "head_to_head",
+          "has_xg",
+          "previous_leg_event_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-home-1",
+      "requestPath": "/api/v2/events/1453/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:14.157Z",
+      "contentType": "application/json",
+      "file": "event-stats-home-1.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 41,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "added",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-home-2",
+      "requestPath": "/api/v2/events/1433/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:14.778Z",
+      "contentType": "application/json",
+      "file": "event-stats-home-2.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 29,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "added",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-home-3",
+      "requestPath": "/api/v2/events/1413/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:15.413Z",
+      "contentType": "application/json",
+      "file": "event-stats-home-3.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 14,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "block",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-away-1",
+      "requestPath": "/api/v2/events/1440/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:15.862Z",
+      "contentType": "application/json",
+      "file": "event-stats-away-1.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 19,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "added",
+          "block",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-away-2",
+      "requestPath": "/api/v2/events/1425/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:16.512Z",
+      "contentType": "application/json",
+      "file": "event-stats-away-2.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 20,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "added",
+          "block",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "event-stats-away-3",
+      "requestPath": "/api/v2/events/1398/stats/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:16.978Z",
+      "contentType": "application/json",
+      "file": "event-stats-away-3.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "stats",
+          "shotmap",
+          "momentum",
+          "average_positions",
+          "xg_per_minute"
+        ],
+        "count": 19,
+        "arrayField": "shotmap",
+        "itemKeys": [
+          "gm",
+          "xg",
+          "gml",
+          "min",
+          "pos",
+          "sit",
+          "body",
+          "home",
+          "type",
+          "xgot",
+          "added",
+          "player_id"
+        ]
+      }
+    },
+    {
+      "label": "manager-detail",
+      "requestPath": "/api/v2/managers/483/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:17.492Z",
+      "contentType": "application/json",
+      "file": "manager-detail.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "id",
+          "name",
+          "short_name",
+          "country",
+          "tactical_profile",
+          "preferred_formation",
+          "current_team_id",
+          "matches_total",
+          "wins",
+          "draws",
+          "losses",
+          "win_pct",
+          "avg_goals_scored",
+          "avg_goals_conceded",
+          "avg_possession",
+          "clean_sheet_pct",
+          "btts_pct",
+          "over_25_pct",
+          "stats_updated_at"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "venue-detail",
+      "requestPath": "/api/v2/venues/63/",
+      "status": 200,
+      "capturedAt": "2026-08-13T21:47:18.059Z",
+      "contentType": "application/json",
+      "file": "venue-detail.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "id",
+          "name",
+          "city",
+          "country",
+          "country_code",
+          "capacity",
+          "latitude",
+          "longitude",
+          "pitch_length_m",
+          "pitch_width_m",
+          "built_year",
+          "home_team_id",
+          "competition_assignments"
+        ],
+        "count": 0,
+        "arrayField": "competition_assignments",
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "event-player-stats-1",
+      "requestPath": "/api/v2/events/1453/player-stats/",
+      "status": 200,
+      "capturedAt": "2026-08-14T07:55:58.491Z",
+      "contentType": "application/json",
+      "file": "event-player-stats-1.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "event_id",
+          "count",
+          "player_stats"
+        ],
+        "count": 52,
+        "arrayField": "player_stats",
+        "itemKeys": [
+          "id",
+          "player_id",
+          "event_id",
+          "team_id",
+          "minutes_played",
+          "rating",
+          "touches",
+          "goals",
+          "goal_assist",
+          "expected_goals",
+          "expected_assists",
+          "total_shots",
+          "shots_on_target",
+          "key_pass",
+          "total_pass",
+          "accurate_pass",
+          "total_long_balls",
+          "accurate_long_balls",
+          "total_cross",
+          "accurate_cross",
+          "total_contest",
+          "won_contest",
+          "duel_won",
+          "duel_lost",
+          "aerial_won",
+          "aerial_lost",
+          "total_tackle",
+          "won_tackle",
+          "total_clearance",
+          "interception",
+          "ball_recovery",
+          "blocked_scoring_attempt",
+          "dispossessed",
+          "possession_lost",
+          "was_fouled",
+          "fouls",
+          "yellow_card",
+          "red_card",
+          "saves",
+          "goals_conceded",
+          "punches",
+          "high_claims",
+          "good_high_claim",
+          "accurate_keeper_sweeper",
+          "total_keeper_sweeper",
+          "goals_prevented",
+          "keeper_save_value",
+          "goalkeeper_value_normalized",
+          "big_chance_created",
+          "big_chance_missed",
+          "expected_goals_on_target",
+          "hit_woodwork",
+          "last_man_tackle",
+          "outfielder_block",
+          "saved_shots_from_inside_the_box",
+          "clearance_off_line",
+          "challenge_lost",
+          "total_offside",
+          "error_lead_to_a_goal",
+          "error_lead_to_a_shot",
+          "defensive_value_normalized",
+          "pass_value_normalized",
+          "shot_value_normalized",
+          "dribble_value_normalized",
+          "ball_carries_count",
+          "progressive_ball_carries_count",
+          "total_ball_carries_distance",
+          "total_progressive_ball_carries_distance",
+          "best_ball_carry_progression",
+          "total_progression",
+          "unsuccessful_touch",
+          "accurate_opposition_half_passes",
+          "total_opposition_half_passes",
+          "accurate_own_half_passes",
+          "total_own_half_passes"
+        ]
+      }
+    },
+    {
+      "label": "referee-detail",
+      "requestPath": "/api/v2/referees/1761/",
+      "status": 200,
+      "capturedAt": "2026-08-14T09:52:56.123Z",
+      "contentType": "application/json",
+      "file": "referee-detail.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "id",
+          "name",
+          "country",
+          "nationality_a3",
+          "birthdate",
+          "matches",
+          "total_yellow_cards",
+          "total_red_cards",
+          "avg_yellow_per_match",
+          "avg_red_per_match",
+          "avg_goals_per_match",
+          "avg_fouls_per_match",
+          "career_games",
+          "career_yellow_cards",
+          "career_red_cards"
+        ],
+        "count": null,
+        "arrayField": null,
+        "itemKeys": []
+      }
+    },
+    {
+      "label": "referees-league",
+      "requestPath": "/api/v2/referees/?league_id=4&limit=100",
+      "status": 200,
+      "capturedAt": "2026-08-14T09:52:56.825Z",
+      "contentType": "application/json",
+      "file": "referees-league.json",
+      "summary": {
+        "kind": "object",
+        "keys": [
+          "count",
+          "next",
+          "previous",
+          "results"
+        ],
+        "count": 42,
+        "arrayField": "results",
+        "itemKeys": [
+          "id",
+          "name",
+          "country",
+          "nationality_a3",
+          "birthdate",
+          "matches",
+          "total_yellow_cards",
+          "total_red_cards",
+          "avg_yellow_per_match",
+          "avg_red_per_match",
+          "avg_goals_per_match",
+          "avg_fouls_per_match",
+          "career_games",
+          "career_yellow_cards",
+          "career_red_cards"
+        ]
+      }
+    }
+  ],
+  "completedAt": "2026-08-14T09:52:56.831Z",
+  "findings": {
+    "teamIdFilterHonoured": true,
+    "finishedEventsDeclared": 38,
+    "finishedEventsReturned": 38,
+    "homeMatchesInPage": 19,
+    "awayMatchesInPage": 19,
+    "currentSeasonId": 1375,
+    "previousSeasonId": 358
+  }
+}

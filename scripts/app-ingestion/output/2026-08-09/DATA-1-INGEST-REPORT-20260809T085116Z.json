@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "iqstats.data1.ingest-report.v1",
+  "status": "completed",
+  "startedAt": "2026-08-09T08:50:50.413Z",
+  "completedAt": "2026-08-09T08:51:16.959Z",
+  "destination": "local normalized PostgreSQL",
+  "scope": {
+    "productFreshCompetitions": 33,
+    "heldCompetitions": 3
+  },
+  "requests": {
+    "method": "GET",
+    "started": 40,
+    "completed": 40,
+    "limit": 139,
+    "requestsPerSecondMax": 2,
+    "remoteWrites": 0
+  },
+  "normalized": {
+    "matches": 3856,
+    "standingSnapshots": 13,
+    "standingRows": 131,
+    "unavailableStandings": 1,
+    "rejectedRows": 0,
+    "rawResponsesPersisted": 0
+  },
+  "database": {
+    "batchesApplied": 14,
+    "rowsObserved": 4255,
+    "rowsAccepted": 4255
+  }
+}

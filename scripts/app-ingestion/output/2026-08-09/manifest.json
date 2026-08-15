@@ -1,0 +1,768 @@
+{
+  "schemaVersion": "iqstats.data0.manifest.v1",
+  "runDate": "2026-08-09",
+  "status": "completed",
+  "policy": {
+    "method": "GET",
+    "requestLimit": 50,
+    "requestsPerSecondMax": 2,
+    "remoteWrites": 0,
+    "rawResponsesPersisted": 0,
+    "remoteIdentifiersPersisted": 0
+  },
+  "requestsStarted": 50,
+  "requestsCompleted": 50,
+  "entries": [
+    {
+      "requestNumber": 1,
+      "domain": "contractCatalog",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 1,
+        "topLevelFieldCount": 7,
+        "sampleRowFieldCount": 2,
+        "paginationDeclared": false,
+        "responseBytes": 789795
+      }
+    },
+    {
+      "requestNumber": 2,
+      "domain": "competitions",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 79,
+        "returnedRows": 79,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 6,
+        "paginationDeclared": true,
+        "responseBytes": 18003
+      }
+    },
+    {
+      "requestNumber": 3,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 142,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1271
+      }
+    },
+    {
+      "requestNumber": 4,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 307,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2153
+      }
+    },
+    {
+      "requestNumber": 5,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 384,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1728
+      }
+    },
+    {
+      "requestNumber": 6,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 384,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1252
+      }
+    },
+    {
+      "requestNumber": 7,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 185,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2002
+      }
+    },
+    {
+      "requestNumber": 8,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 241,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2071
+      }
+    },
+    {
+      "requestNumber": 9,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 410,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1569
+      }
+    },
+    {
+      "requestNumber": 10,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 380,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2144
+      }
+    },
+    {
+      "requestNumber": 11,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 552,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1330
+      }
+    },
+    {
+      "requestNumber": 12,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 132,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2074
+      }
+    },
+    {
+      "requestNumber": 13,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2096
+      }
+    },
+    {
+      "requestNumber": 14,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 999
+      }
+    },
+    {
+      "requestNumber": 15,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 182,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2091
+      }
+    },
+    {
+      "requestNumber": 16,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 380,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2015
+      }
+    },
+    {
+      "requestNumber": 17,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 380,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2129
+      }
+    },
+    {
+      "requestNumber": 18,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 153,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2154
+      }
+    },
+    {
+      "requestNumber": 19,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 168,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2063
+      }
+    },
+    {
+      "requestNumber": 20,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 235,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1359
+      }
+    },
+    {
+      "requestNumber": 21,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2243
+      }
+    },
+    {
+      "requestNumber": 22,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 410,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1353
+      }
+    },
+    {
+      "requestNumber": 23,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 256,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2059
+      }
+    },
+    {
+      "requestNumber": 24,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2174
+      }
+    },
+    {
+      "requestNumber": 25,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2116
+      }
+    },
+    {
+      "requestNumber": 26,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 180,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1000
+      }
+    },
+    {
+      "requestNumber": 27,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 241,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2251
+      }
+    },
+    {
+      "requestNumber": 28,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2097
+      }
+    },
+    {
+      "requestNumber": 29,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 198,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2147
+      }
+    },
+    {
+      "requestNumber": 30,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 201,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2150
+      }
+    },
+    {
+      "requestNumber": 31,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 380,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2139
+      }
+    },
+    {
+      "requestNumber": 32,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 462,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2178
+      }
+    },
+    {
+      "requestNumber": 33,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 242,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1482
+      }
+    },
+    {
+      "requestNumber": 34,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 133,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2310
+      }
+    },
+    {
+      "requestNumber": 35,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 8,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1930
+      }
+    },
+    {
+      "requestNumber": 36,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 306,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1542
+      }
+    },
+    {
+      "requestNumber": 37,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 515,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 1790
+      }
+    },
+    {
+      "requestNumber": 38,
+      "domain": "matches",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 378,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 37,
+        "paginationDeclared": true,
+        "responseBytes": 2312
+      }
+    },
+    {
+      "requestNumber": 39,
+      "domain": "standings",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 18,
+        "returnedRows": 18,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 17,
+        "paginationDeclared": false,
+        "responseBytes": 3831
+      }
+    },
+    {
+      "requestNumber": 40,
+      "domain": "matchDetail",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 37,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 1900
+      }
+    },
+    {
+      "requestNumber": 41,
+      "domain": "statistics",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 31,
+        "returnedRows": 31,
+        "topLevelFieldCount": 6,
+        "sampleRowFieldCount": 13,
+        "paginationDeclared": false,
+        "responseBytes": 17758
+      }
+    },
+    {
+      "requestNumber": 42,
+      "domain": "headToHead",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 10,
+        "returnedRows": 10,
+        "topLevelFieldCount": 10,
+        "sampleRowFieldCount": 4,
+        "paginationDeclared": false,
+        "responseBytes": 1100
+      }
+    },
+    {
+      "requestNumber": 43,
+      "domain": "oddsCurrent",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 2,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 232
+      }
+    },
+    {
+      "requestNumber": 44,
+      "domain": "oddsComparison",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 11,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 43495
+      }
+    },
+    {
+      "requestNumber": 45,
+      "domain": "lineups",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 6,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 5597
+      }
+    },
+    {
+      "requestNumber": 46,
+      "domain": "oddsDetailed",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 368,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 14,
+        "paginationDeclared": true,
+        "responseBytes": 437
+      }
+    },
+    {
+      "requestNumber": 47,
+      "domain": "players",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 43,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 23,
+        "paginationDeclared": true,
+        "responseBytes": 585
+      }
+    },
+    {
+      "requestNumber": 48,
+      "domain": "playerDetail",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 23,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 463
+      }
+    },
+    {
+      "requestNumber": 49,
+      "domain": "managerDetail",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 1,
+        "returnedRows": 0,
+        "topLevelFieldCount": 19,
+        "sampleRowFieldCount": null,
+        "paginationDeclared": false,
+        "responseBytes": 417
+      }
+    },
+    {
+      "requestNumber": 50,
+      "domain": "transfers",
+      "completed": true,
+      "statusCode": 200,
+      "summary": {
+        "shape": "object",
+        "explicitTotal": 46,
+        "returnedRows": 1,
+        "topLevelFieldCount": 4,
+        "sampleRowFieldCount": 10,
+        "paginationDeclared": true,
+        "responseBytes": 414
+      }
+    }
+  ],
+  "completedAt": "2026-08-09T05:55:58.461Z"
+}

@@ -1,0 +1,19 @@
+# Escludi cache, documentazione e altri artefatti non necessari al build di IQstatS.
+.agents/
+.codex/
+.git/
+design-system/
+docs/
+infra/
+outputs/
+scripts/
+tasks/
+tests/
+work/
+
+# Le dipendenze, gli artefatti e le credenziali non vengono mai caricati.
+node_modules/
+**/node_modules/
+**/.next/
+**/.env*
+.vercel/

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "iqstats.data1.reconciliation.v1",
+  "status": "completed_with_coverage_caveats",
+  "asOf": "2026-08-09T08:51:16.959Z",
+  "scope": {
+    "competitions": 36,
+    "seasons": 36,
+    "freshSeasons": 33,
+    "heldSeasons": 3
+  },
+  "requestBudget": {
+    "authorizedCap": 200,
+    "ingestRequestsCompleted": 99,
+    "contractDiagnosticsCompleted": 2,
+    "totalRequestsCompleted": 101,
+    "requestsPerSecondMax": 2,
+    "providerWrites": 0,
+    "remoteDatabaseAccesses": 0,
+    "rawResponsesPersisted": 0
+  },
+  "normalizedLocalState": {
+    "matches": 9548,
+    "teams": 591,
+    "standingSnapshots": 32,
+    "standingRows": 331
+  },
+  "coverage": {
+    "freshSeasonsWithMatches": 33,
+    "freshSeasonsWithCompleteStandings": 21,
+    "incompleteStandingSnapshots": 11,
+    "standingsCoverageAbsent": 1,
+    "interpretation": "Empty or absent provider standings remain explicit coverage limits and are not synthesized."
+  },
+  "integrityChecks": {
+    "duplicateMatchSourceKeys": 0,
+    "duplicateTeamSourceKeys": 0,
+    "crossCompetitionMatchSeasonLinks": 0,
+    "standingRowCountMismatches": 0,
+    "duplicateStandingPositions": 0
+  },
+  "baselineReconciliation": {
+    "data0CurrentSeasonMatches": 10361,
+    "data1FreshScopeMatches": 9548,
+    "differenceOutsideFreshScope": 813,
+    "heldSeasonCount": 3,
+    "assessment": "The difference is consistent with DATA-1 intentionally excluding held current-season windows; it is not a record-by-record comparison."
+  },
+  "executionHistory": {
+    "completedRuns": 1,
+    "failedRunsRecoveredLocally": 2,
+    "assessment": "Recovery reused normalized local catalog state and stayed within the authorized cumulative read cap."
+  },
+  "nextGate": "Do not start DATA-2, APP-6A, or remote database work without a separate approved scope."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "iqstats-workspace-tools",
+  "private": true,
+  "scripts": {
+    "supabase": "supabase",
+    "test:data1-contracts": "node --test scripts/app-ingestion/data1-contracts.test.mjs scripts/app-ingestion/data1-harvest.test.mjs",
+    "plan:data1-ingest": "node scripts/app-ingestion/data1-harvest.mjs --plan",
+    "validate:data1-sql": "node scripts/app-ingestion/validateData1Sql.mjs"
+  },
+  "devDependencies": {
+    "supabase": "2.113.0"
+  }
+}

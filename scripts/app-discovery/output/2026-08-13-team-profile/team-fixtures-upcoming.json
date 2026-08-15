@@ -1,0 +1,75 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 219707,
+      "league_id": 79,
+      "season_id": 1552,
+      "home_team_id": 63,
+      "home_team": "AC Milan",
+      "away_team_id": 17,
+      "away_team": "Manchester United",
+      "home_coach_id": 1813,
+      "away_coach_id": 831,
+      "referee_id": null,
+      "venue_id": 837,
+      "event_date": "2026-08-15T14:45:00+00:00",
+      "status": "notstarted",
+      "replaced_by": null,
+      "round_number": null,
+      "round_name": "",
+      "group_name": null,
+      "period": "",
+      "current_minute": null,
+      "home_score": null,
+      "away_score": null,
+      "home_score_ht": null,
+      "away_score_ht": null,
+      "penalty_shootout": null,
+      "extra_time_score": null,
+      "is_local_derby": false,
+      "is_neutral_ground": false,
+      "travel_distance_km": null,
+      "weather": {
+        "code": 53,
+        "description": null,
+        "wind_speed": 21.1,
+        "temperature_c": 28
+      },
+      "pitch_condition": null,
+      "attendance": null,
+      "live_websocket": false,
+      "websocket_plus": true,
+      "highlights": [],
+      "head_to_head": {
+        "total_matches": 2,
+        "home_wins": 0,
+        "draws": 1,
+        "away_wins": 1,
+        "home_goals": 1,
+        "away_goals": 2,
+        "avg_total_goals": 1.5,
+        "home_win_rate": 0,
+        "away_win_rate": 0.5,
+        "recent_matches": [
+          {
+            "away": "Manchester United",
+            "date": "2021-03-18T20:00:00+00:00",
+            "home": "AC Milan",
+            "score": "0-1"
+          },
+          {
+            "away": "AC Milan",
+            "date": "2021-03-11T17:55:00+00:00",
+            "home": "Manchester United",
+            "score": "1-1"
+          }
+        ]
+      },
+      "has_xg": false,
+      "previous_leg_event_id": null
+    }
+  ]
+}

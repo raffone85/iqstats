@@ -1,0 +1,723 @@
+{
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/v2/events/": {
+      "get": {
+        "operationId": "api_v2_events_list",
+        "description": "Lightweight events list. Same shape as detail. Filter by league, season, team, status, or date range. Spatial data (lineups, shotmap, momentum, average_positions) is never included in the list — fetch it from the sub-resources `/events/{id}/lineups/` and `/events/{id}/stats/`.",
+        "summary": "List events (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date_from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC, e.g. 2026-04-30T00:00:00Z. Date-only (YYYY-MM-DD) is also accepted."
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO 8601 UTC, e.g. 2026-04-30T23:59:59Z. Date-only (YYYY-MM-DD) is also accepted."
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by league ID."
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size (default 50, max 200)."
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by season ID. Bypasses the default 7-day window — returns all matches in that season."
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1st_half",
+                "2nd_half",
+                "aet",
+                "cancelled",
+                "delayed",
+                "extratime",
+                "finished",
+                "halftime",
+                "inprogress",
+                "notstarted",
+                "penalties",
+                "postponed"
+              ]
+            },
+            "description": "Filter by match status."
+          },
+          {
+            "in": "query",
+            "name": "team_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Matches where the team played home or away (exact match)."
+          },
+          {
+            "in": "query",
+            "name": "team_name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Partial, case-insensitive match on home or away team name."
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDetailV2Schema"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/events/{id}/": {
+      "get": {
+        "operationId": "api_v2_events_retrieve",
+        "summary": "Event detail (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDetailV2Schema"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/events/{id}/h2h/": {
+      "get": {
+        "operationId": "api_v2_events_h2h_retrieve",
+        "description": "Aggregated head-to-head stats for the two teams in this event. Returns null for all fields if no history is indexed.",
+        "summary": "Head-to-head record (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/events/{id}/odds/": {
+      "get": {
+        "operationId": "api_v2_events_odds_retrieve",
+        "description": "Consensus decimal odds. Markets: 1X2, Over/Under {1.5,2.5,3.5}, BTTS.",
+        "summary": "Event odds (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/events/{id}/odds/comparison/": {
+      "get": {
+        "operationId": "v2_events_odds_comparison_retrieve",
+        "description": "All bookmakers side-by-side for a single event. Outcome keys are codes (HOME/DRAW/AWAY/over/under/...), not team names — stable parsing even when teams are renamed. Bookmaker keys are slugs. Cached 3 min. Event with no odds returns {markets: {}}; missing event returns 404.",
+        "summary": "Side-by-side bookmaker comparison for an event (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Events"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/leagues/{id}/standings/": {
+      "get": {
+        "operationId": "api_v2_leagues_standings_retrieve",
+        "description": "Standings for one season (defaults to current). Cup competitions return a `groups` map; league competitions return a flat `standings` array.",
+        "summary": "League standings (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Season ID. Defaults to the league's current season."
+          }
+        ],
+        "tags": [
+          "v2 / Leagues"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    },
+    "/api/v2/odds/": {
+      "get": {
+        "operationId": "v2_odds_list",
+        "description": "Paginated list of latest odds across bookmakers. Each item is one (event, bookmaker, market, outcome) tuple at its most recent observation. Standard v2 wrapper (count + next + previous + results). Cached 3 min.\n\nWhen no event_id/league_id/season_id/team_id or updated_after filter is given, results default to the last 48h of observations (the meaningful \"latest odds\" window). Pass an explicit updated_after to widen it.\n\nMarket+outcome compatibility (incoherent combos return 400):\n- 1x2            → HOME, DRAW, AWAY\n- btts           → yes, no\n- over_under_15/25/35 → over, under\n- double_chance  → 1X, 12, X2\n- draw_no_bet    → HOME, AWAY\n- total_corners  → over, under (line in `line` field)\n- corners_1x2    → HOME, DRAW, AWAY (which team has more corners)\n- total_red_cards → over, under (line in `line` field)\n- red_card       → yes, no (a red card is shown in the match)\n\nFor total_corners/total_red_cards the handicap line varies per quote and is returned in the `line` field (null for all other markets).\n\nFor event-scoped side-by-side comparison use `/api/v2/events/{id}/odds/comparison/`.",
+        "summary": "List odds (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "bookmaker_slug",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Slug only (e.g. \"pinnacle\"). Display names rejected with 400."
+          },
+          {
+            "in": "query",
+            "name": "event_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_max_quote",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1x2",
+                "btts",
+                "corners_1x2",
+                "double_chance",
+                "draw_no_bet",
+                "over_under_15",
+                "over_under_25",
+                "over_under_35",
+                "red_card",
+                "total_corners",
+                "total_red_cards"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "max_decimal_odds",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_decimal_odds",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "in": "query",
+            "name": "movement",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRIFTING",
+                "SHORTENING"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "outcome",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "12",
+                "1X",
+                "AWAY",
+                "DRAW",
+                "HOME",
+                "X2",
+                "no",
+                "over",
+                "under",
+                "yes"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "team_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "updated_after",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "ISO-8601 UTC. Only odds with observed_at >= this."
+          }
+        ],
+        "tags": [
+          "v2 / Odds"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OddsItemV2Schema"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/odds/{id}/": {
+      "get": {
+        "operationId": "v2_odds_retrieve",
+        "description": "Returns one odds row by its id. NOT the event-context envelope that v1 had as a fallback — invalid ids are 404s.",
+        "summary": "Odds detail (v2)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "v2 / Odds"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OddsItemV2Schema"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/v2/odds/best/": {
+      "get": {
+        "operationId": "v2_odds_best_list",
+        "description": "Per upcoming event, the highest decimal odds for each outcome of the requested market across all bookmakers. Defaults: market=1x2, date_from=now, date_to=now+7 days. Cached 5 min.",
+        "summary": "Best upcoming odds (v2)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date_from",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "date_to",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "league_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1x2",
+                "btts",
+                "corners_1x2",
+                "double_chance",
+                "draw_no_bet",
+                "over_under_15",
+                "over_under_25",
+                "over_under_35",
+                "red_card",
+                "total_corners",
+                "total_red_cards"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "season_id",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "team_id",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "v2 / Odds"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response body"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OddsItemV2Schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Internal odds record ID."
+          },
+          "event_id": {
+            "type": "integer",
+            "description": "Internal ID of the match this quote belongs to."
+          },
+          "market": {
+            "enum": [
+              "1x2",
+              "btts",
+              "over_under_15",
+              "over_under_25",
+              "over_under_35",
+              "double_chance",
+              "draw_no_bet",
+              "total_corners",
+              "corners_1x2",
+              "total_red_cards",
+              "red_card"
+            ],
+            "type": "string",
+            "x-spec-enum-id": "821a714ffb1e6c51",
+            "description": "Betting market (e.g. 1x2, btts, over_under_25).\n\n* `1x2` - 1x2\n* `btts` - btts\n* `over_under_15` - over_under_15\n* `over_under_25` - over_under_25\n* `over_under_35` - over_under_35\n* `double_chance` - double_chance\n* `draw_no_bet` - draw_no_bet\n* `total_corners` - total_corners\n* `corners_1x2` - corners_1x2\n* `total_red_cards` - total_red_cards\n* `red_card` - red_card"
+          },
+          "outcome": {
+            "enum": [
+              "HOME",
+              "DRAW",
+              "AWAY",
+              "over",
+              "under",
+              "yes",
+              "no",
+              "1X",
+              "12",
+              "X2"
+            ],
+            "type": "string",
+            "x-spec-enum-id": "6d89360dbea55ebc",
+            "description": "Selection within the market (e.g. HOME, DRAW, AWAY, over, under, yes, no).\n\n* `HOME` - HOME\n* `DRAW` - DRAW\n* `AWAY` - AWAY\n* `over` - over\n* `under` - under\n* `yes` - yes\n* `no` - no\n* `1X` - 1X\n* `12` - 12\n* `X2` - X2"
+          },
+          "line": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Handicap or totals line. Only set for total_corners and total_red_cards markets; null for all others."
+          },
+          "outcome_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Human-readable label for the outcome (e.g. \"Over 2.5\"). Null when not available."
+          },
+          "bookmaker_slug": {
+            "type": "string",
+            "description": "Machine-readable bookmaker identifier (e.g. \"bet365\")."
+          },
+          "bookmaker_name": {
+            "type": "string",
+            "description": "Display name of the bookmaker."
+          },
+          "decimal_odds": {
+            "type": "number",
+            "format": "double",
+            "description": "Current decimal odds (e.g. 1.85). Multiply by stake to get total return."
+          },
+          "previous_decimal_odds": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Previous odds observation before the last change. Null on first observation."
+          },
+          "implied_probability": {
+            "type": "number",
+            "format": "double",
+            "description": "Implied win probability derived from decimal_odds (1 / decimal_odds), ignoring the overround."
+          },
+          "movement": {
+            "enum": [
+              "SHORTENING",
+              "DRIFTING",
+              ""
+            ],
+            "type": "string",
+            "x-spec-enum-id": "ef2f1fffcdb990cc",
+            "description": "Direction of the most recent odds move: SHORTENING (odds fell = more likely) or DRIFTING (odds rose = less likely). Empty string if unchanged.\n\n* `SHORTENING` - SHORTENING\n* `DRIFTING` - DRIFTING"
+          },
+          "is_max_quote": {
+            "type": "boolean",
+            "description": "True when this is the best available price across all tracked bookmakers for this market + outcome."
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "UTC timestamp of the last odds change (ISO 8601, Z suffix)."
+          }
+        },
+        "required": [
+          "bookmaker_name",
+          "bookmaker_slug",
+          "decimal_odds",
+          "event_id",
+          "id",
+          "implied_probability",
+          "is_max_quote",
+          "market",
+          "movement",
+          "outcome",
+          "outcome_name",
+          "previous_decimal_odds",
+          "updated_at"
+        ]
+      },
+      "BookmakerV2Schema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Machine-readable bookmaker identifier (e.g. \"bet365\"). Use this as the bookmaker_slug filter."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the bookmaker."
+          }
+        },
+        "required": [
+          "name",
+          "slug"
+        ]
+      }
+    }
+  },
+  "missing": [
+    "/api/v2/events/{id}/pregame/",
+    "/api/v2/events/{id}/team-stats/"
+  ]
+}

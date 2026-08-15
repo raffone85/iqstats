@@ -1,0 +1,18 @@
+# Local credentials and generated local state
+.env
+.env.*
+!.env.example
+*.local
+
+# Package and build artefacts
+node_modules/
+dist/
+.next/
+coverage/
+.vercel/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+
+.vercel

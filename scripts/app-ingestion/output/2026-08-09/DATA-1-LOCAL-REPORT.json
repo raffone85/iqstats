@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "iqstats.data1.local.report.v1",
+  "generatedAt": "2026-08-09T09:10:01+02:00",
+  "status": "local-ingest-ready-provider-read-gated",
+  "runtime": {
+    "supabaseCliVersion": "2.113.0",
+    "postgresVersion": "17.6",
+    "healthyPostgresContainers": 1,
+    "remoteDatabaseReads": 0,
+    "remoteDatabaseWrites": 0
+  },
+  "migration": {
+    "appliedLocally": true,
+    "resetFromMigrations": true,
+    "footballTables": 8,
+    "footballViews": 2,
+    "privateSyncTables": 2,
+    "batchIngestFunctions": 1,
+    "indexes": 19,
+    "rlsEnabledTables": 10,
+    "clientDirectGrants": 0,
+    "securityInvokerViews": 2
+  },
+  "security": {
+    "anonymousSchemaAccess": false,
+    "authenticatedSchemaAccess": false,
+    "serverSchemaAccess": true,
+    "anonymousQueueClaim": false,
+    "authenticatedQueueClaim": false,
+    "serverQueueClaim": true,
+    "anonymousBatchExecute": false,
+    "authenticatedBatchExecute": false,
+    "serverBatchExecute": true
+  },
+  "normalizer": {
+    "completed": true,
+    "testsPassed": 8,
+    "testsFailed": 0,
+    "nullPreservationVerified": true,
+    "freshnessTtlVerified": true,
+    "rawPayloadPersistence": 0
+  },
+  "batchIngest": {
+    "completed": true,
+    "replayIdempotent": true,
+    "staleUpdateRejected": true,
+    "newerUpdateAccepted": true,
+    "standingSnapshotChangeOnly": true,
+    "rollbackConfirmed": true
+  },
+  "smoke": {
+    "completed": true,
+    "sqlErrors": 0,
+    "explainPlans": 2,
+    "rollbackConfirmed": true
+  },
+  "benchmark": {
+    "completed": true,
+    "matches": 10361,
+    "standingRows": 20,
+    "syncJobs": 1000,
+    "explainPlans": 4,
+    "indexPlanNodes": 4,
+    "claimedJobs": 25,
+    "matchesTotalMiB": 5.88,
+    "footballTotalMiB": 6.23,
+    "rollbackConfirmed": true
+  },
+  "advisors": {
+    "errors": 0,
+    "warnings": 0,
+    "unindexedForeignKeys": 0,
+    "intentionalFailClosedTables": 10,
+    "unusedIndexesOnInitialEmptyDatabase": 16
+  },
+  "harvestPlan": {
+    "completed": true,
+    "networkCalls": 0,
+    "databaseWrites": 0,
+    "productFreshCompetitions": 33,
+    "heldCompetitions": 3,
+    "estimatedGetRequestsLow": 86,
+    "estimatedGetRequestsHigh": 171,
+    "recommendedHardCap": 200,
+    "requestsPerSecondMax": 2,
+    "destination": "local normalized PostgreSQL only"
+  },
+  "finalState": {
+    "persistedSyntheticRows": 0,
+    "realProviderRows": 0,
+    "remoteMigrationApplied": false,
+    "remoteIngestStarted": false
+  },
+  "nextGate": "explicit provider GET cap approval for DATA-1 local ingestion; remote database remains out of scope"
+}
