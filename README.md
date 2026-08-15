@@ -1,6 +1,6 @@
 # IQstatS
 
-IQstatS è un'applicazione personale di analisi calcistica ispirata alla struttura osservata su BioFootballBet, ma con interfaccia, brand e implementazione originali.
+IQstatS è un'applicazione personale di analisi calcistica, ma con interfaccia, brand e implementazione originali.
 
 ## Stato del repository
 
