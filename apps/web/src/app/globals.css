@@ -519,6 +519,63 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .dossier-note { margin: 18px 0 0; font-family: var(--font-display); font-style: italic; font-size: 12.5px; color: var(--card-ink-3); }
 @media (max-width: 640px) { .dossier-h2h { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* La gara giocata: due colonne di numeri, la mappa dei tiri e la cronologia.
+   La barra divide casa e ospiti e non esprime un merito: per questo usa il bordeaux e il
+   filetto, non il verde — qui il verde significherebbe «sopra il riferimento». */
+.gamestat-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; font-family: var(--font-display); font-size: 12.5px; font-weight: 700; color: var(--card-ink-2); }
+.gamestat-heads span:last-child { text-align: right; }
+.gamestat-table { margin-top: 6px; }
+.gamestat-row { display: grid; grid-template-columns: minmax(58px, auto) 1fr minmax(58px, auto); align-items: baseline; gap: 10px; padding: 9px 0 11px; border-top: 1px solid var(--card-stroke); }
+.gamestat-row:first-child { border-top: 0; }
+.gamestat-val { font-family: var(--font-mono, monospace); font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--card-ink); }
+.gamestat-val-away { text-align: right; }
+.gamestat-label { text-align: center; font-size: 12px; color: var(--card-ink-3); }
+.gamestat-bar { grid-column: 1 / -1; display: block; height: 4px; margin-top: 7px; border-radius: 999px; background: var(--card-stroke); overflow: hidden; }
+.gamestat-bar i { display: block; height: 100%; background: var(--card-brand); }
+.gamestat-bar.is-empty { background: transparent; }
+.gamestat-more { margin-top: 12px; border-top: 1px solid var(--card-stroke); }
+.gamestat-more summary { display: flex; align-items: center; min-height: var(--h-control); cursor: pointer; font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); }
+.gamestat-more[open] summary { color: var(--card-ink-2); }
+
+.shotmap { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 18px; }
+.shotmap-half { margin: 0; min-width: 0; padding: 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); }
+.shotmap-team { font-family: var(--font-display); font-size: 13.5px; font-weight: 700; color: var(--card-ink); }
+.shotmap-team em { display: block; margin-top: 2px; font-style: normal; font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-ink-3); }
+.shotmap-svg { display: block; width: 100%; height: auto; margin-top: 10px; }
+.shotmap-lines { stroke: var(--card-stroke); stroke-width: .35; }
+.shotmap-goal { stroke: var(--card-ink-2); stroke-width: .8; }
+.shotmap-spot { fill: var(--card-stroke); stroke: none; }
+.shotmap-shot.is-goal { fill: var(--card-brand); }
+.shotmap-shot.is-onTarget { fill: var(--card-ink); }
+.shotmap-shot.is-offTarget { fill: none; stroke: var(--card-ink-2); stroke-width: .45; }
+.shotmap-shot.is-blocked { fill: var(--card-ink-3); opacity: .55; }
+.shotmap-shot.is-woodwork { fill: none; stroke: var(--card-brand); stroke-width: .7; }
+.shotmap-legend { grid-column: 1 / -1; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 2px 0 0; padding: 0; font-size: 11.5px; color: var(--card-ink-3); }
+.shotmap-legend li { display: flex; align-items: center; gap: 6px; }
+.shotmap-key { width: 11px; height: 11px; border-radius: 50%; }
+.shotmap-key.is-goal { background: var(--card-brand); }
+.shotmap-key.is-onTarget { background: var(--card-ink); }
+.shotmap-key.is-offTarget { border: 1.5px solid var(--card-ink-2); }
+.shotmap-key.is-blocked { background: var(--card-ink-3); opacity: .55; }
+.shotmap-key.is-woodwork { border: 1.5px solid var(--card-brand); }
+
+.timeline { list-style: none; margin: 14px 0 0; padding: 0; }
+.timeline-row { display: grid; grid-template-columns: 46px 1fr auto; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid var(--card-stroke); }
+.timeline-row:first-child { border-top: 0; }
+.timeline-row.is-period { background: var(--card-panel-2); }
+.timeline-minute { font-family: var(--font-mono, monospace); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--card-ink-3); }
+.timeline-body { min-width: 0; }
+.timeline-what { font-size: 13.5px; color: var(--card-ink); }
+.timeline-row.is-goal .timeline-what { font-family: var(--font-display); font-weight: 700; color: var(--card-brand-strong); }
+.timeline-row.is-substitution .timeline-what { color: var(--card-ink-2); }
+.timeline-body em { display: block; margin-top: 2px; font-style: normal; font-size: 12px; color: var(--card-ink-3); }
+.timeline-side { font-size: 11.5px; text-align: right; color: var(--card-ink-3); }
+.timeline-side b { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-brand-strong); }
+@media (max-width: 520px) {
+  .timeline-row { grid-template-columns: 42px 1fr; }
+  .timeline-side { grid-column: 2; text-align: left; }
+}
+
 /* Giocate statistiche — motore IQstatS (ENG-1). */
 .engine-badge { display: inline-flex; align-items: center; margin: 0 0 14px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--card-brand-soft); background: var(--card-brand-pale); font: 700 11px/1.3 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-brand-strong); }
 .engine-badge.is-previous { border-color: var(--card-down); background: var(--card-down-pale); color: var(--card-down); }

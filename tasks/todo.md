@@ -1321,3 +1321,57 @@ colleghi». Serve una sveglia esterna.
 — serve una rotta che restituisca il solo blocco); le statistiche della gara conclusa con
 mappa dei tiri e cronologia (la domanda sul disegno della mappa è rimasta aperta); il
 pannello giocatore con filtraggio profondo; la sezione riscontri.
+
+### Pubblicazione del ramo e la gara giocata — 16 agosto 2026, mattina
+
+**Il segreto della sveglia è configurato e la catena è verificata da un capo all'altro.**
+Segreto generato a 32 byte casuali, scritto come repository secret di Actions con `gh` e
+inserito a mano dall'utente su Vercel (*Sensitive*, Production e Preview): non compare in
+nessun file del progetto. Controllati prima del push anche i due presupposti che nessuno
+aveva verificato: **non esiste un middleware** che intercetti `/api/interno/rinfresca` (il
+manifest del build è vuoto) e sul progetto **non è attiva nessuna protezione dei deploy**.
+A rilascio fatto: la rotta senza credenziali risponde **401** — se la variabile mancasse
+risponderebbe 503 — e il workflow lanciato a mano ha chiuso con `risposta 200`,
+`{"ok":true,"inWindow":0,...}`, zero gare in finestra alle 08:00 italiane, che è il
+risultato giusto.
+
+**`formazioni-e-sveglia` è su `main`** (commit di merge `a47dca85`; `3aa551c6` resta
+intatto). Su `origin/main` c'era un commit non previsto dall'handoff — `b6bc460f`, una riga
+di `README.md` — quindi il merge non poteva essere fast-forward: si è scelto il commit di
+merge invece del rebase, per non riscrivere l'unica copia del lavoro.
+
+**Il primo rilascio è fallito e non per colpa del codice.** Turbopack ha ricevuto tre
+**404 da Google** sui `.woff2` del carattere Archivo: la cache di compilazione restaurata
+conteneva un CSS con URL che Google non serve più. Verificato a mano che quelle URL sono
+davvero sparite e che oggi il carattere risponde su indirizzi diversi e più corti. Rimedio:
+**rilancio senza cache**, verde. Se si ripete, la soluzione stabile è ospitare noi i file
+del carattere invece di scaricarli in compilazione — non fatto, fuori scope.
+
+**La gara giocata.** Nuovo `server/iqstats/match-finished.ts` e
+`components/match-finished-section.tsx`, agganciati al dossier fra «Classifica e forma» e
+«Chi gioca». Due richieste in tutto e solo a gara conclusa, in una quarta ondata.
+- **Otto statistiche in vista** (possesso, tiri, tiri in porta, xG, grandi occasioni,
+  corner, falli, ammoniti) e **le altre trenta in un blocco richiudibile** — scelta
+  dell'utente fra tre opzioni.
+- **Due campi della fonte esclusi di proposito:** `expected_goals` vale `0.0` anche dove
+  l'xG vero è 2,42 — è un campo non popolato e mostrarlo sarebbe spacciare uno zero per una
+  misura — e la media voti è un giudizio, non un dato osservato.
+- **Mappa dei tiri a due mezzi campi affiancati**, scelta dell'utente contro il campo
+  intero e l'elenco senza campo: così nessun colore serve a distinguere le squadre e il
+  verde resta libero di significare «sopra il riferimento». Cinque esiti distinti, area del
+  pallino proporzionale all'xG (il raggio cresce con la radice).
+- **Le coordinate della fonte sono metri dalla linea di porta**, non una scala arbitraria:
+  verificato contando i tiri oltre i 16,5 metri, che coincidono esattamente con
+  `shots_outside_box` di entrambe le squadre. Il campo si ferma al tiro più lontano della
+  gara — con un minimo di trenta metri — ed è **lo stesso per le due squadre**, altrimenti
+  il confronto fra le due metà mentirebbe.
+- **Bug trovato e corretto in verifica:** «Fine gara» compariva prima dei gol del recupero,
+  perché l'ordinamento ignorava il recupero sui fine tempo. Confermato corretto su tre gare
+  diverse con episodi al 90'+4, 90'+6 e 90'+9.
+
+**Verifiche:** sonda Playwright ai quattro viewport sul dossier di una gara conclusa —
+**zero overflow orizzontale, zero controlli sotto 44 px** a 375, 768, 1024 e 1440.
+`typecheck` verde, `lint` verde, **build di produzione verde** (`BUILD_ID`
+`LXJgif4ofLnS70Nz-lKDG`, dev fermato prima). Nota di ambiente: fermare il dev server mentre
+scrive `.next/dev/types/routes.d.ts` lascia il file troncato e la build successiva fallisce
+con errori di sintassi in un file **generato**; si risolve cancellando `.next/dev`.
