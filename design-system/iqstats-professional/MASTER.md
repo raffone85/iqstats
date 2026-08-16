@@ -67,9 +67,21 @@ Space Grotesk: la geometrica da interfaccia scura non regge la carta.
 ## Superfici e profondità
 
 **La carta non ha ombre, ha filetti.** `--shadow-sm` e `--shadow-md` valgono `none`: la
-gerarchia si costruisce con bordo da 1 px, superficie tenue e spaziatura. L'unica
-eccezione al piatto è la hero, che è bordeaux pieno sotto la foto dello stadio ed è il
-solo blocco ad alto contrasto del sistema.
+gerarchia si costruisce con bordo da 1 px, superficie tenue e spaziatura.
+
+### Un solo blocco ad alto contrasto per pagina
+
+Un blocco ad alto contrasto è una superficie bordeaux piena con testo chiaro sopra: la
+hero della gara, il campo della porta d'ingresso, il pannello «Cosa non fa IQstatS» di
+`/metodo`. **Ogni pagina ne ammette uno e uno solo**, e quell'uno è il protagonista della
+pagina: ciò che deve essere letto per primo. Tutto il resto torna su carta, anche quando
+sembra importante.
+
+La regola è nata su `/metodo`, dove il pannello pieno ripetuto affaticava la lettura e
+azzerava la gerarchia: se tutto grida, nulla si distingue. Il corollario pratico è che
+scegliere il blocco pieno significa **decidere il protagonista della pagina**, non
+decorare un riquadro. Se due candidati sembrano meritarlo, la pagina ha due argomenti e
+il problema è la pagina.
 
 ## La porta d'ingresso
 
@@ -80,14 +92,40 @@ di servizio), **campi alti 56 px** con etichetta in maiuscoletto sopra, **una so
 che domina** a tutta larghezza, separatore con la parola in mezzo, **due azioni secondarie
 affiancate** di pari altezza. Classi `.gate-*`.
 
-È il **secondo** blocco ad alto contrasto ammesso dal sistema, dopo la hero della gara: non
-se ne aggiungono altri. Dal riferimento si prendono impianto e ritmo, **mai** i suoi colori
+Il campo bordeaux **è il blocco ad alto contrasto di quella pagina**, e ne esaurisce la
+quota: sulla porta d'ingresso non ce ne sono altri. Dal riferimento si prendono impianto
+e ritmo, **mai** i suoi colori
 (verde e viola restano fuori: qui il verde significa «sopra il riferimento») e mai le sue
 ombre o i suoi bagliori. Lo stacco lo dà il fondo, non un'ombra.
 
 Le icone in questo blocco sono disegnate a tratto, monocrome, e prendono il colore del
 testo che accompagnano. Non sono decorazione: se un'icona non aggiunge significato, non si
 mette. Restano vietate le emoji come icone.
+
+## Il ritmo — sei token
+
+Dal 15 agosto 2026 il ritmo nato sulla porta d'ingresso vale su tutto il prodotto:
+riquadri con raggio ampio, azione dominante alta, spaziature generose. Sei token in
+`:root` di `apps/web/src/app/globals.css` lo tengono insieme. **Non si scrivono raggi,
+altezze o padding di riquadro a mano: si usa un token.**
+
+| Token | Valore | Dove si usa |
+|---|---|---|
+| `--r-panel` | `20px` | il riquadro che **contiene**: pannelli, gruppi, hero, stati vuoti |
+| `--r-control` | `14px` | il controllo che **si tocca**: azioni, campi, righe di elenco, schede |
+| `--r-inset` | `10px` | il dettaglio che **sta dentro** a un controllo: stemmi, chip, celle |
+| `--h-action` | `56px` | altezza dell'azione dominante e dei campi di modulo |
+| `--h-control` | `44px` | altezza minima di ogni altro controllo — è anche il minimo tattile |
+| `--pad-panel` | `clamp(22px, 4vw, 34px)` | padding interno dei riquadri, elastico col viewport |
+
+**Tre gradini di raggio e non uno di più.** Il quarto raggio non aggiunge gerarchia,
+aggiunge rumore: se un elemento non è né contenitore né controllo né dettaglio, la
+domanda giusta è cosa sia, non che raggio dargli.
+
+**Le righe degli elenchi restano compatte.** Con oltre centocinquanta gare al giorno il
+respiro si prende **attorno** alla lista, non dentro ogni riga: gonfiare la riga di
+un'altezza d'azione significa perdere di vista la pagina. La riga usa `--r-control` per il
+raggio ma tiene la sua altezza.
 
 ## Firma visiva — il filo del campione
 
@@ -113,6 +151,8 @@ scritte accanto a ogni riga.
 
 - ❌ Colore usato come decorazione: verde e mattone significano un verso, o non si usano
 - ❌ Emoji come icone
+- ❌ Due blocchi ad alto contrasto sulla stessa pagina
+- ❌ Raggi, altezze di controllo e padding di riquadro scritti a mano invece dei sei token
 - ❌ Ombre per creare gerarchia
 - ❌ Testo sotto 4,5:1 (3:1 per il testo grande)
 - ❌ Stati di focus invisibili

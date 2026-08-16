@@ -494,6 +494,25 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .dossier-h2h-stat { text-align: center; padding: 12px; border-radius: var(--r-inset); background: var(--card-panel-2); border: 1px solid var(--card-stroke); }
 .dossier-h2h-stat strong { display: block; font-family: var(--font-display); font-size: 24px; color: var(--card-brand-strong); }
 .dossier-h2h-stat span { display: block; margin-top: 4px; font-size: 11px; color: var(--card-ink-3); }
+/* Classifica e forma: due colonne su carta, il verso solo dove c'è un riferimento. */
+.standing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); gap: 14px; margin-top: 14px; }
+.standing-team { min-width: 0; padding: 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); }
+.standing-name { margin: 0; font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--card-ink); }
+.standing-rank { margin: 4px 0 12px; font-family: var(--font-display); font-size: 13.5px; color: var(--card-ink-2); }
+.standing-rank b { font-size: 19px; color: var(--card-brand-strong); }
+.standing-figures { display: grid; gap: 6px; margin: 0; }
+.standing-figures div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.standing-figures dt { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }
+.standing-figures dd { margin: 0; font-family: var(--font-mono, monospace); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--card-ink); }
+.standing-figures .standing-up { color: var(--card-up); }
+.standing-figures .standing-down { color: var(--card-down); }
+.standing-form { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; margin: 14px 0 0; padding: 0; }
+.standing-chip { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel); font-family: var(--font-display); font-size: 12.5px; font-weight: 700; color: var(--card-ink); }
+.standing-chip.is-V { border-color: var(--card-up); background: var(--card-up); color: #FFFFFF; }
+.standing-chip.is-P { border-color: var(--card-down); background: var(--card-down); color: #FFFFFF; }
+.standing-last { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--card-ink-3); }
+.standing-empty { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
+
 .dossier-recent { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 6px; }
 .dossier-recent li { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink-2); }
 .dossier-recent b { color: var(--card-brand-strong); }

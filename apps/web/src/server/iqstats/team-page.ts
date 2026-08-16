@@ -120,6 +120,91 @@ export async function getStandingRow(
   return envelope?.data?.rows.find((row) => row.teamId === teamId) ?? null;
 }
 
+export interface MatchStandingRows {
+  readonly home: StandingEntry | null;
+  readonly away: StandingEntry | null;
+  /** Quante squadre compongono la classifica: senza il totale la posizione non si legge. */
+  readonly teams: number;
+  readonly seasonName: string;
+}
+
+/**
+ * Le due righe di classifica di una gara, con una sola lettura della tabella: chiedere
+ * la riga di casa e quella di trasferta separatamente costerebbe due richieste identiche.
+ * Nelle coppe la tabella arriva a gironi e una squadra può non esserci: resta `null`.
+ */
+export async function getMatchStandingRows(
+  leagueId: string,
+  seasonId: string,
+  homeTeamId: string,
+  awayTeamId: string,
+): Promise<MatchStandingRows | null> {
+  const envelope = await safely(() => getTeamGateway().getStandings(leagueId, seasonId));
+  const table = envelope?.data;
+  if (!table) return null;
+  return {
+    home: table.rows.find((row) => row.teamId === homeTeamId) ?? null,
+    away: table.rows.find((row) => row.teamId === awayTeamId) ?? null,
+    teams: table.rows.length,
+    seasonName: table.seasonName,
+  };
+}
+
+export interface TeamFormEntry {
+  readonly matchId: string;
+  readonly kickoffAt: string;
+  readonly opponent: string;
+  readonly atHome: boolean;
+  readonly goalsFor: number;
+  readonly goalsAgainst: number;
+  /** Vinta, pareggiata (nulla), persa. */
+  readonly outcome: "V" | "N" | "P";
+  readonly competition: string;
+}
+
+/**
+ * La forma di una squadra, ricavata dalle gare davvero giocate.
+ *
+ * Non si usa la stringa di forma della classifica: il 16 agosto 2026 è risultata non
+ * allineata al giocato — una squadra reduce da una vittoria la mostrava come sconfitta —
+ * e il suo ordine non è dichiarato da nessuna parte. Qui ogni lettera è una gara con la
+ * sua data, il suo avversario e il suo punteggio, quindi è verificabile a vista.
+ *
+ * Le gare arrivano senza filtro di stagione perché «le ultime cinque» attraversa la
+ * pausa estiva: è un elenco, non una media, e ogni riga porta la sua competizione.
+ */
+export async function getTeamForm(
+  teamId: string,
+  limit = 5,
+): Promise<readonly TeamFormEntry[] | null> {
+  const envelope = await safely(() => getTeamGateway().getTeamFinishedMatches(teamId, null));
+  const items = envelope?.data?.items;
+  if (!items) return null;
+
+  const entries: TeamFormEntry[] = [];
+  for (const match of items.toSorted((left, right) =>
+    right.kickoffAt.localeCompare(left.kickoffAt),
+  )) {
+    if (match.score.status === "unavailable") continue;
+    const atHome = match.homeTeam.id === teamId;
+    const opponent = atHome ? match.awayTeam : match.homeTeam;
+    const goalsFor = atHome ? match.score.value.home : match.score.value.away;
+    const goalsAgainst = atHome ? match.score.value.away : match.score.value.home;
+    entries.push({
+      matchId: match.id,
+      kickoffAt: match.kickoffAt,
+      opponent: opponent.name,
+      atHome,
+      goalsFor,
+      goalsAgainst,
+      outcome: goalsFor > goalsAgainst ? "V" : goalsFor === goalsAgainst ? "N" : "P",
+      competition: match.competition.name,
+    });
+    if (entries.length === limit) break;
+  }
+  return entries;
+}
+
 /**
  * Deduplicato per richiesta: il blocco statistiche e il blocco arbitri leggono le
  * stesse gare, e senza `cache` verrebbero normalizzate due volte.

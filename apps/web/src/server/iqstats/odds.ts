@@ -141,18 +141,34 @@ export async function getMatchOdds(eventId: number): Promise<MatchOdds | null> {
     }
     if (outcomes.length === 0) continue;
 
-    // Solo i mercati chiusi (due o tre esiti che si escludono) si possono normalizzare.
-    const closed = outcomes.length === 2 || outcomes.length === 3;
-    const rawSum = outcomes.reduce((sum, o) => sum + 1 / (o.odds as number), 0);
+    // Il margine si toglie solo dentro un insieme chiuso di esiti. Un mercato a soglie
+    // ne contiene molti: i corner arrivano con diciassette linee tutte insieme, e
+    // sommarle sarebbe come sommare diciassette scommesse diverse. L'insieme chiuso è
+    // la singola linea — sopra e sotto la stessa soglia — quindi si raggruppa per quella.
+    const lineOf = (key: string): string => {
+      const at = key.indexOf("@");
+      return at === -1 ? "" : key.slice(at + 1);
+    };
+    const groupSum = new Map<string, number>();
+    const groupSize = new Map<string, number>();
+    for (const o of outcomes) {
+      const group = lineOf(o.key);
+      groupSum.set(group, (groupSum.get(group) ?? 0) + 1 / (o.odds as number));
+      groupSize.set(group, (groupSize.get(group) ?? 0) + 1);
+    }
 
     markets[marketKey] = outcomes.map((o) => {
       const raw = 1 / (o.odds as number);
+      const group = lineOf(o.key);
+      const size = groupSize.get(group) ?? 0;
+      const sum = groupSum.get(group) ?? 0;
+      const closed = size === 2 || size === 3;
       if (o.latest !== null && (updatedAt === null || o.latest > updatedAt)) updatedAt = o.latest;
       return {
         key: o.key,
         label: o.label,
         consensusOdds: o.odds,
-        impliedProb: closed && rawSum > 0 ? (raw / rawSum) * 100 : raw * 100,
+        impliedProb: closed && sum > 0 ? (raw / sum) * 100 : raw * 100,
         drift: o.drift,
         books: o.books,
       };
