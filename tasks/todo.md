@@ -1812,3 +1812,103 @@ non è un caso che sia proprio lì che l'arbitro conta di più.
 statistiche per giocatore non portano né posizione né titolarità. Servirebbe la raccolta
 delle formazioni, circa 9.200 richieste, da cui ricavare il modulo più usato nelle gare
 precedenti — che sarebbe legittimo, perché guarda solo al passato.
+
+### Il registro allineato e la regola della quarta giornata — 17 agosto 2026, sera
+
+**Il registro descriveva i modelli di ieri.** Gli artefatti erano addestrati sulle 52
+colonne precedenti mentre il manifesto ne prescriveva 45-88, e finché il registro non
+descrive i modelli che si vogliono promuovere, promuovere è impossibile.
+
+`export_model.py` non sapeva leggere il manifesto né citare il rapporto giusto: ora accetta
+`--solo-manifesto` e `--suffisso-validazione`, e ogni artefatto **dichiara da dove vengono
+le sue colonne** — due modelli con lo stesso nome e feature diverse sono due modelli
+diversi. `registry.py` inciampava sui campioni `-riscontro-asof.json`: ora riconosce un
+artefatto dallo schema e non dal nome.
+
+**Dieci artefatti, non cinque:** entrambi i modelli riproducibili su tutti e cinque i
+bersagli, perché la scelta di quale promuovere è una decisione umana e va fatta sui numeri.
+
+| Bersaglio | Poisson | ridge | migliore | vantaggio | origini |
+| --- | ---: | ---: | :---: | ---: | :---: |
+| Tiri | 3,6177 | **3,6095** | ridge | +4,71% | 5/5 |
+| Falli | 2,7924 | **2,7870** | ridge | +4,81% | 5/5 |
+| Corner | **2,0764** | 2,0788 | Poisson | +4,26% | 5/5 |
+| Tiri in porta | **1,7663** | 1,7669 | Poisson | +3,85% | 5/5 |
+| Ammoniti | **1,0541** | 1,0602 | Poisson | +1,39% | 5/5 |
+
+Su corner e tiri in porta i due sono appaiati alla terza cifra. Sugli ammoniti Poisson è
+l'unico dei due a vincere tutte e cinque le origini.
+
+**La domanda aperta sulla quarta giornata ha avuto la sua misura.** Il motore deve partire
+da tre gare precedenti, e quel caso non era mai stato misurato davvero. Il perché è
+quantificato: le righe con 3-4 gare precedenti sono **770 in tutto, ma 578 cadono in
+agosto-settembre 2025** — l'inizio della stagione europea, che sta interamente
+nell'addestramento. Nel periodo di prova ne restano **87**, con cui il MAE si stima a ±10%.
+
+Correzione dell'utente, decisiva: **non si riaddestra su un campione ridotto per simulare
+l'inizio stagione.** Ciò che scarseggia alla quarta giornata è lo storico *della squadra*,
+non quello di addestramento. `validate_maturity.py` misura quindi con la stessa finestra
+avanzante della validazione principale, stratificando l'errore per fascia.
+
+**Il motore alla quarta giornata regge.** In fascia EARLY nessun ripiego batte il modello
+oltre il rumore: gli scarti appaiati fra modello completo, modello ridotto e baseline con
+restringimento stanno sotto 2,4 errori standard su tutti e cinque i bersagli. L'unico
+metodo nettamente peggiore è la baseline dell'avversario, da 1,8 a 5,4 errori standard: con
+tre gare il profilo dell'avversario è troppo rumoroso per essere il cardine.
+
+**Ma tre gare non dicono la stessa cosa a tutte le metriche.** Il peso della miscela fra
+modello e baseline, stimato sui treni dove le righe in fascia sono centinaia:
+
+| Bersaglio | EARLY | DEVELOPING | MATURE |
+| --- | :---: | :---: | :---: |
+| Tiri | 0,75 | 0,95 | 1,00 |
+| Tiri in porta | 0,75 | 1,00 | 1,00 |
+| Corner | 0,90 | 1,00 | 1,00 |
+| Ammoniti | 0,90 | 1,00 | 1,00 |
+| Falli | 0,95 | 0,80 | 1,00 |
+
+I tiri hanno bisogno del doppio di restringimento degli ammoniti. **Il congelamento non
+costa nulla:** peso congelato contro peso ristimato a ogni origine, gli scarti sono nella
+terza cifra (corner 2,0602 contro 2,0561, ammoniti 1,0173 contro 1,0173).
+
+**L'ordine dei gradini di ripiego è misurato, non fisso.** Il metodo mette la baseline
+dell'avversario prima di quella con restringimento; sui dati è vero solo sui tiri a storico
+pieno, e mai in fascia EARLY. L'ordine sta nell'artefatto, fascia per fascia, con l'errore
+che lo giustifica. Un test lo ha dimostrato trovando un errore vero: sotto il minimo di gare
+i ripieghi venivano ordinati come a stagione inoltrata.
+
+**L'affidabilità sintetica non è stata scritta, ed è una decisione, non una dimenticanza.**
+La strada naturale — la stabilità dell'errore fra periodi — è misurabilmente inutilizzabile
+dove serve: in fascia EARLY l'oscillazione osservata fra origini è **minore di quella che il
+caso produce da solo** con ventisei righe per origine, quindi l'instabilità vera risulta
+zero e la formula concluderebbe che la quarta giornata è la fascia più affidabile di tutte.
+
+| Bersaglio | fascia | sd osservata | sd attesa dal caso | instabilità vera |
+| --- | --- | ---: | ---: | ---: |
+| Tiri | EARLY | 0,438 | 0,961 | **0** |
+| Corner | EARLY | 0,425 | 0,575 | **0** |
+| Ammoniti | EARLY | 0,153 | 0,183 | **0** |
+| Ammoniti | MATURE | 0,030 | 0,021 | 0,021 |
+
+La proiezione espone quindi le **componenti misurate** e il livello resta nullo. Le altre
+strade valutate: la copertura dell'intervallo è calibrata a 0,80 ovunque per costruzione e
+non distingue le fasce; il vantaggio sulla previsione banale vale 0,01-0,05, vero e
+inutilizzabile.
+
+**Nuovo modulo `production.ts`:** fascia, miscela, intervallo calibrato dentro la fascia,
+gerarchia di ripiego, componenti dell'affidabilità. Il ripiego **non dichiara un
+intervallo**, perché nessuno lo ha calibrato su quelle baseline. Lo schema dell'artefatto
+rifiuta un peso fuori da zero e uno o una colonna di miscela che il modello non riceve.
+
+**Verifiche: `test:projection` 41 su 41, `test:asof` 12 su 12, `test:production` 12 su 12.**
+
+**Pubblicazione, su decisione dell'utente:** `main` invariato e in produzione;
+`gara-giocata` spinto com'è; il motore su un ramo nuovo **`motore-proiezione`** nato da
+`main`, così non eredita la gara giocata. Nessun merge fra i tre rami senza decisione
+esplicita. I dati grezzi (636 MB) e i dataset derivati (275 MB) restano fuori dal
+repository e **non sono in alcun backup**.
+
+**Non ancora fatto:** l'affidabilità sintetica; il modello a feature ridotte come gradino
+del ripiego, competitivo ma non distinguibile dal completo; il ponte verso l'applicazione
+per ciò che il predittore riceve già calcolato; la distribuzione predittiva con le cinque
+linee; gli altri 56 bersagli.
