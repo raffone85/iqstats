@@ -1,0 +1,2395 @@
+{
+  "versione_schema": "2026-08-17.1",
+  "generato_da": "scripts/projection/models/select_features.py",
+  "regola": {
+    "tieni_se_quasi_unanime": "costo medio positivo e almeno 4 origini su cinque",
+    "tieni_se_netto": "costo medio almeno 0.002 con almeno 3 origini",
+    "tieni_se_gratis": "almeno 3 origini e nessun costo di trasporto",
+    "scarta_altrimenti": "costo medio nullo o negativo, oppure guadagno instabile",
+    "nota": "la decisione e' presa target per target, mai in media fra i target"
+  },
+  "target": {
+    "corner_kicks": {
+      "target": "corner_kicks",
+      "modello_di_riferimento": "poisson_glm",
+      "mae_insieme_completo": 2.0776,
+      "righe_valutate": 12430,
+      "blocchi": {
+        "base": {
+          "tenuto": true,
+          "motivo": "costo 0.116% e 5 origini su 5",
+          "costo_medio": 0.001156,
+          "costo_per_origine": [
+            0.00058,
+            0.00235,
+            0.001116,
+            0.001211,
+            0.000521
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "avversario": {
+          "tenuto": true,
+          "motivo": "costo 0.879% e 5 origini su 5",
+          "costo_medio": 0.008792,
+          "costo_per_origine": [
+            0.007342,
+            0.012852,
+            0.010336,
+            0.007079,
+            0.006353
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "forma": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.005% su 5 origini",
+          "costo_medio": -5.2e-05,
+          "costo_per_origine": [
+            4.8e-05,
+            0.00045,
+            -0.000243,
+            -0.000419,
+            -9.5e-05
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "casa_trasferta": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.012% su 5 origini",
+          "costo_medio": -0.000116,
+          "costo_per_origine": [
+            -0.000241,
+            -0.0003,
+            0.000146,
+            -0.000279,
+            9.5e-05
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "riposo": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.003% su 5 origini",
+          "costo_medio": -2.8e-05,
+          "costo_per_origine": [
+            -9.7e-05,
+            5e-05,
+            -4.9e-05,
+            -4.7e-05,
+            0.0
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "giocatori": {
+          "tenuto": true,
+          "motivo": "costo 0.1% e 4 origini su 5",
+          "costo_medio": 0.001001,
+          "costo_per_origine": [
+            0.002946,
+            0.003351,
+            -0.002135,
+            0.000605,
+            0.000237
+          ],
+          "trasporto": "statistiche_per_giocatore",
+          "costo_trasporto": "alto"
+        },
+        "allenatore": {
+          "tenuto": true,
+          "motivo": "costo 0.048% e 4 origini su 5",
+          "costo_medio": 0.000484,
+          "costo_per_origine": [
+            0.000531,
+            0.00055,
+            0.00097,
+            0.000512,
+            -0.000142
+          ],
+          "trasporto": "storia_allenatore",
+          "costo_trasporto": "medio"
+        },
+        "arbitro": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.045% su 5 origini",
+          "costo_medio": -0.000453,
+          "costo_per_origine": [
+            0.000386,
+            -0.00055,
+            -0.003106,
+            -0.000559,
+            0.001564
+          ],
+          "trasporto": "profilo_arbitro",
+          "costo_trasporto": "medio"
+        },
+        "spaziale": {
+          "tenuto": true,
+          "motivo": "costo 0.137% e 5 origini su 5",
+          "costo_medio": 0.001374,
+          "costo_per_origine": [
+            0.001256,
+            0.00035,
+            0.001844,
+            0.002235,
+            0.001185
+          ],
+          "trasporto": "mappa_dei_tiri",
+          "costo_trasporto": "alto"
+        },
+        "classifica": {
+          "tenuto": true,
+          "motivo": "costo 0.366% e 4 origini su 5",
+          "costo_medio": 0.003664,
+          "costo_per_origine": [
+            0.008839,
+            0.008951,
+            9.7e-05,
+            -0.000279,
+            0.000711
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "contesto": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.101%, 3 origini",
+          "costo_medio": 0.001011,
+          "costo_per_origine": [
+            -0.000531,
+            -0.00015,
+            0.000146,
+            0.000279,
+            0.00531
+          ],
+          "trasporto": "calendario",
+          "costo_trasporto": "basso"
+        },
+        "interazione": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.074%, 3 origini",
+          "costo_medio": 0.000742,
+          "costo_per_origine": [
+            0.000193,
+            0.002,
+            -0.000243,
+            0.002375,
+            -0.000616
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        }
+      },
+      "blocchi_tenuti": [
+        "base",
+        "avversario",
+        "giocatori",
+        "allenatore",
+        "spaziale",
+        "classifica",
+        "contesto",
+        "interazione"
+      ],
+      "conferma": {
+        "mae_insieme_intero": 2.0776,
+        "mae_set_scelto": 2.0763,
+        "blocchi_reintegrati": [],
+        "regola": "il set scelto non puo' avere errore maggiore dell'insieme intero: se lo ha, si reintegrano i blocchi scartati con costo medio positivo, dal maggiore"
+      },
+      "feature": [
+        "prodotto_stagione_media",
+        "prodotto_stagione_sd",
+        "prodotto_stagione_campione",
+        "gare_precedenti",
+        "lega_lato_media",
+        "lega_lato_campione",
+        "lega_media",
+        "lega_sd",
+        "zeta_dalla_lega",
+        "baseline_lega",
+        "baseline_squadra_stagione",
+        "baseline_restringimento",
+        "concesso_ultime3_media",
+        "concesso_ultime5_media",
+        "concesso_ultime10_media",
+        "concesso_ewma",
+        "concesso_stagione_media",
+        "concesso_lato_media",
+        "avv_prodotto_ultime3_media",
+        "avv_prodotto_ultime5_media",
+        "avv_prodotto_ultime10_media",
+        "avv_prodotto_stagione_media",
+        "avv_prodotto_ewma",
+        "avv_prodotto_lato_media",
+        "avv_concesso_ultime3_media",
+        "avv_concesso_ultime5_media",
+        "avv_concesso_ultime10_media",
+        "avv_concesso_stagione_media",
+        "avv_concesso_ewma",
+        "avv_concesso_lato_media",
+        "avv_gare_precedenti",
+        "avv_giorni_di_riposo",
+        "debolezza_difesa_avversario",
+        "confronto_produce_meno_concede",
+        "baseline_attacco_contro_concesso",
+        "giocatori_fouls_quota_primi",
+        "giocatori_fouls_titolari_per90",
+        "giocatori_gare_precedenti",
+        "giocatori_goalkeeper_saves_quota_primi",
+        "giocatori_goalkeeper_saves_titolari_per90",
+        "giocatori_minuti_nuovi",
+        "giocatori_minuti_titolari",
+        "giocatori_red_cards_titolari_per90",
+        "giocatori_rosa_usata",
+        "giocatori_shots_on_target_quota_primi",
+        "giocatori_shots_on_target_titolari_per90",
+        "giocatori_stabilita",
+        "giocatori_total_shots_quota_primi",
+        "giocatori_total_shots_titolari_per90",
+        "giocatori_yellow_cards_titolari_per90",
+        "allenatore_prodotto_media",
+        "allenatore_concesso_media",
+        "allenatore_campione",
+        "allenatore_prodotto_ewma",
+        "allenatore_gare_con_la_squadra",
+        "allenatore_disponibile",
+        "spaziale_totali",
+        "spaziale_totali_concesso",
+        "spaziale_quota_in_area",
+        "spaziale_quota_in_area_concesso",
+        "spaziale_distanza_media",
+        "spaziale_distanza_media_concesso",
+        "spaziale_xg_per_tiro",
+        "spaziale_xg_per_tiro_concesso",
+        "spaziale_quota_qualita",
+        "spaziale_quota_qualita_concesso",
+        "spaziale_quota_bloccati",
+        "spaziale_quota_bloccati_concesso",
+        "spaziale_quota_da_fermo",
+        "spaziale_quota_da_fermo_concesso",
+        "classifica_punti_media",
+        "classifica_reti_fatte_media",
+        "classifica_reti_subite_media",
+        "classifica_differenza_media",
+        "classifica_delta_punti",
+        "classifica_delta_differenza",
+        "contesto_turno",
+        "contesto_derby",
+        "contesto_gare_recenti",
+        "interazione_casa",
+        "interazione_casa_delta_punti",
+        "interazione_casa_scarto_dalla_lega",
+        "interazione_casa_severita_arbitro"
+      ],
+      "feature_totali_candidate": 115,
+      "trasporto_richiesto": [
+        "calendario",
+        "mappa_dei_tiri",
+        "statistiche_per_giocatore",
+        "storia_allenatore",
+        "storia_squadra"
+      ],
+      "maturita": {
+        "5-9": {
+          "n": 201,
+          "mae": 2.0718,
+          "rmse": 2.6475,
+          "bias": -0.0156,
+          "mae_mediano": 1.78
+        },
+        "10+": {
+          "n": 6561,
+          "mae": 2.0777,
+          "rmse": 2.6235,
+          "bias": 0.0121,
+          "mae_mediano": 1.7796
+        }
+      },
+      "importanza_per_permutazione": [
+        {
+          "colonna": "interazione_casa",
+          "aumento_medio": 0.015213,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_differenza",
+          "aumento_medio": 0.008637,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_punti",
+          "aumento_medio": 0.004402,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_restringimento",
+          "aumento_medio": 0.004014,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_stagione_media",
+          "aumento_medio": 0.003039,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_totali",
+          "aumento_medio": 0.002169,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_lega",
+          "aumento_medio": 0.001992,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_media",
+          "aumento_medio": 0.001952,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "contesto_derby",
+          "aumento_medio": 0.001934,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ewma",
+          "aumento_medio": 0.001763,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_qualita",
+          "aumento_medio": 0.001519,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_stabilita",
+          "aumento_medio": 0.00118,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_prodotto_stagione_media",
+          "aumento_medio": 0.000997,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo",
+          "aumento_medio": 0.000945,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_stagione_media",
+          "aumento_medio": 0.000895,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "concesso_ultime5_media",
+          "aumento_medio": 0.000748,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_squadra_stagione",
+          "aumento_medio": 0.000744,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "zeta_dalla_lega",
+          "aumento_medio": 0.000721,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_xg_per_tiro",
+          "aumento_medio": 0.00068,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime5_media",
+          "aumento_medio": 0.000649,
+          "origini_positive": 3,
+          "origini": 5
+        }
+      ],
+      "importanza_coda": [
+        {
+          "colonna": "prodotto_ewma",
+          "aumento_medio": -0.00013,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_campione",
+          "aumento_medio": -0.00013,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime5_sd",
+          "aumento_medio": -0.000132,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_total_shots_titolari_per90",
+          "aumento_medio": -0.000136,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_fouls_titolari_per90",
+          "aumento_medio": -0.000196,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_media",
+          "aumento_medio": -0.000211,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_yellow_cards_titolari_per90",
+          "aumento_medio": -0.000222,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_stagione_sd",
+          "aumento_medio": -0.000292,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_in_area",
+          "aumento_medio": -0.000372,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime3_sd",
+          "aumento_medio": -0.000444,
+          "origini_positive": 2,
+          "origini": 5
+        }
+      ]
+    },
+    "fouls": {
+      "target": "fouls",
+      "modello_di_riferimento": "poisson_glm",
+      "mae_insieme_completo": 2.7792,
+      "righe_valutate": 12408,
+      "blocchi": {
+        "base": {
+          "tenuto": true,
+          "motivo": "costo 0.11% e 4 origini su 5",
+          "costo_medio": 0.001095,
+          "costo_per_origine": [
+            0.000976,
+            0.000698,
+            0.002109,
+            0.002232,
+            -0.000538
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "avversario": {
+          "tenuto": true,
+          "motivo": "costo 3.835% e 5 origini su 5",
+          "costo_medio": 0.038353,
+          "costo_per_origine": [
+            0.039306,
+            0.037052,
+            0.039994,
+            0.040061,
+            0.035352
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "forma": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.018% su 5 origini",
+          "costo_medio": -0.000185,
+          "costo_per_origine": [
+            -0.000217,
+            -0.001213,
+            -0.000429,
+            -0.000177,
+            0.001111
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "casa_trasferta": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.001% su 5 origini",
+          "costo_medio": -1.4e-05,
+          "costo_per_origine": [
+            3.6e-05,
+            3.7e-05,
+            -7.1e-05,
+            0.0,
+            -7.2e-05
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "riposo": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.001% su 5 origini",
+          "costo_medio": -1.3e-05,
+          "costo_per_origine": [
+            -3.6e-05,
+            0.000221,
+            0.0,
+            -0.000142,
+            -0.000108
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "giocatori": {
+          "tenuto": true,
+          "motivo": "costo 0.065% e 4 origini su 5",
+          "costo_medio": 0.000645,
+          "costo_per_origine": [
+            -0.001121,
+            0.002058,
+            0.000608,
+            0.000283,
+            0.001398
+          ],
+          "trasporto": "statistiche_per_giocatore",
+          "costo_trasporto": "alto"
+        },
+        "allenatore": {
+          "tenuto": false,
+          "motivo": "guadagno 0.014% instabile: solo 3 origini su 5, trasporto medio",
+          "costo_medio": 0.000137,
+          "costo_per_origine": [
+            -3.6e-05,
+            0.000147,
+            -3.6e-05,
+            0.000142,
+            0.000466
+          ],
+          "trasporto": "storia_allenatore",
+          "costo_trasporto": "medio"
+        },
+        "arbitro": {
+          "tenuto": true,
+          "motivo": "costo 0.29% e 4 origini su 5",
+          "costo_medio": 0.002904,
+          "costo_per_origine": [
+            0.000579,
+            0.002904,
+            0.007077,
+            0.004286,
+            -0.000323
+          ],
+          "trasporto": "profilo_arbitro",
+          "costo_trasporto": "medio"
+        },
+        "spaziale": {
+          "tenuto": true,
+          "motivo": "costo 0.161% e 5 origini su 5",
+          "costo_medio": 0.001612,
+          "costo_per_origine": [
+            0.000434,
+            0.001544,
+            0.001716,
+            0.000779,
+            0.003585
+          ],
+          "trasporto": "mappa_dei_tiri",
+          "costo_trasporto": "alto"
+        },
+        "classifica": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.039% su 5 origini",
+          "costo_medio": -0.000387,
+          "costo_per_origine": [
+            -0.001338,
+            0.000294,
+            -0.0005,
+            -0.000142,
+            -0.000251
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "contesto": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.033% su 5 origini",
+          "costo_medio": -0.000332,
+          "costo_per_origine": [
+            0.001483,
+            -7.4e-05,
+            -0.000608,
+            -0.001027,
+            -0.001434
+          ],
+          "trasporto": "calendario",
+          "costo_trasporto": "basso"
+        },
+        "interazione": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.059%, 3 origini",
+          "costo_medio": 0.000587,
+          "costo_per_origine": [
+            -0.000579,
+            3.7e-05,
+            0.002716,
+            -0.000425,
+            0.001183
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        }
+      },
+      "blocchi_tenuti": [
+        "base",
+        "avversario",
+        "giocatori",
+        "arbitro",
+        "spaziale",
+        "interazione"
+      ],
+      "conferma": {
+        "mae_insieme_intero": 2.7792,
+        "mae_set_scelto": 2.7744,
+        "blocchi_reintegrati": [],
+        "regola": "il set scelto non puo' avere errore maggiore dell'insieme intero: se lo ha, si reintegrano i blocchi scartati con costo medio positivo, dal maggiore"
+      },
+      "feature": [
+        "prodotto_stagione_media",
+        "prodotto_stagione_sd",
+        "prodotto_stagione_campione",
+        "gare_precedenti",
+        "lega_lato_media",
+        "lega_lato_campione",
+        "lega_media",
+        "lega_sd",
+        "zeta_dalla_lega",
+        "baseline_lega",
+        "baseline_squadra_stagione",
+        "baseline_restringimento",
+        "concesso_ultime3_media",
+        "concesso_ultime5_media",
+        "concesso_ultime10_media",
+        "concesso_ewma",
+        "concesso_stagione_media",
+        "concesso_lato_media",
+        "avv_prodotto_ultime3_media",
+        "avv_prodotto_ultime5_media",
+        "avv_prodotto_ultime10_media",
+        "avv_prodotto_stagione_media",
+        "avv_prodotto_ewma",
+        "avv_prodotto_lato_media",
+        "avv_concesso_ultime3_media",
+        "avv_concesso_ultime5_media",
+        "avv_concesso_ultime10_media",
+        "avv_concesso_stagione_media",
+        "avv_concesso_ewma",
+        "avv_concesso_lato_media",
+        "avv_gare_precedenti",
+        "avv_giorni_di_riposo",
+        "debolezza_difesa_avversario",
+        "confronto_produce_meno_concede",
+        "baseline_attacco_contro_concesso",
+        "giocatori_fouls_quota_primi",
+        "giocatori_fouls_titolari_per90",
+        "giocatori_gare_precedenti",
+        "giocatori_goalkeeper_saves_quota_primi",
+        "giocatori_goalkeeper_saves_titolari_per90",
+        "giocatori_minuti_nuovi",
+        "giocatori_minuti_titolari",
+        "giocatori_red_cards_titolari_per90",
+        "giocatori_rosa_usata",
+        "giocatori_shots_on_target_quota_primi",
+        "giocatori_shots_on_target_titolari_per90",
+        "giocatori_stabilita",
+        "giocatori_total_shots_quota_primi",
+        "giocatori_total_shots_titolari_per90",
+        "giocatori_yellow_cards_titolari_per90",
+        "arbitro_campione",
+        "arbitro_gare_viste",
+        "arbitro_prodotto_sd",
+        "arbitro_prodotto_ewma",
+        "arbitro_prodotto_media",
+        "arbitro_falli_media",
+        "arbitro_ammoniti_media",
+        "arbitro_espulsioni_media",
+        "arbitro_prodotto_lato_media",
+        "arbitro_disponibile",
+        "arbitro_qualita_storia",
+        "arbitro_cartellini_per_fallo",
+        "arbitro_scarto_dalla_lega",
+        "arbitro_severita_ammoniti",
+        "arbitro_severita_falli",
+        "spaziale_totali",
+        "spaziale_totali_concesso",
+        "spaziale_quota_in_area",
+        "spaziale_quota_in_area_concesso",
+        "spaziale_distanza_media",
+        "spaziale_distanza_media_concesso",
+        "spaziale_xg_per_tiro",
+        "spaziale_xg_per_tiro_concesso",
+        "spaziale_quota_qualita",
+        "spaziale_quota_qualita_concesso",
+        "spaziale_quota_bloccati",
+        "spaziale_quota_bloccati_concesso",
+        "spaziale_quota_da_fermo",
+        "spaziale_quota_da_fermo_concesso",
+        "interazione_casa",
+        "interazione_casa_delta_punti",
+        "interazione_casa_scarto_dalla_lega",
+        "interazione_casa_severita_arbitro"
+      ],
+      "feature_totali_candidate": 115,
+      "trasporto_richiesto": [
+        "mappa_dei_tiri",
+        "profilo_arbitro",
+        "statistiche_per_giocatore",
+        "storia_squadra"
+      ],
+      "maturita": {
+        "5-9": {
+          "n": 201,
+          "mae": 2.6633,
+          "rmse": 3.3425,
+          "bias": -0.1005,
+          "mae_mediano": 2.2621
+        },
+        "10+": {
+          "n": 6543,
+          "mae": 2.7863,
+          "rmse": 3.5079,
+          "bias": 0.0861,
+          "mae_mediano": 2.3522
+        }
+      },
+      "importanza_per_permutazione": [
+        {
+          "colonna": "avv_concesso_stagione_media",
+          "aumento_medio": 0.018402,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_restringimento",
+          "aumento_medio": 0.011325,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime10_media",
+          "aumento_medio": 0.0061,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ewma",
+          "aumento_medio": 0.004155,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_media",
+          "aumento_medio": 0.003805,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "zeta_dalla_lega",
+          "aumento_medio": 0.0027,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime10_media",
+          "aumento_medio": 0.001899,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_lato_media",
+          "aumento_medio": 0.00176,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo",
+          "aumento_medio": 0.001701,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_campione",
+          "aumento_medio": 0.001694,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "allenatore_prodotto_ewma",
+          "aumento_medio": 0.001592,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ewma",
+          "aumento_medio": 0.001552,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_xg_per_tiro",
+          "aumento_medio": 0.001286,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "debolezza_difesa_avversario",
+          "aumento_medio": 0.0011,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_prodotto_lato_media",
+          "aumento_medio": 0.001087,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime5_media",
+          "aumento_medio": 0.000984,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_media_mobile",
+          "aumento_medio": 0.000888,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_lega",
+          "aumento_medio": 0.000887,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "concesso_ultime10_media",
+          "aumento_medio": 0.000856,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_media",
+          "aumento_medio": 0.000846,
+          "origini_positive": 5,
+          "origini": 5
+        }
+      ],
+      "importanza_coda": [
+        {
+          "colonna": "spaziale_quota_qualita",
+          "aumento_medio": -0.000123,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_gare_precedenti",
+          "aumento_medio": -0.000163,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_bloccati_concesso",
+          "aumento_medio": -0.000171,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "concesso_lato_media",
+          "aumento_medio": -0.000172,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime3_media",
+          "aumento_medio": -0.000266,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_stagione_campione",
+          "aumento_medio": -0.000303,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_differenza_media",
+          "aumento_medio": -0.000358,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_giorni_di_riposo",
+          "aumento_medio": -0.000385,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_reti_fatte_media",
+          "aumento_medio": -0.000675,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_attacco_contro_concesso",
+          "aumento_medio": -0.000688,
+          "origini_positive": 1,
+          "origini": 5
+        }
+      ]
+    },
+    "shots_on_target": {
+      "target": "shots_on_target",
+      "modello_di_riferimento": "poisson_glm",
+      "mae_insieme_completo": 1.7687,
+      "righe_valutate": 12430,
+      "blocchi": {
+        "base": {
+          "tenuto": true,
+          "motivo": "costo 0.08% e 4 origini su 5",
+          "costo_medio": 0.000797,
+          "costo_per_origine": [
+            0.00078,
+            0.000351,
+            0.001261,
+            0.002198,
+            -0.000604
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "avversario": {
+          "tenuto": true,
+          "motivo": "costo 0.513% e 5 origini su 5",
+          "costo_medio": 0.005131,
+          "costo_per_origine": [
+            0.00758,
+            0.007252,
+            0.005847,
+            0.003381,
+            0.001593
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "forma": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.041%, 3 origini",
+          "costo_medio": 0.000407,
+          "costo_per_origine": [
+            -0.00039,
+            0.000819,
+            0.000516,
+            -0.000394,
+            0.001483
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "casa_trasferta": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.001% su 5 origini",
+          "costo_medio": -1.2e-05,
+          "costo_per_origine": [
+            -5.6e-05,
+            -0.000117,
+            0.0,
+            0.000113,
+            0.0
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "riposo": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.014% su 5 origini",
+          "costo_medio": -0.000139,
+          "costo_per_origine": [
+            -0.000111,
+            -0.000585,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "giocatori": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.09% su 5 origini",
+          "costo_medio": -0.000899,
+          "costo_per_origine": [
+            0.003065,
+            -0.003509,
+            -0.001146,
+            -0.001972,
+            -0.000934
+          ],
+          "trasporto": "statistiche_per_giocatore",
+          "costo_trasporto": "alto"
+        },
+        "allenatore": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.03% su 5 origini",
+          "costo_medio": -0.000296,
+          "costo_per_origine": [
+            -5.6e-05,
+            -0.000117,
+            -0.000745,
+            -0.000451,
+            -0.00011
+          ],
+          "trasporto": "storia_allenatore",
+          "costo_trasporto": "medio"
+        },
+        "arbitro": {
+          "tenuto": true,
+          "motivo": "costo 0.035% e 4 origini su 5",
+          "costo_medio": 0.000349,
+          "costo_per_origine": [
+            -5.6e-05,
+            0.000234,
+            0.000287,
+            0.000564,
+            0.000714
+          ],
+          "trasporto": "profilo_arbitro",
+          "costo_trasporto": "medio"
+        },
+        "spaziale": {
+          "tenuto": true,
+          "motivo": "costo 0.256% e 5 origini su 5",
+          "costo_medio": 0.002561,
+          "costo_per_origine": [
+            0.000334,
+            0.003275,
+            0.0047,
+            0.001803,
+            0.002692
+          ],
+          "trasporto": "mappa_dei_tiri",
+          "costo_trasporto": "alto"
+        },
+        "classifica": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.105%, 3 origini",
+          "costo_medio": 0.001049,
+          "costo_per_origine": [
+            0.003121,
+            0.001228,
+            -0.000688,
+            -0.000338,
+            0.001923
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "contesto": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.029%, 3 origini",
+          "costo_medio": 0.000289,
+          "costo_per_origine": [
+            0.000223,
+            0.00076,
+            0.000688,
+            -0.000169,
+            -5.5e-05
+          ],
+          "trasporto": "calendario",
+          "costo_trasporto": "basso"
+        },
+        "interazione": {
+          "tenuto": true,
+          "motivo": "costo 0.148% e 4 origini su 5",
+          "costo_medio": 0.001475,
+          "costo_per_origine": [
+            -0.002285,
+            0.00503,
+            0.001892,
+            0.00186,
+            0.000879
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        }
+      },
+      "blocchi_tenuti": [
+        "base",
+        "avversario",
+        "forma",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto",
+        "interazione"
+      ],
+      "conferma": {
+        "mae_insieme_intero": 1.7687,
+        "mae_set_scelto": 1.766,
+        "blocchi_reintegrati": [],
+        "regola": "il set scelto non puo' avere errore maggiore dell'insieme intero: se lo ha, si reintegrano i blocchi scartati con costo medio positivo, dal maggiore"
+      },
+      "feature": [
+        "prodotto_stagione_media",
+        "prodotto_stagione_sd",
+        "prodotto_stagione_campione",
+        "gare_precedenti",
+        "lega_lato_media",
+        "lega_lato_campione",
+        "lega_media",
+        "lega_sd",
+        "zeta_dalla_lega",
+        "baseline_lega",
+        "baseline_squadra_stagione",
+        "baseline_restringimento",
+        "concesso_ultime3_media",
+        "concesso_ultime5_media",
+        "concesso_ultime10_media",
+        "concesso_ewma",
+        "concesso_stagione_media",
+        "concesso_lato_media",
+        "avv_prodotto_ultime3_media",
+        "avv_prodotto_ultime5_media",
+        "avv_prodotto_ultime10_media",
+        "avv_prodotto_stagione_media",
+        "avv_prodotto_ewma",
+        "avv_prodotto_lato_media",
+        "avv_concesso_ultime3_media",
+        "avv_concesso_ultime5_media",
+        "avv_concesso_ultime10_media",
+        "avv_concesso_stagione_media",
+        "avv_concesso_ewma",
+        "avv_concesso_lato_media",
+        "avv_gare_precedenti",
+        "avv_giorni_di_riposo",
+        "debolezza_difesa_avversario",
+        "confronto_produce_meno_concede",
+        "baseline_attacco_contro_concesso",
+        "prodotto_ultime3_media",
+        "prodotto_ultime3_sd",
+        "prodotto_ultime3_campione",
+        "prodotto_ultime5_media",
+        "prodotto_ultime5_sd",
+        "prodotto_ultime5_campione",
+        "prodotto_ultime10_media",
+        "prodotto_ultime10_sd",
+        "prodotto_ultime10_campione",
+        "prodotto_ewma",
+        "baseline_media_mobile",
+        "arbitro_campione",
+        "arbitro_gare_viste",
+        "arbitro_prodotto_sd",
+        "arbitro_prodotto_ewma",
+        "arbitro_prodotto_media",
+        "arbitro_falli_media",
+        "arbitro_ammoniti_media",
+        "arbitro_espulsioni_media",
+        "arbitro_prodotto_lato_media",
+        "arbitro_disponibile",
+        "arbitro_qualita_storia",
+        "arbitro_cartellini_per_fallo",
+        "arbitro_scarto_dalla_lega",
+        "arbitro_severita_ammoniti",
+        "arbitro_severita_falli",
+        "spaziale_totali",
+        "spaziale_totali_concesso",
+        "spaziale_quota_in_area",
+        "spaziale_quota_in_area_concesso",
+        "spaziale_distanza_media",
+        "spaziale_distanza_media_concesso",
+        "spaziale_xg_per_tiro",
+        "spaziale_xg_per_tiro_concesso",
+        "spaziale_quota_qualita",
+        "spaziale_quota_qualita_concesso",
+        "spaziale_quota_bloccati",
+        "spaziale_quota_bloccati_concesso",
+        "spaziale_quota_da_fermo",
+        "spaziale_quota_da_fermo_concesso",
+        "classifica_punti_media",
+        "classifica_reti_fatte_media",
+        "classifica_reti_subite_media",
+        "classifica_differenza_media",
+        "classifica_delta_punti",
+        "classifica_delta_differenza",
+        "contesto_turno",
+        "contesto_derby",
+        "contesto_gare_recenti",
+        "interazione_casa",
+        "interazione_casa_delta_punti",
+        "interazione_casa_scarto_dalla_lega",
+        "interazione_casa_severita_arbitro"
+      ],
+      "feature_totali_candidate": 115,
+      "trasporto_richiesto": [
+        "calendario",
+        "mappa_dei_tiri",
+        "profilo_arbitro",
+        "storia_squadra"
+      ],
+      "maturita": {
+        "5-9": {
+          "n": 201,
+          "mae": 1.7856,
+          "rmse": 2.2608,
+          "bias": 0.1793,
+          "mae_mediano": 1.525
+        },
+        "10+": {
+          "n": 6561,
+          "mae": 1.7709,
+          "rmse": 2.2312,
+          "bias": 0.0322,
+          "mae_mediano": 1.5207
+        }
+      },
+      "importanza_per_permutazione": [
+        {
+          "colonna": "interazione_casa",
+          "aumento_medio": 0.010866,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_totali",
+          "aumento_medio": 0.005162,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_punti",
+          "aumento_medio": 0.003125,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_restringimento",
+          "aumento_medio": 0.003043,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_differenza",
+          "aumento_medio": 0.002832,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_total_shots_titolari_per90",
+          "aumento_medio": 0.002255,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_media",
+          "aumento_medio": 0.002237,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_prodotto_lato_media",
+          "aumento_medio": 0.002102,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime10_media",
+          "aumento_medio": 0.001911,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime10_media",
+          "aumento_medio": 0.001796,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_stagione_media",
+          "aumento_medio": 0.001773,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo",
+          "aumento_medio": 0.001613,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_lega",
+          "aumento_medio": 0.001295,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ewma",
+          "aumento_medio": 0.001259,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_prodotto_stagione_media",
+          "aumento_medio": 0.000956,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_in_area_concesso",
+          "aumento_medio": 0.000849,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "interazione_casa_delta_punti",
+          "aumento_medio": 0.000784,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_bloccati",
+          "aumento_medio": 0.000727,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_shots_on_target_quota_primi",
+          "aumento_medio": 0.000679,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_prodotto_lato_media",
+          "aumento_medio": 0.000545,
+          "origini_positive": 5,
+          "origini": 5
+        }
+      ],
+      "importanza_coda": [
+        {
+          "colonna": "spaziale_quota_in_area",
+          "aumento_medio": -0.00013,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime5_media",
+          "aumento_medio": -0.000132,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "interazione_casa_scarto_dalla_lega",
+          "aumento_medio": -0.000149,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "concesso_ultime3_media",
+          "aumento_medio": -0.000159,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "debolezza_difesa_avversario",
+          "aumento_medio": -0.000178,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_goalkeeper_saves_quota_primi",
+          "aumento_medio": -0.000208,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime3_media",
+          "aumento_medio": -0.00023,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_prodotto_ultime5_media",
+          "aumento_medio": -0.000253,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_goalkeeper_saves_titolari_per90",
+          "aumento_medio": -0.00026,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_rosa_usata",
+          "aumento_medio": -0.000447,
+          "origini_positive": 1,
+          "origini": 5
+        }
+      ]
+    },
+    "total_shots": {
+      "target": "total_shots",
+      "modello_di_riferimento": "ridge",
+      "mae_insieme_completo": 3.6074,
+      "righe_valutate": 12430,
+      "blocchi": {
+        "base": {
+          "tenuto": true,
+          "motivo": "costo 0.273% e 5 origini su 5",
+          "costo_medio": 0.002731,
+          "costo_per_origine": [
+            0.005113,
+            0.003209,
+            0.004114,
+            0.000945,
+            0.000276
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "avversario": {
+          "tenuto": true,
+          "motivo": "costo 2.476% e 5 origini su 5",
+          "costo_medio": 0.024757,
+          "costo_per_origine": [
+            0.023035,
+            0.023085,
+            0.026335,
+            0.021235,
+            0.030096
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "forma": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.015% su 5 origini",
+          "costo_medio": -0.000154,
+          "costo_per_origine": [
+            0.002472,
+            -0.001713,
+            0.00042,
+            -0.002502,
+            0.000551
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "casa_trasferta": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.016% su 5 origini",
+          "costo_medio": -0.000164,
+          "costo_per_origine": [
+            0.000393,
+            -0.001305,
+            0.000364,
+            0.00025,
+            -0.000524
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "riposo": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.027% su 5 origini",
+          "costo_medio": -0.000269,
+          "costo_per_origine": [
+            -0.001433,
+            -0.00019,
+            5.6e-05,
+            2.8e-05,
+            0.000193
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "giocatori": {
+          "tenuto": false,
+          "motivo": "guadagno 0.045% instabile: solo 2 origini su 5, trasporto alto",
+          "costo_medio": 0.000452,
+          "costo_per_origine": [
+            0.001601,
+            -0.000897,
+            0.002967,
+            -0.000639,
+            -0.000772
+          ],
+          "trasporto": "statistiche_per_giocatore",
+          "costo_trasporto": "alto"
+        },
+        "allenatore": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.082% su 5 origini",
+          "costo_medio": -0.000817,
+          "costo_per_origine": [
+            -0.000534,
+            -0.000299,
+            -0.00056,
+            -0.002196,
+            -0.000496
+          ],
+          "trasporto": "storia_allenatore",
+          "costo_trasporto": "medio"
+        },
+        "arbitro": {
+          "tenuto": false,
+          "motivo": "guadagno 0.032% instabile: solo 2 origini su 5, trasporto medio",
+          "costo_medio": 0.000318,
+          "costo_per_origine": [
+            -8.4e-05,
+            -0.000381,
+            0.001091,
+            -0.000139,
+            0.001102
+          ],
+          "trasporto": "profilo_arbitro",
+          "costo_trasporto": "medio"
+        },
+        "spaziale": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.008% su 5 origini",
+          "costo_medio": -8e-05,
+          "costo_per_origine": [
+            -0.003427,
+            0.001305,
+            -0.000364,
+            0.002502,
+            -0.000413
+          ],
+          "trasporto": "mappa_dei_tiri",
+          "costo_trasporto": "alto"
+        },
+        "classifica": {
+          "tenuto": true,
+          "motivo": "reintegrato: senza di lui il set scelto perdeva contro l'insieme intero",
+          "costo_medio": 0.001476,
+          "costo_per_origine": [
+            0.005562,
+            0.003589,
+            -0.000308,
+            -0.000584,
+            -0.000882
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "contesto": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.019% su 5 origini",
+          "costo_medio": -0.000192,
+          "costo_per_origine": [
+            0.000478,
+            -0.000816,
+            -0.000476,
+            -0.001084,
+            0.000937
+          ],
+          "trasporto": "calendario",
+          "costo_trasporto": "basso"
+        },
+        "interazione": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.027%, 3 origini",
+          "costo_medio": 0.00027,
+          "costo_per_origine": [
+            -0.000927,
+            0.002474,
+            0.000924,
+            0.001306,
+            -0.002425
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        }
+      },
+      "blocchi_tenuti": [
+        "base",
+        "avversario",
+        "interazione",
+        "classifica"
+      ],
+      "conferma": {
+        "mae_insieme_intero": 3.6074,
+        "mae_set_scelto": 3.6027,
+        "blocchi_reintegrati": [
+          "classifica"
+        ],
+        "regola": "il set scelto non puo' avere errore maggiore dell'insieme intero: se lo ha, si reintegrano i blocchi scartati con costo medio positivo, dal maggiore"
+      },
+      "feature": [
+        "prodotto_stagione_media",
+        "prodotto_stagione_sd",
+        "prodotto_stagione_campione",
+        "gare_precedenti",
+        "lega_lato_media",
+        "lega_lato_campione",
+        "lega_media",
+        "lega_sd",
+        "zeta_dalla_lega",
+        "baseline_lega",
+        "baseline_squadra_stagione",
+        "baseline_restringimento",
+        "concesso_ultime3_media",
+        "concesso_ultime5_media",
+        "concesso_ultime10_media",
+        "concesso_ewma",
+        "concesso_stagione_media",
+        "concesso_lato_media",
+        "avv_prodotto_ultime3_media",
+        "avv_prodotto_ultime5_media",
+        "avv_prodotto_ultime10_media",
+        "avv_prodotto_stagione_media",
+        "avv_prodotto_ewma",
+        "avv_prodotto_lato_media",
+        "avv_concesso_ultime3_media",
+        "avv_concesso_ultime5_media",
+        "avv_concesso_ultime10_media",
+        "avv_concesso_stagione_media",
+        "avv_concesso_ewma",
+        "avv_concesso_lato_media",
+        "avv_gare_precedenti",
+        "avv_giorni_di_riposo",
+        "debolezza_difesa_avversario",
+        "confronto_produce_meno_concede",
+        "baseline_attacco_contro_concesso",
+        "interazione_casa",
+        "interazione_casa_delta_punti",
+        "interazione_casa_scarto_dalla_lega",
+        "interazione_casa_severita_arbitro",
+        "classifica_punti_media",
+        "classifica_reti_fatte_media",
+        "classifica_reti_subite_media",
+        "classifica_differenza_media",
+        "classifica_delta_punti",
+        "classifica_delta_differenza"
+      ],
+      "feature_totali_candidate": 115,
+      "trasporto_richiesto": [
+        "storia_squadra"
+      ],
+      "maturita": {
+        "5-9": {
+          "n": 201,
+          "mae": 3.4565,
+          "rmse": 4.3556,
+          "bias": 0.3429,
+          "mae_mediano": 2.7648
+        },
+        "10+": {
+          "n": 6561,
+          "mae": 3.6094,
+          "rmse": 4.5891,
+          "bias": -0.0492,
+          "mae_mediano": 3.0916
+        }
+      },
+      "importanza_per_permutazione": [
+        {
+          "colonna": "baseline_restringimento",
+          "aumento_medio": 0.042218,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_attacco_contro_concesso",
+          "aumento_medio": 0.038512,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "interazione_casa",
+          "aumento_medio": 0.02392,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_gare_precedenti",
+          "aumento_medio": 0.020504,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_minuti_titolari",
+          "aumento_medio": 0.019165,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_stagione_media",
+          "aumento_medio": 0.019144,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_stagione_campione",
+          "aumento_medio": 0.017328,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "allenatore_prodotto_ewma",
+          "aumento_medio": 0.014433,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime10_media",
+          "aumento_medio": 0.01272,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "allenatore_concesso_media",
+          "aumento_medio": 0.011842,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_prodotto_ewma",
+          "aumento_medio": 0.010184,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_lato_media",
+          "aumento_medio": 0.009799,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ultime10_media",
+          "aumento_medio": 0.009469,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_ewma",
+          "aumento_medio": 0.009186,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_media",
+          "aumento_medio": 0.007587,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_differenza",
+          "aumento_medio": 0.0075,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "concesso_stagione_media",
+          "aumento_medio": 0.007016,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_squadra_stagione",
+          "aumento_medio": 0.006189,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "allenatore_prodotto_media",
+          "aumento_medio": 0.005841,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_media",
+          "aumento_medio": 0.005014,
+          "origini_positive": 5,
+          "origini": 5
+        }
+      ],
+      "importanza_coda": [
+        {
+          "colonna": "classifica_reti_fatte_media",
+          "aumento_medio": -0.000149,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo_concesso",
+          "aumento_medio": -0.000153,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_prodotto_media",
+          "aumento_medio": -0.000162,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_fouls_quota_primi",
+          "aumento_medio": -0.00017,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_differenza_media",
+          "aumento_medio": -0.00021,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "debolezza_difesa_avversario",
+          "aumento_medio": -0.000217,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_qualita_storia",
+          "aumento_medio": -0.00022,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_prodotto_lato_media",
+          "aumento_medio": -0.000273,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "contesto_gare_recenti",
+          "aumento_medio": -0.000364,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_rosa_usata",
+          "aumento_medio": -0.000585,
+          "origini_positive": 0,
+          "origini": 5
+        }
+      ]
+    },
+    "yellow_cards": {
+      "target": "yellow_cards",
+      "modello_di_riferimento": "poisson_glm",
+      "mae_insieme_completo": 1.0611,
+      "righe_valutate": 12446,
+      "blocchi": {
+        "base": {
+          "tenuto": true,
+          "motivo": "guadagno piccolo ma senza costo di trasporto: 0.016%, 3 origini",
+          "costo_medio": 0.000159,
+          "costo_per_origine": [
+            -0.000581,
+            9.4e-05,
+            -9.5e-05,
+            9.3e-05,
+            0.001283
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "avversario": {
+          "tenuto": true,
+          "motivo": "costo 0.254% e 5 origini su 5",
+          "costo_medio": 0.002542,
+          "costo_per_origine": [
+            0.003002,
+            0.000283,
+            0.003341,
+            0.002326,
+            0.003758
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "forma": {
+          "tenuto": true,
+          "motivo": "costo 0.068% e 4 origini su 5",
+          "costo_medio": 0.000679,
+          "costo_per_origine": [
+            0.002227,
+            0.001227,
+            0.000286,
+            0.001303,
+            -0.00165
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "casa_trasferta": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.006% su 5 origini",
+          "costo_medio": -5.8e-05,
+          "costo_per_origine": [
+            -0.000194,
+            9.4e-05,
+            -9.5e-05,
+            -0.000186,
+            9.2e-05
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "riposo": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.009% su 5 origini",
+          "costo_medio": -9.3e-05,
+          "costo_per_origine": [
+            0.0,
+            -9.4e-05,
+            0.0,
+            -0.000186,
+            -0.000183
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "giocatori": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.126% su 5 origini",
+          "costo_medio": -0.001261,
+          "costo_per_origine": [
+            -0.001162,
+            -0.002076,
+            -0.003246,
+            -0.000186,
+            0.000367
+          ],
+          "trasporto": "statistiche_per_giocatore",
+          "costo_trasporto": "alto"
+        },
+        "allenatore": {
+          "tenuto": true,
+          "motivo": "costo 0.045% e 5 origini su 5",
+          "costo_medio": 0.000448,
+          "costo_per_origine": [
+            0.000194,
+            0.000283,
+            0.000382,
+            0.000558,
+            0.000825
+          ],
+          "trasporto": "storia_allenatore",
+          "costo_trasporto": "medio"
+        },
+        "arbitro": {
+          "tenuto": true,
+          "motivo": "costo 0.137% e 4 origini su 5",
+          "costo_medio": 0.001369,
+          "costo_per_origine": [
+            -0.000678,
+            0.001038,
+            0.00315,
+            0.002326,
+            0.001008
+          ],
+          "trasporto": "profilo_arbitro",
+          "costo_trasporto": "medio"
+        },
+        "spaziale": {
+          "tenuto": true,
+          "motivo": "costo 0.048% e 4 origini su 5",
+          "costo_medio": 0.000483,
+          "costo_per_origine": [
+            0.001162,
+            0.000189,
+            -0.001145,
+            0.000837,
+            0.001375
+          ],
+          "trasporto": "mappa_dei_tiri",
+          "costo_trasporto": "alto"
+        },
+        "classifica": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.026% su 5 origini",
+          "costo_medio": -0.000264,
+          "costo_per_origine": [
+            -0.000484,
+            -0.000661,
+            0.000477,
+            -0.000744,
+            9.2e-05
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        },
+        "contesto": {
+          "tenuto": false,
+          "motivo": "toglierlo non peggiora: costo medio -0.035% su 5 origini",
+          "costo_medio": -0.00035,
+          "costo_per_origine": [
+            9.7e-05,
+            -0.000189,
+            -0.000191,
+            9.3e-05,
+            -0.001558
+          ],
+          "trasporto": "calendario",
+          "costo_trasporto": "basso"
+        },
+        "interazione": {
+          "tenuto": true,
+          "motivo": "costo 0.139% e 4 origini su 5",
+          "costo_medio": 0.001393,
+          "costo_per_origine": [
+            0.001452,
+            -0.001133,
+            0.002195,
+            0.00335,
+            0.0011
+          ],
+          "trasporto": "storia_squadra",
+          "costo_trasporto": "basso"
+        }
+      },
+      "blocchi_tenuti": [
+        "base",
+        "avversario",
+        "forma",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "interazione"
+      ],
+      "conferma": {
+        "mae_insieme_intero": 1.0611,
+        "mae_set_scelto": 1.0592,
+        "blocchi_reintegrati": [],
+        "regola": "il set scelto non puo' avere errore maggiore dell'insieme intero: se lo ha, si reintegrano i blocchi scartati con costo medio positivo, dal maggiore"
+      },
+      "feature": [
+        "prodotto_stagione_media",
+        "prodotto_stagione_sd",
+        "prodotto_stagione_campione",
+        "gare_precedenti",
+        "lega_lato_media",
+        "lega_lato_campione",
+        "lega_media",
+        "lega_sd",
+        "zeta_dalla_lega",
+        "baseline_lega",
+        "baseline_squadra_stagione",
+        "baseline_restringimento",
+        "concesso_ultime3_media",
+        "concesso_ultime5_media",
+        "concesso_ultime10_media",
+        "concesso_ewma",
+        "concesso_stagione_media",
+        "concesso_lato_media",
+        "avv_prodotto_ultime3_media",
+        "avv_prodotto_ultime5_media",
+        "avv_prodotto_ultime10_media",
+        "avv_prodotto_stagione_media",
+        "avv_prodotto_ewma",
+        "avv_prodotto_lato_media",
+        "avv_concesso_ultime3_media",
+        "avv_concesso_ultime5_media",
+        "avv_concesso_ultime10_media",
+        "avv_concesso_stagione_media",
+        "avv_concesso_ewma",
+        "avv_concesso_lato_media",
+        "avv_gare_precedenti",
+        "avv_giorni_di_riposo",
+        "debolezza_difesa_avversario",
+        "confronto_produce_meno_concede",
+        "baseline_attacco_contro_concesso",
+        "prodotto_ultime3_media",
+        "prodotto_ultime3_sd",
+        "prodotto_ultime3_campione",
+        "prodotto_ultime5_media",
+        "prodotto_ultime5_sd",
+        "prodotto_ultime5_campione",
+        "prodotto_ultime10_media",
+        "prodotto_ultime10_sd",
+        "prodotto_ultime10_campione",
+        "prodotto_ewma",
+        "baseline_media_mobile",
+        "allenatore_prodotto_media",
+        "allenatore_concesso_media",
+        "allenatore_campione",
+        "allenatore_prodotto_ewma",
+        "allenatore_gare_con_la_squadra",
+        "allenatore_disponibile",
+        "arbitro_campione",
+        "arbitro_gare_viste",
+        "arbitro_prodotto_sd",
+        "arbitro_prodotto_ewma",
+        "arbitro_prodotto_media",
+        "arbitro_falli_media",
+        "arbitro_ammoniti_media",
+        "arbitro_espulsioni_media",
+        "arbitro_prodotto_lato_media",
+        "arbitro_disponibile",
+        "arbitro_qualita_storia",
+        "arbitro_cartellini_per_fallo",
+        "arbitro_scarto_dalla_lega",
+        "arbitro_severita_ammoniti",
+        "arbitro_severita_falli",
+        "spaziale_totali",
+        "spaziale_totali_concesso",
+        "spaziale_quota_in_area",
+        "spaziale_quota_in_area_concesso",
+        "spaziale_distanza_media",
+        "spaziale_distanza_media_concesso",
+        "spaziale_xg_per_tiro",
+        "spaziale_xg_per_tiro_concesso",
+        "spaziale_quota_qualita",
+        "spaziale_quota_qualita_concesso",
+        "spaziale_quota_bloccati",
+        "spaziale_quota_bloccati_concesso",
+        "spaziale_quota_da_fermo",
+        "spaziale_quota_da_fermo_concesso",
+        "interazione_casa",
+        "interazione_casa_delta_punti",
+        "interazione_casa_scarto_dalla_lega",
+        "interazione_casa_severita_arbitro"
+      ],
+      "feature_totali_candidate": 115,
+      "trasporto_richiesto": [
+        "mappa_dei_tiri",
+        "profilo_arbitro",
+        "storia_allenatore",
+        "storia_squadra"
+      ],
+      "maturita": {
+        "5-9": {
+          "n": 201,
+          "mae": 1.0382,
+          "rmse": 1.3177,
+          "bias": -0.0126,
+          "mae_mediano": 0.926
+        },
+        "10+": {
+          "n": 6563,
+          "mae": 1.0623,
+          "rmse": 1.3358,
+          "bias": 0.0185,
+          "mae_mediano": 0.9319
+        }
+      },
+      "importanza_per_permutazione": [
+        {
+          "colonna": "interazione_casa",
+          "aumento_medio": 0.002928,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "interazione_casa_delta_punti",
+          "aumento_medio": 0.000932,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_fouls_titolari_per90",
+          "aumento_medio": 0.000518,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_sd",
+          "aumento_medio": 0.000413,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ewma",
+          "aumento_medio": 0.000413,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_xg_per_tiro",
+          "aumento_medio": 0.000411,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_fouls_quota_primi",
+          "aumento_medio": 0.000379,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_ultime10_media",
+          "aumento_medio": 0.000348,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_stabilita",
+          "aumento_medio": 0.000342,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_stagione_media",
+          "aumento_medio": 0.000337,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_media",
+          "aumento_medio": 0.000287,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "lega_lato_campione",
+          "aumento_medio": 0.000263,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "avv_concesso_lato_media",
+          "aumento_medio": 0.00026,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_espulsioni_media",
+          "aumento_medio": 0.000258,
+          "origini_positive": 2,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo_concesso",
+          "aumento_medio": 0.000247,
+          "origini_positive": 4,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_quota_da_fermo",
+          "aumento_medio": 0.00024,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_prodotto_sd",
+          "aumento_medio": 0.000214,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "contesto_turno",
+          "aumento_medio": 0.000207,
+          "origini_positive": 5,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_rosa_usata",
+          "aumento_medio": 0.000185,
+          "origini_positive": 3,
+          "origini": 5
+        },
+        {
+          "colonna": "baseline_lega",
+          "aumento_medio": 0.000156,
+          "origini_positive": 2,
+          "origini": 5
+        }
+      ],
+      "importanza_coda": [
+        {
+          "colonna": "giocatori_total_shots_titolari_per90",
+          "aumento_medio": -0.000242,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_severita_falli",
+          "aumento_medio": -0.000244,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "allenatore_campione",
+          "aumento_medio": -0.000247,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "prodotto_lato_campione",
+          "aumento_medio": -0.000264,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_minuti_titolari",
+          "aumento_medio": -0.000265,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "arbitro_campione",
+          "aumento_medio": -0.00027,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "contesto_derby",
+          "aumento_medio": -0.000348,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "classifica_delta_differenza",
+          "aumento_medio": -0.000449,
+          "origini_positive": 1,
+          "origini": 5
+        },
+        {
+          "colonna": "giocatori_minuti_nuovi",
+          "aumento_medio": -0.000513,
+          "origini_positive": 0,
+          "origini": 5
+        },
+        {
+          "colonna": "spaziale_totali_concesso",
+          "aumento_medio": -0.000549,
+          "origini_positive": 2,
+          "origini": 5
+        }
+      ]
+    }
+  }
+}

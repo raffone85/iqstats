@@ -1,0 +1,63 @@
+{
+  "generato_da": "scripts/projection/dataset/reconstruct_cards.py",
+  "sorgente": "/events/{id}/incidents/",
+  "gare_con_episodi_acquisiti": 9205,
+  "gare_ricostruite": 9205,
+  "gare_con_lista_episodi_vuota": 0,
+  "righe_squadra_gara": 18410,
+  "leghe_coperte": 29,
+  "episodi_senza_lato": 0,
+  "cartellini_non_attribuiti": {
+    "totale": 1765,
+    "gare_interessate": 1163,
+    "trattamento": "fuori dai quattro conteggi, perche' il conteggio aggregato del pannello non li comprende; dichiarati in colonna propria"
+  },
+  "distribuzioni": {
+    "yellow_cards": {
+      "media": 1.962846,
+      "sd": 1.41138,
+      "dispersione": 1.014849,
+      "min": 0,
+      "max": 12,
+      "quota_zeri": 0.15421,
+      "osservazioni": 18410
+    },
+    "second_yellow_red": {
+      "media": 0.039381,
+      "sd": 0.197822,
+      "dispersione": 0.993723,
+      "min": 0,
+      "max": 2,
+      "quota_zeri": 0.961271,
+      "osservazioni": 18410
+    },
+    "red_cards_direct": {
+      "media": 0.064856,
+      "sd": 0.258748,
+      "dispersione": 1.032296,
+      "min": 0,
+      "max": 3,
+      "quota_zeri": 0.938131,
+      "osservazioni": 18410
+    },
+    "bench_cards": {
+      "media": 0.000326,
+      "sd": 0.01805,
+      "dispersione": 0.999674,
+      "min": 0,
+      "max": 1,
+      "quota_zeri": 0.999674,
+      "osservazioni": 18410
+    },
+    "unattributed_cards": {
+      "media": 0.095872,
+      "sd": 0.394544,
+      "dispersione": 1.623675,
+      "min": 0,
+      "max": 6,
+      "quota_zeri": 0.925964,
+      "osservazioni": 18410
+    }
+  },
+  "provenienza": "C"
+}

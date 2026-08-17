@@ -1,0 +1,1591 @@
+{
+  "target": "fouls-k3",
+  "generato_da": "scripts/projection/models/ablate.py",
+  "righe_valutate": 12801,
+  "sottoinsieme": null,
+  "confronto_mirato": {
+    "blocco": "arbitro",
+    "colonne_del_blocco": [
+      "arbitro_campione",
+      "arbitro_gare_viste",
+      "arbitro_prodotto_sd",
+      "arbitro_prodotto_ewma",
+      "arbitro_prodotto_media",
+      "arbitro_falli_media",
+      "arbitro_ammoniti_media",
+      "arbitro_espulsioni_media",
+      "arbitro_prodotto_lato_media",
+      "arbitro_disponibile",
+      "arbitro_qualita_storia",
+      "arbitro_cartellini_per_fallo",
+      "arbitro_scarto_dalla_lega",
+      "arbitro_severita_ammoniti",
+      "arbitro_severita_falli"
+    ],
+    "senza": {
+      "poisson_glm": {
+        "n": 7039,
+        "mae": 2.7968,
+        "rmse": 3.5226,
+        "bias": 0.0871,
+        "mae_mediano": 2.3713,
+        "mae_per_origine": [
+          2.7554,
+          2.7311,
+          2.8533,
+          2.8493,
+          2.795
+        ],
+        "sd_fra_origini": 0.049,
+        "copertura_intervallo": 0.8058,
+        "livello_dichiarato": 0.8,
+        "per_lega": {
+          "12": {
+            "n": 612,
+            "mae": 2.586,
+            "rmse": 3.2629,
+            "bias": -0.1623,
+            "mae_mediano": 2.1551
+          },
+          "38": {
+            "n": 535,
+            "mae": 2.9158,
+            "rmse": 3.7284,
+            "bias": 0.1712,
+            "mae_mediano": 2.4532
+          },
+          "4": {
+            "n": 460,
+            "mae": 2.8741,
+            "rmse": 3.5945,
+            "bias": 0.539,
+            "mae_mediano": 2.4519
+          },
+          "17": {
+            "n": 450,
+            "mae": 2.8617,
+            "rmse": 3.6449,
+            "bias": -0.1163,
+            "mae_mediano": 2.4143
+          },
+          "1": {
+            "n": 440,
+            "mae": 2.5943,
+            "rmse": 3.2882,
+            "bias": -0.0304,
+            "mae_mediano": 2.0834
+          },
+          "3": {
+            "n": 438,
+            "mae": 2.8484,
+            "rmse": 3.5775,
+            "bias": -0.192,
+            "mae_mediano": 2.4556
+          },
+          "2": {
+            "n": 359,
+            "mae": 2.8777,
+            "rmse": 3.6563,
+            "bias": 0.2464,
+            "mae_mediano": 2.3006
+          },
+          "5": {
+            "n": 357,
+            "mae": 2.7033,
+            "rmse": 3.2878,
+            "bias": 0.509,
+            "mae_mediano": 2.4774
+          }
+        },
+        "per_lato": {
+          "away": {
+            "n": 3521,
+            "mae": 2.8849,
+            "rmse": 3.6315,
+            "bias": -0.0489,
+            "mae_mediano": 2.4444
+          },
+          "home": {
+            "n": 3518,
+            "mae": 2.7086,
+            "rmse": 3.4102,
+            "bias": 0.2231,
+            "mae_mediano": 2.2756
+          }
+        },
+        "totale_di_gara": {
+          "n": 3512,
+          "mae": 4.1483,
+          "rmse": 5.1779,
+          "bias": 0.1752,
+          "mae_mediano": 3.604,
+          "gare": 3512
+        }
+      },
+      "ridge": {
+        "n": 7039,
+        "mae": 2.7972,
+        "rmse": 3.5278,
+        "bias": 0.0639,
+        "mae_mediano": 2.3586,
+        "mae_per_origine": [
+          2.7607,
+          2.7424,
+          2.859,
+          2.8436,
+          2.7803
+        ],
+        "sd_fra_origini": 0.046,
+        "copertura_intervallo": 0.8041,
+        "livello_dichiarato": 0.8,
+        "per_lega": {
+          "12": {
+            "n": 612,
+            "mae": 2.59,
+            "rmse": 3.2946,
+            "bias": -0.5242,
+            "mae_mediano": 2.1324
+          },
+          "38": {
+            "n": 535,
+            "mae": 2.9105,
+            "rmse": 3.7196,
+            "bias": 0.1408,
+            "mae_mediano": 2.451
+          },
+          "4": {
+            "n": 460,
+            "mae": 2.8786,
+            "rmse": 3.6039,
+            "bias": 0.5585,
+            "mae_mediano": 2.4671
+          },
+          "17": {
+            "n": 450,
+            "mae": 2.8763,
+            "rmse": 3.6398,
+            "bias": -0.0491,
+            "mae_mediano": 2.4362
+          },
+          "1": {
+            "n": 440,
+            "mae": 2.6108,
+            "rmse": 3.3035,
+            "bias": -0.0816,
+            "mae_mediano": 2.0605
+          },
+          "3": {
+            "n": 438,
+            "mae": 2.8332,
+            "rmse": 3.5664,
+            "bias": -0.1933,
+            "mae_mediano": 2.4783
+          },
+          "2": {
+            "n": 359,
+            "mae": 2.882,
+            "rmse": 3.6676,
+            "bias": 0.1752,
+            "mae_mediano": 2.3059
+          },
+          "5": {
+            "n": 357,
+            "mae": 2.6928,
+            "rmse": 3.2709,
+            "bias": 0.5481,
+            "mae_mediano": 2.4913
+          }
+        },
+        "per_lato": {
+          "away": {
+            "n": 3521,
+            "mae": 2.8847,
+            "rmse": 3.6334,
+            "bias": -0.0534,
+            "mae_mediano": 2.4379
+          },
+          "home": {
+            "n": 3518,
+            "mae": 2.7095,
+            "rmse": 3.4189,
+            "bias": 0.1814,
+            "mae_mediano": 2.2727
+          }
+        },
+        "totale_di_gara": {
+          "n": 3512,
+          "mae": 4.1516,
+          "rmse": 5.1937,
+          "bias": 0.1283,
+          "mae_mediano": 3.6059,
+          "gare": 3512
+        }
+      },
+      "colonne": 96
+    },
+    "con": {
+      "poisson_glm": {
+        "n": 7039,
+        "mae": 2.7853,
+        "rmse": 3.5091,
+        "bias": 0.098,
+        "mae_mediano": 2.3603,
+        "mae_per_origine": [
+          2.7473,
+          2.7283,
+          2.8267,
+          2.8308,
+          2.7934
+        ],
+        "sd_fra_origini": 0.0413,
+        "copertura_intervallo": 0.8055,
+        "livello_dichiarato": 0.8,
+        "per_lega": {
+          "12": {
+            "n": 612,
+            "mae": 2.5652,
+            "rmse": 3.255,
+            "bias": -0.1327,
+            "mae_mediano": 2.0931
+          },
+          "38": {
+            "n": 535,
+            "mae": 2.8659,
+            "rmse": 3.6495,
+            "bias": 0.1474,
+            "mae_mediano": 2.5013
+          },
+          "4": {
+            "n": 460,
+            "mae": 2.8802,
+            "rmse": 3.5943,
+            "bias": 0.6276,
+            "mae_mediano": 2.498
+          },
+          "17": {
+            "n": 450,
+            "mae": 2.8817,
+            "rmse": 3.6592,
+            "bias": -0.0019,
+            "mae_mediano": 2.4277
+          },
+          "1": {
+            "n": 440,
+            "mae": 2.578,
+            "rmse": 3.2843,
+            "bias": -0.123,
+            "mae_mediano": 2.0613
+          },
+          "3": {
+            "n": 438,
+            "mae": 2.8162,
+            "rmse": 3.5421,
+            "bias": -0.1545,
+            "mae_mediano": 2.414
+          },
+          "2": {
+            "n": 359,
+            "mae": 2.9093,
+            "rmse": 3.6676,
+            "bias": 0.2378,
+            "mae_mediano": 2.3142
+          },
+          "5": {
+            "n": 357,
+            "mae": 2.6979,
+            "rmse": 3.29,
+            "bias": 0.5329,
+            "mae_mediano": 2.4627
+          }
+        },
+        "per_lato": {
+          "away": {
+            "n": 3521,
+            "mae": 2.8713,
+            "rmse": 3.6113,
+            "bias": -0.031,
+            "mae_mediano": 2.4463
+          },
+          "home": {
+            "n": 3518,
+            "mae": 2.6992,
+            "rmse": 3.4037,
+            "bias": 0.2272,
+            "mae_mediano": 2.2766
+          }
+        },
+        "totale_di_gara": {
+          "n": 3512,
+          "mae": 4.1213,
+          "rmse": 5.1448,
+          "bias": 0.1968,
+          "mae_mediano": 3.5824,
+          "gare": 3512
+        }
+      },
+      "ridge": {
+        "n": 7039,
+        "mae": 2.7886,
+        "rmse": 3.5157,
+        "bias": 0.0771,
+        "mae_mediano": 2.3505,
+        "mae_per_origine": [
+          2.7562,
+          2.7417,
+          2.834,
+          2.8252,
+          2.7863
+        ],
+        "sd_fra_origini": 0.0365,
+        "copertura_intervallo": 0.7987,
+        "livello_dichiarato": 0.8,
+        "per_lega": {
+          "12": {
+            "n": 612,
+            "mae": 2.5632,
+            "rmse": 3.2751,
+            "bias": -0.4212,
+            "mae_mediano": 2.0449
+          },
+          "38": {
+            "n": 535,
+            "mae": 2.8604,
+            "rmse": 3.6387,
+            "bias": 0.1576,
+            "mae_mediano": 2.4091
+          },
+          "4": {
+            "n": 460,
+            "mae": 2.8763,
+            "rmse": 3.596,
+            "bias": 0.6202,
+            "mae_mediano": 2.5318
+          },
+          "17": {
+            "n": 450,
+            "mae": 2.9102,
+            "rmse": 3.6642,
+            "bias": 0.0687,
+            "mae_mediano": 2.5031
+          },
+          "1": {
+            "n": 440,
+            "mae": 2.5907,
+            "rmse": 3.3081,
+            "bias": -0.1847,
+            "mae_mediano": 2.0469
+          },
+          "3": {
+            "n": 438,
+            "mae": 2.8113,
+            "rmse": 3.5296,
+            "bias": -0.1207,
+            "mae_mediano": 2.4538
+          },
+          "2": {
+            "n": 359,
+            "mae": 2.9085,
+            "rmse": 3.6845,
+            "bias": 0.1778,
+            "mae_mediano": 2.33
+          },
+          "5": {
+            "n": 357,
+            "mae": 2.689,
+            "rmse": 3.2761,
+            "bias": 0.5676,
+            "mae_mediano": 2.4119
+          }
+        },
+        "per_lato": {
+          "away": {
+            "n": 3521,
+            "mae": 2.8713,
+            "rmse": 3.6143,
+            "bias": -0.0363,
+            "mae_mediano": 2.4219
+          },
+          "home": {
+            "n": 3518,
+            "mae": 2.7059,
+            "rmse": 3.4141,
+            "bias": 0.1905,
+            "mae_mediano": 2.268
+          }
+        },
+        "totale_di_gara": {
+          "n": 3512,
+          "mae": 4.1221,
+          "rmse": 5.1624,
+          "bias": 0.1542,
+          "mae_mediano": 3.5552,
+          "gare": 3512
+        }
+      },
+      "colonne": 111
+    },
+    "guadagno": {
+      "poisson_glm": 0.00411,
+      "ridge": 0.00307
+    }
+  },
+  "origini": 5,
+  "modelli": [
+    "poisson_glm",
+    "ridge"
+  ],
+  "blocchi_disponibili": {
+    "base": {
+      "colonne": 12,
+      "descrizione": "medie di lega e di squadra nella stagione, con restringimento"
+    },
+    "avversario": {
+      "colonne": 23,
+      "descrizione": "profilo dell'avversario e valori concessi"
+    },
+    "forma": {
+      "colonne": 11,
+      "descrizione": "orizzonti recenti e media esponenziale"
+    },
+    "casa_trasferta": {
+      "colonne": 5,
+      "descrizione": "split casa e trasferta e forza relativa"
+    },
+    "riposo": {
+      "colonne": 1,
+      "descrizione": "giorni dall'ultima gara"
+    },
+    "giocatori": {
+      "colonne": 15,
+      "descrizione": "composizione della rosa: minuti, dipendenza da pochi, rotazione"
+    },
+    "allenatore": {
+      "colonne": 6,
+      "descrizione": "storia dell'allenatore prima di questa gara e gare con la squadra"
+    },
+    "arbitro": {
+      "colonne": 15,
+      "descrizione": "profilo dell'arbitro al momento di: severita', campione, scarto dalla lega"
+    },
+    "spaziale": {
+      "colonne": 14,
+      "descrizione": "profilo dei tiri: dentro e fuori area, distanza, qualita', prodotto e concesso"
+    },
+    "classifica": {
+      "colonne": 6,
+      "descrizione": "punti e reti accumulati nella stagione, e lo scarto con l'avversario"
+    },
+    "contesto": {
+      "colonne": 3,
+      "descrizione": "turno, derby e gare ravvicinate"
+    }
+  },
+  "blocchi_non_disponibili": {
+    "formazione": "le formazioni previste storiche non esistono: sarebbe contaminazione",
+    "meteo_terreno_viaggio": "la fonte li valorizza solo dalla meta' di aprile 2026: un campo nuovo, non un campo sparso. In finestra avanzante cadrebbero tutti nell'ultima origine",
+    "campo_neutro": "falso in tutte le gare dell'archivio: costante, non feature",
+    "spettatori": "mai valorizzati dalla fonte in nessuna gara"
+  },
+  "colonne_non_assegnate": [],
+  "cumulativa": [
+    {
+      "blocchi": [
+        "base"
+      ],
+      "aggiunto": "base",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.9103,
+          "rmse": 3.6547,
+          "bias": 0.172,
+          "mae_mediano": 2.4505,
+          "mae_per_origine": [
+            2.8679,
+            2.8325,
+            2.9716,
+            2.9682,
+            2.9117
+          ],
+          "sd_fra_origini": 0.0547
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.9072,
+          "rmse": 3.6514,
+          "bias": 0.1306,
+          "mae_mediano": 2.4434,
+          "mae_per_origine": [
+            2.8665,
+            2.8344,
+            2.9685,
+            2.9654,
+            2.9012
+          ],
+          "sd_fra_origini": 0.0532
+        },
+        "colonne": 12
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario"
+      ],
+      "aggiunto": "avversario",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.8021,
+          "rmse": 3.5266,
+          "bias": 0.1353,
+          "mae_mediano": 2.3548,
+          "mae_per_origine": [
+            2.7543,
+            2.7345,
+            2.8564,
+            2.8539,
+            2.8116
+          ],
+          "sd_fra_origini": 0.0502
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7938,
+          "rmse": 3.5194,
+          "bias": 0.0943,
+          "mae_mediano": 2.3333,
+          "mae_per_origine": [
+            2.7465,
+            2.7353,
+            2.8448,
+            2.8459,
+            2.7964
+          ],
+          "sd_fra_origini": 0.0469
+        },
+        "colonne": 35
+      },
+      "guadagno": {
+        "poisson_glm": 0.03718,
+        "ridge": 0.03901
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma"
+      ],
+      "aggiunto": "forma",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.8009,
+          "rmse": 3.5259,
+          "bias": 0.1488,
+          "mae_mediano": 2.3521,
+          "mae_per_origine": [
+            2.7533,
+            2.7365,
+            2.8573,
+            2.8515,
+            2.8058
+          ],
+          "sd_fra_origini": 0.0494
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7948,
+          "rmse": 3.52,
+          "bias": 0.1365,
+          "mae_mediano": 2.3486,
+          "mae_per_origine": [
+            2.7441,
+            2.7425,
+            2.8501,
+            2.8447,
+            2.7927
+          ],
+          "sd_fra_origini": 0.0466
+        },
+        "colonne": 46
+      },
+      "guadagno": {
+        "poisson_glm": 0.00043,
+        "ridge": -0.00036
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta"
+      ],
+      "aggiunto": "casa_trasferta",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.8008,
+          "rmse": 3.526,
+          "bias": 0.143,
+          "mae_mediano": 2.3505,
+          "mae_per_origine": [
+            2.7538,
+            2.7366,
+            2.8574,
+            2.8514,
+            2.8052
+          ],
+          "sd_fra_origini": 0.0492
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7947,
+          "rmse": 3.52,
+          "bias": 0.136,
+          "mae_mediano": 2.3427,
+          "mae_per_origine": [
+            2.7441,
+            2.742,
+            2.8509,
+            2.8447,
+            2.7918
+          ],
+          "sd_fra_origini": 0.0469
+        },
+        "colonne": 51
+      },
+      "guadagno": {
+        "poisson_glm": 4e-05,
+        "ridge": 4e-05
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo"
+      ],
+      "aggiunto": "riposo",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.8008,
+          "rmse": 3.5261,
+          "bias": 0.1428,
+          "mae_mediano": 2.3508,
+          "mae_per_origine": [
+            2.754,
+            2.7358,
+            2.8572,
+            2.8516,
+            2.8056
+          ],
+          "sd_fra_origini": 0.0494
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7948,
+          "rmse": 3.5202,
+          "bias": 0.1358,
+          "mae_mediano": 2.3428,
+          "mae_per_origine": [
+            2.7452,
+            2.7414,
+            2.8505,
+            2.8449,
+            2.7923
+          ],
+          "sd_fra_origini": 0.0468
+        },
+        "colonne": 52
+      },
+      "guadagno": {
+        "poisson_glm": 0.0,
+        "ridge": -4e-05
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori"
+      ],
+      "aggiunto": "giocatori",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7999,
+          "rmse": 3.5253,
+          "bias": 0.1513,
+          "mae_mediano": 2.3668,
+          "mae_per_origine": [
+            2.7543,
+            2.7348,
+            2.8565,
+            2.8503,
+            2.8037
+          ],
+          "sd_fra_origini": 0.0491
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7948,
+          "rmse": 3.521,
+          "bias": 0.1398,
+          "mae_mediano": 2.3455,
+          "mae_per_origine": [
+            2.7507,
+            2.7409,
+            2.8501,
+            2.8437,
+            2.7886
+          ],
+          "sd_fra_origini": 0.0455
+        },
+        "colonne": 67
+      },
+      "guadagno": {
+        "poisson_glm": 0.00032,
+        "ridge": 0.0
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore"
+      ],
+      "aggiunto": "allenatore",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7997,
+          "rmse": 3.5251,
+          "bias": 0.152,
+          "mae_mediano": 2.3674,
+          "mae_per_origine": [
+            2.7545,
+            2.7345,
+            2.8574,
+            2.8505,
+            2.8017
+          ],
+          "sd_fra_origini": 0.0494
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7945,
+          "rmse": 3.5224,
+          "bias": 0.1356,
+          "mae_mediano": 2.3359,
+          "mae_per_origine": [
+            2.751,
+            2.741,
+            2.8555,
+            2.839,
+            2.786
+          ],
+          "sd_fra_origini": 0.0459
+        },
+        "colonne": 73
+      },
+      "guadagno": {
+        "poisson_glm": 7e-05,
+        "ridge": 0.00011
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro"
+      ],
+      "aggiunto": "arbitro",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7885,
+          "rmse": 3.5111,
+          "bias": 0.1648,
+          "mae_mediano": 2.3508,
+          "mae_per_origine": [
+            2.7445,
+            2.7334,
+            2.8332,
+            2.833,
+            2.7987
+          ],
+          "sd_fra_origini": 0.0426
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7854,
+          "rmse": 3.5098,
+          "bias": 0.149,
+          "mae_mediano": 2.3256,
+          "mae_per_origine": [
+            2.7464,
+            2.7431,
+            2.8294,
+            2.8194,
+            2.7889
+          ],
+          "sd_fra_origini": 0.0358
+        },
+        "colonne": 88
+      },
+      "guadagno": {
+        "poisson_glm": 0.004,
+        "ridge": 0.00326
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale"
+      ],
+      "aggiunto": "spaziale",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.783,
+          "rmse": 3.5062,
+          "bias": 0.1507,
+          "mae_mediano": 2.3477,
+          "mae_per_origine": [
+            2.7469,
+            2.7295,
+            2.8251,
+            2.8266,
+            2.7869
+          ],
+          "sd_fra_origini": 0.0396
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7811,
+          "rmse": 3.506,
+          "bias": 0.132,
+          "mae_mediano": 2.3295,
+          "mae_per_origine": [
+            2.7475,
+            2.7355,
+            2.8256,
+            2.8161,
+            2.7807
+          ],
+          "sd_fra_origini": 0.0358
+        },
+        "colonne": 102
+      },
+      "guadagno": {
+        "poisson_glm": 0.00197,
+        "ridge": 0.00154
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica"
+      ],
+      "aggiunto": "classifica",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7841,
+          "rmse": 3.5065,
+          "bias": 0.152,
+          "mae_mediano": 2.34,
+          "mae_per_origine": [
+            2.753,
+            2.7277,
+            2.8251,
+            2.8282,
+            2.7866
+          ],
+          "sd_fra_origini": 0.0394
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7827,
+          "rmse": 3.5065,
+          "bias": 0.1341,
+          "mae_mediano": 2.3244,
+          "mae_per_origine": [
+            2.7548,
+            2.7332,
+            2.8273,
+            2.8176,
+            2.7806
+          ],
+          "sd_fra_origini": 0.0359
+        },
+        "colonne": 108
+      },
+      "guadagno": {
+        "poisson_glm": -0.0004,
+        "ridge": -0.00058
+      }
+    },
+    {
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "aggiunto": "contesto",
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7853,
+          "rmse": 3.5091,
+          "bias": 0.098,
+          "mae_mediano": 2.3603,
+          "mae_per_origine": [
+            2.7473,
+            2.7283,
+            2.8267,
+            2.8308,
+            2.7934
+          ],
+          "sd_fra_origini": 0.0413
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7886,
+          "rmse": 3.5157,
+          "bias": 0.0771,
+          "mae_mediano": 2.3505,
+          "mae_per_origine": [
+            2.7562,
+            2.7417,
+            2.834,
+            2.8252,
+            2.7863
+          ],
+          "sd_fra_origini": 0.0365
+        },
+        "colonne": 111
+      },
+      "guadagno": {
+        "poisson_glm": -0.00043,
+        "ridge": -0.00212
+      }
+    }
+  ],
+  "lascia_fuori_uno": [
+    {
+      "senza": "base",
+      "blocchi": [
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7888,
+          "rmse": 3.5131,
+          "bias": 0.0868,
+          "mae_mediano": 2.3655,
+          "mae_per_origine": [
+            2.7516,
+            2.7308,
+            2.8339,
+            2.8352,
+            2.7926
+          ],
+          "sd_fra_origini": 0.0423
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7863,
+          "rmse": 3.5132,
+          "bias": 0.0611,
+          "mae_mediano": 2.3317,
+          "mae_per_origine": [
+            2.7516,
+            2.7325,
+            2.8381,
+            2.8228,
+            2.7867
+          ],
+          "sd_fra_origini": 0.0403
+        },
+        "colonne": 99
+      },
+      "costo": {
+        "poisson_glm": 0.00126,
+        "ridge": -0.00082
+      }
+    },
+    {
+      "senza": "avversario",
+      "blocchi": [
+        "base",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.8925,
+          "rmse": 3.6341,
+          "bias": 0.1129,
+          "mae_mediano": 2.436,
+          "mae_per_origine": [
+            2.8597,
+            2.8267,
+            2.9371,
+            2.9491,
+            2.8897
+          ],
+          "sd_fra_origini": 0.0461
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.8972,
+          "rmse": 3.6401,
+          "bias": 0.1012,
+          "mae_mediano": 2.4393,
+          "mae_per_origine": [
+            2.8711,
+            2.8396,
+            2.9378,
+            2.9493,
+            2.8881
+          ],
+          "sd_fra_origini": 0.0411
+        },
+        "colonne": 88
+      },
+      "costo": {
+        "poisson_glm": 0.03849,
+        "ridge": 0.03894
+      }
+    },
+    {
+      "senza": "forma",
+      "blocchi": [
+        "base",
+        "avversario",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7852,
+          "rmse": 3.5085,
+          "bias": 0.0883,
+          "mae_mediano": 2.3614,
+          "mae_per_origine": [
+            2.7467,
+            2.7254,
+            2.8253,
+            2.8316,
+            2.7969
+          ],
+          "sd_fra_origini": 0.0423
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7865,
+          "rmse": 3.5129,
+          "bias": 0.0499,
+          "mae_mediano": 2.3562,
+          "mae_per_origine": [
+            2.7552,
+            2.7342,
+            2.8296,
+            2.8259,
+            2.7877
+          ],
+          "sd_fra_origini": 0.0378
+        },
+        "colonne": 100
+      },
+      "costo": {
+        "poisson_glm": -4e-05,
+        "ridge": -0.00075
+      }
+    },
+    {
+      "senza": "casa_trasferta",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7855,
+          "rmse": 3.5092,
+          "bias": 0.1022,
+          "mae_mediano": 2.3622,
+          "mae_per_origine": [
+            2.7477,
+            2.7286,
+            2.8268,
+            2.8306,
+            2.7938
+          ],
+          "sd_fra_origini": 0.0412
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7884,
+          "rmse": 3.5156,
+          "bias": 0.0782,
+          "mae_mediano": 2.3482,
+          "mae_per_origine": [
+            2.756,
+            2.7423,
+            2.833,
+            2.824,
+            2.7866
+          ],
+          "sd_fra_origini": 0.0359
+        },
+        "colonne": 106
+      },
+      "costo": {
+        "poisson_glm": 7e-05,
+        "ridge": -7e-05
+      }
+    },
+    {
+      "senza": "riposo",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7854,
+          "rmse": 3.5089,
+          "bias": 0.0981,
+          "mae_mediano": 2.3614,
+          "mae_per_origine": [
+            2.7477,
+            2.7296,
+            2.8268,
+            2.8302,
+            2.793
+          ],
+          "sd_fra_origini": 0.0408
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7888,
+          "rmse": 3.5155,
+          "bias": 0.0774,
+          "mae_mediano": 2.3546,
+          "mae_per_origine": [
+            2.7563,
+            2.7433,
+            2.8342,
+            2.8243,
+            2.7859
+          ],
+          "sd_fra_origini": 0.0359
+        },
+        "colonne": 110
+      },
+      "costo": {
+        "poisson_glm": 4e-05,
+        "ridge": 7e-05
+      }
+    },
+    {
+      "senza": "giocatori",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7876,
+          "rmse": 3.5101,
+          "bias": 0.1118,
+          "mae_mediano": 2.3607,
+          "mae_per_origine": [
+            2.7476,
+            2.7322,
+            2.8291,
+            2.8315,
+            2.7979
+          ],
+          "sd_fra_origini": 0.041
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.788,
+          "rmse": 3.5141,
+          "bias": 0.0666,
+          "mae_mediano": 2.3524,
+          "mae_per_origine": [
+            2.7446,
+            2.7457,
+            2.8395,
+            2.8223,
+            2.7881
+          ],
+          "sd_fra_origini": 0.0387
+        },
+        "colonne": 96
+      },
+      "costo": {
+        "poisson_glm": 0.00083,
+        "ridge": -0.00022
+      }
+    },
+    {
+      "senza": "allenatore",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "arbitro",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7854,
+          "rmse": 3.5092,
+          "bias": 0.0925,
+          "mae_mediano": 2.3601,
+          "mae_per_origine": [
+            2.7473,
+            2.7287,
+            2.8263,
+            2.83,
+            2.7947
+          ],
+          "sd_fra_origini": 0.041
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7867,
+          "rmse": 3.5128,
+          "bias": 0.0736,
+          "mae_mediano": 2.3597,
+          "mae_per_origine": [
+            2.7555,
+            2.7407,
+            2.8274,
+            2.824,
+            2.7858
+          ],
+          "sd_fra_origini": 0.035
+        },
+        "colonne": 105
+      },
+      "costo": {
+        "poisson_glm": 4e-05,
+        "ridge": -0.00068
+      }
+    },
+    {
+      "senza": "arbitro",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "spaziale",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7968,
+          "rmse": 3.5226,
+          "bias": 0.0871,
+          "mae_mediano": 2.3713,
+          "mae_per_origine": [
+            2.7554,
+            2.7311,
+            2.8533,
+            2.8493,
+            2.795
+          ],
+          "sd_fra_origini": 0.049
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7972,
+          "rmse": 3.5278,
+          "bias": 0.0639,
+          "mae_mediano": 2.3586,
+          "mae_per_origine": [
+            2.7607,
+            2.7424,
+            2.859,
+            2.8436,
+            2.7803
+          ],
+          "sd_fra_origini": 0.046
+        },
+        "colonne": 96
+      },
+      "costo": {
+        "poisson_glm": 0.00413,
+        "ridge": 0.00308
+      }
+    },
+    {
+      "senza": "spaziale",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "classifica",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7896,
+          "rmse": 3.513,
+          "bias": 0.1143,
+          "mae_mediano": 2.3656,
+          "mae_per_origine": [
+            2.7487,
+            2.7313,
+            2.8318,
+            2.833,
+            2.803
+          ],
+          "sd_fra_origini": 0.0422
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7915,
+          "rmse": 3.5181,
+          "bias": 0.0934,
+          "mae_mediano": 2.3459,
+          "mae_per_origine": [
+            2.7581,
+            2.7479,
+            2.8364,
+            2.8233,
+            2.792
+          ],
+          "sd_fra_origini": 0.0348
+        },
+        "colonne": 97
+      },
+      "costo": {
+        "poisson_glm": 0.00154,
+        "ridge": 0.00104
+      }
+    },
+    {
+      "senza": "classifica",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "contesto"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7842,
+          "rmse": 3.5088,
+          "bias": 0.0967,
+          "mae_mediano": 2.3629,
+          "mae_per_origine": [
+            2.7423,
+            2.7298,
+            2.8263,
+            2.8292,
+            2.7934
+          ],
+          "sd_fra_origini": 0.0415
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7873,
+          "rmse": 3.5156,
+          "bias": 0.0745,
+          "mae_mediano": 2.3554,
+          "mae_per_origine": [
+            2.75,
+            2.7439,
+            2.8321,
+            2.8243,
+            2.7864
+          ],
+          "sd_fra_origini": 0.0365
+        },
+        "colonne": 105
+      },
+      "costo": {
+        "poisson_glm": -0.00039,
+        "ridge": -0.00047
+      }
+    },
+    {
+      "senza": "contesto",
+      "blocchi": [
+        "base",
+        "avversario",
+        "forma",
+        "casa_trasferta",
+        "riposo",
+        "giocatori",
+        "allenatore",
+        "arbitro",
+        "spaziale",
+        "classifica"
+      ],
+      "misure": {
+        "poisson_glm": {
+          "n": 7039,
+          "mae": 2.7841,
+          "rmse": 3.5065,
+          "bias": 0.152,
+          "mae_mediano": 2.34,
+          "mae_per_origine": [
+            2.753,
+            2.7277,
+            2.8251,
+            2.8282,
+            2.7866
+          ],
+          "sd_fra_origini": 0.0394
+        },
+        "ridge": {
+          "n": 7039,
+          "mae": 2.7827,
+          "rmse": 3.5065,
+          "bias": 0.1341,
+          "mae_mediano": 2.3244,
+          "mae_per_origine": [
+            2.7548,
+            2.7332,
+            2.8273,
+            2.8176,
+            2.7806
+          ],
+          "sd_fra_origini": 0.0359
+        },
+        "colonne": 108
+      },
+      "costo": {
+        "poisson_glm": -0.00043,
+        "ridge": -0.00212
+      }
+    }
+  ],
+  "nota": "il costo di «lascia fuori uno» e' l'aumento relativo dell'errore quando il blocco viene tolto dall'insieme completo: e' la misura di quanto serve davvero"
+}

@@ -1,0 +1,78 @@
+{
+  "generato_da": "scripts/projection/dataset/verify_home_away.py",
+  "permutazioni": 200,
+  "min_gare_per_lato": 4,
+  "metriche": [
+    {
+      "metrica": "fouls",
+      "righe": 15788,
+      "squadre_stagione": 472,
+      "effetto_medio_di_lega": -0.3245,
+      "scostamento_individuale_medio": -0.3037,
+      "sd_osservata_fra_squadre": 1.2775,
+      "sd_attesa_dal_caso": 1.3243,
+      "sd_vera_stimata": 0.0,
+      "quota_di_varianza_vera": 0.0,
+      "coppie_di_meta": 472,
+      "ripetibilita_meta_contro_meta": -0.0238,
+      "affidabilita_stagione_intera": -0.0488
+    },
+    {
+      "metrica": "yellow_cards",
+      "righe": 18410,
+      "squadre_stagione": 548,
+      "effetto_medio_di_lega": -0.2341,
+      "scostamento_individuale_medio": -0.2297,
+      "sd_osservata_fra_squadre": 0.4756,
+      "sd_attesa_dal_caso": 0.4701,
+      "sd_vera_stimata": 0.0721,
+      "quota_di_varianza_vera": 0.023,
+      "coppie_di_meta": 548,
+      "ripetibilita_meta_contro_meta": 0.011,
+      "affidabilita_stagione_intera": 0.0218
+    },
+    {
+      "metrica": "total_shots",
+      "righe": 15810,
+      "squadre_stagione": 472,
+      "effetto_medio_di_lega": 2.3549,
+      "scostamento_individuale_medio": 2.3968,
+      "sd_osservata_fra_squadre": 1.7995,
+      "sd_attesa_dal_caso": 1.7728,
+      "sd_vera_stimata": 0.3087,
+      "quota_di_varianza_vera": 0.0294,
+      "coppie_di_meta": 472,
+      "ripetibilita_meta_contro_meta": 0.06,
+      "affidabilita_stagione_intera": 0.1132
+    },
+    {
+      "metrica": "shots_on_target",
+      "righe": 15810,
+      "squadre_stagione": 472,
+      "effetto_medio_di_lega": 0.7875,
+      "scostamento_individuale_medio": 0.7982,
+      "sd_osservata_fra_squadre": 0.8167,
+      "sd_attesa_dal_caso": 0.8373,
+      "sd_vera_stimata": 0.0,
+      "quota_di_varianza_vera": 0.0,
+      "coppie_di_meta": 472,
+      "ripetibilita_meta_contro_meta": 0.0036,
+      "affidabilita_stagione_intera": 0.0072
+    },
+    {
+      "metrica": "corner_kicks",
+      "righe": 15810,
+      "squadre_stagione": 472,
+      "effetto_medio_di_lega": 0.9323,
+      "scostamento_individuale_medio": 0.947,
+      "sd_osservata_fra_squadre": 0.9555,
+      "sd_attesa_dal_caso": 0.9718,
+      "sd_vera_stimata": 0.0,
+      "quota_di_varianza_vera": 0.0,
+      "coppie_di_meta": 472,
+      "ripetibilita_meta_contro_meta": 0.0111,
+      "affidabilita_stagione_intera": 0.0219
+    }
+  ],
+  "nota": "l'effetto medio di lega e' gia' nel modello attraverso le medie di lega per lato; qui si misura solo lo scostamento personale della singola squadra"
+}

@@ -1,0 +1,2886 @@
+{
+  "schema": "registro-target/1",
+  "generato_da": "scripts/projection/discovery/build_registries.py",
+  "politica_provenienza": "2026-08-16.1",
+  "campione": {
+    "gare": 9305,
+    "gare_con_pannello_completo": 7905,
+    "leghe": 29,
+    "data_minima": "2025-02-22",
+    "data_massima": "2026-06-28",
+    "tiri_mappati": 211950
+  },
+  "nota_idoneita": "nessun target e' idoneo alla produzione prima di aver battuto le baseline fuori campione e di aver superato il test di parita' numerica fra Python e TypeScript",
+  "target": [
+    {
+      "target": "accurate_passes",
+      "nome_fonte": "accurate_passes",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "aerial_duels_pct",
+      "nome_fonte": "aerial_duels.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "aerial_duels_total",
+      "nome_fonte": "aerial_duels.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "aerial_duels_value",
+      "nome_fonte": "aerial_duels.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "ball_possession",
+      "nome_fonte": "ball_possession",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000253,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "big_chances",
+      "nome_fonte": "big_chances",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.071347,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "big_chances_missed",
+      "nome_fonte": "big_chances_missed",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.127641,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "big_chances_scored",
+      "nome_fonte": "big_chances_scored",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.224668,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "big_saves",
+      "nome_fonte": "big_saves",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.34902,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "blocked_shots",
+      "nome_fonte": "blocked_shots",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 27,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "clearances",
+      "nome_fonte": "clearances",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "corner_kicks",
+      "nome_fonte": "corner_kicks",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "crosses_pct",
+      "nome_fonte": "crosses.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "crosses_total",
+      "nome_fonte": "crosses.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "crosses_value",
+      "nome_fonte": "crosses.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "dispossessed",
+      "nome_fonte": "dispossessed",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "dribbles_pct",
+      "nome_fonte": "dribbles.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000886,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "dribbles_total",
+      "nome_fonte": "dribbles.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000886,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "dribbles_value",
+      "nome_fonte": "dribbles.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000886,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "duels",
+      "nome_fonte": "duels",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "errors_lead_to_a_goal",
+      "nome_fonte": "errors_lead_to_a_goal",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.73599,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "errors_lead_to_a_shot",
+      "nome_fonte": "errors_lead_to_a_shot",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.445035,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "expected_goals",
+      "nome_fonte": "expected_goals",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "continuo",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.005693,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "final_third_entries",
+      "nome_fonte": "final_third_entries",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.05642,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "final_third_phase_pct",
+      "nome_fonte": "final_third_phase.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.019734,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "final_third_phase_total",
+      "nome_fonte": "final_third_phase.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.019734,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "final_third_phase_value",
+      "nome_fonte": "final_third_phase.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.019734,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "fouled_in_final_third",
+      "nome_fonte": "fouled_in_final_third",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.070209,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "fouls",
+      "nome_fonte": "fouls",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7894,
+        "quota_sul_pannello": 0.9986,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15788
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.001392,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (fouls per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "free_kicks",
+      "nome_fonte": "free_kicks",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "goal_kicks",
+      "nome_fonte": "goal_kicks",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 27,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "goalkeeper_saves",
+      "nome_fonte": "goalkeeper_saves",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7867,
+        "quota_sul_pannello": 0.9952,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15734
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.004807,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (saves per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "goals_prevented",
+      "nome_fonte": "goals_prevented",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "continuo",
+      "copertura_storica": {
+        "gare_utili": 6085,
+        "quota_sul_pannello": 0.7698,
+        "leghe": 19,
+        "osservazioni_squadra_gara": 12170
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.230234,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (goals_prevented per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "ground_duels_pct",
+      "nome_fonte": "ground_duels.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "ground_duels_total",
+      "nome_fonte": "ground_duels.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "ground_duels_value",
+      "nome_fonte": "ground_duels.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "high_claims",
+      "nome_fonte": "high_claims",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.314231,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "hit_woodwork",
+      "nome_fonte": "hit_woodwork",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7899,
+        "quota_sul_pannello": 0.9992,
+        "leghe": 27,
+        "osservazioni_squadra_gara": 15798
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (hit_woodwork per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "interceptions",
+      "nome_fonte": "interceptions",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "long_balls_pct",
+      "nome_fonte": "long_balls.pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "long_balls_total",
+      "nome_fonte": "long_balls.total",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "long_balls_value",
+      "nome_fonte": "long_balls.value",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "offsides",
+      "nome_fonte": "offsides",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7518,
+        "quota_sul_pannello": 0.951,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15036
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.048956,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (total_offside per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "pass_accuracy_pct",
+      "nome_fonte": "pass_accuracy_pct",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "percentuale",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_su_logit",
+        "beta",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "passes",
+      "nome_fonte": "passes",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "penalty_saves",
+      "nome_fonte": "penalty_saves",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.951803,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "punches",
+      "nome_fonte": "punches",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.452878,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "recoveries",
+      "nome_fonte": "recoveries",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.05642,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "shots_inside_box",
+      "nome_fonte": "shots_inside_box",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7900,
+        "quota_sul_pannello": 0.9994,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15800
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.000633,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/stats/ shotmap: i tiri entro 16,5 metri dalla porta",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "shots_off_target",
+      "nome_fonte": "shots_off_target",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 27,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "shots_on_target",
+      "nome_fonte": "shots_on_target",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 28,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "shots_outside_box",
+      "nome_fonte": "shots_outside_box",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7900,
+        "quota_sul_pannello": 0.9994,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15800
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.000633,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/stats/ shotmap: i tiri oltre 16,5 metri dalla porta",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "tackles",
+      "nome_fonte": "tackles",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7899,
+        "quota_sul_pannello": 0.9992,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15798
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.000759,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/player-stats/ (total_tackle per giocatore)",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "tackles_won",
+      "nome_fonte": "tackles_won",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 24,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.05642,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "throw_ins",
+      "nome_fonte": "throw_ins",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 27,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "total_shots",
+      "nome_fonte": "total_shots",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 26,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "touches_in_penalty_area",
+      "nome_fonte": "touches_in_penalty_area",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 25,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "B",
+      "quota_assente": 0.019734,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "xg",
+      "nome_fonte": "xg.actual",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "natura": "continuo",
+      "copertura_storica": {
+        "gare_utili": 7905,
+        "quota_sul_pannello": 1.0,
+        "leghe": 29,
+        "osservazioni_squadra_gara": 15810
+      },
+      "provenienza_ammessa": "A",
+      "quota_assente": 0.0,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": null,
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "yellow_cards",
+      "nome_fonte": null,
+      "sorgente": "/events/{id}/incidents/ con card_type yellow, panchina esclusa",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 9205,
+        "quota_sul_pannello": 1.1645,
+        "leghe": 29,
+        "osservazioni_squadra_gara": 18410
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.010747,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/incidents/ con card_type yellow, panchina esclusa",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "second_yellow_red",
+      "nome_fonte": null,
+      "sorgente": "/events/{id}/incidents/ con card_type yellowRed",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 9205,
+        "quota_sul_pannello": 1.1645,
+        "leghe": 29,
+        "osservazioni_squadra_gara": 18410
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.010747,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/incidents/ con card_type yellowRed",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    },
+    {
+      "target": "red_cards_direct",
+      "nome_fonte": null,
+      "sorgente": "/events/{id}/incidents/ con card_type red e is_manager falso",
+      "entita": "squadra-gara",
+      "natura": "conteggio",
+      "copertura_storica": {
+        "gare_utili": 9205,
+        "quota_sul_pannello": 1.1645,
+        "leghe": 29,
+        "osservazioni_squadra_gara": 18410
+      },
+      "provenienza_ammessa": "C",
+      "quota_assente": 0.010747,
+      "baseline_obbligatorie": [
+        "media_di_lega",
+        "media_di_squadra_stagione",
+        "media_di_squadra_casa_trasferta",
+        "media_mobile_recente",
+        "attacco_contro_concesso_avversario",
+        "restringimento_verso_la_media_di_lega"
+      ],
+      "modelli_candidati": [
+        "poisson",
+        "binomiale_negativa",
+        "regressione_regolarizzata",
+        "gradient_boosting"
+      ],
+      "metrica_di_valutazione": [
+        "mae",
+        "rmse",
+        "bias",
+        "errore_mediano_assoluto",
+        "copertura_intervallo"
+      ],
+      "validazione": "walk-forward per date intere, mai split casuale",
+      "min_previous_matches": 3,
+      "subordinato_a_ricostruzione": false,
+      "ricostruzione": "/events/{id}/incidents/ con card_type red e is_manager falso",
+      "idoneita_produzione": "da validare",
+      "fallback": [
+        "modello del target con meno feature",
+        "baseline attacco contro concesso avversario",
+        "restringimento verso la media di lega",
+        "nessuna previsione se l'incertezza resta eccessiva"
+      ]
+    }
+  ],
+  "derivate_di_mercato": [
+    {
+      "nome_interno": "card_points",
+      "livello": "mercato",
+      "definizione": "somma pesata dei cartellini di una squadra in una gara",
+      "pesi_predefiniti": {
+        "yellow_cards": 1,
+        "second_yellow_red": 2,
+        "red_cards_direct": 2,
+        "bench_cards": 0
+      },
+      "configurabile": true,
+      "motivo_configurabilita": "il conteggio di seconda ammonizione, rosso diretto e cartellini alla panchina cambia da un mercato all'altro",
+      "vincolo": "vive accanto alle metriche osservate e non le riscrive: gialli e rossi restano separati nel dataset statistico",
+      "verifica_eseguita": "misurato da scripts/projection/dataset/verify_cards.py: il conteggio aggregato del pannello comprende gia' la seconda ammonizione, e cosi' fa anche il conteggio aggregato dei rossi. I pesi qui sopra si applicano percio' alle quattro nature separate ricostruite dagli episodi, mai ai conteggi aggregati"
+    }
+  ]
+}

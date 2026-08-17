@@ -1,0 +1,3669 @@
+{
+  "schema": "registro-metriche/1",
+  "generato_da": "scripts/projection/discovery/build_registries.py",
+  "politica_provenienza": {
+    "versione": "2026-08-16.1",
+    "classi": {
+      "A": "osservato direttamente",
+      "B": "zero implicito verificato dalla struttura della fonte",
+      "C": "ricostruito deterministicamente da un'altra risorsa",
+      "D": "ambiguo",
+      "E": "mancante"
+    },
+    "ammesse_nei_dataset_validati": [
+      "A",
+      "B",
+      "C"
+    ],
+    "regola_pannello": "una riga statistica compare per entrambe le squadre o per nessuna: verificato su 7905 gare senza una sola presenza asimmetrica",
+    "gare_senza_pannello": 1400,
+    "trattamento_gare_senza_pannello": "classe E, restano null e non diventano mai zero",
+    "min_previous_matches": 3
+  },
+  "campione": {
+    "gare": 9305,
+    "gare_con_pannello_completo": 7905,
+    "leghe": 29,
+    "data_minima": "2025-02-22",
+    "data_massima": "2026-06-28",
+    "tiri_mappati": 211950
+  },
+  "altre_risorse": [
+    "2026-08-01/event-finished-detail",
+    "2026-08-01/event-finished-h2h",
+    "2026-08-01/event-finished-odds",
+    "2026-08-01/event-finished-odds-comparison",
+    "2026-08-01/event-finished-odds-list",
+    "2026-08-01/event-finished-odds-list-offset-200",
+    "2026-08-01/event-finished-odds-list-offset-400",
+    "2026-08-01/event-upcoming-detail",
+    "2026-08-01/event-upcoming-h2h",
+    "2026-08-01/event-upcoming-odds",
+    "2026-08-01/event-upcoming-odds-comparison",
+    "2026-08-01/event-upcoming-odds-list",
+    "2026-08-01/event-upcoming-pregame",
+    "2026-08-01/event-upcoming-team-stats",
+    "2026-08-01/events-finished-sample",
+    "2026-08-01/events-upcoming-sample",
+    "2026-08-01/league-standings",
+    "2026-08-01/openapi-relevant-contracts",
+    "2026-08-13-team-profile/event-player-stats-1",
+    "2026-08-13-team-profile/event-stats-away-1",
+    "2026-08-13-team-profile/event-stats-away-2",
+    "2026-08-13-team-profile/event-stats-away-3",
+    "2026-08-13-team-profile/event-stats-home-1",
+    "2026-08-13-team-profile/event-stats-home-2",
+    "2026-08-13-team-profile/event-stats-home-3",
+    "2026-08-13-team-profile/events-by-team-previous-season",
+    "2026-08-13-team-profile/league-seasons",
+    "2026-08-13-team-profile/league-top-scorers-previous-season",
+    "2026-08-13-team-profile/manager-detail",
+    "2026-08-13-team-profile/openapi-team-contracts",
+    "2026-08-13-team-profile/referee-detail",
+    "2026-08-13-team-profile/referees-league",
+    "2026-08-13-team-profile/standings-current-season",
+    "2026-08-13-team-profile/standings-previous-season",
+    "2026-08-13-team-profile/team-detail",
+    "2026-08-13-team-profile/team-fixtures-finished",
+    "2026-08-13-team-profile/team-fixtures-upcoming",
+    "2026-08-13-team-profile/team-squad",
+    "2026-08-13-team-profile/venue-detail"
+  ],
+  "metriche": [
+    {
+      "nome_fonte": "accurate_passes",
+      "nome_interno": "accurate_passes",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 339.341689,
+        "sd": 110.709221,
+        "dispersione": 36.118555,
+        "min": 67,
+        "max": 924,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "aerial_duels",
+      "nome_interno": "aerial_duels",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "aerial_duels.pct",
+      "nome_interno": "aerial_duels_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 49.852684,
+        "sd": 10.888295,
+        "dispersione": 2.378106,
+        "min": 0,
+        "max": 100,
+        "quota_zeri": 0.000127
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "aerial_duels.total",
+      "nome_interno": "aerial_duels_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 29.612307,
+        "sd": 11.277822,
+        "dispersione": 4.295149,
+        "min": 4,
+        "max": 85,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "aerial_duels.value",
+      "nome_interno": "aerial_duels_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 14.74905,
+        "sd": 6.363261,
+        "dispersione": 2.745335,
+        "min": 0,
+        "max": 46,
+        "quota_zeri": 0.000127
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "attack",
+      "nome_interno": "attack",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 80.915852,
+        "sd": 20.979981,
+        "dispersione": 5.43972,
+        "min": 3,
+        "max": 199,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "attack_pct",
+      "nome_interno": "attack_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 24.369707,
+        "sd": 6.334129,
+        "dispersione": 1.646355,
+        "min": 1,
+        "max": 64,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ball_possession",
+      "nome_interno": "ball_possession",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7903 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7903,
+        "righe_assenti": 2,
+        "quota_assente": 0.000253,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 49.962811,
+        "sd": 11.00223,
+        "dispersione": 2.422783,
+        "min": 0,
+        "max": 85,
+        "quota_zeri": 0.000744
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ball_safe",
+      "nome_interno": "ball_safe",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 74.693811,
+        "sd": 15.960988,
+        "dispersione": 3.410633,
+        "min": 1,
+        "max": 156,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ball_safe_pct",
+      "nome_interno": "ball_safe_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 46.504343,
+        "sd": 9.911729,
+        "dispersione": 2.112542,
+        "min": 0,
+        "max": 92,
+        "quota_zeri": 0.000543
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "big_chances",
+      "nome_interno": "big_chances",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7341 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7341,
+        "righe_assenti": 564,
+        "quota_assente": 0.071347,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 2.30929,
+        "sd": 1.730054,
+        "dispersione": 1.296107,
+        "min": 0,
+        "max": 13,
+        "quota_zeri": 0.120828
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "big_chances_missed",
+      "nome_interno": "big_chances_missed",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 6896 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 6896,
+        "righe_assenti": 1009,
+        "quota_assente": 0.127641,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.518997,
+        "sd": 1.319446,
+        "dispersione": 1.146111,
+        "min": 0,
+        "max": 12,
+        "quota_zeri": 0.222375
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "big_chances_scored",
+      "nome_interno": "big_chances_scored",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 6129 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 6129,
+        "righe_assenti": 1776,
+        "quota_assente": 0.224668,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.063387,
+        "sd": 0.953211,
+        "dispersione": 0.854449,
+        "min": 0,
+        "max": 7,
+        "quota_zeri": 0.298499
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "big_saves",
+      "nome_interno": "big_saves",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 5146 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 5146,
+        "righe_assenti": 2759,
+        "quota_assente": 0.34902,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.875534,
+        "sd": 0.848031,
+        "dispersione": 0.821392,
+        "min": 0,
+        "max": 6,
+        "quota_zeri": 0.364652
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "blocked_shots",
+      "nome_interno": "blocked_shots",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 27,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 3.41337,
+        "sd": 2.373499,
+        "dispersione": 1.650421,
+        "min": 0,
+        "max": 19,
+        "quota_zeri": 0.067421
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "clearances",
+      "nome_interno": "clearances",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 25.079567,
+        "sd": 10.565043,
+        "dispersione": 4.450641,
+        "min": 0,
+        "max": 84,
+        "quota_zeri": 0.000127
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "corner_kicks",
+      "nome_interno": "corner_kicks",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 4.842371,
+        "sd": 2.839807,
+        "dispersione": 1.665404,
+        "min": 0,
+        "max": 28,
+        "quota_zeri": 0.024526
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "crosses",
+      "nome_interno": "crosses",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "crosses.pct",
+      "nome_interno": "crosses_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 24.807356,
+        "sd": 12.247559,
+        "dispersione": 6.046703,
+        "min": 0,
+        "max": 100,
+        "quota_zeri": 0.034439
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "crosses.total",
+      "nome_interno": "crosses_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 17.808243,
+        "sd": 8.256017,
+        "dispersione": 3.827544,
+        "min": 0,
+        "max": 68,
+        "quota_zeri": 0.000317
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "crosses.value",
+      "nome_interno": "crosses_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 4.385857,
+        "sd": 2.750575,
+        "dispersione": 1.725013,
+        "min": 0,
+        "max": 23,
+        "quota_zeri": 0.030641
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dangerous_attack",
+      "nome_interno": "dangerous_attack",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 44.075461,
+        "sd": 15.428348,
+        "dispersione": 5.4006,
+        "min": 4,
+        "max": 125,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dangerous_attack_pct",
+      "nome_interno": "dangerous_attack_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "presente solo nelle gare con pannello in diretta",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 852,
+        "righe_assenti": 7053,
+        "quota_assente": 0.89222,
+        "gare_utili_dopo_politica": 852,
+        "leghe_coperte": 22,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 29.12595,
+        "sd": 8.672056,
+        "dispersione": 2.582046,
+        "min": 1,
+        "max": 73,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dispossessed",
+      "nome_interno": "dispossessed",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 7.934232,
+        "sd": 3.354679,
+        "dispersione": 1.418395,
+        "min": 0,
+        "max": 25,
+        "quota_zeri": 0.001393
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dribbles",
+      "nome_interno": "dribbles",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7898 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7898,
+        "righe_assenti": 7,
+        "quota_assente": 0.000886,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dribbles.pct",
+      "nome_interno": "dribbles_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7898 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7898,
+        "righe_assenti": 7,
+        "quota_assente": 0.000886,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 48.37185,
+        "sd": 15.86847,
+        "dispersione": 5.20568,
+        "min": 0,
+        "max": 100,
+        "quota_zeri": 0.002723
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dribbles.total",
+      "nome_interno": "dribbles_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7898 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7898,
+        "righe_assenti": 7,
+        "quota_assente": 0.000886,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 14.823984,
+        "sd": 5.495786,
+        "dispersione": 2.037486,
+        "min": 1,
+        "max": 58,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "dribbles.value",
+      "nome_interno": "dribbles_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7898 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7898,
+        "righe_assenti": 7,
+        "quota_assente": 0.000886,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 7.247499,
+        "sd": 3.809387,
+        "dispersione": 2.002267,
+        "min": 0,
+        "max": 40,
+        "quota_zeri": 0.002723
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "duels",
+      "nome_interno": "duels",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 49.299468,
+        "sd": 6.127161,
+        "dispersione": 0.761511,
+        "min": 24,
+        "max": 71,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "errors_lead_to_a_goal",
+      "nome_interno": "errors_lead_to_a_goal",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 2087 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 2087,
+        "righe_assenti": 5818,
+        "quota_assente": 0.73599,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.599904,
+        "sd": 0.619875,
+        "dispersione": 0.640511,
+        "min": 0,
+        "max": 4,
+        "quota_zeri": 0.467178
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "errors_lead_to_a_shot",
+      "nome_interno": "errors_lead_to_a_shot",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 4387 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 4387,
+        "righe_assenti": 3518,
+        "quota_assente": 0.445035,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.886027,
+        "sd": 0.974137,
+        "dispersione": 1.071009,
+        "min": 0,
+        "max": 11,
+        "quota_zeri": 0.377935
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "expected_goals",
+      "nome_interno": "expected_goals",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "continuo",
+      "unita": "gol attesi",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7860 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7860,
+        "righe_assenti": 45,
+        "quota_assente": 0.005693,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.409173,
+        "sd": 0.876941,
+        "dispersione": 0.545728,
+        "min": 0,
+        "max": 13.91,
+        "quota_zeri": 0.000311
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "final_third_entries",
+      "nome_interno": "final_third_entries",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7459 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7459,
+        "righe_assenti": 446,
+        "quota_assente": 0.05642,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 54.265451,
+        "sd": 13.930796,
+        "dispersione": 3.576255,
+        "min": 12,
+        "max": 145,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "final_third_phase",
+      "nome_interno": "final_third_phase",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7749 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7749,
+        "righe_assenti": 156,
+        "quota_assente": 0.019734,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "final_third_phase.pct",
+      "nome_interno": "final_third_phase_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7749 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7749,
+        "righe_assenti": 156,
+        "quota_assente": 0.019734,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 66.382292,
+        "sd": 10.062502,
+        "dispersione": 1.525316,
+        "min": 15,
+        "max": 94,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "final_third_phase.total",
+      "nome_interno": "final_third_phase_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7749 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7749,
+        "righe_assenti": 156,
+        "quota_assente": 0.019734,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 114.835183,
+        "sd": 43.86429,
+        "dispersione": 16.755109,
+        "min": 13,
+        "max": 510,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "final_third_phase.value",
+      "nome_interno": "final_third_phase_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7749 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7749,
+        "righe_assenti": 156,
+        "quota_assente": 0.019734,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 78.968831,
+        "sd": 39.681985,
+        "dispersione": 19.940271,
+        "min": 3,
+        "max": 476,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "fouled_in_final_third",
+      "nome_interno": "fouled_in_final_third",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7350 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7350,
+        "righe_assenti": 555,
+        "quota_assente": 0.070209,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 2.153605,
+        "sd": 1.541604,
+        "dispersione": 1.103518,
+        "min": 0,
+        "max": 10,
+        "quota_zeri": 0.121156
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "fouls",
+      "nome_interno": "fouls",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (fouls per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7894,
+        "righe_assenti": 11,
+        "quota_assente": 0.001392,
+        "gare_utili_dopo_politica": 7894,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 12.331586,
+        "sd": 4.166298,
+        "dispersione": 1.407608,
+        "min": 0,
+        "max": 62,
+        "quota_zeri": 0.000374
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "free_kicks",
+      "nome_interno": "free_kicks",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 11.668465,
+        "sd": 4.544443,
+        "dispersione": 1.769895,
+        "min": 0,
+        "max": 38,
+        "quota_zeri": 0.005396
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "goal_kicks",
+      "nome_interno": "goal_kicks",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 27,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 7.844283,
+        "sd": 3.391837,
+        "dispersione": 1.466617,
+        "min": 0,
+        "max": 32,
+        "quota_zeri": 0.001516
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "goalkeeper_saves",
+      "nome_interno": "goalkeeper_saves",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (saves per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7867,
+        "righe_assenti": 38,
+        "quota_assente": 0.004807,
+        "gare_utili_dopo_politica": 7867,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 2.987861,
+        "sd": 1.970106,
+        "dispersione": 1.29903,
+        "min": 0,
+        "max": 14,
+        "quota_zeri": 0.068705
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "goals_prevented",
+      "nome_interno": "goals_prevented",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "continuo",
+      "unita": "gol attesi",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (goals_prevented per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 6085,
+        "righe_assenti": 1820,
+        "quota_assente": 0.230234,
+        "gare_utili_dopo_politica": 6085,
+        "leghe_coperte": 19,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.010954,
+        "sd": 0.786728,
+        "dispersione": 56.503739,
+        "min": -3.87,
+        "max": 3.73,
+        "quota_zeri": 0.02917
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ground_duels",
+      "nome_interno": "ground_duels",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ground_duels.pct",
+      "nome_interno": "ground_duels_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 49.179539,
+        "sd": 7.156053,
+        "dispersione": 1.041268,
+        "min": 20,
+        "max": 74,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ground_duels.total",
+      "nome_interno": "ground_duels_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 70.450684,
+        "sd": 16.225511,
+        "dispersione": 3.7369,
+        "min": 33,
+        "max": 184,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "ground_duels.value",
+      "nome_interno": "ground_duels_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 34.283996,
+        "sd": 7.4892,
+        "dispersione": 1.635986,
+        "min": 10,
+        "max": 75,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "high_claims",
+      "nome_interno": "high_claims",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 5421 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 5421,
+        "righe_assenti": 2484,
+        "quota_assente": 0.314231,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.955267,
+        "sd": 0.954282,
+        "dispersione": 0.953298,
+        "min": 0,
+        "max": 7,
+        "quota_zeri": 0.354363
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "hit_woodwork",
+      "nome_interno": "hit_woodwork",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (hit_woodwork per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7899,
+        "leghe_coperte": 27,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.336537,
+        "sd": 0.592358,
+        "dispersione": 1.042644,
+        "min": 0,
+        "max": 5,
+        "quota_zeri": 0.718604
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "interceptions",
+      "nome_interno": "interceptions",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 8.740727,
+        "sd": 3.872624,
+        "dispersione": 1.715786,
+        "min": 0,
+        "max": 34,
+        "quota_zeri": 0.000506
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "long_balls",
+      "nome_interno": "long_balls",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": null,
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "long_balls.pct",
+      "nome_interno": "long_balls_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 45.608382,
+        "sd": 11.045291,
+        "dispersione": 2.674913,
+        "min": 11,
+        "max": 85,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "long_balls.total",
+      "nome_interno": "long_balls_total",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 52.353001,
+        "sd": 12.052209,
+        "dispersione": 2.774545,
+        "min": 14,
+        "max": 104,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "long_balls.value",
+      "nome_interno": "long_balls_value",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 23.558053,
+        "sd": 6.962848,
+        "dispersione": 2.057948,
+        "min": 3,
+        "max": 63,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "offsides",
+      "nome_interno": "offsides",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (total_offside per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7518,
+        "righe_assenti": 387,
+        "quota_assente": 0.048956,
+        "gare_utili_dopo_politica": 7518,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.760915,
+        "sd": 1.471343,
+        "dispersione": 1.22939,
+        "min": 0,
+        "max": 15,
+        "quota_zeri": 0.191255
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "pass_accuracy_pct",
+      "nome_interno": "pass_accuracy_pct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "percentuale",
+      "unita": "percentuale 0-100",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 80.170237,
+        "sd": 6.77172,
+        "dispersione": 0.571985,
+        "min": 42,
+        "max": 94.5,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "passes",
+      "nome_interno": "passes",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7899 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 416.131219,
+        "sd": 108.742001,
+        "dispersione": 28.416091,
+        "min": 137,
+        "max": 995,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "penalty_saves",
+      "nome_interno": "penalty_saves",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 381 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 381,
+        "righe_assenti": 7524,
+        "quota_assente": 0.951803,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.507874,
+        "sd": 0.507752,
+        "dispersione": 0.50763,
+        "min": 0,
+        "max": 2,
+        "quota_zeri": 0.496063
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "punches",
+      "nome_interno": "punches",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 4325 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 4325,
+        "righe_assenti": 3580,
+        "quota_assente": 0.452878,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.792023,
+        "sd": 0.816793,
+        "dispersione": 0.842337,
+        "min": 0,
+        "max": 7,
+        "quota_zeri": 0.405665
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "recoveries",
+      "nome_interno": "recoveries",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7459 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7459,
+        "righe_assenti": 446,
+        "quota_assente": 0.05642,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 47.10913,
+        "sd": 7.502506,
+        "dispersione": 1.194834,
+        "min": 20,
+        "max": 80,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "shots_inside_box",
+      "nome_interno": "shots_inside_box",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/stats/ shotmap: i tiri entro 16,5 metri dalla porta"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7900,
+        "righe_assenti": 5,
+        "quota_assente": 0.000633,
+        "gare_utili_dopo_politica": 7900,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 8.114051,
+        "sd": 3.947668,
+        "dispersione": 1.920629,
+        "min": 0,
+        "max": 34,
+        "quota_zeri": 0.003481
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "shots_off_target",
+      "nome_interno": "shots_off_target",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 27,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 4.967522,
+        "sd": 2.633895,
+        "dispersione": 1.396552,
+        "min": 0,
+        "max": 22,
+        "quota_zeri": 0.01447
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "shots_on_target",
+      "nome_interno": "shots_on_target",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 28,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 4.347977,
+        "sd": 2.455937,
+        "dispersione": 1.387226,
+        "min": 0,
+        "max": 16,
+        "quota_zeri": 0.024455
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "shots_outside_box",
+      "nome_interno": "shots_outside_box",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/stats/ shotmap: i tiri oltre 16,5 metri dalla porta"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7900,
+        "righe_assenti": 5,
+        "quota_assente": 0.000633,
+        "gare_utili_dopo_politica": 7900,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 4.628038,
+        "sd": 2.634808,
+        "dispersione": 1.500034,
+        "min": 0,
+        "max": 20,
+        "quota_zeri": 0.021392
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "tackles",
+      "nome_interno": "tackles",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "assenza ambigua, valore ricostruibile",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/player-stats/ (total_tackle per giocatore)"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7899,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 15.005064,
+        "sd": 5.644205,
+        "dispersione": 2.123086,
+        "min": 0,
+        "max": 38,
+        "quota_zeri": 0.006646
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "tackles_won",
+      "nome_interno": "tackles_won",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7459 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7459,
+        "righe_assenti": 446,
+        "quota_assente": 0.05642,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 24,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 61.319413,
+        "sd": 13.462169,
+        "dispersione": 2.955508,
+        "min": 0,
+        "max": 100,
+        "quota_zeri": 0.000469
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "through_balls",
+      "nome_interno": "through_balls",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "D",
+        "motivo": "assenza ambigua e nessuna via di ricostruzione individuata",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 4785,
+        "righe_assenti": 3120,
+        "quota_assente": 0.394687,
+        "gare_utili_dopo_politica": 4785,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.886938,
+        "sd": 0.960542,
+        "dispersione": 1.040253,
+        "min": 0,
+        "max": 11,
+        "quota_zeri": 0.387252
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "throw_ins",
+      "nome_interno": "throw_ins",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 27,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 19.4976,
+        "sd": 5.930763,
+        "dispersione": 1.804015,
+        "min": 2,
+        "max": 49,
+        "quota_zeri": 0.0
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "total_saves",
+      "nome_interno": "goalkeeper_saves",
+      "alias_di": "goalkeeper_saves",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "alias verificato di goalkeeper_saves, nessuna differenza su 2.685 confronti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7867,
+        "righe_assenti": 38,
+        "quota_assente": 0.004807,
+        "gare_utili_dopo_politica": 7867,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 2.987861,
+        "sd": 1.970106,
+        "dispersione": 1.29903,
+        "min": 0,
+        "max": 14,
+        "quota_zeri": 0.068705
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "total_shots",
+      "nome_interno": "total_shots",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 12.743833,
+        "sd": 5.293908,
+        "dispersione": 2.199139,
+        "min": 0,
+        "max": 42,
+        "quota_zeri": 0.000316
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "total_tackles",
+      "nome_interno": "tackles",
+      "alias_di": "tackles",
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "alias verificato di tackles, nessuna differenza su 2.685 confronti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7899,
+        "righe_assenti": 6,
+        "quota_assente": 0.000759,
+        "gare_utili_dopo_politica": 7899,
+        "leghe_coperte": 26,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 15.005064,
+        "sd": 5.644205,
+        "dispersione": 2.123086,
+        "min": 0,
+        "max": 38,
+        "quota_zeri": 0.006646
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": false,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "touches_in_penalty_area",
+      "nome_interno": "touches_in_penalty_area",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "B",
+        "motivo": "nessuna gara con entrambe a zero su 7749 righe presenti",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7749,
+        "righe_assenti": 156,
+        "quota_assente": 0.019734,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 25,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 22.542715,
+        "sd": 10.25894,
+        "dispersione": 4.66873,
+        "min": 0,
+        "max": 86,
+        "quota_zeri": 0.000323
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "xg",
+      "nome_interno": "xg",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "composito",
+      "unita": "gol attesi",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": null,
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": "xg.actual",
+      "nome_interno": "xg",
+      "alias_di": null,
+      "sorgente": "/events/{id}/stats/",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "continuo",
+      "unita": "gol attesi",
+      "provenienza": {
+        "classe": "A",
+        "motivo": "riga sempre presente nel pannello completo",
+        "politica": "2026-08-16.1",
+        "ricostruzione": null
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 7905,
+        "righe_assenti": 0,
+        "quota_assente": 0.0,
+        "gare_utili_dopo_politica": 7905,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.397419,
+        "sd": 0.880335,
+        "dispersione": 0.554586,
+        "min": 0,
+        "max": 13.91,
+        "quota_zeri": 6.3e-05
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": null,
+      "nome_interno": "yellow_cards",
+      "alias_di": null,
+      "sorgente": "/events/{id}/incidents/ con card_type yellow, panchina esclusa",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "ricostruito episodio per episodio da /events/{id}/incidents/ con card_type yellow, panchina esclusa",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/incidents/ con card_type yellow, panchina esclusa"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 9205,
+        "righe_assenti": 100,
+        "quota_assente": 0.010747,
+        "gare_utili_dopo_politica": 9205,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 1.962846,
+        "sd": 1.41138,
+        "dispersione": 1.014849,
+        "min": 0,
+        "max": 12,
+        "quota_zeri": 0.15421
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "descrizione": "ammonizione semplice, esclusa la seconda ammonizione",
+      "osservazioni_non_nulle": 15571,
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": null,
+      "nome_interno": "second_yellow_red",
+      "alias_di": null,
+      "sorgente": "/events/{id}/incidents/ con card_type yellowRed",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "ricostruito episodio per episodio da /events/{id}/incidents/ con card_type yellowRed",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/incidents/ con card_type yellowRed"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 9205,
+        "righe_assenti": 100,
+        "quota_assente": 0.010747,
+        "gare_utili_dopo_politica": 9205,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.039381,
+        "sd": 0.197822,
+        "dispersione": 0.993723,
+        "min": 0,
+        "max": 2,
+        "quota_zeri": 0.961271
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "descrizione": "espulsione per seconda ammonizione, distinta dal rosso diretto",
+      "osservazioni_non_nulle": 713,
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": null,
+      "nome_interno": "red_cards_direct",
+      "alias_di": null,
+      "sorgente": "/events/{id}/incidents/ con card_type red e is_manager falso",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "ricostruito episodio per episodio da /events/{id}/incidents/ con card_type red e is_manager falso",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/incidents/ con card_type red e is_manager falso"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 9205,
+        "righe_assenti": 100,
+        "quota_assente": 0.010747,
+        "gare_utili_dopo_politica": 9205,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.064856,
+        "sd": 0.258748,
+        "dispersione": 1.032296,
+        "min": 0,
+        "max": 3,
+        "quota_zeri": 0.938131
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": true,
+        "subordinato_a_ricostruzione": false
+      },
+      "descrizione": "espulsione diretta, esclusi i cartellini alla panchina",
+      "osservazioni_non_nulle": 1139,
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    },
+    {
+      "nome_fonte": null,
+      "nome_interno": "bench_cards",
+      "alias_di": null,
+      "sorgente": "/events/{id}/incidents/ con is_manager vero",
+      "entita": "squadra-gara",
+      "livello": "home e away, sempre simmetrico",
+      "tipo": "conteggio",
+      "unita": "eventi per squadra a gara",
+      "provenienza": {
+        "classe": "C",
+        "motivo": "ricostruito episodio per episodio da /events/{id}/incidents/ con is_manager vero",
+        "politica": "2026-08-16.1",
+        "ricostruzione": "/events/{id}/incidents/ con is_manager vero"
+      },
+      "copertura": {
+        "gare_con_pannello": 7905,
+        "gare_scansionate": 9305,
+        "righe_presenti": 9205,
+        "righe_assenti": 100,
+        "quota_assente": 0.010747,
+        "gare_utili_dopo_politica": 9205,
+        "leghe_coperte": 29,
+        "presenze_asimmetriche": 0
+      },
+      "distribuzione": {
+        "media": 0.000326,
+        "sd": 0.01805,
+        "dispersione": 0.999674,
+        "min": 0,
+        "max": 1,
+        "quota_zeri": 0.999674
+      },
+      "disponibilita": {
+        "storica": true,
+        "pre_match": false,
+        "post_match": true,
+        "nota": "osservata a gara conclusa: entra nelle feature solo da gare precedenti"
+      },
+      "uso": {
+        "come_feature": true,
+        "come_target": false,
+        "subordinato_a_ricostruzione": false
+      },
+      "descrizione": "cartellini a panchina e staff, tenuti fuori dai conteggi di squadra",
+      "osservazioni_non_nulle": 6,
+      "rischio_leakage": "alto se letta sulla gara da prevedere; nullo se letta solo da gare con data anteriore al calcio d'inizio"
+    }
+  ],
+  "superate_dalla_ricostruzione": [
+    {
+      "nome_fonte": "red_cards",
+      "motivo": "il conteggio aggregato comprende sia l'espulsione diretta sia la seconda ammonizione: sostituito da red_cards_direct e second_yellow_red"
+    },
+    {
+      "nome_fonte": "yellow_cards",
+      "motivo": "il conteggio aggregato comprende anche la seconda ammonizione: sostituito dalla ammonizione semplice ricostruita dagli episodi"
+    }
+  ],
+  "verifica_doppio_conteggio": {
+    "eseguita": true,
+    "misurata_da": "scripts/projection/dataset/verify_cards.py",
+    "domanda": "il conteggio aggregato del pannello comprende gia' la seconda ammonizione?",
+    "gialli": {
+      "lati_di_controllo": 13918,
+      "accordo_di_controllo": 0.975068,
+      "lati_con_seconda_ammonizione": 541,
+      "accordo_se_esclusa": 0.077634,
+      "accordo_se_inclusa": 0.90573,
+      "esito": "compreso nel conteggio aggregato"
+    },
+    "rossi": {
+      "lati_di_controllo": 2791,
+      "accordo_di_controllo": 0.9957,
+      "lati_con_seconda_ammonizione": 539,
+      "accordo_se_esclusa": 0.001855,
+      "accordo_se_inclusa": 0.998145,
+      "esito": "compreso nel conteggio aggregato"
+    }
+  },
+  "derivate": [
+    {
+      "nome_interno": "card_points",
+      "livello": "mercato",
+      "definizione": "somma pesata dei cartellini di una squadra in una gara",
+      "pesi_predefiniti": {
+        "yellow_cards": 1,
+        "second_yellow_red": 2,
+        "red_cards_direct": 2,
+        "bench_cards": 0
+      },
+      "configurabile": true,
+      "motivo_configurabilita": "il conteggio di seconda ammonizione, rosso diretto e cartellini alla panchina cambia da un mercato all'altro",
+      "vincolo": "vive accanto alle metriche osservate e non le riscrive: gialli e rossi restano separati nel dataset statistico",
+      "verifica_eseguita": "misurato da scripts/projection/dataset/verify_cards.py: il conteggio aggregato del pannello comprende gia' la seconda ammonizione, e cosi' fa anche il conteggio aggregato dei rossi. I pesi qui sopra si applicano percio' alle quattro nature separate ricostruite dagli episodi, mai ai conteggi aggregati"
+    }
+  ]
+}

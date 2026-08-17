@@ -1,0 +1,1343 @@
+{
+  "schema": "registro-modelli/1",
+  "generato_da": "scripts/projection/models/registry.py",
+  "stati": {
+    "experimental": "esiste e si puo' studiare, non si mostra",
+    "validated": "ha superato tutte le condizioni misurabili",
+    "production": "scelto da una persona fra i validati: il registro non lo assegna",
+    "disabled": "escluso deliberatamente"
+  },
+  "regola_di_promozione": "un modello diventa validated solo se batte la migliore baseline fuori campione, vince la maggioranza delle origini, passa i controlli di contaminazione, supera il test di parita' con TypeScript e ha un intervallo calibrato. Il passaggio a production resta una decisione umana",
+  "modelli": [
+    {
+      "model_id": "corner_kicks__poisson_glm",
+      "model_version": "1.0.0",
+      "target": "corner_kicks",
+      "model_type": "poisson_glm",
+      "stato": "validated",
+      "artefatto": "corner_kicks__poisson_glm.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "corner_kicks__poisson_glm.json.sha256"
+      },
+      "feature": 83,
+      "addestramento": {
+        "righe": 12462,
+        "da": "2025-04-12 21:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 83,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.430248911253252,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7200000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 2.0764,
+        "rmse": 2.622,
+        "bias": 0.0059,
+        "mae_mediano": 1.7893,
+        "copertura_intervallo": 0.7954,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 2.1687,
+        "vantaggio_su_migliore_baseline": 0.04256,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04256,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 1.737517668286325e-16,
+          "scarto_massimo_valore_atteso": 1.7763568394002505e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.8027,
+          "copertura_fuori_campione": 0.7954,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.00616
+          },
+          {
+            "blocco": "giocatori",
+            "costo": 0.00274
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00265
+          },
+          {
+            "blocco": "contesto",
+            "costo": 0.00115
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00067
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00063
+          },
+          {
+            "blocco": "base",
+            "costo": 0.00048
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00034
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "forma",
+            "costo": -0.00014
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": -0.00034
+          },
+          {
+            "blocco": "riposo",
+            "costo": 0.0
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00067
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "corner_kicks__ridge",
+      "model_version": "1.0.0",
+      "target": "corner_kicks",
+      "model_type": "ridge",
+      "stato": "validated",
+      "artefatto": "corner_kicks__ridge.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "corner_kicks__ridge.json.sha256"
+      },
+      "feature": 83,
+      "addestramento": {
+        "righe": 12462,
+        "da": "2025-04-12 21:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 83,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.430194031457329,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7200000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 2.0788,
+        "rmse": 2.6335,
+        "bias": -0.0487,
+        "mae_mediano": 1.7746,
+        "copertura_intervallo": 0.7896,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 2.1687,
+        "vantaggio_su_migliore_baseline": 0.04145,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04145,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 2.5662395146910803e-16,
+          "scarto_massimo_valore_atteso": 8.881784197001252e-16
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.8026,
+          "copertura_fuori_campione": 0.7896,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.00616
+          },
+          {
+            "blocco": "giocatori",
+            "costo": 0.00274
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00265
+          },
+          {
+            "blocco": "contesto",
+            "costo": 0.00115
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00067
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00063
+          },
+          {
+            "blocco": "base",
+            "costo": 0.00048
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00034
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "forma",
+            "costo": -0.00014
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": -0.00034
+          },
+          {
+            "blocco": "riposo",
+            "costo": 0.0
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00067
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "fouls__poisson_glm",
+      "model_version": "1.0.0",
+      "target": "fouls",
+      "model_type": "poisson_glm",
+      "stato": "validated",
+      "artefatto": "fouls__poisson_glm.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "fouls__poisson_glm.json.sha256"
+      },
+      "feature": 83,
+      "addestramento": {
+        "righe": 13359,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 83,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.04638126594868,
+        "distribuzione_intervallo": "poisson",
+        "livello_nominale": 0.7600000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 2.7924,
+        "rmse": 3.5156,
+        "bias": 0.1691,
+        "mae_mediano": 2.3545,
+        "copertura_intervallo": 0.8072,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 2.9278,
+        "vantaggio_su_migliore_baseline": 0.04625,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04625,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 2.0719382161530568e-16,
+          "scarto_massimo_valore_atteso": 7.105427357601002e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.804,
+          "copertura_fuori_campione": 0.8072,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.03846
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00208
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00097
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00011
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00079
+          },
+          {
+            "blocco": "forma",
+            "costo": -0.0005
+          },
+          {
+            "blocco": "riposo",
+            "costo": -4e-05
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -7e-05
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00043
+          },
+          {
+            "blocco": "classifica",
+            "costo": -0.00058
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00169
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.0
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "fouls__ridge",
+      "model_version": "1.0.0",
+      "target": "fouls",
+      "model_type": "ridge",
+      "stato": "validated",
+      "artefatto": "fouls__ridge.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "fouls__ridge.json.sha256"
+      },
+      "feature": 83,
+      "addestramento": {
+        "righe": 13359,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 83,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.040775884219523,
+        "distribuzione_intervallo": "poisson",
+        "livello_nominale": 0.7500000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 2.787,
+        "rmse": 3.511,
+        "bias": 0.13,
+        "mae_mediano": 2.3541,
+        "copertura_intervallo": 0.8025,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 2.9278,
+        "vantaggio_su_migliore_baseline": 0.04809,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04809,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 3.8371410190065014e-16,
+          "scarto_massimo_valore_atteso": 3.552713678800501e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.7968,
+          "copertura_fuori_campione": 0.8025,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.03846
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00208
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00097
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00011
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00079
+          },
+          {
+            "blocco": "forma",
+            "costo": -0.0005
+          },
+          {
+            "blocco": "riposo",
+            "costo": -4e-05
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -7e-05
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00043
+          },
+          {
+            "blocco": "classifica",
+            "costo": -0.00058
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00169
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.0
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "shots_on_target__poisson_glm",
+      "model_version": "1.0.0",
+      "target": "shots_on_target",
+      "model_type": "poisson_glm",
+      "stato": "validated",
+      "artefatto": "shots_on_target__poisson_glm.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "shots_on_target__poisson_glm.json.sha256"
+      },
+      "feature": 88,
+      "addestramento": {
+        "righe": 12656,
+        "da": "2025-04-12 21:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 88,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.1740948632374133,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7100000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 1.7663,
+        "rmse": 2.2278,
+        "bias": 0.044,
+        "mae_mediano": 1.5181,
+        "copertura_intervallo": 0.8039,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 1.837,
+        "vantaggio_su_migliore_baseline": 0.03849,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.03849,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 1.855865703377511e-16,
+          "scarto_massimo_valore_atteso": 1.7763568394002505e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.8031,
+          "copertura_fuori_campione": 0.8039,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "spaziale",
+            "costo": 0.00247
+          },
+          {
+            "blocco": "avversario",
+            "costo": 0.00135
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00107
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00079
+          },
+          {
+            "blocco": "forma",
+            "costo": 0.00073
+          },
+          {
+            "blocco": "contesto",
+            "costo": 0.00045
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00011
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00191
+          },
+          {
+            "blocco": "riposo",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -0.00337
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00439
+          },
+          {
+            "blocco": "arbitro",
+            "costo": -0.00051
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "shots_on_target__ridge",
+      "model_version": "1.0.0",
+      "target": "shots_on_target",
+      "model_type": "ridge",
+      "stato": "validated",
+      "artefatto": "shots_on_target__ridge.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "shots_on_target__ridge.json.sha256"
+      },
+      "feature": 88,
+      "addestramento": {
+        "righe": 12656,
+        "da": "2025-04-12 21:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 88,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.1723703840592274,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7000000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 1.7669,
+        "rmse": 2.2318,
+        "bias": 0.0147,
+        "mae_mediano": 1.5064,
+        "copertura_intervallo": 0.8012,
+        "migliore_baseline": "baseline_restringimento",
+        "mae_migliore_baseline": 1.837,
+        "vantaggio_su_migliore_baseline": 0.03816,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.03816,
+          "migliore_baseline": "baseline_restringimento"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 4.704876061538399e-16,
+          "scarto_massimo_valore_atteso": 1.7763568394002505e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.7982,
+          "copertura_fuori_campione": 0.8012,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "spaziale",
+            "costo": 0.00247
+          },
+          {
+            "blocco": "avversario",
+            "costo": 0.00135
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00107
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00079
+          },
+          {
+            "blocco": "forma",
+            "costo": 0.00073
+          },
+          {
+            "blocco": "contesto",
+            "costo": 0.00045
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00011
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00191
+          },
+          {
+            "blocco": "riposo",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -0.00337
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00439
+          },
+          {
+            "blocco": "arbitro",
+            "costo": -0.00051
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "total_shots__poisson_glm",
+      "model_version": "1.0.0",
+      "target": "total_shots",
+      "model_type": "poisson_glm",
+      "stato": "validated",
+      "artefatto": "total_shots__poisson_glm.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "total_shots__poisson_glm.json.sha256"
+      },
+      "feature": 45,
+      "addestramento": {
+        "righe": 13638,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 45,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.6612728055441057,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7500000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 3.6177,
+        "rmse": 4.5785,
+        "bias": 0.0669,
+        "mae_mediano": 3.1086,
+        "copertura_intervallo": 0.7961,
+        "migliore_baseline": "baseline_attacco_contro_concesso",
+        "mae_migliore_baseline": 3.788,
+        "vantaggio_su_migliore_baseline": 0.04496,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04496,
+          "migliore_baseline": "baseline_attacco_contro_concesso"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 1.9861404884966678e-16,
+          "scarto_massimo_valore_atteso": 7.105427357601002e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.797,
+          "copertura_fuori_campione": 0.7961,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.02475
+          },
+          {
+            "blocco": "base",
+            "costo": 0.00272
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00147
+          },
+          {
+            "blocco": "giocatori",
+            "costo": 0.00042
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.0003
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00028
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "forma",
+            "costo": -0.00017
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": -0.00017
+          },
+          {
+            "blocco": "riposo",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.0008
+          },
+          {
+            "blocco": "spaziale",
+            "costo": -6e-05
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00019
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "total_shots__ridge",
+      "model_version": "1.0.0",
+      "target": "total_shots",
+      "model_type": "ridge",
+      "stato": "validated",
+      "artefatto": "total_shots__ridge.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "total_shots__ridge.json.sha256"
+      },
+      "feature": 45,
+      "addestramento": {
+        "righe": 13638,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 45,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.6583981483034977,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.7500000000000002,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 3.6095,
+        "rmse": 4.5778,
+        "bias": -0.0077,
+        "mae_mediano": 3.1038,
+        "copertura_intervallo": 0.8005,
+        "migliore_baseline": "baseline_attacco_contro_concesso",
+        "mae_migliore_baseline": 3.788,
+        "vantaggio_su_migliore_baseline": 0.04712,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.04712,
+          "migliore_baseline": "baseline_attacco_contro_concesso"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 2.2123874329482534e-16,
+          "scarto_massimo_valore_atteso": 3.552713678800501e-15
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.7956,
+          "copertura_fuori_campione": 0.8005,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.02475
+          },
+          {
+            "blocco": "base",
+            "costo": 0.00272
+          },
+          {
+            "blocco": "classifica",
+            "costo": 0.00147
+          },
+          {
+            "blocco": "giocatori",
+            "costo": 0.00042
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.0003
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00028
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "forma",
+            "costo": -0.00017
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": -0.00017
+          },
+          {
+            "blocco": "riposo",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.0008
+          },
+          {
+            "blocco": "spaziale",
+            "costo": -6e-05
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00019
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "yellow_cards__poisson_glm",
+      "model_version": "1.0.0",
+      "target": "yellow_cards",
+      "model_type": "poisson_glm",
+      "stato": "validated",
+      "artefatto": "yellow_cards__poisson_glm.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "yellow_cards__poisson_glm.json.sha256"
+      },
+      "feature": 85,
+      "addestramento": {
+        "righe": 13627,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 85,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.0,
+        "distribuzione_intervallo": "poisson",
+        "livello_nominale": 0.6300000000000001,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 1.0541,
+        "rmse": 1.3286,
+        "bias": 0.0384,
+        "mae_mediano": 0.9412,
+        "copertura_intervallo": 0.7989,
+        "migliore_baseline": "baseline_lega",
+        "mae_migliore_baseline": 1.069,
+        "vantaggio_su_migliore_baseline": 0.01394,
+        "origini_vinte_su_migliore_baseline": "5/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.01394,
+          "migliore_baseline": "baseline_lega"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 5,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 1.4892673779239722e-15,
+          "scarto_massimo_valore_atteso": 8.881784197001252e-16
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.7989,
+          "copertura_fuori_campione": 0.7989,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.00169
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00094
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00084
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00056
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00047
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00038
+          },
+          {
+            "blocco": "forma",
+            "costo": -0.00056
+          },
+          {
+            "blocco": "riposo",
+            "costo": 0.0
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -0.00197
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00216
+          },
+          {
+            "blocco": "classifica",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00075
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    },
+    {
+      "model_id": "yellow_cards__ridge",
+      "model_version": "1.0.0",
+      "target": "yellow_cards",
+      "model_type": "ridge",
+      "stato": "validated",
+      "artefatto": "yellow_cards__ridge.json",
+      "checksum": {
+        "algoritmo": "sha256",
+        "ambito": "byte del file dell'artefatto",
+        "file": "yellow_cards__ridge.json.sha256"
+      },
+      "feature": 85,
+      "addestramento": {
+        "righe": 13627,
+        "da": "2025-03-15 18:30:00+00:00",
+        "a": "2026-06-20 19:30:00+00:00",
+        "leghe": 25,
+        "min_previous_matches": 3,
+        "feature_candidate": 85,
+        "densita_minima_richiesta": 0.8,
+        "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+      },
+      "calibrazione": {
+        "dispersione": 1.0,
+        "distribuzione_intervallo": "poisson",
+        "livello_nominale": 0.6200000000000001,
+        "livello_dichiarato": 0.8
+      },
+      "metriche_di_validazione": {
+        "metodo": "finestra avanzante su 5 origini",
+        "mae": 1.0602,
+        "rmse": 1.3344,
+        "bias": 0.0165,
+        "mae_mediano": 0.9305,
+        "copertura_intervallo": 0.7924,
+        "migliore_baseline": "baseline_lega",
+        "mae_migliore_baseline": 1.069,
+        "vantaggio_su_migliore_baseline": 0.00823,
+        "origini_vinte_su_migliore_baseline": "4/5"
+      },
+      "condizioni_di_promozione": {
+        "batte_la_migliore_baseline": {
+          "soddisfatta": true,
+          "vantaggio": 0.00823,
+          "migliore_baseline": "baseline_lega"
+        },
+        "vantaggio_stabile_sulle_origini": {
+          "soddisfatta": true,
+          "origini_vinte": 4,
+          "origini_confrontate": 5
+        },
+        "controlli_di_contaminazione_passati": {
+          "soddisfatta": true,
+          "esito": true
+        },
+        "parita_con_typescript": {
+          "soddisfatta": true,
+          "righe_confrontate": 200,
+          "scarto_massimo_predittore_relativo": 5.094366652883757e-16,
+          "scarto_massimo_valore_atteso": 8.881784197001252e-16
+        },
+        "intervallo_calibrato": {
+          "soddisfatta": true,
+          "copertura_sul_periodo_di_addestramento": 0.8017,
+          "copertura_fuori_campione": 0.7924,
+          "livello_dichiarato": 0.8
+        }
+      },
+      "idoneo_a_produzione": true,
+      "condizioni_mancanti": [],
+      "blocchi_di_feature": {
+        "misurata": true,
+        "blocchi_che_pagano": [
+          {
+            "blocco": "avversario",
+            "costo": 0.00169
+          },
+          {
+            "blocco": "spaziale",
+            "costo": 0.00094
+          },
+          {
+            "blocco": "interazione",
+            "costo": 0.00084
+          },
+          {
+            "blocco": "arbitro",
+            "costo": 0.00056
+          },
+          {
+            "blocco": "casa_trasferta",
+            "costo": 0.00047
+          }
+        ],
+        "blocchi_che_non_pagano": [
+          {
+            "blocco": "base",
+            "costo": -0.00038
+          },
+          {
+            "blocco": "forma",
+            "costo": -0.00056
+          },
+          {
+            "blocco": "riposo",
+            "costo": 0.0
+          },
+          {
+            "blocco": "giocatori",
+            "costo": -0.00197
+          },
+          {
+            "blocco": "allenatore",
+            "costo": -0.00216
+          },
+          {
+            "blocco": "classifica",
+            "costo": -0.00028
+          },
+          {
+            "blocco": "contesto",
+            "costo": -0.00075
+          }
+        ],
+        "blocchi_non_disponibili": [
+          "campo_neutro",
+          "formazione",
+          "meteo_terreno_viaggio",
+          "spettatori"
+        ]
+      }
+    }
+  ]
+}

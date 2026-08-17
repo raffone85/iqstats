@@ -6,10 +6,24 @@
 
 # Package and build artefacts
 node_modules/
+.venv/
 dist/
 .next/
 coverage/
 .vercel/
+scripts/projection/build/
+
+__pycache__/
+.codex/skills/_plugin-cache/
+
+# Dati grezzi e dataset derivati: non entrano nel repository.
+# Sono centinaia di megabyte e sono ricostruibili con gli script che stanno qui accanto.
+# Attenzione: NON sono in alcun backup. Non cancellarli e non usare git clean.
+scripts/projection/harvest/data/
+scripts/projection/dataset/output/features/
+scripts/projection/dataset/output/*.csv
+scripts/calibration/data/
+scripts/calibration/context/
 
 # Editor and OS files
 .DS_Store

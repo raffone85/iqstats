@@ -1,0 +1,138 @@
+{
+  "schema_version": "esito-parita/1",
+  "generato_da": "scripts/projection/tests/parity.test.ts",
+  "artefatti": 10,
+  "superati": 10,
+  "esiti": [
+    {
+      "model_id": "corner_kicks__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 1.737517668286325e-16,
+      "scarto_massimo_valore_atteso": 1.7763568394002505e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "corner_kicks__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 2.5662395146910803e-16,
+      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "fouls__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 2.0719382161530568e-16,
+      "scarto_massimo_valore_atteso": 7.105427357601002e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "fouls__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 3.8371410190065014e-16,
+      "scarto_massimo_valore_atteso": 3.552713678800501e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "shots_on_target__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 1.855865703377511e-16,
+      "scarto_massimo_valore_atteso": 1.7763568394002505e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "shots_on_target__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 4.704876061538399e-16,
+      "scarto_massimo_valore_atteso": 1.7763568394002505e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "total_shots__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 1.9861404884966678e-16,
+      "scarto_massimo_valore_atteso": 7.105427357601002e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "total_shots__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 2.2123874329482534e-16,
+      "scarto_massimo_valore_atteso": 3.552713678800501e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "yellow_cards__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 1.4892673779239722e-15,
+      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "yellow_cards__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 5.094366652883757e-16,
+      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    }
+  ]
+}
