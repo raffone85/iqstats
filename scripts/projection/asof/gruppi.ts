@@ -16,6 +16,7 @@ import type {
   GaraPrecedente,
   IngressoFeature,
   Lato,
+  ProfiloDiContesto,
   ProfiloTiri,
 } from './contratto';
 import {
@@ -331,6 +332,109 @@ export function gruppoSpaziale(ingresso: IngressoFeature): Feature {
   return uscita;
 }
 
+/**
+ * Il lato del campo moltiplicato per cio' che lo rende diverso.
+ *
+ * Un modello lineare non puo' inventare un prodotto: sa che in casa i valori medi sono
+ * altri, perche' le medie di lega sono per lato, ma non puo' sapere che quel vantaggio
+ * cresce con la forza della squadra se nessuno glielo scrive.
+ *
+ * I fattori si rileggono dai gruppi che li producono invece di essere ricalcolati qui:
+ * e' l'unico modo perche' un cambiamento di la' non faccia divergere questo.
+ */
+export function gruppoInterazione(ingresso: IngressoFeature): Feature {
+  const casa = ingresso.lato === 'home' ? 1 : 0;
+  const base = gruppoBase(ingresso);
+  const classifica = gruppoClassifica(ingresso);
+  const arbitro = gruppoArbitro(ingresso);
+
+  // Un fattore ignoto resta ignoto anche in trasferta, dove il prodotto varrebbe zero:
+  // zero e' un valore, non un modo di scrivere «assente», e il lato che addestra
+  // propaga l'assenza.
+  function perIlLato(fattore: number | null): number | null {
+    return fattore === null ? null : casa * fattore;
+  }
+
+  return {
+    interazione_casa: casa,
+    interazione_casa_delta_punti: perIlLato(classifica.classifica_delta_punti),
+    interazione_casa_scarto_dalla_lega: perIlLato(
+      differenza(base.prodotto_stagione_media, base.lega_media),
+    ),
+    interazione_casa_severita_arbitro: perIlLato(arbitro.arbitro_severita_ammoniti),
+  };
+}
+
+/**
+ * Le famiglie che descrivono il tipo di gara, non il bersaglio.
+ *
+ * L'elenco deve restare identico a build_features.CONTESTO_GARA, nomi compresi: e' il test
+ * di parita' a dirlo, e una divergenza qui non da' errore, fa sparire delle colonne.
+ *
+ * Qui si producono tutte le metriche di una famiglia, anche quella che per un certo
+ * bersaglio non serve: chi orchestra prende solo le colonne dichiarate, e una colonna in
+ * piu' calcolata non costa quanto un ramo di codice per bersaglio.
+ */
+const CONTESTO_GARA: ReadonlyArray<readonly [string, readonly string[]]> = [
+  ['circolazione_', ['ball_possession', 'passes', 'accurate_passes',
+    'pass_accuracy_pct', 'long_balls_total']],
+  ['territorio_', ['final_third_entries', 'final_third_phase_total',
+    'touches_in_penalty_area', 'crosses_total']],
+  ['intensita_', ['duels', 'ground_duels_total', 'aerial_duels_total', 'tackles',
+    'interceptions', 'recoveries', 'clearances', 'dribbles_total', 'dispossessed']],
+  ['ambiente_tiro_', ['shots_inside_box', 'shots_outside_box', 'blocked_shots',
+    'hit_woodwork', 'errors_lead_to_a_shot']],
+  ['ambiente_gol_', ['expected_goals', 'big_chances']],
+  ['inattive_', ['free_kicks', 'throw_ins', 'goal_kicks', 'fouled_in_final_third']],
+  ['incrociato_', ['total_shots', 'shots_on_target', 'corner_kicks', 'fouls',
+    'yellow_cards', 'offsides', 'goalkeeper_saves']],
+];
+
+function daContesto(
+  profilo: ProfiloDiContesto | null | undefined,
+  metrica: string,
+): number | null {
+  if (profilo === null || profilo === undefined) {
+    return null;
+  }
+  const valore = profilo[metrica];
+  if (valore === null || valore === undefined || !Number.isFinite(valore)) {
+    return null;
+  }
+  return valore;
+}
+
+/**
+ * Una famiglia di contesto: quanto la squadra produce e concede su ogni metrica, e le
+ * stesse due viste dal lato dell'avversario. Medie dentro la stagione, sulle sole gare
+ * precedenti, come il lato che addestra.
+ */
+function gruppoDiContesto(
+  prefisso: string,
+  metriche: readonly string[],
+): (ingresso: IngressoFeature) => Feature {
+  return (ingresso: IngressoFeature): Feature => {
+    const nostre = dentroLaStagione(ingresso.squadra, ingresso.stagione);
+    const loro = dentroLaStagione(ingresso.avversario, ingresso.stagione);
+    const uscita: Feature = {};
+    for (const metrica of metriche) {
+      uscita[prefisso + metrica] = media(
+        nostre.map((gara) => daContesto(gara.contesto, metrica)),
+      );
+      uscita[prefisso + metrica + '_concesso'] = media(
+        nostre.map((gara) => daContesto(gara.contestoConcesso, metrica)),
+      );
+      uscita[prefisso + 'avv_' + metrica] = media(
+        loro.map((gara) => daContesto(gara.contesto, metrica)),
+      );
+      uscita[prefisso + 'avv_' + metrica + '_concesso'] = media(
+        loro.map((gara) => daContesto(gara.contestoConcesso, metrica)),
+      );
+    }
+    return uscita;
+  };
+}
+
 export type NomeGruppo =
   | 'base'
   | 'forma'
@@ -339,6 +443,14 @@ export type NomeGruppo =
   | 'avversario'
   | 'classifica'
   | 'contesto'
+  | 'interazione'
+  | 'circolazione'
+  | 'territorio'
+  | 'intensita'
+  | 'ambiente_tiro'
+  | 'ambiente_gol'
+  | 'inattive'
+  | 'incrociato'
   | 'arbitro'
   | 'allenatore'
   | 'giocatori'
@@ -352,6 +464,14 @@ export const GRUPPI: Record<NomeGruppo, (ingresso: IngressoFeature) => Feature> 
   avversario: gruppoAvversario,
   classifica: gruppoClassifica,
   contesto: gruppoContesto,
+  interazione: gruppoInterazione,
+  circolazione: gruppoDiContesto(CONTESTO_GARA[0][0], CONTESTO_GARA[0][1]),
+  territorio: gruppoDiContesto(CONTESTO_GARA[1][0], CONTESTO_GARA[1][1]),
+  intensita: gruppoDiContesto(CONTESTO_GARA[2][0], CONTESTO_GARA[2][1]),
+  ambiente_tiro: gruppoDiContesto(CONTESTO_GARA[3][0], CONTESTO_GARA[3][1]),
+  ambiente_gol: gruppoDiContesto(CONTESTO_GARA[4][0], CONTESTO_GARA[4][1]),
+  inattive: gruppoDiContesto(CONTESTO_GARA[5][0], CONTESTO_GARA[5][1]),
+  incrociato: gruppoDiContesto(CONTESTO_GARA[6][0], CONTESTO_GARA[6][1]),
   arbitro: gruppoArbitro,
   allenatore: gruppoAllenatore,
   giocatori: gruppoGiocatori,

@@ -84,7 +84,37 @@ def carica_tiri():
     return mappa
 
 
-def gara_precedente(riga, tiri):
+def carica_contesto():
+    """(event_id, lato) -> le metriche del pannello di quella gara.
+
+    Il dataset delle feature non le conserva, esattamente come per i tiri: sono la misura
+    della gara stessa e la tavola le getta appena ha finito di farne le medie. Qui servono
+    grezze, con la stessa politica di provenienza del lato che addestra: un valore la cui
+    provenienza non e' ammessa non e' un valore.
+    """
+    percorso = os.path.join(ROOT, "scripts", "projection", "dataset", "output",
+                            "osservazioni.csv")
+    if not os.path.isfile(percorso):
+        return {}
+    metriche = [nome for _, gruppo in build_features.CONTESTO_GARA for nome in gruppo]
+    colonne = ["event_id", "lato"]
+    for nome in metriche:
+        colonne.extend((nome, nome + "__p"))
+    tavola = pd.read_csv(percorso, usecols=list(dict.fromkeys(colonne)), low_memory=False)
+    for nome in metriche:
+        valore = pd.to_numeric(tavola[nome], errors="coerce")
+        noto = (tavola[nome + "__p"].isin(build_features.PROVENIENZE_AMMESSE)
+                & valore.notna())
+        tavola[nome] = valore.where(noto)
+    mappa = {}
+    for riga in tavola.to_dict("records"):
+        mappa[(int(riga["event_id"]), riga["lato"])] = {
+            nome: numero(riga.get(nome)) for nome in metriche
+        }
+    return mappa
+
+
+def gara_precedente(riga, tiri, contesto):
     voce = {
         "eventId": int(riga["event_id"]),
         "quando": pd.Timestamp(riga["quando"]).isoformat().replace("+00:00", "Z"),
@@ -102,10 +132,14 @@ def gara_precedente(riga, tiri):
         voce["tiri"] = tiri[chiave]
     if altro in tiri:
         voce["tiriConcessi"] = tiri[altro]
+    if chiave in contesto:
+        voce["contesto"] = contesto[chiave]
+    if altro in contesto:
+        voce["contestoConcesso"] = contesto[altro]
     return voce
 
 
-def storia(tavola, chiave, valore, quando, event_id, tiri):
+def storia(tavola, chiave, valore, quando, event_id, tiri, contesto):
     """Le gare precedenti secondo lo stesso ordine del lato che addestra."""
     if valore is None or (isinstance(valore, float) and math.isnan(valore)):
         return []
@@ -115,7 +149,7 @@ def storia(tavola, chiave, valore, quando, event_id, tiri):
         | ((sotto["quando"] == quando) & (sotto["event_id"] < event_id))
     ]
     prima = prima.sort_values(["quando", "event_id"])
-    return [gara_precedente(riga, tiri) for _, riga in prima.iterrows()]
+    return [gara_precedente(riga, tiri, contesto) for _, riga in prima.iterrows()]
 
 
 def profilo_arbitro(riga):
@@ -145,6 +179,7 @@ def colonne_del_manifesto(target):
 
 def esporta(target, quante, forza):
     tiri = carica_tiri()
+    contesto = carica_contesto()
     intera_pura = build_features.tavola_completa(target, "puro")
     intera_ristretta = build_features.tavola_completa(target, "restringimento", forza)
 
@@ -182,11 +217,11 @@ def esporta(target, quante, forza):
             "turno": numero(riga.get("contesto_turno")),
             "derby": numero(riga.get("contesto_derby")),
             "squadra": storia(intera_pura, "team_id", riga["team_id"],
-                              riga["quando"], riga["event_id"], tiri),
+                              riga["quando"], riga["event_id"], tiri, contesto),
             "avversario": storia(intera_pura, "team_id", riga["opponent_id"],
-                                 riga["quando"], riga["event_id"], tiri),
+                                 riga["quando"], riga["event_id"], tiri, contesto),
             "allenatore": storia(intera_pura, "coach_id", riga.get("coach_id"),
-                                 riga["quando"], riga["event_id"], tiri),
+                                 riga["quando"], riga["event_id"], tiri, contesto),
             "allenatoreConLaSquadra": numero(riga.get("allenatore_gare_con_la_squadra")),
             "lega": {
                 "media": numero(riga.get("lega_media")),

@@ -1,0 +1,577 @@
+{
+  "target": "goalkeeper_saves",
+  "modello": "poisson_glm",
+  "schema": "affidabilita-condizionale/1",
+  "modello_di_produzione": {
+    "condizioni": [
+      "valore_atteso",
+      "gare_precedenti",
+      "scarto_dalla_lega",
+      "zeta_dalla_lega"
+    ],
+    "standardizzazione": {
+      "media": [
+        3.0230035798,
+        24.7659005879,
+        0.0005323268,
+        -3.35901e-05
+      ],
+      "scala": [
+        0.5677016251,
+        8.188240465,
+        0.7296215884,
+        0.2987162758
+      ]
+    },
+    "coefficienti": [
+      -0.320910745,
+      -0.0589114146,
+      0.0195009133,
+      0.0494380512
+    ],
+    "intercetta": 1.0494142136,
+    "righe_di_addestramento": 7484,
+    "scarto_medio_di_calibrazione": 0.0349,
+    "regola": "regressione logistica sulle condizioni note prima del calcio d'inizio, addestrata sugli errori fuori campione di tutte le origini"
+  },
+  "soglia_assoluta": 2.0,
+  "come_e_stata_misurata": "lo strato condizionale si addestra sugli errori fuori campione delle origini precedenti e si valuta sull'origine successiva: sugli errori del proprio periodo di addestramento sarebbe ottimista",
+  "condizioni_usate": [
+    "valore_atteso",
+    "gare_precedenti",
+    "scarto_dalla_lega",
+    "zeta_dalla_lega"
+  ],
+  "origini_valutabili": 4,
+  "confronto_per_origine": [
+    {
+      "origine": 2,
+      "righe_di_addestramento": 1508,
+      "righe_di_prova": 1494,
+      "quota_osservata": 0.7289,
+      "costante_per_fascia": {
+        "brier": 0.19776,
+        "log_loss": 0.58475
+      },
+      "condizionale": {
+        "brier": 0.19366,
+        "log_loss": 0.57437,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6534,
+              "frequenza_osservata": 0.58
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7019,
+              "frequenza_osservata": 0.64
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7197,
+              "frequenza_osservata": 0.6733
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7343,
+              "frequenza_osservata": 0.76
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7439,
+              "frequenza_osservata": 0.7383
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7532,
+              "frequenza_osservata": 0.7114
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7625,
+              "frequenza_osservata": 0.7651
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7711,
+              "frequenza_osservata": 0.8188
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.781,
+              "frequenza_osservata": 0.7584
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7989,
+              "frequenza_osservata": 0.8456
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0375
+        }
+      },
+      "condizionale_con_lega": {
+        "brier": 0.19674,
+        "log_loss": 0.58282,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6228,
+              "frequenza_osservata": 0.6267
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6764,
+              "frequenza_osservata": 0.66
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.702,
+              "frequenza_osservata": 0.7533
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7227,
+              "frequenza_osservata": 0.7133
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.74,
+              "frequenza_osservata": 0.7517
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7579,
+              "frequenza_osservata": 0.7651
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7726,
+              "frequenza_osservata": 0.7584
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7875,
+              "frequenza_osservata": 0.7517
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8044,
+              "frequenza_osservata": 0.7651
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8291,
+              "frequenza_osservata": 0.745
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0273
+        }
+      }
+    },
+    {
+      "origine": 3,
+      "righe_di_addestramento": 3002,
+      "righe_di_prova": 1495,
+      "quota_osservata": 0.7411,
+      "costante_per_fascia": {
+        "brier": 0.19173,
+        "log_loss": 0.57156
+      },
+      "condizionale": {
+        "brier": 0.18675,
+        "log_loss": 0.55894,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6126,
+              "frequenza_osservata": 0.5667
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6807,
+              "frequenza_osservata": 0.7333
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.705,
+              "frequenza_osservata": 0.64
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7218,
+              "frequenza_osservata": 0.7333
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7364,
+              "frequenza_osservata": 0.74
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7495,
+              "frequenza_osservata": 0.7315
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7631,
+              "frequenza_osservata": 0.8054
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7755,
+              "frequenza_osservata": 0.8121
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7901,
+              "frequenza_osservata": 0.8188
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.811,
+              "frequenza_osservata": 0.8322
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0325
+        }
+      },
+      "condizionale_con_lega": {
+        "brier": 0.18601,
+        "log_loss": 0.55724,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6032,
+              "frequenza_osservata": 0.5667
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6748,
+              "frequenza_osservata": 0.6533
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7028,
+              "frequenza_osservata": 0.7
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7232,
+              "frequenza_osservata": 0.7533
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7385,
+              "frequenza_osservata": 0.7733
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.752,
+              "frequenza_osservata": 0.745
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7661,
+              "frequenza_osservata": 0.7718
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7802,
+              "frequenza_osservata": 0.7919
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.796,
+              "frequenza_osservata": 0.8255
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.82,
+              "frequenza_osservata": 0.8322
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0192
+        }
+      }
+    },
+    {
+      "origine": 4,
+      "righe_di_addestramento": 4497,
+      "righe_di_prova": 1492,
+      "quota_osservata": 0.7446,
+      "costante_per_fascia": {
+        "brier": 0.19024,
+        "log_loss": 0.56838
+      },
+      "condizionale": {
+        "brier": 0.18959,
+        "log_loss": 0.56597,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.5986,
+              "frequenza_osservata": 0.6467
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6767,
+              "frequenza_osservata": 0.7333
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7036,
+              "frequenza_osservata": 0.7248
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.72,
+              "frequenza_osservata": 0.7114
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7359,
+              "frequenza_osservata": 0.7584
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7498,
+              "frequenza_osservata": 0.7651
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7628,
+              "frequenza_osservata": 0.7852
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7768,
+              "frequenza_osservata": 0.7114
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7924,
+              "frequenza_osservata": 0.7718
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8177,
+              "frequenza_osservata": 0.8389
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0302
+        }
+      },
+      "condizionale_con_lega": {
+        "brier": 0.18951,
+        "log_loss": 0.56593,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.5984,
+              "frequenza_osservata": 0.68
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6749,
+              "frequenza_osservata": 0.68
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7062,
+              "frequenza_osservata": 0.7383
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7253,
+              "frequenza_osservata": 0.7114
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.743,
+              "frequenza_osservata": 0.7584
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7585,
+              "frequenza_osservata": 0.7181
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7725,
+              "frequenza_osservata": 0.8188
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7858,
+              "frequenza_osservata": 0.7315
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8033,
+              "frequenza_osservata": 0.7919
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8327,
+              "frequenza_osservata": 0.8188
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0314
+        }
+      }
+    },
+    {
+      "origine": 5,
+      "righe_di_addestramento": 5989,
+      "righe_di_prova": 1495,
+      "quota_osservata": 0.7271,
+      "costante_per_fascia": {
+        "brier": 0.19864,
+        "log_loss": 0.58671
+      },
+      "condizionale": {
+        "brier": 0.19396,
+        "log_loss": 0.57474,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6258,
+              "frequenza_osservata": 0.6333
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6865,
+              "frequenza_osservata": 0.6333
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7097,
+              "frequenza_osservata": 0.6333
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7266,
+              "frequenza_osservata": 0.6933
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7404,
+              "frequenza_osservata": 0.6533
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7525,
+              "frequenza_osservata": 0.8389
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7642,
+              "frequenza_osservata": 0.7651
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.776,
+              "frequenza_osservata": 0.7919
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7885,
+              "frequenza_osservata": 0.7919
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8108,
+              "frequenza_osservata": 0.8389
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0392
+        }
+      },
+      "condizionale_con_lega": {
+        "brier": 0.19469,
+        "log_loss": 0.5766,
+        "calibrazione": {
+          "decili": [
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6185,
+              "frequenza_osservata": 0.6067
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.6837,
+              "frequenza_osservata": 0.64
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7124,
+              "frequenza_osservata": 0.6467
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7295,
+              "frequenza_osservata": 0.7467
+            },
+            {
+              "righe": 150,
+              "probabilita_promessa": 0.7445,
+              "frequenza_osservata": 0.7267
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7573,
+              "frequenza_osservata": 0.7517
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7709,
+              "frequenza_osservata": 0.7315
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.7861,
+              "frequenza_osservata": 0.8121
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8011,
+              "frequenza_osservata": 0.7919
+            },
+            {
+              "righe": 149,
+              "probabilita_promessa": 0.8253,
+              "frequenza_osservata": 0.8188
+            }
+          ],
+          "scarto_medio_di_calibrazione": 0.0243
+        }
+      }
+    }
+  ],
+  "esito": {
+    "condizionale": {
+      "promosso": true,
+      "origini_vinte_su_brier": "4/4",
+      "origini_vinte_su_log_loss": "4/4",
+      "scarto_medio_di_brier": -0.003603,
+      "perche": "batte la costante su entrambe le misure nella maggioranza delle origini"
+    },
+    "condizionale_con_lega": {
+      "promosso": true,
+      "origini_vinte_su_brier": "4/4",
+      "origini_vinte_su_log_loss": "4/4",
+      "scarto_medio_di_brier": -0.002855,
+      "perche": "batte la costante su entrambe le misure nella maggioranza delle origini"
+    }
+  },
+  "avvertenza": "la lega e' provata a parte perche' nell'analisi di discriminazione i suoi estremi sono stati scelti guardando i numeri, quindi lo scarto e' gonfiato per costruzione"
+}

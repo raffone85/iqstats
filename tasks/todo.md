@@ -1912,3 +1912,186 @@ repository e **non sono in alcun backup**.
 del ripiego, competitivo ma non distinguibile dal completo; il ponte verso l'applicazione
 per ciò che il predittore riceve già calcolato; la distribuzione predittiva con le cinque
 linee; gli altri 56 bersagli.
+
+### Curve, discriminazione e i due bersagli nuovi — 19 agosto 2026, pomeriggio
+
+**La curva di accuratezza entra nei rapporti di maturità.** Non più un errore medio soltanto,
+ma la quota di righe entro ciascuna soglia — undici soglie da 0,5 a 8, con intervallo di
+Wilson — misurata fuori campione, complessiva, per fascia e per lega. Aggiunta additiva:
+schema del rapporto a `validazione-maturita/2`, nessun consumatore legge quella stringa.
+**Non-regressione superata:** il MAE con peso congelato riproduce esattamente i valori
+precedenti (corner EARLY 2,0602 · ammoniti EARLY 1,0173).
+
+**L'analisi di discriminazione, su tutti e sette i bersagli.** La domanda è: che cosa separa
+le gare in cui il modello azzecca da quelle in cui sbaglia? Risposta misurata, e in parte
+scomoda.
+
+**Le tre fasce di maturità non discriminano.** Su nessun bersaglio, a nessuna soglia: gli
+intervalli di EARLY contengono sempre MATURE. Su falli e tiri in porta la fascia con meno
+storico è persino migliore. Un punteggio costruito sulla fascia ripeterebbe l'errore già
+scartato con la stabilità temporale.
+
+**Ciò che discrimina è la statura della gara, non la disponibilità dei dati.** In ordine:
+livello atteso della proiezione (da −6,0 a −9,9 punti, segno sempre negativo: più alta la
+previsione, meno si azzecca), ampiezza dell'intervallo, lega, scarto dalla media di lega,
+scarto fra le classifiche. **Non discriminano affatto:** storico della squadra,
+dell'avversario e dei giocatori, allenatore, turno, giorni di riposo, qualità del confronto,
+stabilità della rosa, periodo di prova. **L'arbitro serve con un solo numero e su un solo
+bersaglio:** ammoniti medi dell'arbitro sugli ammoniti, −7,6 punti a 5,4 errori standard.
+
+**Un errore vero trovato e corretto** in `discriminate.py`: la verifica di coerenza contava
+come concorde solo uno scarto positivo, quindi scartava i discriminatori più forti perché
+vanno in direzione opposta.
+
+**Il motore si estende a fuorigioco e parate**, con la pipeline esistente e senza toccare i
+cinque già validati. Fuorigioco Poisson MAE 1,0841, +4,84% sulla migliore baseline, 5 origini
+su 5, 56 feature; parate ridge MAE 1,4752, +2,89%, 5 su 5, 70 feature. **Le parate sono
+l'unico bersaglio che continua a mescolare con la baseline anche a storico pieno:** peso
+MATURE 0,95. `MIN_PREVIOUS_MATCHES = 3` resta anche per i due nuovi: nessuna regola diversa
+perché sono nuovi.
+
+**Una cancellazione evitata:** `select_features.py` riscriveva il manifesto invece di
+fonderlo, quindi `--target offsides` avrebbe azzerato le cinque voci esistenti. Corretto
+prima di lanciarlo, perché il file è stato letto prima di essere usato.
+
+### L'affidabilità prende un numero — 19 agosto 2026, sera
+
+**La parità as-of falliva su `offsides`, e la causa non era di `offsides`.** Il lato
+TypeScript non conosceva affatto la famiglia `interazione_casa*` — le quattro colonne
+dell'effetto casa — e `gruppoDi` non le assegnava a nessun gruppo. I cinque bersagli validati
+non lo mostravano perché i loro campioni di riscontro erano fermi al 17 agosto alle 09:54,
+**precedenti** alla riselezione delle feature delle 16:34: verificavano 61-81 colonne mentre
+gli artefatti ne dichiaravano 45-88. Aggiunto il gruppo `interazione` in `asof/gruppi.ts`,
+rileggendo i fattori dai gruppi che li producono invece di ricalcolarli; rigenerati i cinque
+campioni scaduti. Ora le colonne verificate coincidono **esattamente** con il manifesto su
+tutti e sette.
+
+**L'affidabilità è definita, ed è una decisione dell'utente.** È la probabilità, misurata
+fuori campione, che lo scarto resti entro una **soglia assoluta specifica del bersaglio**,
+esposta come punteggio 0-100 con fasce di lettura. La soglia non è scelta a mano: è l'errore
+assoluto medio della migliore baseline arrotondato all'unità — sotto quella distanza il
+modello vale più del non sapere nulla. Una regola sola per tutti e sette.
+
+| Bersaglio | Migliore baseline | MAE | Soglia | Punteggio |
+| --- | --- | ---: | :---: | ---: |
+| Tiri | attacco contro concesso | 3,7880 | 4 | 62 |
+| Tiri in porta | restringimento | 1,8370 | 2 | 63 |
+| Corner | restringimento | 2,1687 | 2 | 55 |
+| Falli | restringimento | 2,9278 | 3 | 61 |
+| Ammoniti | lega | 1,0690 | 1 | 54 |
+| Fuorigioco | lega | 1,1392 | 1 | 54 |
+| Parate | lega | 1,5191 | 2 | 73 |
+
+Il criterio era misurato solo sui cinque; esteso qui ai due nuovi. **La curva intera resta
+nell'artefatto:** cambiare soglia domani non costa un riaddestramento.
+
+**Il punteggio si legge dentro la fascia**, perché è lì che è misurato sulla miscela
+congelata, e porta la sua incertezza binomiale: in EARLY è larga venti punti e non si
+nasconde. **Sotto un ripiego il livello non si dichiara affatto** — nessuno lo ha misurato su
+quella baseline. Lo schema rifiuta l'artefatto se il punteggio non viene dalla quota che
+dichiara o se l'incertezza non lo contiene.
+
+**Riesportazione puramente additiva su tutti e quattordici gli artefatti:** coefficienti,
+intercetta, schema delle feature, calibrazione e metadati identici bit per bit; le tavole di
+riscontro del predittore differiscono solo nel checksum. Nessun riaddestramento effettivo.
+
+**Una prova falliva, ed era un'assunzione sbagliata del test, non del codice.** «A storico
+maturo il valore atteso è quello del modello, senza miscela» valeva quando i bersagli erano
+cinque, tutti con peso 1,00. Le parate no. Prima della riesportazione il test non lo vedeva,
+perché i due bersagli nuovi non avevano ancora i parametri di maturità nell'artefatto e
+venivano saltati. Ora verifica che si applichi **il peso dichiarato**, non che sia uno.
+
+**Verifiche: `test:projection` 53/53, `test:asof` 14/14, `test:production` 17/17, registro 14
+modelli su 14 `validated`.** I quattro artefatti nuovi sono passati da `experimental` a
+`validated`.
+
+**Registrata in architettura l'estensione `match-context-pace`** (§8ter): contesto e ritmo
+della gara come **gruppo di feature del motore esistente**, non un motore nuovo, con ablazione
+bersaglio per bersaglio, selezione target-specific, nessun peso a mano, e il vincolo che non
+entra automaticamente nell'affidabilità. Il §8bis non dice più «affidabilità non definita»; la
+definizione sta nel nuovo §8quater.
+
+**Non ancora fatto:** lo strato condizionale dell'affidabilità, che entra solo se batte fuori
+campione la costante per fascia; la costruzione di `match-context-pace`; quale modello passa a
+`production`; se pubblicare `gara-giocata`; il ponte verso l'applicazione.
+
+### Contesto e ritmo della gara, e l'affidabilità che cambia partita per partita — 19 agosto 2026, notte
+
+**L'archivio conteneva già quasi tutto, e non era mai stato usato.** Fino a stasera le feature
+leggevano dal pannello statistico la sola colonna del bersaglio più le quattro della severità
+arbitrale. Possesso, territorio, duelli, contrasti, reti attese, occasioni nitide, palle
+inattive: raccolti su 15.810 righe su 18.610, completi al 100% dove il pannello c'è, e fermi.
+
+**`match-context-pace` è nato da lì**, spezzato in **sette famiglie** invece che in un blocco
+unico, perché la selezione lavora per blocco e un blocco da 140 colonne entrerebbe o uscirebbe
+tutto insieme. Trentasei metriche, quattro viste ciascuna — prodotto, concesso, e le stesse due
+per l'avversario — da 117 colonne candidate a 257. Nessuna sotto la soglia di densità, e il
+costo in copertura è **zero righe** su tiri e fuorigioco, 54 su 16.662 sugli ammoniti.
+
+**Un errore vero, trovato prima di sprecare il calcolo.** `evaluate.py` teneva una **seconda
+copia** dell'elenco dei prefissi delle feature e non conosceva i nuovi: il dataset aveva 257
+colonne, l'ablazione ne vedeva 115, e nessun errore lo diceva. Le due liste ora sono allineate,
+con scritto sopra perché la copia esiste e che cosa succede se divergono.
+
+| Famiglia | Bersagli che la promuovono |
+| --- | --- |
+| `territorio` | tiri, tiri in porta, corner, ammoniti, parate |
+| `intensita` | corner, parate |
+| `incrociato` | tiri, parate |
+| `ambiente_tiro` | parate |
+| `ambiente_gol` | ammoniti |
+| `circolazione` | nessuno |
+| `inattive` | nessuno |
+
+**Possesso, passaggi, accuratezza, palle lunghe, punizioni, rimesse e rinvii non servono a
+niente, su nessuno dei sette.** È un risultato quanto gli altri: quella strada è percorsa.
+
+**In produzione, per decisione dell'utente, solo dove pesa:** corner 2,0764 → **2,0637**
+(+0,61%) e parate 1,4804 → **1,4699** (+0,71%, cinque origini su cinque). Il guadagno
+end-to-end è quattro volte quello del singolo blocco nell'ablazione, perché la riselezione ha
+tolto blocchi che facevano più danno che bene: sulle parate sono usciti `avversario`, `forma`,
+`riposo`, `giocatori`, `arbitro`, `spaziale` e `contesto`. Le righe utilizzabili **aumentano**.
+Sulle parate il modello migliore passa da ridge a poisson.
+
+**L'affidabilità non è più una costante.** Una regressione logistica stima per la singola gara
+la probabilità che lo scarto resti entro la soglia, da valore atteso, gare precedenti delle due
+squadre e scarto normalizzato dalla lega. **Non si addestra sugli errori del proprio periodo di
+addestramento**, dove sarebbero ottimisti: si addestra sugli errori fuori campione delle
+origini precedenti e si valuta sulla successiva.
+
+| Bersaglio | Esito | Guadagno di Brier |
+| --- | --- | ---: |
+| Tiri | promosso 4/4 | +1,26% |
+| Tiri in porta | promosso 4/4 | +0,99% |
+| Corner | promosso 3/4 | +0,49% |
+| Falli | **costante** 2/4 | +0,35% |
+| Ammoniti | promosso 4/4 | +0,74% |
+| Fuorigioco | promosso 3/4 | +0,63% |
+| Parate | promosso 4/4 | **+1,85%** |
+
+**I falli sono passati da promossi a non promossi, ed è la correzione più istruttiva della
+serata.** La prima misura usava `scarto_dalla_lega`, che non è fra le colonne che il modello
+dei falli riceve: una condizione che in produzione non sarebbe mai arrivata. Ristretto
+l'insieme a ciò che è davvero disponibile, i falli scendono a 2 origini su 4 e restano alla
+costante.
+
+**La lega è stata provata e scartata.** Batteva la costante su cinque bersagli, ma non batte
+mai il condizionale semplice: da −0,12% a −0,76% su tutti e sette. Nessuna tabella di leghe
+nell'artefatto, e la cautela dell'utente sugli estremi scelti dai dati era fondata.
+
+**Il punteggio ora si muove davvero.** Su ammoniti e fuorigioco scende con meno storico — 55 a
+41 e 55 a 35 — che è una distinzione che la costante non poteva esprimere. Sul ripiego resta
+assente, e se una condizione manca si torna alla costante della fascia, mai a zero.
+
+**Verifiche: `test:projection` 53/53, `test:asof` 14/14, `test:production` 20/20, registro 14
+modelli su 14 `validated`.** La parità copre anche le 96 colonne nuove delle parate e le 52 dei
+corner, verificate cifra per cifra su 40 righe reali per bersaglio.
+
+**Deciso dall'utente e registrato:** la raccolta delle formazioni è **riaperta come blocco
+separato**, con `PRE_LINEUP` e `CONFIRMED_LINEUP` come due istantanee distinte e il vincolo che
+la formazione ufficiale non entri mai nel modello provvisorio. Non è ancora iniziata.
+
+**Non ancora fatto:** il ponte verso l'applicazione — `production.ts` vive ancora in
+`scripts/projection/` e `apps/web` non ne importa una riga; la distribuzione predittiva con le
+cinque linee; le fasi B, C e D delle formazioni; quale modello passa a `production`; se
+pubblicare `gara-giocata`.

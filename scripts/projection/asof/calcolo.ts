@@ -58,6 +58,14 @@ const REGOLE: RegolaDiGruppo[] = [
   { gruppo: 'spaziale', prefissi: ['spaziale_'], colonne: [] },
   { gruppo: 'classifica', prefissi: ['classifica_'], colonne: [] },
   { gruppo: 'contesto', prefissi: ['contesto_'], colonne: [] },
+  { gruppo: 'interazione', prefissi: ['interazione_'], colonne: [] },
+  { gruppo: 'circolazione', prefissi: ['circolazione_'], colonne: [] },
+  { gruppo: 'territorio', prefissi: ['territorio_'], colonne: [] },
+  { gruppo: 'intensita', prefissi: ['intensita_'], colonne: [] },
+  { gruppo: 'ambiente_tiro', prefissi: ['ambiente_tiro_'], colonne: [] },
+  { gruppo: 'ambiente_gol', prefissi: ['ambiente_gol_'], colonne: [] },
+  { gruppo: 'inattive', prefissi: ['inattive_'], colonne: [] },
+  { gruppo: 'incrociato', prefissi: ['incrociato_'], colonne: [] },
 ]
 
 export function gruppoDi(colonna: string): NomeGruppo | null {

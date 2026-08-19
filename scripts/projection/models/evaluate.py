@@ -39,11 +39,15 @@ BASELINE = [
     "baseline_attacco_contro_concesso",
     "baseline_restringimento",
 ]
+# Deve restare identico a build_features.PREFISSI_FEATURE. La copia esiste perche' questo
+# modulo non importa il costruttore del dataset, e una divergenza fra le due liste non da'
+# errore: fa semplicemente sparire delle colonne dalla valutazione, in silenzio.
 PREFISSI_FEATURE = ("prodotto_", "concesso_", "lega_", "avv_", "baseline_",
                     "giorni_", "gare_", "forza_", "debolezza_", "scarto_",
                     "zeta_", "confronto_", "arbitro_", "allenatore_",
                     "contesto_", "classifica_", "giocatori_", "spaziale_",
-                    "interazione_")
+                    "interazione_", "circolazione_", "territorio_", "intensita_",
+                    "ambiente_tiro_", "ambiente_gol_", "inattive_", "incrociato_")
 SOGLIA_POISSON = 1.05
 LIVELLO_INTERVALLO = 0.80
 

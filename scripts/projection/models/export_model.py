@@ -27,6 +27,7 @@ Uso:
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 
@@ -44,6 +45,11 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "output", "artefatti")
 SCHEMA = "artefatto-modello/1"
 VERSIONE_ARTEFATTO = "1.0.0"
 RIGHE_DI_RISCONTRO = 200
+
+# Le fasce di lettura dell'affidabilita': sono rappresentazione, non dato. Il dato e' la
+# quota misurata; la fascia serve solo a chi legge.
+FASCE_DI_LETTURA = ((0, 50, "BASSA"), (50, 70, "MODERATA"), (70, 85, "ALTA"),
+                    (85, 101, "MOLTO ALTA"))
 
 COLLEGAMENTO = {"poisson_glm": "log", "ridge": "identita"}
 
@@ -180,6 +186,8 @@ def esporta(target, nome_modello, densita_minima, solo_manifesto=False, suffisso
             "selezione_feature": provenienza_delle_feature(solo_manifesto),
         },
         "maturita": parametri_di_maturita(target, nome_modello, utilizzabili, y, atteso, colonne),
+        "affidabilita": affidabilita_dichiarata(target, nome_modello, suffisso_validazione,
+                                                colonne),
         "validation_metrics": metriche_di_validazione(target, nome_modello, suffisso_validazione),
         "checksum": {
             "algoritmo": "sha256",
@@ -271,6 +279,166 @@ def ripiego_ordinato(voce_fascia):
     return sorted(gradini, key=lambda gradino: gradino["mae_fuori_campione"]) or None
 
 
+def soglia_assoluta(metriche):
+    """La soglia dell'affidabilita': l'errore della previsione banale, arrotondato.
+
+    Vive qui, in un posto solo, perche' la usano sia l'artefatto sia lo strato
+    condizionale: due copie della stessa regola divergerebbero senza dare errore.
+    """
+    if metriche is None or metriche.get("mae_migliore_baseline") is None:
+        return None
+    soglia = float(math.floor(float(metriche["mae_migliore_baseline"]) + 0.5))
+    return soglia if soglia > 0 else None
+
+
+def fascia_di_lettura(punteggio):
+    for minimo, massimo, nome in FASCE_DI_LETTURA:
+        if minimo <= punteggio < massimo:
+            return nome
+    return FASCE_DI_LETTURA[-1][2]
+
+
+def punto_della_curva(curva, soglia):
+    """Il punto gia' misurato a quella soglia, o nulla. Non si interpola: un punto che
+    nessuno ha misurato sarebbe un numero inventato."""
+    for voce in curva or ():
+        if abs(float(voce["soglia"]) - soglia) < 1e-9:
+            return voce
+    return None
+
+
+def punteggio_da(voce):
+    """Dalla quota misurata al punteggio 0-100, con l'incertezza che la quota gia' porta.
+
+    L'incertezza non e' un ornamento: con settantacinque righe di prova in fascia EARLY
+    l'intervallo e' largo venti punti, e chi legge deve poterlo vedere.
+    """
+    punteggio = int(math.floor(100.0 * float(voce["quota"]) + 0.5))
+    return {
+        "punteggio": punteggio,
+        "punteggio_basso": int(math.floor(100.0 * float(voce["quota_bassa"]) + 0.5)),
+        "punteggio_alto": int(math.floor(100.0 * float(voce["quota_alta"]) + 0.5)),
+        "fascia_di_lettura": fascia_di_lettura(punteggio),
+        "quota": voce["quota"],
+        "righe_entro_soglia": voce["righe_entro_soglia"],
+        "righe_di_prova": voce["righe"],
+    }
+
+
+def strato_condizionale(target, nome_modello, colonne):
+    """Lo strato condizionale, se e' stato misurato, promosso e se il modello lo puo' usare.
+
+    Tre cancelli, tutti necessari. Il rapporto deve esistere ed essere di questo modello;
+    lo strato deve aver battuto la costante fuori campione; e ogni condizione deve essere
+    fra le colonne che il modello riceve, altrimenti il lato che prevede non l'avrebbe.
+    """
+    percorso = os.path.join(os.path.dirname(__file__), "output",
+                            target + "-affidabilita-condizionale.json")
+    if not os.path.isfile(percorso):
+        return None
+    with open(percorso, "r", encoding="utf-8") as handle:
+        rapporto = json.load(handle)
+    if rapporto.get("modello") != nome_modello:
+        return None
+    if not rapporto.get("esito", {}).get("condizionale", {}).get("promosso"):
+        return None
+    produzione = rapporto.get("modello_di_produzione")
+    if not produzione:
+        return None
+    mancanti = [nome for nome in produzione["condizioni"]
+                if nome != "valore_atteso" and nome not in colonne]
+    if mancanti:
+        return None
+    return {
+        "condizioni": produzione["condizioni"],
+        "standardizzazione": produzione["standardizzazione"],
+        "coefficienti": produzione["coefficienti"],
+        "intercetta": produzione["intercetta"],
+        "collegamento": "logistico",
+        "righe_di_addestramento": produzione["righe_di_addestramento"],
+        "scarto_medio_di_calibrazione": produzione["scarto_medio_di_calibrazione"],
+        "origini_vinte_su_brier": rapporto["esito"]["condizionale"]["origini_vinte_su_brier"],
+        "regola": produzione["regola"],
+        "significato": (
+            "sostituisce la costante della fascia con una probabilita' stimata per questa "
+            "gara; l'incertezza dichiarata e' lo scarto medio di calibrazione misurato, "
+            "non un intervallo binomiale"
+        ),
+    }
+
+
+def affidabilita_dichiarata(target, nome_modello, suffisso_validazione, colonne=()):
+    """L'affidabilita' del bersaglio: soglia assoluta, punteggio e curva conservata.
+
+    La soglia e' **l'errore della previsione banale**, cioe' l'errore assoluto medio della
+    migliore baseline arrotondato all'unita' del bersaglio. Sotto quella distanza il
+    modello vale piu' del non sapere nulla, ed e' la stessa regola per tutti e sette: non
+    una scelta a mano bersaglio per bersaglio.
+
+    Il punteggio e' la quota misurata fuori campione, non una sintesi di altre grandezze.
+    La curva intera resta nell'artefatto: cambiare soglia domani non costa un
+    riaddestramento, e la diagnostica ha i dati che le servono.
+    """
+    metriche = metriche_di_validazione(target, nome_modello, suffisso_validazione)
+    soglia = soglia_assoluta(metriche)
+    if soglia is None:
+        return None
+    mae_baseline = float(metriche["mae_migliore_baseline"])
+
+    percorso = os.path.join(os.path.dirname(__file__), "output", target + "-maturita.json")
+    if not os.path.isfile(percorso):
+        return None
+    with open(percorso, "r", encoding="utf-8") as handle:
+        rapporto = json.load(handle)
+    if rapporto.get("modello") != nome_modello:
+        return None
+
+    curva_complessiva = rapporto["complessivo"]["A_modello_completo"]["curva_di_accuratezza"]
+    voce = punto_della_curva(curva_complessiva, soglia)
+    if voce is None:
+        return None
+
+    per_fascia = {}
+    curve_per_fascia = {}
+    for nome, voce_fascia in rapporto.get("parametri_per_fascia", {}).items():
+        curva = voce_fascia.get("curva_di_accuratezza_con_peso_congelato")
+        punto = punto_della_curva(curva, soglia)
+        if punto is None:
+            continue
+        per_fascia[nome] = punteggio_da(punto)
+        curve_per_fascia[nome] = curva
+
+    return {
+        "definizione": (
+            "probabilita' misurata fuori campione che lo scarto fra previsto e osservato "
+            "resti entro la soglia assoluta di questo bersaglio"
+        ),
+        "soglia_assoluta": soglia,
+        "come_e_stata_scelta": (
+            "errore assoluto medio della migliore baseline (" + str(metriche["migliore_baseline"])
+            + ", " + str(round(mae_baseline, 4)) + ") arrotondato all'unita' del bersaglio"
+        ),
+        "fasce_di_lettura": [{"da": a, "fino_a": b, "nome": n} for a, b, n in FASCE_DI_LETTURA],
+        "misurata_sulla_miscela_congelata": True,
+        "condizionale": strato_condizionale(target, nome_modello, set(colonne)),
+        "complessivo": punteggio_da(voce),
+        "per_fascia": per_fascia,
+        "curva_completa": {
+            "soglie": rapporto.get("soglie_di_errore"),
+            "complessivo": curva_complessiva,
+            "per_fascia": curve_per_fascia,
+            "perche": (
+                "si conserva intera perche' una soglia diversa si legga senza riaddestrare, "
+                "e perche' la diagnostica veda la distribuzione dell'errore e non un punto"
+            ),
+        },
+        "avvertenza": (
+            "affidabilita' del modello e probabilita' dell'evento sono due numeri diversi: "
+            "non si sommano, non si confrontano e non si sostituiscono a vicenda"
+        ),
+    }
+
+
 def parametri_di_maturita(target, nome_modello, tavola, y, atteso, colonne):
     """La fascia di storico della squadra: peso della miscela, intervallo e affidabilita'.
 
@@ -338,10 +506,10 @@ def parametri_di_maturita(target, nome_modello, tavola, y, atteso, colonne):
             "livello nominale della fascia"
         ),
         "affidabilita": (
-            "non ancora definita: in fascia EARLY l'oscillazione dell'errore fra origini "
-            "e' minore di quella che il caso produce da solo con ventisei righe per "
-            "origine, quindi la stabilita' non e' misurabile li' e non puo' sostenere una "
-            "affidabilita'. L'evidenza per fascia e' esposta qui sotto"
+            "il punteggio sta nel blocco affidabilita' dell'artefatto, misurato per fascia "
+            "sulla miscela congelata. Non poggia sulla stabilita' temporale, che in fascia "
+            "EARLY non e' misurabile: li' l'oscillazione dell'errore fra origini e' minore "
+            "di quella che il caso produce da solo. L'evidenza per fascia resta qui sotto"
         ),
         "sotto_il_minimo": (
             "con meno di " + str(evaluate_min_previous()) + " gare precedenti il modello "

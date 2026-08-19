@@ -22,6 +22,15 @@ export interface ProfiloTiri {
   quotaDaFermo: number | null;
 }
 
+/**
+ * Le metriche del pannello di una gara gia' giocata: quanto la squadra ha prodotto su
+ * ciascuna. Si ricevono per gara, come il profilo dei tiri, perche' sono la misura di
+ * quella gara: le medie si fanno qui sopra, non a monte.
+ */
+export interface ProfiloDiContesto {
+  [metrica: string]: number | null;
+}
+
 /** Una gara gia' giocata, vista dal lato di una squadra. */
 export interface GaraPrecedente {
   eventId: number;
@@ -37,6 +46,10 @@ export interface GaraPrecedente {
   retiSubite: number | null;
   tiri?: ProfiloTiri | null;
   tiriConcessi?: ProfiloTiri | null;
+  /** Le metriche del pannello prodotte dalla squadra in quella gara. */
+  contesto?: ProfiloDiContesto | null;
+  /** Le stesse metriche, prodotte dall'avversario di quella gara. */
+  contestoConcesso?: ProfiloDiContesto | null;
 }
 
 /**

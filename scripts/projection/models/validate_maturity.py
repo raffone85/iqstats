@@ -66,6 +66,12 @@ FASCE = (
 # I pesi provati per la miscela fra modello e baseline: il migliore si sceglie sul treno.
 PESI = np.round(np.arange(0.0, 1.001, 0.05), 3)
 
+# Le distanze dal valore reale su cui si misura la quota di previsioni che vi restano
+# dentro. La griglia e' una sola per tutti i bersagli, e sale fino a otto perche' sui tiri
+# le soglie basse non dicono nulla: quale soglia abbia senso per quale metrica e' una
+# decisione da prendere guardando la curva, non da incorporare qui.
+SOGLIE_DI_ERRORE = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0)
+
 
 def colonne_ridotte(colonne):
     """Le colonne del manifesto che appartengono ai blocchi robusti a poco storico."""
@@ -89,6 +95,54 @@ def errore_standard_del_mae(errore):
     if len(errore) < 2:
         return None
     return float(np.std(np.abs(errore), ddof=1) / np.sqrt(len(errore)))
+
+
+def quota_incerta(dentro, totale, z=1.96):
+    """L'incertezza di una quota, nella forma che regge anche con decine di righe.
+
+    L'intervallo ingenuo su settantanove righe scavalca lo zero e l'uno appena la quota si
+    avvicina agli estremi, e diventa una promessa falsa proprio dove il campione e' piu'
+    povero. Quello di Wilson resta dentro i limiti e non si allarga oltre il lecito.
+    """
+    if totale <= 0:
+        return None, None
+    quota = dentro / totale
+    denominatore = 1.0 + z * z / totale
+    centro = (quota + z * z / (2 * totale)) / denominatore
+    raggio = z * np.sqrt(quota * (1 - quota) / totale
+                         + z * z / (4 * totale * totale)) / denominatore
+    return max(0.0, centro - raggio), min(1.0, centro + raggio)
+
+
+def curva_di_accuratezza(vero, previsto, soglie=SOGLIE_DI_ERRORE):
+    """Quante volte la previsione resta entro una distanza dichiarata dal valore reale.
+
+    E' l'unica forma di affidabilita' che il campione attuale sostiene: una frequenza
+    misurata fuori campione, non una sintesi di grandezze incommensurabili. La soglia non
+    si sceglie qui. Si conserva l'intera curva, cosi' che cambiarla in seguito non costi
+    un riaddestramento, e la scelta resti una decisione dichiarata invece che un numero
+    nascosto in una formula.
+    """
+    vero = np.asarray(vero, dtype=float)
+    previsto = np.asarray(previsto, dtype=float)
+    valido = np.isfinite(vero) & np.isfinite(previsto)
+    if valido.sum() == 0:
+        return None
+    scarto = np.abs(previsto[valido] - vero[valido])
+    totale = int(valido.sum())
+    voci = []
+    for soglia in soglie:
+        dentro = int(np.count_nonzero(scarto <= soglia))
+        bassa, alta = quota_incerta(dentro, totale)
+        voci.append({
+            "soglia": soglia,
+            "quota": round(dentro / totale, 4),
+            "quota_bassa": round(bassa, 4),
+            "quota_alta": round(alta, 4),
+            "righe_entro_soglia": dentro,
+            "righe": totale,
+        })
+    return voci
 
 
 def misure(vero, previsto, basso=None, alto=None):
@@ -403,6 +457,7 @@ def valuta(target, nome_modello, origini, quota_iniziale, densita_minima):
             misura["mae_per_origine"] = [voce_origine["mae"] for voce_origine in fra_origini]
             misura["righe_per_origine"] = [voce_origine["n"] for voce_origine in fra_origini]
             misura["instabilita_fra_origini"] = instabilita(fra_origini)
+            misura["curva_di_accuratezza"] = curva_di_accuratezza(vero[dentro], previsto)
             voce["metodi"][nome] = misura
 
         migliore = min(voce["metodi"], key=lambda nome: voce["metodi"][nome]["mae"])
@@ -425,6 +480,36 @@ def valuta(target, nome_modello, origini, quota_iniziale, densita_minima):
             "righe": int(dentro.sum()),
             "metodi": {nome: misure(vero[dentro], unite[nome]["previsto"][dentro])
                        for nome in metodi},
+        }
+
+    # La stessa misura su tutte le righe di prova insieme: e' la colonna «tutte» della
+    # tavola, quella che dice come si comporta il bersaglio quando non si guarda la fascia.
+    complessivo = {}
+    for nome in metodi:
+        previsto = unite[nome]["previsto"]
+        misura = misure(vero, previsto, unite[nome]["basso"], unite[nome]["alto"])
+        if misura is None:
+            continue
+        misura["curva_di_accuratezza"] = curva_di_accuratezza(vero, previsto)
+        complessivo[nome] = misura
+
+    # Le leghe si guardano su un metodo solo, quello che finisce in produzione: servono a
+    # vedere se la curva regge dappertutto, non a moltiplicare le tavole. Sotto le cento
+    # righe la quota sarebbe piu' rumore che misura.
+    per_lega_della_produzione = {}
+    previsto_produzione = unite["F_miscela_congelata"]["previsto"]
+    for lega in sotto["league_id"].value_counts().index[:8]:
+        maschera = (sotto["league_id"] == lega).to_numpy()
+        if maschera.sum() < 100:
+            continue
+        misura = misure(vero[maschera], previsto_produzione[maschera])
+        if misura is None:
+            continue
+        per_lega_della_produzione[str(lega)] = {
+            "righe": misura["n"],
+            "mae": misura["mae"],
+            "curva_di_accuratezza": curva_di_accuratezza(vero[maschera],
+                                                         previsto_produzione[maschera]),
         }
 
     # Cio' che il modello di produzione deve portarsi dietro: un peso per fascia, preso
@@ -452,13 +537,20 @@ def valuta(target, nome_modello, origini, quota_iniziale, densita_minima):
             "bias_fuori_campione": voce.get("bias"),
             "righe_di_prova": voce.get("n"),
             "instabilita_fra_origini": voce.get("instabilita_fra_origini"),
+            "curva_di_accuratezza_con_peso_congelato": congelata.get("curva_di_accuratezza"),
         }
 
     return {
         "target": target,
         "modello": nome_modello,
-        "schema": "validazione-maturita/1",
+        "schema": "validazione-maturita/2",
         "parametri_per_fascia": parametri,
+        "soglie_di_errore": list(SOGLIE_DI_ERRORE),
+        "significato_della_curva": (
+            "quota delle righe di prova in cui lo scarto assoluto fra previsto e osservato "
+            "resta entro la soglia, misurata fuori campione; la soglia da usare non e' "
+            "scelta qui, si conserva l'intera curva"
+        ),
         "definizione_delle_fasce": {
             nome: str(minimo) + "-" + ("oltre" if massimo > 1000 else str(massimo))
             for nome, minimo, massimo in FASCE
@@ -478,8 +570,10 @@ def valuta(target, nome_modello, origini, quota_iniziale, densita_minima):
         "blocchi_del_modello_ridotto": list(BLOCCHI_RIDOTTI),
         "righe_utilizzabili": int(len(righe)),
         "origini": per_origine,
+        "complessivo": complessivo,
         "per_fascia_della_squadra": per_fascia,
         "per_fascia_della_coppia": per_fascia_coppia,
+        "per_lega_della_miscela_congelata": per_lega_della_produzione,
         "avvertenza": (
             "la fascia EARLY ha poche righe nel periodo di prova perche' quasi tutti gli "
             "inizi di stagione dell'archivio cadono prima della prima origine: leggere "

@@ -382,7 +382,7 @@
     "colonna_del_campione": "gare_precedenti",
     "significato": "maturita' del campione della squadra, mai disponibilita' del motore: con tre gare precedenti il motore prevede",
     "regola": "il valore atteso e' la miscela fra il modello e la baseline con restringimento, con il peso della fascia; l'intervallo usa dispersione e livello nominale della fascia",
-    "affidabilita": "non ancora definita: in fascia EARLY l'oscillazione dell'errore fra origini e' minore di quella che il caso produce da solo con ventisei righe per origine, quindi la stabilita' non e' misurabile li' e non puo' sostenere una affidabilita'. L'evidenza per fascia e' esposta qui sotto",
+    "affidabilita": "il punteggio sta nel blocco affidabilita' dell'artefatto, misurato per fascia sulla miscela congelata. Non poggia sulla stabilita' temporale, che in fascia EARLY non e' misurabile: li' l'oscillazione dell'errore fra origini e' minore di quella che il caso produce da solo. L'evidenza per fascia resta qui sotto",
     "sotto_il_minimo": "con meno di 3 gare precedenti il modello del bersaglio non si applica: si scende nella gerarchia di ripiego",
     "per_fascia": {
       "EARLY": {
@@ -512,6 +512,452 @@
         }
       }
     }
+  },
+  "affidabilita": {
+    "definizione": "probabilita' misurata fuori campione che lo scarto fra previsto e osservato resti entro la soglia assoluta di questo bersaglio",
+    "soglia_assoluta": 3.0,
+    "come_e_stata_scelta": "errore assoluto medio della migliore baseline (baseline_restringimento, 2.9278) arrotondato all'unita' del bersaglio",
+    "fasce_di_lettura": [
+      {
+        "da": 0,
+        "fino_a": 50,
+        "nome": "BASSA"
+      },
+      {
+        "da": 50,
+        "fino_a": 70,
+        "nome": "MODERATA"
+      },
+      {
+        "da": 70,
+        "fino_a": 85,
+        "nome": "ALTA"
+      },
+      {
+        "da": 85,
+        "fino_a": 101,
+        "nome": "MOLTO ALTA"
+      }
+    ],
+    "misurata_sulla_miscela_congelata": true,
+    "condizionale": null,
+    "complessivo": {
+      "punteggio": 61,
+      "punteggio_basso": 60,
+      "punteggio_alto": 62,
+      "fascia_di_lettura": "MODERATA",
+      "quota": 0.6098,
+      "righe_entro_soglia": 4481,
+      "righe_di_prova": 7348
+    },
+    "per_fascia": {
+      "EARLY": {
+        "punteggio": 59,
+        "punteggio_basso": 48,
+        "punteggio_alto": 70,
+        "fascia_di_lettura": "MODERATA",
+        "quota": 0.5949,
+        "righe_entro_soglia": 47,
+        "righe_di_prova": 79
+      },
+      "DEVELOPING": {
+        "punteggio": 66,
+        "punteggio_basso": 59,
+        "punteggio_alto": 72,
+        "fascia_di_lettura": "MODERATA",
+        "quota": 0.6567,
+        "righe_entro_soglia": 132,
+        "righe_di_prova": 201
+      },
+      "MATURE": {
+        "punteggio": 61,
+        "punteggio_basso": 60,
+        "punteggio_alto": 62,
+        "fascia_di_lettura": "MODERATA",
+        "quota": 0.6091,
+        "righe_entro_soglia": 4305,
+        "righe_di_prova": 7068
+      }
+    },
+    "curva_completa": {
+      "soglie": [
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0
+      ],
+      "complessivo": [
+        {
+          "soglia": 0.5,
+          "quota": 0.1189,
+          "quota_bassa": 0.1117,
+          "quota_alta": 0.1265,
+          "righe_entro_soglia": 874,
+          "righe": 7348
+        },
+        {
+          "soglia": 1.0,
+          "quota": 0.2244,
+          "quota_bassa": 0.215,
+          "quota_alta": 0.2341,
+          "righe_entro_soglia": 1649,
+          "righe": 7348
+        },
+        {
+          "soglia": 1.5,
+          "quota": 0.3371,
+          "quota_bassa": 0.3264,
+          "quota_alta": 0.348,
+          "righe_entro_soglia": 2477,
+          "righe": 7348
+        },
+        {
+          "soglia": 2.0,
+          "quota": 0.4363,
+          "quota_bassa": 0.425,
+          "quota_alta": 0.4477,
+          "righe_entro_soglia": 3206,
+          "righe": 7348
+        },
+        {
+          "soglia": 2.5,
+          "quota": 0.5297,
+          "quota_bassa": 0.5182,
+          "quota_alta": 0.5411,
+          "righe_entro_soglia": 3892,
+          "righe": 7348
+        },
+        {
+          "soglia": 3.0,
+          "quota": 0.6098,
+          "quota_bassa": 0.5986,
+          "quota_alta": 0.6209,
+          "righe_entro_soglia": 4481,
+          "righe": 7348
+        },
+        {
+          "soglia": 4.0,
+          "quota": 0.7545,
+          "quota_bassa": 0.7445,
+          "quota_alta": 0.7642,
+          "righe_entro_soglia": 5544,
+          "righe": 7348
+        },
+        {
+          "soglia": 5.0,
+          "quota": 0.8466,
+          "quota_bassa": 0.8382,
+          "quota_alta": 0.8547,
+          "righe_entro_soglia": 6221,
+          "righe": 7348
+        },
+        {
+          "soglia": 6.0,
+          "quota": 0.91,
+          "quota_bassa": 0.9033,
+          "quota_alta": 0.9164,
+          "righe_entro_soglia": 6687,
+          "righe": 7348
+        },
+        {
+          "soglia": 7.0,
+          "quota": 0.953,
+          "quota_bassa": 0.948,
+          "quota_alta": 0.9577,
+          "righe_entro_soglia": 7003,
+          "righe": 7348
+        },
+        {
+          "soglia": 8.0,
+          "quota": 0.9756,
+          "quota_bassa": 0.9719,
+          "quota_alta": 0.9789,
+          "righe_entro_soglia": 7169,
+          "righe": 7348
+        }
+      ],
+      "per_fascia": {
+        "EARLY": [
+          {
+            "soglia": 0.5,
+            "quota": 0.1899,
+            "quota_bassa": 0.1186,
+            "quota_alta": 0.2899,
+            "righe_entro_soglia": 15,
+            "righe": 79
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.3291,
+            "quota_bassa": 0.2355,
+            "quota_alta": 0.4385,
+            "righe_entro_soglia": 26,
+            "righe": 79
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.443,
+            "quota_bassa": 0.3387,
+            "quota_alta": 0.5527,
+            "righe_entro_soglia": 35,
+            "righe": 79
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.481,
+            "quota_bassa": 0.3743,
+            "quota_alta": 0.5895,
+            "righe_entro_soglia": 38,
+            "righe": 79
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.5443,
+            "quota_bassa": 0.435,
+            "quota_alta": 0.6495,
+            "righe_entro_soglia": 43,
+            "righe": 79
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.5949,
+            "quota_bassa": 0.4847,
+            "quota_alta": 0.6963,
+            "righe_entro_soglia": 47,
+            "righe": 79
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.7848,
+            "quota_bassa": 0.6821,
+            "quota_alta": 0.8611,
+            "righe_entro_soglia": 62,
+            "righe": 79
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.8861,
+            "quota_bassa": 0.7975,
+            "quota_alta": 0.9389,
+            "righe_entro_soglia": 70,
+            "righe": 79
+          },
+          {
+            "soglia": 6.0,
+            "quota": 0.9114,
+            "quota_bassa": 0.8282,
+            "quota_alta": 0.9564,
+            "righe_entro_soglia": 72,
+            "righe": 79
+          },
+          {
+            "soglia": 7.0,
+            "quota": 0.962,
+            "quota_bassa": 0.8942,
+            "quota_alta": 0.987,
+            "righe_entro_soglia": 76,
+            "righe": 79
+          },
+          {
+            "soglia": 8.0,
+            "quota": 0.9747,
+            "quota_bassa": 0.9123,
+            "quota_alta": 0.993,
+            "righe_entro_soglia": 77,
+            "righe": 79
+          }
+        ],
+        "DEVELOPING": [
+          {
+            "soglia": 0.5,
+            "quota": 0.1194,
+            "quota_bassa": 0.0816,
+            "quota_alta": 0.1715,
+            "righe_entro_soglia": 24,
+            "righe": 201
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.2289,
+            "quota_bassa": 0.1762,
+            "quota_alta": 0.2917,
+            "righe_entro_soglia": 46,
+            "righe": 201
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.3483,
+            "quota_bassa": 0.2858,
+            "quota_alta": 0.4164,
+            "righe_entro_soglia": 70,
+            "righe": 201
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.4577,
+            "quota_bassa": 0.3903,
+            "quota_alta": 0.5267,
+            "righe_entro_soglia": 92,
+            "righe": 201
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.5473,
+            "quota_bassa": 0.4782,
+            "quota_alta": 0.6145,
+            "righe_entro_soglia": 110,
+            "righe": 201
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.6567,
+            "quota_bassa": 0.5887,
+            "quota_alta": 0.7189,
+            "righe_entro_soglia": 132,
+            "righe": 201
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.7711,
+            "quota_bassa": 0.7083,
+            "quota_alta": 0.8238,
+            "righe_entro_soglia": 155,
+            "righe": 201
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.8607,
+            "quota_bassa": 0.806,
+            "quota_alta": 0.9018,
+            "righe_entro_soglia": 173,
+            "righe": 201
+          },
+          {
+            "soglia": 6.0,
+            "quota": 0.9453,
+            "quota_bassa": 0.9047,
+            "quota_alta": 0.9692,
+            "righe_entro_soglia": 190,
+            "righe": 201
+          },
+          {
+            "soglia": 7.0,
+            "quota": 0.9751,
+            "quota_bassa": 0.9431,
+            "quota_alta": 0.9893,
+            "righe_entro_soglia": 196,
+            "righe": 201
+          },
+          {
+            "soglia": 8.0,
+            "quota": 0.9751,
+            "quota_bassa": 0.9431,
+            "quota_alta": 0.9893,
+            "righe_entro_soglia": 196,
+            "righe": 201
+          }
+        ],
+        "MATURE": [
+          {
+            "soglia": 0.5,
+            "quota": 0.118,
+            "quota_bassa": 0.1107,
+            "quota_alta": 0.1257,
+            "righe_entro_soglia": 834,
+            "righe": 7068
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.2234,
+            "quota_bassa": 0.2138,
+            "quota_alta": 0.2333,
+            "righe_entro_soglia": 1579,
+            "righe": 7068
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.3355,
+            "quota_bassa": 0.3245,
+            "quota_alta": 0.3465,
+            "righe_entro_soglia": 2371,
+            "righe": 7068
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.4353,
+            "quota_bassa": 0.4238,
+            "quota_alta": 0.4469,
+            "righe_entro_soglia": 3077,
+            "righe": 7068
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.529,
+            "quota_bassa": 0.5174,
+            "quota_alta": 0.5406,
+            "righe_entro_soglia": 3739,
+            "righe": 7068
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.6091,
+            "quota_bassa": 0.5977,
+            "quota_alta": 0.6204,
+            "righe_entro_soglia": 4305,
+            "righe": 7068
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.7535,
+            "quota_bassa": 0.7434,
+            "quota_alta": 0.7634,
+            "righe_entro_soglia": 5326,
+            "righe": 7068
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.8462,
+            "quota_bassa": 0.8376,
+            "quota_alta": 0.8544,
+            "righe_entro_soglia": 5981,
+            "righe": 7068
+          },
+          {
+            "soglia": 6.0,
+            "quota": 0.909,
+            "quota_bassa": 0.9021,
+            "quota_alta": 0.9155,
+            "righe_entro_soglia": 6425,
+            "righe": 7068
+          },
+          {
+            "soglia": 7.0,
+            "quota": 0.9523,
+            "quota_bassa": 0.9471,
+            "quota_alta": 0.957,
+            "righe_entro_soglia": 6731,
+            "righe": 7068
+          },
+          {
+            "soglia": 8.0,
+            "quota": 0.9757,
+            "quota_bassa": 0.9718,
+            "quota_alta": 0.979,
+            "righe_entro_soglia": 6896,
+            "righe": 7068
+          }
+        ]
+      },
+      "perche": "si conserva intera perche' una soglia diversa si legga senza riaddestrare, e perche' la diagnostica veda la distribuzione dell'errore e non un punto"
+    },
+    "avvertenza": "affidabilita' del modello e probabilita' dell'evento sono due numeri diversi: non si sommano, non si confrontano e non si sostituiscono a vicenda"
   },
   "validation_metrics": {
     "metodo": "finestra avanzante su 5 origini",

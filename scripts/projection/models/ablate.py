@@ -102,6 +102,41 @@ BLOCCHI = [
         "colonne": (),
         "descrizione": "il lato del campo moltiplicato per forza, classifica e arbitro",
     }),
+    ("circolazione", {
+        "prefissi": ("circolazione_",),
+        "colonne": (),
+        "descrizione": "possesso, passaggi, accuratezza e palle lunghe: il ritmo con cui la palla gira",
+    }),
+    ("territorio", {
+        "prefissi": ("territorio_",),
+        "colonne": (),
+        "descrizione": "ingressi nell'ultimo terzo, tocchi in area e cross: dove si gioca",
+    }),
+    ("intensita", {
+        "prefissi": ("intensita_",),
+        "colonne": (),
+        "descrizione": "duelli, contrasti, intercetti, recuperi e dribbling: quanto si combatte",
+    }),
+    ("ambiente_tiro", {
+        "prefissi": ("ambiente_tiro_",),
+        "colonne": (),
+        "descrizione": "tiri dentro e fuori area, bloccati, legni ed errori che generano tiri",
+    }),
+    ("ambiente_gol", {
+        "prefissi": ("ambiente_gol_",),
+        "colonne": (),
+        "descrizione": "reti attese e occasioni nitide: quanto la gara promette gol",
+    }),
+    ("inattive", {
+        "prefissi": ("inattive_",),
+        "colonne": (),
+        "descrizione": "punizioni, rimesse, rinvii e falli subiti nell'ultimo terzo",
+    }),
+    ("incrociato", {
+        "prefissi": ("incrociato_",),
+        "colonne": (),
+        "descrizione": "gli altri sei bersagli core come storia della squadra e dell'avversario",
+    }),
 ]
 
 # Blocchi che il metodo prevede e che non sono ancora costruibili: si dichiarano invece

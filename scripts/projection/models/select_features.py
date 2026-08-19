@@ -58,6 +58,13 @@ TRASPORTO = {
     "classifica": ("storia_squadra", "basso"),
     "contesto": ("calendario", "basso"),
     "interazione": ("storia_squadra", "basso"),
+    "circolazione": ("storia_squadra_estesa", "medio"),
+    "territorio": ("storia_squadra_estesa", "medio"),
+    "intensita": ("storia_squadra_estesa", "medio"),
+    "ambiente_tiro": ("storia_squadra_estesa", "medio"),
+    "ambiente_gol": ("storia_squadra_estesa", "medio"),
+    "inattive": ("storia_squadra_estesa", "medio"),
+    "incrociato": ("storia_squadra_estesa", "medio"),
     "allenatore": ("storia_allenatore", "medio"),
     "arbitro": ("profilo_arbitro", "medio"),
     "giocatori": ("statistiche_per_giocatore", "alto"),
@@ -349,6 +356,17 @@ def main():
             for riga in voce["importanza_per_permutazione"][:5]))
         print()
 
+    # Il manifesto si aggiorna, non si riscrive da zero: chi lancia la selezione per un
+    # solo bersaglio non intende cancellare gli altri, e senza questa fusione le voci gia'
+    # validate sparirebbero insieme ai modelli che le citano.
+    gia_presenti = {}
+    if os.path.isfile(MANIFESTO):
+        with open(MANIFESTO, "r", encoding="utf-8") as handle:
+            gia_presenti = json.load(handle).get("target") or {}
+    sostituiti = sorted(set(gia_presenti) & set(voci))
+    if sostituiti:
+        print("voci del manifesto rifatte: " + ", ".join(sostituiti))
+
     manifesto = {
         "versione_schema": VERSIONE_SCHEMA,
         "generato_da": "scripts/projection/models/select_features.py",
@@ -362,7 +380,7 @@ def main():
             "scarta_altrimenti": "costo medio nullo o negativo, oppure guadagno instabile",
             "nota": "la decisione e' presa target per target, mai in media fra i target",
         },
-        "target": voci,
+        "target": dict(sorted({**gia_presenti, **voci}.items())),
     }
     if voci:
         with open(MANIFESTO, "w", encoding="utf-8") as handle:

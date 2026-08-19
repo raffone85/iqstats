@@ -99,6 +99,75 @@ export interface Maturita {
   readonly per_fascia: Readonly<Record<string, FasciaDiMaturita>>;
 }
 
+/**
+ * Un punto della curva di accuratezza, letto come punteggio 0-100 con la sua incertezza.
+ *
+ * Il punteggio e' la quota misurata fuori campione, moltiplicata per cento. Non e' una
+ * sintesi di altre grandezze e non contiene giudizi: l'incertezza che lo accompagna e'
+ * quella binomiale della quota, e in fascia EARLY e' larga venti punti.
+ */
+export interface PunteggioDiAffidabilita {
+  readonly punteggio: number;
+  readonly punteggio_basso: number;
+  readonly punteggio_alto: number;
+  readonly fascia_di_lettura: string;
+  readonly quota: number;
+  readonly righe_entro_soglia: number;
+  readonly righe_di_prova: number;
+}
+
+export interface FasciaDiLettura {
+  readonly da: number;
+  readonly fino_a: number;
+  readonly nome: string;
+}
+
+/**
+ * L'affidabilita' del bersaglio: la probabilita' che lo scarto resti entro la soglia.
+ *
+ * La soglia e' assoluta e specifica del bersaglio, nelle sue unita' reali. La curva intera
+ * resta nell'artefatto perche' una soglia diversa si possa leggere domani senza
+ * riaddestrare nulla.
+ *
+ * Questo numero non e' la probabilita' dell'evento. Sono due grandezze diverse.
+ */
+/**
+ * Lo strato condizionale: la probabilita' stimata per **questa** gara, invece della
+ * costante della fascia.
+ *
+ * E' una regressione logistica su condizioni note prima del calcio d'inizio, addestrata
+ * sugli errori fuori campione del motore. C'e' solo dove ha battuto la costante su Brier
+ * e log-loss: dove non l'ha battuta, l'artefatto non lo porta e resta la costante.
+ *
+ * L'incertezza che dichiara non e' binomiale: e' lo scarto medio fra probabilita' promessa
+ * e frequenza osservata, misurato per decili.
+ */
+export interface StratoCondizionale {
+  readonly condizioni: readonly string[];
+  readonly standardizzazione: { readonly media: readonly number[]; readonly scala: readonly number[] };
+  readonly coefficienti: readonly number[];
+  readonly intercetta: number;
+  readonly collegamento: 'logistico';
+  readonly righe_di_addestramento: number;
+  readonly scarto_medio_di_calibrazione: number;
+  readonly origini_vinte_su_brier: string;
+  readonly regola: string;
+  readonly significato: string;
+}
+
+export interface Affidabilita {
+  readonly definizione: string;
+  readonly soglia_assoluta: number;
+  readonly come_e_stata_scelta: string;
+  readonly fasce_di_lettura: readonly FasciaDiLettura[];
+  readonly misurata_sulla_miscela_congelata: boolean;
+  readonly condizionale: StratoCondizionale | null;
+  readonly complessivo: PunteggioDiAffidabilita;
+  readonly per_fascia: Readonly<Record<string, PunteggioDiAffidabilita>>;
+  readonly curva_completa: Record<string, unknown>;
+  readonly avvertenza: string;
+}
+
 export interface RiferimentoChecksum {
   readonly algoritmo: 'sha256';
   readonly ambito: string;
@@ -119,6 +188,7 @@ export interface ArtefattoModello {
   readonly taglio: Taglio;
   readonly calibration: Calibrazione;
   readonly maturita: Maturita | null;
+  readonly affidabilita: Affidabilita | null;
   readonly training_metadata: MetadatiAddestramento;
   readonly validation_metrics: Record<string, unknown> | null;
   readonly checksum: RiferimentoChecksum;
@@ -232,6 +302,7 @@ export function leggiArtefatto(grezzo: unknown): ArtefattoModello {
   }
 
   verificaMaturita(radice.maturita, ordine as readonly string[]);
+  verificaAffidabilita(radice.affidabilita, ordine as readonly string[]);
 
   return radice as unknown as ArtefattoModello;
 }
@@ -294,6 +365,98 @@ function verificaMaturita(grezza: unknown, ordine: readonly string[]): void {
       throw new ArtefattoNonValido(campo + '.distribuzione_intervallo non riconosciuta');
     }
   });
+}
+
+/**
+ * Verifica il blocco di affidabilita', quando l'artefatto lo porta.
+ *
+ * Un punteggio incoerente con la quota da cui dice di venire, o un estremo dell'incertezza
+ * dalla parte sbagliata, sarebbero un numero credibile e falso proprio dove il metodo
+ * vieta di inventare: si rifiuta l'artefatto invece di mostrarlo.
+ */
+function verificaPunteggio(grezzo: unknown, campo: string): void {
+  const voce = oggetto(grezzo, campo);
+  const quota = numero(voce.quota, campo + '.quota');
+  if (quota < 0 || quota > 1) {
+    throw new ArtefattoNonValido(campo + '.quota deve stare fra zero e uno');
+  }
+  const punteggio = numero(voce.punteggio, campo + '.punteggio');
+  const basso = numero(voce.punteggio_basso, campo + '.punteggio_basso');
+  const alto = numero(voce.punteggio_alto, campo + '.punteggio_alto');
+  if (punteggio < 0 || punteggio > 100) {
+    throw new ArtefattoNonValido(campo + '.punteggio deve stare fra zero e cento');
+  }
+  if (basso > punteggio || alto < punteggio) {
+    throw new ArtefattoNonValido(campo + ' ha un intervallo di incertezza che non contiene il punteggio');
+  }
+  if (Math.abs(punteggio - Math.round(100 * quota)) > 1) {
+    throw new ArtefattoNonValido(campo + '.punteggio non viene dalla quota che dichiara');
+  }
+  testo(voce.fascia_di_lettura, campo + '.fascia_di_lettura');
+  const righe = numero(voce.righe_di_prova, campo + '.righe_di_prova');
+  if (righe <= 0) {
+    throw new ArtefattoNonValido(campo + '.righe_di_prova deve essere maggiore di zero');
+  }
+}
+
+function verificaCondizionale(grezzo: unknown, ordine: readonly string[]): void {
+  if (grezzo === null || grezzo === undefined) {
+    return;
+  }
+  const strato = oggetto(grezzo, 'affidabilita.condizionale');
+  const condizioni = strato.condizioni;
+  if (!Array.isArray(condizioni) || condizioni.some((nome) => typeof nome !== 'string')) {
+    throw new ArtefattoNonValido('affidabilita.condizionale.condizioni non e\' un elenco di nomi');
+  }
+  // Una condizione che il modello non riceve renderebbe il punteggio incalcolabile in
+  // produzione: meglio rifiutare l\'artefatto che scoprirlo davanti a una gara.
+  condizioni.forEach((nome) => {
+    if (nome !== 'valore_atteso' && !ordine.includes(nome as string)) {
+      throw new ArtefattoNonValido(
+        'affidabilita.condizionale.condizioni contiene ' + String(nome)
+        + ', che non e\' fra le feature del modello',
+      );
+    }
+  });
+  const standardizzazione = oggetto(strato.standardizzazione, 'affidabilita.condizionale.standardizzazione');
+  const media = elencoDiNumeri(standardizzazione.media, 'affidabilita.condizionale.media');
+  const scala = elencoDiNumeri(standardizzazione.scala, 'affidabilita.condizionale.scala');
+  const coefficienti = elencoDiNumeri(strato.coefficienti, 'affidabilita.condizionale.coefficienti');
+  if (condizioni.length !== media.length || condizioni.length !== scala.length
+    || condizioni.length !== coefficienti.length) {
+    throw new ArtefattoNonValido('affidabilita.condizionale ha lunghezze incoerenti');
+  }
+  if (scala.some((valore) => valore === 0)) {
+    throw new ArtefattoNonValido('affidabilita.condizionale.scala contiene uno zero');
+  }
+  numero(strato.intercetta, 'affidabilita.condizionale.intercetta');
+  if (strato.collegamento !== 'logistico') {
+    throw new ArtefattoNonValido('affidabilita.condizionale.collegamento non riconosciuto');
+  }
+  const calibrazione = numero(strato.scarto_medio_di_calibrazione,
+    'affidabilita.condizionale.scarto_medio_di_calibrazione');
+  if (calibrazione < 0 || calibrazione > 1) {
+    throw new ArtefattoNonValido(
+      'affidabilita.condizionale.scarto_medio_di_calibrazione deve stare fra zero e uno',
+    );
+  }
+}
+
+function verificaAffidabilita(grezza: unknown, ordine: readonly string[]): void {
+  if (grezza === null || grezza === undefined) {
+    return;
+  }
+  const affidabilita = oggetto(grezza, 'affidabilita');
+  const soglia = numero(affidabilita.soglia_assoluta, 'affidabilita.soglia_assoluta');
+  if (soglia <= 0) {
+    throw new ArtefattoNonValido('affidabilita.soglia_assoluta deve essere positiva');
+  }
+  verificaPunteggio(affidabilita.complessivo, 'affidabilita.complessivo');
+  const perFascia = oggetto(affidabilita.per_fascia, 'affidabilita.per_fascia');
+  Object.keys(perFascia).forEach((nome) => {
+    verificaPunteggio(perFascia[nome], 'affidabilita.per_fascia.' + nome);
+  });
+  verificaCondizionale(affidabilita.condizionale, ordine);
 }
 
 /**

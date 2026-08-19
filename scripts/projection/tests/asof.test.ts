@@ -91,6 +91,7 @@ test('ogni colonna appartiene a un gruppo, e uno solo', () => {
   assert.equal(gruppoDi('giorni_di_riposo'), 'riposo');
   assert.equal(gruppoDi('arbitro_severita_falli'), 'arbitro');
   assert.equal(gruppoDi('spaziale_quota_in_area_concesso'), 'spaziale');
+  assert.equal(gruppoDi('interazione_casa_severita_arbitro'), 'interazione');
   assert.equal(gruppoDi('colonna_inventata'), null);
 });
 

@@ -21,7 +21,12 @@
  * Modulo puro: nessuna dipendenza dall'applicazione, nessun accesso a rete o disco.
  */
 
-import type { ArtefattoModello, FasciaDiMaturita, RipiegoMisurato } from './artifact-schema';
+import type {
+  ArtefattoModello,
+  FasciaDiMaturita,
+  RipiegoMisurato,
+  StratoCondizionale,
+} from './artifact-schema';
 import type { ValoreFeature } from './feature-transform';
 import type { Intervallo } from './predictor';
 import { intervalloDaParametri, prevedi } from './predictor';
@@ -33,15 +38,38 @@ export type Copertura = 'piena' | 'ridotta';
 export type OrigineDelValore = 'modello' | 'miscela' | 'ripiego';
 
 /**
+ * Il livello di affidabilita' letto dall'artefatto, con la sua incertezza.
+ *
+ * Non e' una sintesi di altre grandezze: e' la quota di righe, misurata fuori campione, in
+ * cui lo scarto fra previsto e osservato e' rimasto entro la soglia assoluta del bersaglio,
+ * moltiplicata per cento. L'incertezza e' quella binomiale della quota, e nella fascia con
+ * meno storico e' larga venti punti: si espone, non si nasconde.
+ *
+ * Non e' la probabilita' dell'evento. Sono due numeri diversi e non si confondono.
+ */
+export interface LivelloDiAffidabilita {
+  readonly punteggio: number;
+  readonly punteggioBasso: number;
+  readonly punteggioAlto: number;
+  readonly fasciaDiLettura: string;
+  readonly soglia: number;
+  readonly misuratoSu: 'condizionale' | 'fascia' | 'complessivo';
+  readonly righeDiProva: number;
+}
+
+/**
  * Le evidenze misurate su cui poggia il giudizio di affidabilita'.
  *
- * Il metodo vieta di inventare una percentuale di confidenza, e con il campione attuale
- * la stabilita' temporale in fascia EARLY non e' misurabile: l'oscillazione dell'errore
- * fra origini vi risulta minore di quella che il caso produce da solo. Finche' non esiste
- * una sintesi sostenuta dai dati, qui si espongono le componenti e il livello resta nullo.
+ * Il livello c'e' quando il numero viene dal modello e l'artefatto porta la curva
+ * misurata. Resta nullo sotto un ripiego: l'affidabilita' e' stata misurata sul modello
+ * del bersaglio, e attribuirla a una baseline su cui nessuno l'ha misurata sarebbe
+ * l'invenzione che il metodo vieta.
+ *
+ * Le componenti restano tutte anche quando il livello c'e': una sintesi non sostituisce
+ * l'evidenza da cui viene.
  */
 export interface EvidenzeDiAffidabilita {
-  readonly livello: null;
+  readonly livello: LivelloDiAffidabilita | null;
   readonly perche: string;
   readonly fascia: string | null;
   readonly garePrecedenti: number | null;
@@ -133,12 +161,134 @@ function fasciaPiuPovera(artefatto: ArtefattoModello): FasciaDiMaturita | null {
   return piuPovera;
 }
 
+/**
+ * Il punteggio condizionale per questa gara, quando l\'artefatto porta lo strato.
+ *
+ * Le condizioni si leggono dal vettore delle feature, tranne il valore atteso, che e\' la
+ * proiezione stessa. Se una condizione manca, il punteggio condizionale non si calcola e
+ * si torna alla costante della fascia: un valore mancante non diventa zero nemmeno qui.
+ */
+function livelloCondizionale(
+  strato: StratoCondizionale,
+  soglia: number,
+  valori: Readonly<Record<string, ValoreFeature>>,
+  valoreAtteso: number,
+): LivelloDiAffidabilita | null {
+  let somma = strato.intercetta;
+  for (let indice = 0; indice < strato.condizioni.length; indice += 1) {
+    const nome = strato.condizioni[indice];
+    const grezzo = nome === 'valore_atteso' ? valoreAtteso : numeroDa(valori[nome]);
+    if (grezzo === null) {
+      return null;
+    }
+    const media = strato.standardizzazione.media[indice];
+    const scala = strato.standardizzazione.scala[indice];
+    somma += strato.coefficienti[indice] * ((grezzo - media) / scala);
+  }
+  const probabilita = 1 / (1 + Math.exp(-somma));
+  if (!Number.isFinite(probabilita)) {
+    return null;
+  }
+  const punteggio = Math.round(100 * probabilita);
+  // L\'incertezza qui non e\' binomiale: e\' lo scarto medio fra probabilita\' promessa e
+  // frequenza osservata, misurato per decili sul periodo di prova.
+  const banda = Math.round(100 * strato.scarto_medio_di_calibrazione);
+  return {
+    punteggio,
+    punteggioBasso: Math.max(0, punteggio - banda),
+    punteggioAlto: Math.min(100, punteggio + banda),
+    fasciaDiLettura: fasciaDiLettura(punteggio),
+    soglia,
+    misuratoSu: 'condizionale',
+    righeDiProva: strato.righe_di_addestramento,
+  };
+}
+
+/** Le fasce di lettura, le stesse dichiarate nell\'artefatto. */
+function fasciaDiLettura(punteggio: number): string {
+  if (punteggio < 50) {
+    return 'BASSA';
+  }
+  if (punteggio < 70) {
+    return 'MODERATA';
+  }
+  return punteggio < 85 ? 'ALTA' : 'MOLTO ALTA';
+}
+
+/**
+ * Il punteggio per questa gara: condizionale se l\'artefatto lo porta e le condizioni ci
+ * sono, altrimenti la costante della fascia. Sotto un ripiego non si legge nulla.
+ */
+function livelloDa(
+  artefatto: ArtefattoModello,
+  nomeFascia: string | null,
+  daRipiego: boolean,
+  valori: Readonly<Record<string, ValoreFeature>>,
+  valoreAtteso: number,
+): LivelloDiAffidabilita | null {
+  const affidabilita = artefatto.affidabilita;
+  if (daRipiego || affidabilita === null || affidabilita === undefined) {
+    return null;
+  }
+  const strato = affidabilita.condizionale;
+  if (strato !== null && strato !== undefined) {
+    const condizionale = livelloCondizionale(
+      strato, affidabilita.soglia_assoluta, valori, valoreAtteso,
+    );
+    if (condizionale !== null) {
+      return condizionale;
+    }
+  }
+  const dellaFascia = nomeFascia === null ? undefined : affidabilita.per_fascia[nomeFascia];
+  const voce = dellaFascia === undefined ? affidabilita.complessivo : dellaFascia;
+  if (voce === undefined) {
+    return null;
+  }
+  return {
+    punteggio: voce.punteggio,
+    punteggioBasso: voce.punteggio_basso,
+    punteggioAlto: voce.punteggio_alto,
+    fasciaDiLettura: voce.fascia_di_lettura,
+    soglia: affidabilita.soglia_assoluta,
+    misuratoSu: dellaFascia === undefined ? 'complessivo' : 'fascia',
+    righeDiProva: voce.righe_di_prova,
+  };
+}
+
+function percheDelLivello(livello: LivelloDiAffidabilita | null, daRipiego: boolean): string {
+  if (livello !== null && livello.misuratoSu === 'condizionale') {
+    return (
+      'probabilita\' stimata per questa gara che lo scarto resti entro '
+      + String(livello.soglia) + ', da condizioni note prima del calcio d\'inizio: e\''
+      + ' l\'affidabilita\' del modello, non la probabilita\' dell\'evento'
+    );
+  }
+  if (livello !== null) {
+    return (
+      'probabilita\' misurata fuori campione che lo scarto resti entro '
+      + String(livello.soglia) + ', su ' + String(livello.righeDiProva)
+      + ' righe di prova: e\' l\'affidabilita\' del modello, non la probabilita\' dell\'evento'
+    );
+  }
+  if (daRipiego) {
+    return (
+      'il valore viene da un ripiego: l\'affidabilita\' e\' misurata sul modello del '
+      + 'bersaglio, non su quella baseline, quindi qui non si dichiara'
+    );
+  }
+  return 'l\'artefatto non porta la curva misurata: nessun livello si dichiara';
+}
+
 function evidenzeDa(
+  artefatto: ArtefattoModello,
   nomeFascia: string | null,
   fascia: FasciaDiMaturita | null,
   garePrecedenti: number | null,
   garePrecedentiAvversario: number | null,
   feature: 'complete' | 'incomplete',
+  daRipiego: boolean,
+  valori: Readonly<Record<string, ValoreFeature>>,
+  valoreAtteso: number,
 ): EvidenzeDiAffidabilita {
   const evidenza = (fascia === null ? {} : fascia.evidenza_fuori_campione) as Record<
     string,
@@ -149,13 +299,11 @@ function evidenzeDa(
     ? null
     : (instabilita.deviazione_vera as number | undefined);
 
+  const livello = livelloDa(artefatto, nomeFascia, daRipiego, valori, valoreAtteso);
+
   return {
-    livello: null,
-    perche: (
-      'l\'affidabilita\' sintetica non e\' ancora definita: con il campione attuale la '
-      + 'stabilita\' temporale non e\' misurabile nella fascia con meno storico, e una '
-      + 'percentuale non sostenuta dai dati sarebbe inventata'
-    ),
+    livello,
+    perche: percheDelLivello(livello, daRipiego),
     fascia: nomeFascia,
     garePrecedenti,
     garePrecedentiAvversario,
@@ -227,11 +375,15 @@ function conRipiego(
     copertura: 'ridotta',
     campioneDiAddestramento: artefatto.training_metadata.righe,
     evidenze: evidenzeDa(
+      artefatto,
       nomeFascia,
       fascia,
       garePrecedenti,
       garePrecedentiAvversario,
       featureMancanti.length > 0 ? 'incomplete' : 'complete',
+      true,
+      valori,
+      scelto.valore,
     ),
   };
 }
@@ -294,7 +446,10 @@ export function proietta(
       ripiegoUsato: false,
       copertura: 'piena',
       campioneDiAddestramento: artefatto.training_metadata.righe,
-      evidenze: evidenzeDa(nomeFascia, null, garePrecedenti, garePrecedentiAvversario, 'complete'),
+      evidenze: evidenzeDa(
+        artefatto, nomeFascia, null, garePrecedenti, garePrecedentiAvversario, 'complete', false,
+        valori, esito.valoreAtteso,
+      ),
     };
   }
 
@@ -331,7 +486,8 @@ export function proietta(
     copertura: 'piena',
     campioneDiAddestramento: artefatto.training_metadata.righe,
     evidenze: evidenzeDa(
-      nomeFascia, fascia, garePrecedenti, garePrecedentiAvversario, 'complete',
+      artefatto, nomeFascia, fascia, garePrecedenti, garePrecedentiAvversario, 'complete', false,
+      valori, valoreAtteso,
     ),
   };
 }

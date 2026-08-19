@@ -1,13 +1,13 @@
 {
   "schema_version": "esito-parita/1",
   "generato_da": "scripts/projection/tests/parity.test.ts",
-  "artefatti": 10,
-  "superati": 10,
+  "artefatti": 14,
+  "superati": 14,
   "esiti": [
     {
       "model_id": "corner_kicks__poisson_glm",
       "righe": 200,
-      "scarto_massimo_predittore_relativo": 1.737517668286325e-16,
+      "scarto_massimo_predittore_relativo": 1.9007417996709988e-16,
       "scarto_massimo_valore_atteso": 1.7763568394002505e-15,
       "scarto_massimo_intervallo": 0,
       "tolleranze": {
@@ -20,8 +20,8 @@
     {
       "model_id": "corner_kicks__ridge",
       "righe": 200,
-      "scarto_massimo_predittore_relativo": 2.5662395146910803e-16,
-      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
+      "scarto_massimo_predittore_relativo": 3.70026733204384e-16,
+      "scarto_massimo_valore_atteso": 1.3322676295501878e-15,
       "scarto_massimo_intervallo": 0,
       "tolleranze": {
         "predittore_lineare_relativa": 1e-9,
@@ -48,6 +48,58 @@
       "righe": 200,
       "scarto_massimo_predittore_relativo": 3.8371410190065014e-16,
       "scarto_massimo_valore_atteso": 3.552713678800501e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "goalkeeper_saves__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 2.937791699926638e-16,
+      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "goalkeeper_saves__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 7.074443066331725e-16,
+      "scarto_massimo_valore_atteso": 1.3322676295501878e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "offsides__poisson_glm",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 1.0744859585240203e-15,
+      "scarto_massimo_valore_atteso": 2.6645352591003757e-15,
+      "scarto_massimo_intervallo": 0,
+      "tolleranze": {
+        "predittore_lineare_relativa": 1e-9,
+        "valore_atteso_assoluta": 0.000001,
+        "estremi_intervallo_assoluta": 0.000001
+      },
+      "superato": true
+    },
+    {
+      "model_id": "offsides__ridge",
+      "righe": 200,
+      "scarto_massimo_predittore_relativo": 5.897934303062585e-16,
+      "scarto_massimo_valore_atteso": 8.881784197001252e-16,
       "scarto_massimo_intervallo": 0,
       "tolleranze": {
         "predittore_lineare_relativa": 1e-9,

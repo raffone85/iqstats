@@ -62,6 +62,29 @@ COLONNE_CONTESTO = ("referee_id", "venue_id", "round_number", "derby",
 # quando il bersaglio e' un'altra metrica.
 SEVERITA = ("fouls", "yellow_cards", "red_cards_direct", "second_yellow_red")
 
+# Le metriche del pannello che descrivono il tipo di gara, non il bersaglio. Ognuna entra
+# come media «al momento di», mai come valore della gara da prevedere.
+#
+# Sono divise in famiglie perche' la selezione lavora per blocco: un blocco unico da
+# centoquaranta colonne entrerebbe o uscirebbe tutto insieme, e non e' quello che serve.
+# Una metrica puo' valere per il fuorigioco e non per i corner, e la famiglia e' la grana
+# giusta per dirlo.
+CONTESTO_GARA = (
+    ("circolazione_", ("ball_possession", "passes", "accurate_passes",
+                       "pass_accuracy_pct", "long_balls_total")),
+    ("territorio_", ("final_third_entries", "final_third_phase_total",
+                     "touches_in_penalty_area", "crosses_total")),
+    ("intensita_", ("duels", "ground_duels_total", "aerial_duels_total", "tackles",
+                    "interceptions", "recoveries", "clearances", "dribbles_total",
+                    "dispossessed")),
+    ("ambiente_tiro_", ("shots_inside_box", "shots_outside_box", "blocked_shots",
+                        "hit_woodwork", "errors_lead_to_a_shot")),
+    ("ambiente_gol_", ("expected_goals", "big_chances")),
+    ("inattive_", ("free_kicks", "throw_ins", "goal_kicks", "fouled_in_final_third")),
+    ("incrociato_", ("total_shots", "shots_on_target", "corner_kicks", "fouls",
+                     "yellow_cards", "offsides", "goalkeeper_saves")),
+)
+
 # Grandezze del profilo dell'arbitro: colonna della tavola, nome nel profilo.
 CAMPI_ARBITRO = (("valore_noto", "prodotto"), ("sev_fouls", "falli"),
                  ("sev_yellow_cards", "ammoniti"), ("sev_espulsioni", "espulsioni"))
@@ -123,6 +146,18 @@ def normalizza_esito(tavola):
     return tavola
 
 
+def metriche_di_contesto(target):
+    """Le famiglie di contesto per questo bersaglio.
+
+    La metrica che coincide col bersaglio non entra: la sua storia e' gia' tutta nelle
+    colonne del bersaglio, e ripeterla creerebbe due nomi per lo stesso numero.
+    """
+    for prefisso, metriche in CONTESTO_GARA:
+        scelte = tuple(nome for nome in metriche if nome != target)
+        if scelte:
+            yield prefisso, scelte
+
+
 def carica_osservazioni(target):
     colonne = [
         "event_id", "league_id", "season_id", "data", "calcio_dinizio",
@@ -132,6 +167,9 @@ def carica_osservazioni(target):
     colonne.extend(COLONNE_CONTESTO)
     for nome in SEVERITA:
         colonne.extend((nome, nome + "__p"))
+    for _, metriche in metriche_di_contesto(target):
+        for nome in metriche:
+            colonne.extend((nome, nome + "__p"))
     tavola = pd.read_csv(OSSERVAZIONI, usecols=list(dict.fromkeys(colonne)), low_memory=False)
 
     tavola = normalizza_severita(tavola)
@@ -518,11 +556,70 @@ def feature_spaziali(tavola):
     return tavola.drop(columns=grezze + [nome + "__subito" for nome in grezze])
 
 
+def feature_di_contesto_gara(tavola, target):
+    """Il tipo di gara attesa, dalle metriche del pannello gia' raccolte.
+
+    Ogni metrica entra con quattro viste: quanto la squadra ne produce, quanto ne concede,
+    e le stesse due per l'avversario. E' un confronto, non una somma: quanto sara'
+    territoriale questa gara dipende da tutte e due le squadre, e da quanto ciascuna
+    concede all'altra.
+
+    La politica di provenienza e' la stessa del bersaglio: un valore la cui provenienza non
+    e' ammessa non e' un valore e non entra nella media. Le colonne grezze descrivono la
+    gara stessa e non sopravvivono alla funzione.
+    """
+    coppie = list(metriche_di_contesto(target))
+    if not coppie:
+        return tavola
+
+    grezze = []
+    for _, metriche in coppie:
+        for nome in metriche:
+            valore = pd.to_numeric(tavola[nome], errors="coerce")
+            noto = tavola[nome + "__p"].isin(PROVENIENZE_AMMESSE) & valore.notna()
+            tavola[nome + "__noto"] = valore.where(noto)
+            grezze.append(nome + "__noto")
+
+    subito = tavola[["event_id", "lato"] + grezze].copy()
+    subito["lato"] = subito["lato"].map({"home": "away", "away": "home"})
+    subito = subito.rename(columns={nome: nome + "__subito" for nome in grezze})
+    tavola = tavola.merge(subito, on=["event_id", "lato"], how="left")
+
+    ordinata = tavola.sort_values(["team_id", "season_id", "quando", "event_id"])
+    per_stagione = ordinata.groupby(["team_id", "season_id"], sort=False, dropna=False)
+    proprie = []
+    for prefisso, metriche in coppie:
+        for nome in metriche:
+            etichetta = prefisso + nome
+            tavola[etichetta] = per_stagione[nome + "__noto"].transform(media_precedente)
+            tavola[etichetta + "_concesso"] = per_stagione[
+                nome + "__noto__subito"].transform(media_precedente)
+            proprie.extend((etichetta, etichetta + "_concesso"))
+
+    altro = tavola[["event_id", "lato"] + proprie].copy()
+    altro["lato"] = altro["lato"].map({"home": "away", "away": "home"})
+    rinomina = {}
+    for prefisso, metriche in coppie:
+        for nome in metriche:
+            rinomina[prefisso + nome] = prefisso + "avv_" + nome
+            rinomina[prefisso + nome + "_concesso"] = prefisso + "avv_" + nome + "_concesso"
+    altro = altro.rename(columns=rinomina)
+    tavola = tavola.merge(altro, on=["event_id", "lato"], how="left")
+
+    grezze_di_gara = grezze + [nome + "__subito" for nome in grezze]
+    for _, metriche in coppie:
+        grezze_di_gara.extend(metriche)
+        grezze_di_gara.extend(nome + "__p" for nome in metriche)
+    presenti = [nome for nome in dict.fromkeys(grezze_di_gara) if nome in tavola.columns]
+    return tavola.drop(columns=presenti)
+
+
 PREFISSI_FEATURE = ("prodotto_", "concesso_", "lega_", "avv_", "baseline_",
                     "giorni_", "gare_", "forza_", "debolezza_", "scarto_",
                     "zeta_", "confronto_", "arbitro_", "allenatore_",
                     "contesto_", "classifica_", "giocatori_", "spaziale_",
-                    "interazione_")
+                    "interazione_", "circolazione_", "territorio_", "intensita_",
+                    "ambiente_tiro_", "ambiente_gol_", "inattive_", "incrociato_")
 
 
 def controlli_contaminazione(tavola, arbitro):
@@ -600,6 +697,7 @@ def tavola_completa(target, arbitro="puro", forza_arbitro=FORZA_RESTRINGIMENTO):
     tavola = feature_di_interazione(tavola)
     tavola = feature_di_rosa(tavola)
     tavola = feature_spaziali(tavola)
+    tavola = feature_di_contesto_gara(tavola, target)
     return tavola
 
 
