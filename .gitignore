@@ -22,6 +22,8 @@ __pycache__/
 scripts/projection/harvest/data/
 scripts/projection/dataset/output/features/
 scripts/projection/dataset/output/*.csv
+# Lotti delle osservazioni per il database: 125 MB rigenerabili in un minuto.
+scripts/projection/dataset/output/lotti-osservazioni/
 scripts/calibration/data/
 scripts/calibration/context/
 

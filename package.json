@@ -7,9 +7,11 @@
     "plan:data1-ingest": "node scripts/app-ingestion/data1-harvest.mjs --plan",
     "validate:data1-sql": "node scripts/app-ingestion/validateData1Sql.mjs",
     "build:projection": "node ./apps/web/node_modules/typescript/bin/tsc -p scripts/projection",
-    "test:projection": "npm run build:projection && node --test scripts/projection/build/tests/parity.test.js",
-    "test:asof": "npm run build:projection && node --test scripts/projection/build/tests/asof.test.js",
-    "test:production": "npm run build:projection && node --test scripts/projection/build/tests/production.test.js"
+    "test:projection": "npm run build:projection && node --test scripts/projection/build/scripts/projection/tests/parity.test.js",
+    "test:asof": "npm run build:projection && node --test scripts/projection/build/scripts/projection/tests/asof.test.js",
+    "test:production": "npm run build:projection && node --test scripts/projection/build/scripts/projection/tests/production.test.js",
+    "test:snapshot": "npm run build:projection && node --test scripts/projection/build/scripts/projection/tests/snapshot.test.js",
+    "test:match": "npm run build:projection && node --test scripts/projection/build/scripts/projection/tests/match.test.js"
   },
   "devDependencies": {
     "supabase": "2.113.0"

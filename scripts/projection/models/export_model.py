@@ -188,6 +188,23 @@ def esporta(target, nome_modello, densita_minima, solo_manifesto=False, suffisso
         "maturita": parametri_di_maturita(target, nome_modello, utilizzabili, y, atteso, colonne),
         "affidabilita": affidabilita_dichiarata(target, nome_modello, suffisso_validazione,
                                                 colonne),
+        "totale": totale_dichiarato(target, nome_modello, utilizzabili, y, atteso),
+        "linee": {
+            "quante": 5,
+            "regola": (
+                "il centro e' l'atteso arrotondato meno mezzo, poi due soglie sotto e due "
+                "sopra a passo di una unita'"
+            ),
+            "passi": [-2.0, -1.0, 0.0, 1.0, 2.0],
+            "probabilita_da": (
+                "la funzione di ripartizione della distribuzione calibrata, mai la "
+                "distanza dal valore atteso"
+            ),
+            "senza_il_livello_nominale": (
+                "il livello nominale corregge l'intervallo, non la funzione di "
+                "ripartizione: sulle probabilita' non si applica"
+            ),
+        },
         "validation_metrics": metriche_di_validazione(target, nome_modello, suffisso_validazione),
         "checksum": {
             "algoritmo": "sha256",
@@ -363,6 +380,172 @@ def strato_condizionale(target, nome_modello, colonne):
             "sostituisce la costante della fascia con una probabilita' stimata per questa "
             "gara; l'incertezza dichiarata e' lo scarto medio di calibrazione misurato, "
             "non un intervallo binomiale"
+        ),
+    }
+
+
+def totale_dichiarato(target, nome_modello, utilizzabili, y, atteso):
+    """L'incertezza del totale di gara, con la prova su cui poggia.
+
+    **Il valore atteso del totale non sta qui**, ed e' voluto: e' la somma dei due attesi,
+    e non c'e' niente da conservare per calcolarla. Qui sta soltanto cio' che descrive la
+    sua incertezza — dispersione e livello nominale — perche' quello, la somma, non lo sa.
+
+    Il metodo e' la calibrazione diretta sui residui della somma, deciso il 20 agosto 2026
+    dopo averlo confrontato fuori campione con la composizione delle due marginali: la
+    dipendenza fra i due lati esiste, e' stabile, e non migliora mai l'incertezza. Il
+    registro della decisione e' in data/registro-totale.json.
+
+    Dispersione e livello si stimano qui su **tutte** le righe, come per le marginali; le
+    misure fuori campione si leggono dal rapporto e servono a dichiarare quanto vale, non
+    a costruirlo.
+    """
+    if "event_id" not in utilizzabili.columns or "lato" not in utilizzabili.columns:
+        return None
+    quadro = pd.DataFrame({
+        "event_id": utilizzabili["event_id"].to_numpy(),
+        "lato": utilizzabili["lato"].astype(str).to_numpy(),
+        "atteso": np.asarray(atteso, dtype=float),
+        "vero": np.asarray(y, dtype=float),
+    })
+    casa = quadro[quadro["lato"] == "home"].set_index("event_id")
+    via = quadro[quadro["lato"] == "away"].set_index("event_id")
+    comuni = casa.index.intersection(via.index)
+    if len(comuni) < 200:
+        return None
+    atteso_totale = (casa.loc[comuni, "atteso"] + via.loc[comuni, "atteso"]).to_numpy()
+    vero_totale = (casa.loc[comuni, "vero"] + via.loc[comuni, "vero"]).to_numpy()
+
+    disp = evaluate.dispersione_residua(vero_totale, atteso_totale)
+    livello, copertura = evaluate.calibra_livello(vero_totale, atteso_totale, disp)
+    distribuzione = "poisson" if disp <= evaluate.SOGLIA_POISSON else "binomiale_negativa"
+
+    def leggi(nome_file):
+        percorso = os.path.join(os.path.dirname(__file__), "output", target + nome_file)
+        if not os.path.isfile(percorso):
+            return None
+        with open(percorso, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    misura = leggi("-totale.json")
+    if misura is not None and misura.get("modello") != nome_modello:
+        misura = None
+    linee = leggi("-linee.json")
+    if linee is not None and linee.get("modello") != nome_modello:
+        linee = None
+
+    prova = None
+    if misura is not None and misura.get("confronto_per_origine"):
+        origini = misura["confronto_per_origine"]
+        prova = {
+            "origini": len(origini),
+            "gare_di_prova": int(sum(v["gare_di_prova"] for v in origini)),
+            "copertura_media_fuori_campione": round(
+                float(np.mean([v["diretta"]["copertura_intervallo"] for v in origini])), 4),
+            "scarto_di_calibrazione_delle_linee": round(
+                float(np.mean([v["diretta"]["linee"]["scarto_medio_di_calibrazione"]
+                               for v in origini])), 4),
+            "mae_del_totale": misura.get("mae_medio_del_totale_fuori_campione"),
+            "correlazione_di_rango_fra_i_lati": round(
+                float(np.mean([v["dipendenza_fra_i_lati"]["rango"] for v in origini])), 4),
+            "confronto_con_la_composizione": misura.get("esito", {}).get(
+                "scostamento_medio_di_copertura"),
+        }
+
+    return {
+        "metodo": "calibrazione_diretta",
+        "valore_atteso": (
+            "somma dei due attesi: E[casa+trasferta] = E[casa] + E[trasferta], esatta "
+            "anche con i due processi dipendenti. Nessun terzo valore atteso"
+        ),
+        "dispersione": float(disp),
+        "distribuzione": distribuzione,
+        "soglia_poisson": evaluate.SOGLIA_POISSON,
+        "livello_nominale": float(livello),
+        "livello_dichiarato": evaluate.LIVELLO_INTERVALLO,
+        "copertura_sul_periodo_di_addestramento": copertura,
+        "gare_di_addestramento": int(len(comuni)),
+        "prova_fuori_campione": prova,
+        "calibrazione_delle_linee_sui_due_lati": (
+            None if linee is None else linee.get("esito", {}).get(
+                "scarto_medio_di_calibrazione")),
+        "avvertenza": (
+            "la copertura misurata fuori campione e' piu' bassa di quella dichiarata su "
+            "sei bersagli su sette: l'intervallo promette l'ottanta per cento e ne copre "
+            "fra il settantotto e il settantanove virgola nove. Va detto, non nascosto"
+        ),
+        "affidabilita": affidabilita_del_totale(target, nome_modello),
+    }
+
+
+def affidabilita_del_totale(target, nome_modello):
+    """L'affidabilita' del totale: la definizione del §8quater su un'altra grandezza.
+
+    E' la probabilita', misurata fuori campione, che lo scarto fra totale previsto e
+    totale osservato resti entro una soglia assoluta. **La soglia viene dalla migliore
+    baseline del totale** — la somma delle due baseline di lato — non dall'errore del
+    modello e non dalla soglia marginale del bersaglio.
+
+    La griglia della curva e' piu' larga di quella delle marginali, perche' il totale ha
+    una scala piu' grande e il punto letto dev'essere misurato, mai interpolato.
+
+    Non c'e' nessuno strato condizionale: sul totale non e' stato misurato, e un blocco
+    che non esiste non si finge. La fascia con cui leggere il punteggio e' la piu' povera
+    dei due lati — la storia piu' corta governa l'incertezza — e la applica il lato che
+    prevede, come gia' fa per le marginali.
+
+    **La media e il minimo dei due punteggi di lato restano fuori**: sono nel rapporto
+    come termine di paragone del divieto, e sbagliano rispettivamente in entrambe le
+    direzioni e sempre. Un artefatto non porta un numero che nessuno deve usare.
+    """
+    percorso = os.path.join(os.path.dirname(__file__), "output",
+                            target + "-totale-affidabilita.json")
+    if not os.path.isfile(percorso):
+        return None
+    with open(percorso, "r", encoding="utf-8") as handle:
+        rapporto = json.load(handle)
+    if rapporto.get("modello") != nome_modello or rapporto.get("punto") is None:
+        return None
+
+    per_fascia = {}
+    curve_per_fascia = {}
+    for nome, voce in (rapporto.get("per_fascia") or {}).items():
+        if voce.get("punto") is None:
+            continue
+        per_fascia[nome] = punteggio_da(voce["punto"])
+        curve_per_fascia[nome] = voce.get("curva_di_accuratezza")
+
+    nome_baseline = rapporto.get("soglia_dalla_baseline")
+    mae_baseline = (rapporto.get("mae_baseline_del_totale") or {}).get(nome_baseline)
+    return {
+        "definizione": (
+            "probabilita' misurata fuori campione che lo scarto fra totale previsto e "
+            "totale osservato resti entro la soglia assoluta del totale"
+        ),
+        "soglia_assoluta": float(rapporto["soglia_assoluta"]),
+        "come_e_stata_scelta": (
+            "errore assoluto medio della migliore baseline del totale (" + str(nome_baseline)
+            + ("" if mae_baseline is None else ", " + str(round(float(mae_baseline), 4)))
+            + ") arrotondato all'unita' del bersaglio"
+        ),
+        "fasce_di_lettura": [{"da": a, "fino_a": b, "nome": n} for a, b, n in FASCE_DI_LETTURA],
+        "misurata_sulla_miscela_congelata": True,
+        "complessivo": punteggio_da(rapporto["punto"]),
+        "per_fascia": per_fascia,
+        "curva_completa": {
+            "soglie": [voce["soglia"] for voce in rapporto.get("curva_di_accuratezza", ())],
+            "complessivo": rapporto.get("curva_di_accuratezza"),
+            "per_fascia": curve_per_fascia,
+            "perche": (
+                "si conserva intera perche' una soglia diversa si legga senza riaddestrare, "
+                "e perche' la diagnostica veda la distribuzione dell'errore e non un punto"
+            ),
+        },
+        "avvertenza": (
+            "sul totale il modello batte la migliore baseline di poco, dallo zero virgola "
+            "sette al cinque virgola due per cento: e' un margine piu' sottile di quello "
+            "delle marginali. E non e' l'affidabilita' di nessuno dei due lati: la media "
+            "dei due punteggi sbaglia in entrambe le direzioni e il minimo sbaglia sempre"
         ),
     }
 

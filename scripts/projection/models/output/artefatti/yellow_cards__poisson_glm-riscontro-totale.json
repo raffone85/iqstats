@@ -1,0 +1,3654 @@
+{
+  "schema_version": "riscontro-totale/1",
+  "model_id": "yellow_cards__poisson_glm",
+  "target": "yellow_cards",
+  "artefatto": "yellow_cards__poisson_glm.json",
+  "regola_del_centro": "il valore atteso del totale e' la somma dei due attesi, senza nessuna stima",
+  "regola_delle_linee": "centro all'atteso arrotondato meno mezzo, cinque passi, probabilita' dalla funzione di ripartizione senza la correzione del livello nominale",
+  "tolleranze": {
+    "relativa": 1e-09,
+    "assoluta": 1e-09
+  },
+  "prove": [
+    {
+      "event_id": "374",
+      "atteso_casa": 1.8586962139505776,
+      "atteso_trasferta": 1.9039991731559014,
+      "totale": {
+        "valore_atteso": 3.762695387106479,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8894051351977379,
+            "probabilita_sotto": 0.1105948648022621
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7250246406918777,
+            "probabilita_sotto": 0.27497535930812234
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5188533978893838,
+            "probabilita_sotto": 0.4811466021106162
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.32491350182764545,
+            "probabilita_sotto": 0.6750864981723546
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17896615137016247,
+            "probabilita_sotto": 0.8210338486298375
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8441242734600437,
+          "probabilita_sotto": 0.1558757265399563
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5543986506934311,
+          "probabilita_sotto": 0.4456013493065689
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.28514269163304373,
+          "probabilita_sotto": 0.7148573083669563
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11832101440331888,
+          "probabilita_sotto": 0.8816789855966811
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8510283371228168,
+          "probabilita_sotto": 0.14897166287718322
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.567386414181,
+          "probabilita_sotto": 0.432613585819
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2973594208042163,
+          "probabilita_sotto": 0.7026405791957837
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12598236343115898,
+          "probabilita_sotto": 0.874017636568841
+        }
+      ]
+    },
+    {
+      "event_id": "375",
+      "atteso_casa": 1.6629609274284498,
+      "atteso_trasferta": 1.8588680015032284,
+      "totale": {
+        "valore_atteso": 3.5218289289316784,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 5.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8664009844619192,
+            "probabilita_sotto": 0.13359901553808085
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6831713786419764,
+            "probabilita_sotto": 0.3168286213580236
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.46807026983750233,
+            "probabilita_sotto": 0.5319297301624977
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.2786829429292831,
+            "probabilita_sotto": 0.7213170570707169
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.1452849895936016,
+            "probabilita_sotto": 0.8547150104063984
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8104231749590053,
+          "probabilita_sotto": 0.1895768250409947
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.4951643221698915,
+          "probabilita_sotto": 0.5048356778301085
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.23303274506278526,
+          "probabilita_sotto": 0.7669672549372147
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.0877278882046798,
+          "probabilita_sotto": 0.9122721117953202
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8441510486697339,
+          "probabilita_sotto": 0.1558489513302661
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5544484199740684,
+          "probabilita_sotto": 0.44555158002593165
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.28518894675719664,
+          "probabilita_sotto": 0.7148110532428034
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11834967380237704,
+          "probabilita_sotto": 0.881650326197623
+        }
+      ]
+    },
+    {
+      "event_id": "376",
+      "atteso_casa": 1.9195458201495788,
+      "atteso_trasferta": 1.7922336886383035,
+      "totale": {
+        "valore_atteso": 3.711779508787882,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8848723604617663,
+            "probabilita_sotto": 0.11512763953823368
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7165549715459165,
+            "probabilita_sotto": 0.2834450284540835
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5083026264957395,
+            "probabilita_sotto": 0.49169737350426046
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.31505592974217156,
+            "probabilita_sotto": 0.6849440702578284
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.1715981039120038,
+            "probabilita_sotto": 0.8284018960879962
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8533264368182358,
+          "probabilita_sotto": 0.14667356318176417
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5717798116862353,
+          "probabilita_sotto": 0.42822018831376474
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.30155898796155944,
+          "probabilita_sotto": 0.6984410120384406
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12865857039553352,
+          "probabilita_sotto": 0.8713414296044665
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8334123511643327,
+          "probabilita_sotto": 0.16658764883566735
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.534848354810002,
+          "probabilita_sotto": 0.46515164518999796
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2673001285696448,
+          "probabilita_sotto": 0.7326998714303552
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10746381376851444,
+          "probabilita_sotto": 0.8925361862314856
+        }
+      ]
+    },
+    {
+      "event_id": "377",
+      "atteso_casa": 1.834575693180838,
+      "atteso_trasferta": 1.883979624927675,
+      "totale": {
+        "valore_atteso": 3.718555318108513,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8854853643669858,
+            "probabilita_sotto": 0.11451463563301423
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7176936767553878,
+            "probabilita_sotto": 0.28230632324461225
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5097127859878846,
+            "probabilita_sotto": 0.4902872140121154
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3163656741307732,
+            "probabilita_sotto": 0.6836343258692268
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17257128792333665,
+            "probabilita_sotto": 0.8274287120766634
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8403187587645088,
+          "probabilita_sotto": 0.1596812412354912
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5473714349369309,
+          "probabilita_sotto": 0.45262856506306914
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2786544150987058,
+          "probabilita_sotto": 0.7213455849012942
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11432717745230547,
+          "probabilita_sotto": 0.8856728225476945
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8480159389166096,
+          "probabilita_sotto": 0.15198406108339035
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5616810645217389,
+          "probabilita_sotto": 0.43831893547826106
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2919565298886584,
+          "probabilita_sotto": 0.7080434701113416
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12257135402471753,
+          "probabilita_sotto": 0.8774286459752825
+        }
+      ]
+    },
+    {
+      "event_id": "378",
+      "atteso_casa": 1.746627003755524,
+      "atteso_trasferta": 2.085371935099364,
+      "totale": {
+        "valore_atteso": 3.831998938854888,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8953086412384508,
+            "probabilita_sotto": 0.10469135876154922
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7362326013884963,
+            "probabilita_sotto": 0.26376739861150367
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.533039529421075,
+            "probabilita_sotto": 0.466960470578925
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3383806203806199,
+            "probabilita_sotto": 0.6616193796193801
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.18919407380428443,
+            "probabilita_sotto": 0.8108059261957156
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8256389280564593,
+          "probabilita_sotto": 0.17436107194354067
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5210951713961115,
+          "probabilita_sotto": 0.4789048286038885
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.25513299679205415,
+          "probabilita_sotto": 0.7448670032079459
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10028742474505803,
+          "probabilita_sotto": 0.899712575254942
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8757391054183197,
+          "probabilita_sotto": 0.12426089458168033
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6166089232273428,
+          "probabilita_sotto": 0.38339107677265716
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3464175184882188,
+          "probabilita_sotto": 0.6535824815117812
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.15860099430553787,
+          "probabilita_sotto": 0.8413990056944621
+        }
+      ]
+    },
+    {
+      "event_id": "379",
+      "atteso_casa": 1.704662833693192,
+      "atteso_trasferta": 2.002110946656905,
+      "totale": {
+        "valore_atteso": 3.7067737803500966,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8844175417322889,
+            "probabilita_sotto": 0.11558245826771107
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7157114476473722,
+            "probabilita_sotto": 0.28428855235262784
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5072596722676237,
+            "probabilita_sotto": 0.4927403277323763
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.31408877840635385,
+            "probabilita_sotto": 0.6859112215936461
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17088061750800432,
+            "probabilita_sotto": 0.8291193824919957
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8181663159673007,
+          "probabilita_sotto": 0.18183368403269928
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5082011928832466,
+          "probabilita_sotto": 0.4917988071167534
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2440081803519859,
+          "probabilita_sotto": 0.7559918196480141
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.09388817722415899,
+          "probabilita_sotto": 0.906111822775841
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8649501010056659,
+          "probabilita_sotto": 0.13504989899433406
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5945652198842002,
+          "probabilita_sotto": 0.4054347801157998
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.323894954732294,
+          "probabilita_sotto": 0.676105045267706
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14325765446724126,
+          "probabilita_sotto": 0.8567423455327587
+        }
+      ]
+    },
+    {
+      "event_id": "380",
+      "atteso_casa": 1.6703808188280715,
+      "atteso_trasferta": 1.9369288467298722,
+      "totale": {
+        "valore_atteso": 3.6073096655579437,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8750279998472389,
+            "probabilita_sotto": 0.12497200015276111
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6985452862016264,
+            "probabilita_sotto": 0.30145471379837363
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.48633601995572207,
+            "probabilita_sotto": 0.5136639800442779
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.2949598856432698,
+            "probabilita_sotto": 0.7050401143567302
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.15688928983078465,
+            "probabilita_sotto": 0.8431107101692153
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8118246087398351,
+          "probabilita_sotto": 0.18817539126016491
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.4975000446033878,
+          "probabilita_sotto": 0.5024999553966122
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.23497918319338051,
+          "probabilita_sotto": 0.7650208168066195
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.0888092460462141,
+          "probabilita_sotto": 0.9111907539537859
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8558540349661306,
+          "probabilita_sotto": 0.14414596503386945
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5766535571523131,
+          "probabilita_sotto": 0.42334644284768685
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.30625782740314045,
+          "probabilita_sotto": 0.6937421725968596
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13167873107522432,
+          "probabilita_sotto": 0.8683212689247757
+        }
+      ]
+    },
+    {
+      "event_id": "381",
+      "atteso_casa": 1.918031584403292,
+      "atteso_trasferta": 2.0502830723083196,
+      "totale": {
+        "valore_atteso": 3.9683146567116117,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9060726790720668,
+            "probabilita_sotto": 0.09392732092793321
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7572171233000677,
+            "probabilita_sotto": 0.24278287669993226
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5603152287324088,
+            "probabilita_sotto": 0.4396847712675912
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3649730601956277,
+            "probabilita_sotto": 0.6350269398043723
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.20993722209995969,
+            "probabilita_sotto": 0.7900627779000403
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8531041702262911,
+          "probabilita_sotto": 0.14689582977370885
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.571353329103188,
+          "probabilita_sotto": 0.42864667089681197
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.30114982300003557,
+          "probabilita_sotto": 0.6988501769999644
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12839687002591738,
+          "probabilita_sotto": 0.8716031299740826
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8713015325412428,
+          "probabilita_sotto": 0.12869846745875724
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6074332432785298,
+          "probabilita_sotto": 0.39256675672147023
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3369308998813818,
+          "probabilita_sotto": 0.6630691001186182
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.15206210798574737,
+          "probabilita_sotto": 0.8479378920142526
+        }
+      ]
+    },
+    {
+      "event_id": "382",
+      "atteso_casa": 1.7753012381236961,
+      "atteso_trasferta": 1.949181304123003,
+      "totale": {
+        "valore_atteso": 3.724482542246699,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8860191129576075,
+            "probabilita_sotto": 0.11398088704239251
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7186868539259927,
+            "probabilita_sotto": 0.28131314607400726
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5109448280866754,
+            "probabilita_sotto": 0.4890551719133246
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3175119409543006,
+            "probabilita_sotto": 0.6824880590456994
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17342445871011913,
+            "probabilita_sotto": 0.8265755412898809
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8305675976877892,
+          "probabilita_sotto": 0.1694324023122108
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5297740440846492,
+          "probabilita_sotto": 0.47022595591535077
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2627744600190087,
+          "probabilita_sotto": 0.7372255399809913
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10477289596226091,
+          "probabilita_sotto": 0.8952271040377391
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8576094015241417,
+          "probabilita_sotto": 0.14239059847585833
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5800643090921132,
+          "probabilita_sotto": 0.41993569090788685
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3095714564823132,
+          "probabilita_sotto": 0.6904285435176868
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13382491941367247,
+          "probabilita_sotto": 0.8661750805863275
+        }
+      ]
+    },
+    {
+      "event_id": "383",
+      "atteso_casa": 1.843838794638593,
+      "atteso_trasferta": 2.0033669561982212,
+      "totale": {
+        "valore_atteso": 3.8472057508368143,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8965641169589397,
+            "probabilita_sotto": 0.10343588304106033
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7386428562023397,
+            "probabilita_sotto": 0.2613571437976603
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5361243286816091,
+            "probabilita_sotto": 0.4638756713183909
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3413417177494198,
+            "probabilita_sotto": 0.6586582822505802
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.19146796156115364,
+            "probabilita_sotto": 0.8085320384388464
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8417910726787419,
+          "probabilita_sotto": 0.15820892732125813
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5500793148256485,
+          "probabilita_sotto": 0.44992068517435146
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2811445868347724,
+          "probabilita_sotto": 0.7188554131652276
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11585382526972055,
+          "probabilita_sotto": 0.8841461747302795
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.865119618487284,
+          "probabilita_sotto": 0.13488038151271597
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5949047191252994,
+          "probabilita_sotto": 0.4050952808747006
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3242349188981857,
+          "probabilita_sotto": 0.6757650811018143
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14348460762626114,
+          "probabilita_sotto": 0.8565153923737389
+        }
+      ]
+    },
+    {
+      "event_id": "1061",
+      "atteso_casa": 1.7735463764267505,
+      "atteso_trasferta": 2.2396968933430763,
+      "totale": {
+        "valore_atteso": 4.013243269769827,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9093872370900795,
+            "probabilita_sotto": 0.09061276290992049
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7638307485873199,
+            "probabilita_sotto": 0.23616925141268008
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5691128826356435,
+            "probabilita_sotto": 0.4308871173643565
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3737503413770167,
+            "probabilita_sotto": 0.6262496586229833
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.21694286060275325,
+            "probabilita_sotto": 0.7830571393972467
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.830270006215182,
+          "probabilita_sotto": 0.169729993784818
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5292459907671831,
+          "probabilita_sotto": 0.47075400923281685
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.26230596485956936,
+          "probabilita_sotto": 0.7376940351404306
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10449579296899869,
+          "probabilita_sotto": 0.8955042070310013
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.893509222448524,
+          "probabilita_sotto": 0.10649077755147596
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6550021587967949,
+          "probabilita_sotto": 0.3449978412032051
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3879103940462165,
+          "probabilita_sotto": 0.6120896059537835
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.18850886212975282,
+          "probabilita_sotto": 0.8114911378702472
+        }
+      ]
+    },
+    {
+      "event_id": "1062",
+      "atteso_casa": 2.1223174397634414,
+      "atteso_trasferta": 2.347948201633958,
+      "totale": {
+        "valore_atteso": 4.4702656413974,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9373967736342932,
+            "probabilita_sotto": 0.06260322636570681
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8230497231988338,
+            "probabilita_sotto": 0.17695027680116615
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6526624929465772,
+            "probabilita_sotto": 0.3473375070534228
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.46224344766419456,
+            "probabilita_sotto": 0.5377565523358054
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.2919987045454884,
+            "probabilita_sotto": 0.7080012954545116
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8802462154896109,
+          "probabilita_sotto": 0.1197537845103891
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6260906701455391,
+          "probabilita_sotto": 0.3739093298544609
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.35639129699738326,
+          "probabilita_sotto": 0.6436087030026167
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.16559540262218342,
+          "probabilita_sotto": 0.8344045973778166
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9044349586096793,
+          "probabilita_sotto": 0.09556504139032074
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6800531915382009,
+          "probabilita_sotto": 0.3199468084617991
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.4166348083007376,
+          "probabilita_sotto": 0.5833651916992624
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.2104705685674949,
+          "probabilita_sotto": 0.7895294314325051
+        }
+      ]
+    },
+    {
+      "event_id": "1063",
+      "atteso_casa": 2.1460320208085397,
+      "atteso_trasferta": 2.3589862156282844,
+      "totale": {
+        "valore_atteso": 4.505018236436824,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8269855869362153,
+            "probabilita_sotto": 0.17301441306378473
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6585500021436954,
+            "probabilita_sotto": 0.3414499978563046
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.46884865685489496,
+            "probabilita_sotto": 0.531151343145105
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.2979270528543658,
+            "probabilita_sotto": 0.7020729471456342
+          },
+          {
+            "soglia": 6.5,
+            "probabilita_sopra": 0.16959289568379643,
+            "probabilita_sotto": 0.8304071043162036
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8830527172849103,
+          "probabilita_sotto": 0.1169472827150897
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6320801038317788,
+          "probabilita_sotto": 0.3679198961682212
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.36278247142356657,
+          "probabilita_sotto": 0.6372175285764334
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.17014202399824951,
+          "probabilita_sotto": 0.8298579760017505
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9054840065200414,
+          "probabilita_sotto": 0.09451599347995865
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6825220807444059,
+          "probabilita_sotto": 0.3174779192555941
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.41954002598707585,
+          "probabilita_sotto": 0.5804599740129242
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.21274967861036087,
+          "probabilita_sotto": 0.7872503213896391
+        }
+      ]
+    },
+    {
+      "event_id": "1064",
+      "atteso_casa": 2.3853737891515046,
+      "atteso_trasferta": 2.5631312414175245,
+      "totale": {
+        "valore_atteso": 4.948505030569029,
+        "intervallo_basso": 3.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8709433110594181,
+            "probabilita_sotto": 0.12905668894058187
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.727670965983122,
+            "probabilita_sotto": 0.272329034016878
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.550424985895254,
+            "probabilita_sotto": 0.449575014104746
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.3750044610726626,
+            "probabilita_sotto": 0.6249955389273374
+          },
+          {
+            "soglia": 6.5,
+            "probabilita_sopra": 0.23032623614772108,
+            "probabilita_sotto": 0.7696737638522789
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9079454358498009,
+          "probabilita_sotto": 0.09205456415019908
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6883608913541506,
+          "probabilita_sotto": 0.3116391086458494
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.42646528288280194,
+          "probabilita_sotto": 0.5735347171171981
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.21822564290232216,
+          "probabilita_sotto": 0.7817743570976778
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9229369407831471,
+          "probabilita_sotto": 0.07706305921685286
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.725414206145223,
+          "probabilita_sotto": 0.274585793854777
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.47227586012487954,
+          "probabilita_sotto": 0.5277241398751205
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.2560002590963788,
+          "probabilita_sotto": 0.7439997409036212
+        },
+        {
+          "soglia": 4.5,
+          "probabilita_sopra": 0.11741457165825331,
+          "probabilita_sotto": 0.8825854283417467
+        }
+      ]
+    },
+    {
+      "event_id": "1065",
+      "atteso_casa": 1.938876422133325,
+      "atteso_trasferta": 2.2375420771079377,
+      "totale": {
+        "valore_atteso": 4.1764184992412625,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9205243895765033,
+            "probabilita_sotto": 0.07947561042349671
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7866237912733933,
+            "probabilita_sotto": 0.21337620872660668
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6002154793358665,
+            "probabilita_sotto": 0.3997845206641335
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.40558569873881034,
+            "probabilita_sotto": 0.5944143012611897
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.24301461550104786,
+            "probabilita_sotto": 0.7569853844989521
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.856134496903102,
+          "probabilita_sotto": 0.14386550309689805
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5771970649901773,
+          "probabilita_sotto": 0.4228029350098227
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.30678445999698334,
+          "probabilita_sotto": 0.6932155400030167
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13201891864066417,
+          "probabilita_sotto": 0.8679810813593358
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8932795069837424,
+          "probabilita_sotto": 0.10672049301625763
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6544879133701621,
+          "probabilita_sotto": 0.3455120866298379
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3873347941851395,
+          "probabilita_sotto": 0.6126652058148605
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.18807934578276642,
+          "probabilita_sotto": 0.8119206542172336
+        }
+      ]
+    },
+    {
+      "event_id": "1066",
+      "atteso_casa": 1.8625778849567909,
+      "atteso_trasferta": 2.2446104687747863,
+      "totale": {
+        "valore_atteso": 4.107188353731577,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9159664642979559,
+            "probabilita_sotto": 0.08403353570204408
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7771854664199284,
+            "probabilita_sotto": 0.22281453358007164
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5871855670186346,
+            "probabilita_sotto": 0.41281443298136544
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3920942235108432,
+            "probabilita_sotto": 0.6079057764891568
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.23183884471703364,
+            "probabilita_sotto": 0.7681611552829664
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8447281589476852,
+          "probabilita_sotto": 0.15527184105231484
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5555222616471176,
+          "probabilita_sotto": 0.4444777383528824
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.28618800739155614,
+          "probabilita_sotto": 0.7138119926084439
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1189693321789771,
+          "probabilita_sotto": 0.8810306678210229
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8940311895043903,
+          "probabilita_sotto": 0.10596881049560969
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6561724881023334,
+          "probabilita_sotto": 0.3438275118976666
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3892224224742169,
+          "probabilita_sotto": 0.6107775775257831
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.18948945182455446,
+          "probabilita_sotto": 0.8105105481754455
+        }
+      ]
+    },
+    {
+      "event_id": "1067",
+      "atteso_casa": 1.9551906020224077,
+      "atteso_trasferta": 2.31207323234934,
+      "totale": {
+        "valore_atteso": 4.2672638343717475,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9261524763821096,
+            "probabilita_sotto": 0.07384752361789038
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7985027587879776,
+            "probabilita_sotto": 0.2014972412120224
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6169310843355756,
+            "probabilita_sotto": 0.38306891566442436
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.4232275244013117,
+            "probabilita_sotto": 0.5767724755986883
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.25791068522200256,
+            "probabilita_sotto": 0.7420893147779974
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8584625032101312,
+          "probabilita_sotto": 0.14153749678986882
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5817297196528027,
+          "probabilita_sotto": 0.41827028034719727
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.31119705081140814,
+          "probabilita_sotto": 0.6888029491885919
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13488274025849634,
+          "probabilita_sotto": 0.8651172597415037
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9009443268985325,
+          "probabilita_sotto": 0.09905567310146746
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6719203566082832,
+          "probabilita_sotto": 0.3280796433917168
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.40716026097105473,
+          "probabilita_sotto": 0.5928397390289453
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.20311201759869257,
+          "probabilita_sotto": 0.7968879824013074
+        }
+      ]
+    },
+    {
+      "event_id": "1068",
+      "atteso_casa": 1.7126448700852248,
+      "atteso_trasferta": 2.1342759802866307,
+      "totale": {
+        "valore_atteso": 3.8469208503718555,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8965407251327618,
+            "probabilita_sotto": 0.10345927486723816
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7385978612843869,
+            "probabilita_sotto": 0.26140213871561313
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5360666292491346,
+            "probabilita_sotto": 0.4639333707508654
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3412862244071565,
+            "probabilita_sotto": 0.6587137755928435
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.191425264281061,
+            "probabilita_sotto": 0.808574735718939
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8196119418559104,
+          "probabilita_sotto": 0.18038805814408965
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5106712594508,
+          "probabilita_sotto": 0.48932874054919995
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.24611842200992973,
+          "probabilita_sotto": 0.7538815779900703
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.09509006870673065,
+          "probabilita_sotto": 0.9049099312932694
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8816697672092757,
+          "probabilita_sotto": 0.1183302327907243
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6291203936223075,
+          "probabilita_sotto": 0.37087960637769246
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3596153626807568,
+          "probabilita_sotto": 0.6403846373192432
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.16788265797910484,
+          "probabilita_sotto": 0.8321173420208952
+        }
+      ]
+    },
+    {
+      "event_id": "1069",
+      "atteso_casa": 2.0183643598297456,
+      "atteso_trasferta": 1.9902128956905605,
+      "totale": {
+        "valore_atteso": 4.008577255520306,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9090481798603575,
+            "probabilita_sotto": 0.09095182013964254
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7631507847570534,
+            "probabilita_sotto": 0.23684921524294655
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5682037915401323,
+            "probabilita_sotto": 0.43179620845986766
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.372838770779777,
+            "probabilita_sotto": 0.627161229220223
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.21621161503093445,
+            "probabilita_sotto": 0.7837883849690656
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8671273807677753,
+          "probabilita_sotto": 0.1328726192322247
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5989420217122247,
+          "probabilita_sotto": 0.40105797828777534
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3282941364392913,
+          "probabilita_sotto": 0.6717058635607087
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1462054545398982,
+          "probabilita_sotto": 0.8537945454601018
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8633336733238616,
+          "probabilita_sotto": 0.13666632667613843
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5913385875663519,
+          "probabilita_sotto": 0.40866141243364806
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3206745239468246,
+          "probabilita_sotto": 0.6793254760531754
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14111482067495984,
+          "probabilita_sotto": 0.8588851793250402
+        }
+      ]
+    },
+    {
+      "event_id": "1070",
+      "atteso_casa": 1.8311481557659421,
+      "atteso_trasferta": 2.2038696241243527,
+      "totale": {
+        "valore_atteso": 4.035017779890294,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.910953869425197,
+            "probabilita_sotto": 0.08904613057480304
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7669828918294557,
+            "probabilita_sotto": 0.23301710817054433
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5733410737004546,
+            "probabilita_sotto": 0.4266589262995454
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3780040289302542,
+            "probabilita_sotto": 0.6219959710697458
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.22036633918645687,
+            "probabilita_sotto": 0.7796336608135431
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.83977050629453,
+          "probabilita_sotto": 0.16022949370547002
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5463665643964477,
+          "probabilita_sotto": 0.4536334356035523
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2777335208458823,
+          "probabilita_sotto": 0.7222664791541177
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11376455342074576,
+          "probabilita_sotto": 0.8862354465792542
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8896247796986024,
+          "probabilita_sotto": 0.11037522030139757
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6463721844203187,
+          "probabilita_sotto": 0.35362781557968126
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.37832368155870655,
+          "probabilita_sotto": 0.6216763184412935
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1814090304758007,
+          "probabilita_sotto": 0.8185909695241993
+        }
+      ]
+    },
+    {
+      "event_id": "1447",
+      "atteso_casa": 1.7119480920003525,
+      "atteso_trasferta": 1.7337053268426383,
+      "totale": {
+        "valore_atteso": 3.4456534188429906,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 5.0,
+        "linee": [
+          {
+            "soglia": 0.5,
+            "probabilita_sopra": 0.9681160783206073,
+            "probabilita_sotto": 0.03188392167939269
+          },
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8582551345798857,
+            "probabilita_sotto": 0.14174486542011433
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6689837663811183,
+            "probabilita_sotto": 0.33101623361888166
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.45159592074006016,
+            "probabilita_sotto": 0.5484040792599398
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.26433512735305464,
+            "probabilita_sotto": 0.7356648726469454
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8194862076108766,
+          "probabilita_sotto": 0.18051379238912335
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5104559651505692,
+          "probabilita_sotto": 0.48954403484943076
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.24593409817540457,
+          "probabilita_sotto": 0.7540659018245954
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.09498486302190312,
+          "probabilita_sotto": 0.9050151369780969
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8233712712064553,
+          "probabilita_sotto": 0.17662872879354474
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5171491032236428,
+          "probabilita_sotto": 0.4828508967763572
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.25169960130909175,
+          "probabilita_sotto": 0.7483003986909083
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.09829586281676417,
+          "probabilita_sotto": 0.9017041371832358
+        }
+      ]
+    },
+    {
+      "event_id": "1448",
+      "atteso_casa": 1.9576029089777593,
+      "atteso_trasferta": 1.8421881865723455,
+      "totale": {
+        "valore_atteso": 3.7997910955501046,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8926025349791501,
+            "probabilita_sotto": 0.1073974650208499
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7310695790050702,
+            "probabilita_sotto": 0.2689304209949298
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5264724164223386,
+            "probabilita_sotto": 0.47352758357766145
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.332115797283168,
+            "probabilita_sotto": 0.667884202716832
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.18441288712991954,
+            "probabilita_sotto": 0.8155871128700805
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8588035236097665,
+          "probabilita_sotto": 0.14119647639023347
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5823968906908359,
+          "probabilita_sotto": 0.4176031093091641
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3118496763594132,
+          "probabilita_sotto": 0.6881503236405868
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13530833842907208,
+          "probabilita_sotto": 0.8646916615709279
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.84152971610786,
+          "probabilita_sotto": 0.15847028389214002
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5495976311989939,
+          "probabilita_sotto": 0.45040236880100615
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.28070071214871994,
+          "probabilita_sotto": 0.7192992878512801
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11558113625534827,
+          "probabilita_sotto": 0.8844188637446517
+        }
+      ]
+    },
+    {
+      "event_id": "1450",
+      "atteso_casa": 1.967101319069993,
+      "atteso_trasferta": 1.8020267472846516,
+      "totale": {
+        "valore_atteso": 3.7691280663546447,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8899658573339606,
+            "probabilita_sotto": 0.11003414266603939
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7260804550159481,
+            "probabilita_sotto": 0.2739195449840519
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5201787651684,
+            "probabilita_sotto": 0.4798212348316
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.32616130563984,
+            "probabilita_sotto": 0.67383869436016
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17990597522545515,
+            "probabilita_sotto": 0.8200940247745448
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8601383164060366,
+          "probabilita_sotto": 0.13986168359396345
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5850162141210011,
+          "probabilita_sotto": 0.41498378587899887
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3144196889659001,
+          "probabilita_sotto": 0.6855803110340999
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13698942844311457,
+          "probabilita_sotto": 0.8630105715568854
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8350357915810181,
+          "probabilita_sotto": 0.16496420841898185
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5377658756653728,
+          "probabilita_sotto": 0.4622341243346272
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2699217058438468,
+          "probabilita_sotto": 0.7300782941561532
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10903425313629933,
+          "probabilita_sotto": 0.8909657468637007
+        }
+      ]
+    },
+    {
+      "event_id": "1451",
+      "atteso_casa": 1.6707775927917667,
+      "atteso_trasferta": 2.130141545925868,
+      "totale": {
+        "valore_atteso": 3.800919138717635,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8926984036384703,
+            "probabilita_sotto": 0.1073015963615297
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.731251746476335,
+            "probabilita_sotto": 0.26874825352366505
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5267031834464869,
+            "probabilita_sotto": 0.4732968165535131
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.33233504644215195,
+            "probabilita_sotto": 0.667664953557848
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.18457953206281796,
+            "probabilita_sotto": 0.815420467937182
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8118992570254678,
+          "probabilita_sotto": 0.18810074297453216
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.49762475047613597,
+          "probabilita_sotto": 0.502375249523864
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.23508334871197967,
+          "probabilita_sotto": 0.7649166512880203
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.08886725162941533,
+          "probabilita_sotto": 0.9111327483705847
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8811795258919651,
+          "probabilita_sotto": 0.11882047410803487
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6280750974878313,
+          "probabilita_sotto": 0.3719249025121687
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.35850096828709854,
+          "probabilita_sotto": 0.6414990317129015
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1670906175146758,
+          "probabilita_sotto": 0.8329093824853242
+        }
+      ]
+    },
+    {
+      "event_id": "1452",
+      "atteso_casa": 1.8822571255960576,
+      "atteso_trasferta": 1.837933506082791,
+      "totale": {
+        "valore_atteso": 3.7201906316788484,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.88563285608522,
+            "probabilita_sotto": 0.11436714391477998
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7179679650987822,
+            "probabilita_sotto": 0.28203203490121775
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5100528461957154,
+            "probabilita_sotto": 0.48994715380428455
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3166818768138199,
+            "probabilita_sotto": 0.6833181231861801
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17280650306718226,
+            "probabilita_sotto": 0.8271934969328177
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.84775392087481,
+          "probabilita_sotto": 0.15224607912518995
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5611876535973602,
+          "probabilita_sotto": 0.4388123464026398
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.291491954328138,
+          "probabilita_sotto": 0.708508045671862
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12227973709743645,
+          "probabilita_sotto": 0.8777202629025636
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8408540393076358,
+          "probabilita_sotto": 0.1591459606923642
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5483543457934045,
+          "probabilita_sotto": 0.4516456542065955
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2795568521790287,
+          "probabilita_sotto": 0.7204431478209713
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11487954555738289,
+          "probabilita_sotto": 0.8851204544426171
+        }
+      ]
+    },
+    {
+      "event_id": "1453",
+      "atteso_casa": 1.572324427988147,
+      "atteso_trasferta": 2.0702040993647772,
+      "totale": {
+        "valore_atteso": 3.6425285273529244,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8784305249243929,
+            "probabilita_sotto": 0.12156947507560711
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7047120979297186,
+            "probabilita_sotto": 0.29528790207028144
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.4937873225780597,
+            "probabilita_sotto": 0.5062126774219403
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3017124447420785,
+            "probabilita_sotto": 0.6982875552579215
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.1617848003610003,
+            "probabilita_sotto": 0.8382151996389997
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.7924378420923943,
+          "probabilita_sotto": 0.20756215790760568
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.46608279088833293,
+          "probabilita_sotto": 0.5339172091116671
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.20951478128559886,
+          "probabilita_sotto": 0.7904852187144011
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.07504539830604007,
+          "probabilita_sotto": 0.9249546016939599
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8738399701047977,
+          "probabilita_sotto": 0.12616002989520225
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6126629590397673,
+          "probabilita_sotto": 0.3873370409602327
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.34231809955643433,
+          "probabilita_sotto": 0.6576819004435657
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.15576175410823734,
+          "probabilita_sotto": 0.8442382458917627
+        }
+      ]
+    },
+    {
+      "event_id": "1456",
+      "atteso_casa": 1.7826942207102672,
+      "atteso_trasferta": 1.6518878928235328,
+      "totale": {
+        "valore_atteso": 3.4345821135338,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 5.0,
+        "linee": [
+          {
+            "soglia": 0.5,
+            "probabilita_sopra": 0.9677611203911404,
+            "probabilita_sotto": 0.03223887960885963
+          },
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8570340411261816,
+            "probabilita_sotto": 0.14296595887381836
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6668834181625483,
+            "probabilita_sotto": 0.33311658183745174
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.4491874419931463,
+            "probabilita_sotto": 0.5508125580068537
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.26226376550821984,
+            "probabilita_sotto": 0.7377362344917802
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8318155896121996,
+          "probabilita_sotto": 0.1681844103878004
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.531994213200304,
+          "probabilita_sotto": 0.46800578679969596
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2647492957128621,
+          "probabilita_sotto": 0.7352507042871379
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10594397240651054,
+          "probabilita_sotto": 0.8940560275934895
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8083123189924496,
+          "probabilita_sotto": 0.1916876810075504
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.4916657595326577,
+          "probabilita_sotto": 0.5083342404673423
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.23013345059472912,
+          "probabilita_sotto": 0.7698665494052709
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.08612609902247981,
+          "probabilita_sotto": 0.9138739009775202
+        }
+      ]
+    },
+    {
+      "event_id": "7708",
+      "atteso_casa": 1.9663406691672431,
+      "atteso_trasferta": 2.0686098212514548,
+      "totale": {
+        "valore_atteso": 4.034950490418698,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9109490674755141,
+            "probabilita_sotto": 0.08905093252448593
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7669732039340621,
+            "probabilita_sotto": 0.2330267960659379
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5733280435323831,
+            "probabilita_sotto": 0.4266719564676169
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.37799088479989307,
+            "probabilita_sotto": 0.6220091152001069
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.22035573191496138,
+            "probabilita_sotto": 0.7796442680850386
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8600318901585865,
+          "probabilita_sotto": 0.1399681098414135
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.584806903390947,
+          "probabilita_sotto": 0.415193096609053
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3142138610648344,
+          "probabilita_sotto": 0.6857861389351656
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1368544930916582,
+          "probabilita_sotto": 0.8631455069083418
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8736386755132152,
+          "probabilita_sotto": 0.12636132448678483
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6122463986535102,
+          "probabilita_sotto": 0.38775360134648984
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3418870830978775,
+          "probabilita_sotto": 0.6581129169021225
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.15546443795614306,
+          "probabilita_sotto": 0.8445355620438569
+        }
+      ]
+    },
+    {
+      "event_id": "7709",
+      "atteso_casa": 1.8693612406191185,
+      "atteso_trasferta": 2.027676791125254,
+      "totale": {
+        "valore_atteso": 3.8970380317443722,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.90058054824047,
+            "probabilita_sotto": 0.09941945175953004
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7464186037059992,
+            "probabilita_sotto": 0.2535813962940008
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5461602834064997,
+            "probabilita_sotto": 0.4538397165935003
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.351056710811401,
+            "probabilita_sotto": 0.648943289188599
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.19899150230494078,
+            "probabilita_sotto": 0.8010084976950592
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8457778588011017,
+          "probabilita_sotto": 0.15422214119889832
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.557480965598592,
+          "probabilita_sotto": 0.44251903440140805
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.28801544662675194,
+          "probabilita_sotto": 0.7119845533732481
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12010598101032721,
+          "probabilita_sotto": 0.8798940189896728
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8683590043000056,
+          "probabilita_sotto": 0.13164099569999443
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6014336125585078,
+          "probabilita_sotto": 0.3985663874414922
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.33081440166038156,
+          "probabilita_sotto": 0.6691855983396184
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14790497060346142,
+          "probabilita_sotto": 0.8520950293965386
+        }
+      ]
+    },
+    {
+      "event_id": "8042",
+      "atteso_casa": 1.9004313504258719,
+      "atteso_trasferta": 2.607607302928822,
+      "totale": {
+        "valore_atteso": 4.508038653354694,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8273240885398281,
+            "probabilita_sotto": 0.17267591146017192
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6590584911310919,
+            "probabilita_sotto": 0.34094150886890806
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.4694215368439918,
+            "probabilita_sotto": 0.5305784631560082
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.2984433928378505,
+            "probabilita_sotto": 0.7015566071621495
+          },
+          {
+            "soglia": 6.5,
+            "probabilita_sopra": 0.1699807124947621,
+            "probabilita_sotto": 0.8300192875052379
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8504958833523569,
+          "probabilita_sotto": 0.14950411664764307
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5663735730574497,
+          "probabilita_sotto": 0.43362642694255027
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.29639610013751505,
+          "probabilita_sotto": 0.703603899862485
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.12537154898891645,
+          "probabilita_sotto": 0.8746284510110836
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9262892996888636,
+          "probabilita_sotto": 0.07371070031113636
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.7340807392535468,
+          "probabilita_sotto": 0.2659192607464532
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.48347851631526306,
+          "probabilita_sotto": 0.5165214836847369
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.26565445409390687,
+          "probabilita_sotto": 0.7343455459060931
+        },
+        {
+          "soglia": 4.5,
+          "probabilita_sopra": 0.12365455024339977,
+          "probabilita_sotto": 0.8763454497566002
+        }
+      ]
+    },
+    {
+      "event_id": "8043",
+      "atteso_casa": 1.819491943592456,
+      "atteso_trasferta": 2.129856697925409,
+      "totale": {
+        "valore_atteso": 3.949348641517865,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9046396743929837,
+            "probabilita_sotto": 0.09536032560701635
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7543806272140201,
+            "probabilita_sotto": 0.2456193727859799
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5565721725966839,
+            "probabilita_sotto": 0.4434278274033161
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.36126853471575293,
+            "probabilita_sotto": 0.6387314652842471
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.20700410332604224,
+            "probabilita_sotto": 0.7929958966739578
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8378919099304786,
+          "probabilita_sotto": 0.16210809006952143
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5429375460578238,
+          "probabilita_sotto": 0.45706245394217615
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.27460400166095766,
+          "probabilita_sotto": 0.7253959983390423
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11186042758572212,
+          "probabilita_sotto": 0.8881395724142779
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8811456752965935,
+          "probabilita_sotto": 0.11885432470340651
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.628002995749642,
+          "probabilita_sotto": 0.371997004250358
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3584241799677117,
+          "probabilita_sotto": 0.6415758200322883
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.16703609783039697,
+          "probabilita_sotto": 0.832963902169603
+        }
+      ]
+    },
+    {
+      "event_id": "9170",
+      "atteso_casa": 1.9268896183430477,
+      "atteso_trasferta": 1.747962772242048,
+      "totale": {
+        "valore_atteso": 3.674852390585096,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8814777772873801,
+            "probabilita_sotto": 0.11852222271261992
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.710286478102315,
+            "probabilita_sotto": 0.28971352189768496
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5005855597497804,
+            "probabilita_sotto": 0.49941444025021964
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3079305794708551,
+            "probabilita_sotto": 0.6920694205291449
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.16633485650362823,
+            "probabilita_sotto": 0.8336651434963718
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8543996323775169,
+          "probabilita_sotto": 0.14560036762248307
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5738437955788233,
+          "probabilita_sotto": 0.42615620442117674
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.30354373093234843,
+          "probabilita_sotto": 0.6964562690676516
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1299309347974329,
+          "probabilita_sotto": 0.8700690652025671
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.825871678596612,
+          "probabilita_sotto": 0.17412832140338796
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5215018551904916,
+          "probabilita_sotto": 0.47849814480950836
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.2554882950365993,
+          "probabilita_sotto": 0.7445117049634007
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.10049436168307446,
+          "probabilita_sotto": 0.8995056383169255
+        }
+      ]
+    },
+    {
+      "event_id": "9171",
+      "atteso_casa": 1.8124961828178643,
+      "atteso_trasferta": 1.9467276333316235,
+      "totale": {
+        "valore_atteso": 3.759223816149488,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8891014239924195,
+            "probabilita_sotto": 0.11089857600758046
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7244535180169555,
+            "probabilita_sotto": 0.27554648198304454
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5181374082095869,
+            "probabilita_sotto": 0.48186259179041313
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3242402997987939,
+            "probabilita_sotto": 0.6757597002012061
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.17845977423471926,
+            "probabilita_sotto": 0.8215402257652807
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8367538644069984,
+          "probabilita_sotto": 0.1632461355930016
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5408708667849154,
+          "probabilita_sotto": 0.45912913321508464
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.27272746490954947,
+          "probabilita_sotto": 0.7272725350904505
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.11072450079391671,
+          "probabilita_sotto": 0.8892754992060833
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8572595928895816,
+          "probabilita_sotto": 0.14274040711041835
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5793828979747245,
+          "probabilita_sotto": 0.42061710202527547
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3089077776499183,
+          "probabilita_sotto": 0.6910922223500817
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13339398069491915,
+          "probabilita_sotto": 0.8666060193050809
+        }
+      ]
+    },
+    {
+      "event_id": "9172",
+      "atteso_casa": 1.669499432138387,
+      "atteso_trasferta": 2.0184108855441933,
+      "totale": {
+        "valore_atteso": 3.6879103176825803,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8826886063856998,
+            "probabilita_sotto": 0.11731139361430021
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.712515233669452,
+            "probabilita_sotto": 0.287484766330548
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.5033205213244212,
+            "probabilita_sotto": 0.4966794786755788
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.3104476868089515,
+            "probabilita_sotto": 0.6895523131910485
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.16818814352689437,
+            "probabilita_sotto": 0.8318118564731056
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8116586803418531,
+          "probabilita_sotto": 0.18834131965814693
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.49722295412438233,
+          "probabilita_sotto": 0.5027770458756177
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.23474782094233826,
+          "probabilita_sotto": 0.7652521790576617
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.08868045900971477,
+          "probabilita_sotto": 0.9113195409902852
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8671335626175071,
+          "probabilita_sotto": 0.13286643738249293
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5989544990812075,
+          "probabilita_sotto": 0.40104550091879254
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3283067285228497,
+          "probabilita_sotto": 0.6716932714771503
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14621392644176434,
+          "probabilita_sotto": 0.8537860735582357
+        }
+      ]
+    },
+    {
+      "event_id": "9173",
+      "atteso_casa": 1.5339240513552725,
+      "atteso_trasferta": 2.065237602699451,
+      "totale": {
+        "valore_atteso": 3.5991616540547238,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8742283875383404,
+            "probabilita_sotto": 0.12577161246165958
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6971046920069606,
+            "probabilita_sotto": 0.30289530799303943
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.4846057543466251,
+            "probabilita_sotto": 0.5153942456533749
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.293401247358014,
+            "probabilita_sotto": 0.706598752641986
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.15576606143084437,
+            "probabilita_sotto": 0.8442339385691556
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.7843123648137961,
+          "probabilita_sotto": 0.21568763518620393
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.4534639136217362,
+          "probabilita_sotto": 0.5465360863782638
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.19971571530316534,
+          "probabilita_sotto": 0.8002842846968347
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.06997222717352414,
+          "probabilita_sotto": 0.9300277728264759
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8732118382207011,
+          "probabilita_sotto": 0.12678816177929886
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6113641589369518,
+          "probabilita_sotto": 0.38863584106304816
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.34097532221875926,
+          "probabilita_sotto": 0.6590246777812407
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.1548362579052347,
+          "probabilita_sotto": 0.8451637420947653
+        }
+      ]
+    },
+    {
+      "event_id": "9174",
+      "atteso_casa": 1.9685820693038383,
+      "atteso_trasferta": 2.2276982400189023,
+      "totale": {
+        "valore_atteso": 4.1962803093227405,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 6.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9217883968712856,
+            "probabilita_sotto": 0.07821160312871445
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.7892695635525159,
+            "probabilita_sotto": 0.21073043644748413
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6039075065958575,
+            "probabilita_sotto": 0.39609249340414254
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.40944971917016093,
+            "probabilita_sotto": 0.5905502808298391
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.24624984229637759,
+            "probabilita_sotto": 0.7537501577036224
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8603452633705283,
+          "probabilita_sotto": 0.1396547366294717
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5854234529484003,
+          "probabilita_sotto": 0.41457654705159974
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3148203797196254,
+          "probabilita_sotto": 0.6851796202803746
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13725226043406535,
+          "probabilita_sotto": 0.8627477395659346
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8922237801600771,
+          "probabilita_sotto": 0.10777621983992292
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6521308849067905,
+          "probabilita_sotto": 0.3478691150932095
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3847036248083957,
+          "probabilita_sotto": 0.6152963751916043
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.18612121259030556,
+          "probabilita_sotto": 0.8138787874096944
+        }
+      ]
+    },
+    {
+      "event_id": "9175",
+      "atteso_casa": 1.5256281828419171,
+      "atteso_trasferta": 2.023835703152812,
+      "totale": {
+        "valore_atteso": 3.5494638859947294,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 5.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.8692482101759531,
+            "probabilita_sotto": 0.1307517898240469
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.6882047053508702,
+            "probabilita_sotto": 0.3117952946491298
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.4740022446273555,
+            "probabilita_sotto": 0.5259977553726445
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.28392626997002557,
+            "probabilita_sotto": 0.7160737300299744
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.1489927084417373,
+            "probabilita_sotto": 0.8510072915582627
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.7825156060195959,
+          "probabilita_sotto": 0.2174843939804041
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.4507152852347964,
+          "probabilita_sotto": 0.5492847147652036
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.19761332500215723,
+          "probabilita_sotto": 0.8023866749978428
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.0689001637810076,
+          "probabilita_sotto": 0.9310998362189924
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.867852387297388,
+          "probabilita_sotto": 0.132147612702612
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6004073306234319,
+          "probabilita_sotto": 0.3995926693765681
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3297749034591919,
+          "probabilita_sotto": 0.6702250965408081
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.14720304728389466,
+          "probabilita_sotto": 0.8527969527161053
+        }
+      ]
+    },
+    {
+      "event_id": "203017",
+      "atteso_casa": 2.1394488029977654,
+      "atteso_trasferta": 2.2468237882961892,
+      "totale": {
+        "valore_atteso": 4.386272591293954,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.932956860060724,
+            "probabilita_sotto": 0.06704313993927602
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.813220167425962,
+            "probabilita_sotto": 0.18677983257403796
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6381542430672802,
+            "probabilita_sotto": 0.3618457569327198
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.4461825266462739,
+            "probabilita_sotto": 0.5538174733537261
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.2777744710380502,
+            "probabilita_sotto": 0.7222255289619498
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.882280288105327,
+          "probabilita_sotto": 0.11771971189467301
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6304249914030273,
+          "probabilita_sotto": 0.3695750085969727
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.36100923487383607,
+          "probabilita_sotto": 0.6389907651261639
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.16887549560213067,
+          "probabilita_sotto": 0.8311245043978693
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8942654729735902,
+          "probabilita_sotto": 0.10573452702640984
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.6566986224064062,
+          "probabilita_sotto": 0.3433013775935938
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.3898131968239287,
+          "probabilita_sotto": 0.6101868031760713
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.18993168917450742,
+          "probabilita_sotto": 0.8100683108254926
+        }
+      ]
+    },
+    {
+      "event_id": "203018",
+      "atteso_casa": 1.9784823088870713,
+      "atteso_trasferta": 2.4403432692368625,
+      "totale": {
+        "valore_atteso": 4.418825578123934,
+        "intervallo_basso": 2.0,
+        "intervallo_alto": 7.0,
+        "linee": [
+          {
+            "soglia": 1.5,
+            "probabilita_sopra": 0.9347119635914382,
+            "probabilita_sotto": 0.06528803640856184
+          },
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8170835722554798,
+            "probabilita_sotto": 0.18291642774452022
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.6438237908058453,
+            "probabilita_sotto": 0.3561762091941547
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.4524226023233934,
+            "probabilita_sotto": 0.5475773976766066
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.283268908853477,
+            "probabilita_sotto": 0.716731091146523
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.8617210571408008,
+          "probabilita_sotto": 0.13827894285919917
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.5881386150022687,
+          "probabilita_sotto": 0.4118613849977313
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.31749960410566613,
+          "probabilita_sotto": 0.6825003958943339
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.13901477238779147,
+          "probabilita_sotto": 0.8609852276122085
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9128690630423261,
+          "probabilita_sotto": 0.08713093695767393
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.7002396674953653,
+          "probabilita_sotto": 0.29976033250463474
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.44079531036290076,
+          "probabilita_sotto": 0.5592046896370992
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.22975088013966938,
+          "probabilita_sotto": 0.7702491198603306
+        }
+      ]
+    },
+    {
+      "event_id": "204272",
+      "atteso_casa": 2.333747968547008,
+      "atteso_trasferta": 2.8425952107795887,
+      "totale": {
+        "valore_atteso": 5.176343179326597,
+        "intervallo_basso": 3.0,
+        "intervallo_alto": 8.0,
+        "linee": [
+          {
+            "soglia": 2.5,
+            "probabilita_sopra": 0.8894360370067554,
+            "probabilita_sotto": 0.11056396299324456
+          },
+          {
+            "soglia": 3.5,
+            "probabilita_sopra": 0.7588608506488768,
+            "probabilita_sotto": 0.24113914935112324
+          },
+          {
+            "soglia": 4.5,
+            "probabilita_sopra": 0.5898853568256501,
+            "probabilita_sotto": 0.41011464317434987
+          },
+          {
+            "soglia": 5.5,
+            "probabilita_sopra": 0.41495032784061014,
+            "probabilita_sotto": 0.5850496721593899
+          },
+          {
+            "soglia": 6.5,
+            "probabilita_sopra": 0.26402970382194113,
+            "probabilita_sotto": 0.7359702961780589
+          }
+        ]
+      },
+      "linee_casa": [
+        {
+          "soglia": -0.5,
+          "probabilita_sopra": 1.0,
+          "probabilita_sotto": 0.0
+        },
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.903068231793538,
+          "probabilita_sotto": 0.09693176820646199
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.676853914654038,
+          "probabilita_sotto": 0.323146085345962
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.4128903131137598,
+          "probabilita_sotto": 0.5871096868862402
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.20754880682543397,
+          "probabilita_sotto": 0.792451193174566
+        }
+      ],
+      "linee_trasferta": [
+        {
+          "soglia": 0.5,
+          "probabilita_sopra": 0.9417257643718026,
+          "probabilita_sotto": 0.058274235628197446
+        },
+        {
+          "soglia": 1.5,
+          "probabilita_sopra": 0.7760757012632472,
+          "probabilita_sotto": 0.2239242987367528
+        },
+        {
+          "soglia": 2.5,
+          "probabilita_sopra": 0.5406376632343898,
+          "probabilita_sotto": 0.4593623367656102
+        },
+        {
+          "soglia": 3.5,
+          "probabilita_sopra": 0.317552650122331,
+          "probabilita_sotto": 0.682447349877669
+        },
+        {
+          "soglia": 4.5,
+          "probabilita_sopra": 0.15901755265507167,
+          "probabilita_sotto": 0.8409824473449283
+        }
+      ]
+    }
+  ]
+}

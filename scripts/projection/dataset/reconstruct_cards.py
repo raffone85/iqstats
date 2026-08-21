@@ -63,6 +63,12 @@ def scomponi(payload):
     for episodio in episodi:
         if episodio.get("type") != "card":
             continue
+        # Un cartellino annullato dopo revisione resta nella cronologia della fonte ma e'
+        # escluso dai suoi conteggi. Nell'archivio raccolto il campo non compare mai —
+        # 8.022 cartellini su 1.962 gare, zero occorrenze — quindi qui non cambia una
+        # riga; serve perche' una raccolta nuova non conti cose diverse da quelle vecchie.
+        if episodio.get("rescinded") is True:
+            continue
         if episodio.get("is_home") is None:
             senza_lato += 1
             continue

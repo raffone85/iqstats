@@ -1,0 +1,272 @@
+{
+  "schema": "registro-totale/1",
+  "scritto_il": "2026-08-20",
+  "generato_da": "scripts/projection/models/total.py e total_equal_width.py",
+  "regola_non_negoziabile": "il valore atteso del totale e' sempre la somma dei due attesi: E[casa+trasferta] = E[casa] + E[trasferta] vale anche con i due processi dipendenti, e nessun terzo valore atteso indipendente puo' contraddire i due lati",
+  "decisione": {
+    "metodo": "calibrazione_diretta",
+    "vale_per": [
+      "total_shots",
+      "shots_on_target",
+      "corner_kicks",
+      "fouls",
+      "yellow_cards",
+      "offsides",
+      "goalkeeper_saves"
+    ],
+    "perche": "la dipendenza fra i due lati e' stabile e piccola, da -0,25 a +0,17, e non migliora mai l'incertezza del totale: la dispersione stimata sui residui della somma contiene gia' la covarianza. Dove la composizione vinceva - le parate - vinceva per larghezza, non per dipendenza: allargando la diretta alla stessa larghezza si recupera due terzi del vantaggio, e il residuo e' la granularita' dei quantili interi, non la dipendenza",
+    "costo_evitato": "la composizione richiederebbe una simulazione al momento di prevedere, quindi un generatore di numeri casuali dentro il predittore e la riproduzione del suo esito in TypeScript cifra per cifra"
+  },
+  "prova_a_larghezza_pari": {
+    "bersaglio": "goalkeeper_saves",
+    "perche": "e' l'unico dove la composizione vinceva con margine ripetuto",
+    "copertura_media": {
+      "diretta": 0.7821,
+      "composizione": 0.7904,
+      "diretta_a_larghezza_pari": 0.7871
+    },
+    "larghezza_media": {
+      "diretta": 5.242,
+      "composizione": 5.3183,
+      "diretta_a_larghezza_pari": 5.3076
+    }
+  },
+  "per_bersaglio": {
+    "total_shots": {
+      "modello": "ridge",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": -0.2489,
+        "per_origine": [
+          -0.2641,
+          -0.261,
+          -0.2424,
+          -0.228
+        ]
+      },
+      "mae_del_totale_fuori_campione": 4.4496,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.019,
+        "composizione": 0.0197
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.781,
+        "composizione": 0.7803
+      },
+      "brier_delle_linee": {
+        "diretta": 0.23982,
+        "composizione": 0.24012
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0268,
+      "larghezza_media": {
+        "diretta": 13.2553,
+        "composizione": 13.2519
+      },
+      "verdetto_della_regola_originale": "diretta"
+    },
+    "shots_on_target": {
+      "modello": "poisson_glm",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": -0.0675,
+        "per_origine": [
+          -0.0713,
+          -0.0797,
+          -0.0647,
+          -0.0542
+        ]
+      },
+      "mae_del_totale_fuori_campione": 2.4057,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.0272,
+        "composizione": 0.0308
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.7899,
+        "composizione": 0.787
+      },
+      "brier_delle_linee": {
+        "diretta": 0.21894,
+        "composizione": 0.21918
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0227,
+      "larghezza_media": {
+        "diretta": 6.6722,
+        "composizione": 6.6539
+      },
+      "verdetto_della_regola_originale": "diretta"
+    },
+    "corner_kicks": {
+      "modello": "poisson_glm",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": -0.1795,
+        "per_origine": [
+          -0.1621,
+          -0.1917,
+          -0.1842,
+          -0.1802
+        ]
+      },
+      "mae_del_totale_fuori_campione": 2.6459,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.0173,
+        "composizione": 0.0162
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.7993,
+        "composizione": 0.7997
+      },
+      "brier_delle_linee": {
+        "diretta": 0.22125,
+        "composizione": 0.22148
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0235,
+      "larghezza_media": {
+        "diretta": 7.4652,
+        "composizione": 7.5341
+      },
+      "verdetto_della_regola_originale": "diretta"
+    },
+    "fouls": {
+      "modello": "ridge",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": 0.0725,
+        "per_origine": [
+          0.0877,
+          0.0663,
+          0.0677,
+          0.0681
+        ]
+      },
+      "mae_del_totale_fuori_campione": 4.1121,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.0173,
+        "composizione": 0.0165
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.7967,
+        "composizione": 0.7981
+      },
+      "brier_delle_linee": {
+        "diretta": 0.23848,
+        "composizione": 0.23837
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0338,
+      "larghezza_media": {
+        "diretta": 11.7852,
+        "composizione": 11.8332
+      },
+      "verdetto_della_regola_originale": "diretta"
+    },
+    "yellow_cards": {
+      "modello": "poisson_glm",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": 0.1656,
+        "per_origine": [
+          0.1702,
+          0.1742,
+          0.1643,
+          0.1535
+        ]
+      },
+      "mae_del_totale_fuori_campione": 1.5988,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.0149,
+        "composizione": 0.0173
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.7951,
+        "composizione": 0.7927
+      },
+      "brier_delle_linee": {
+        "diretta": 0.18362,
+        "composizione": 0.18362
+      },
+      "scarto_di_calibrazione_delle_linee": 0.02,
+      "larghezza_media": {
+        "diretta": 4.1806,
+        "composizione": 4.138
+      },
+      "verdetto_della_regola_originale": "composizione"
+    },
+    "offsides": {
+      "modello": "poisson_glm",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": -0.0621,
+        "per_origine": [
+          -0.0305,
+          -0.0586,
+          -0.0647,
+          -0.0946
+        ]
+      },
+      "mae_del_totale_fuori_campione": 1.5178,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.0195,
+        "composizione": 0.0153
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.8196,
+        "composizione": 0.8154
+      },
+      "brier_delle_linee": {
+        "diretta": 0.16791,
+        "composizione": 0.168
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0258,
+      "larghezza_media": {
+        "diretta": 3.7358,
+        "composizione": 3.7075
+      },
+      "verdetto_della_regola_originale": "diretta"
+    },
+    "goalkeeper_saves": {
+      "modello": "poisson_glm",
+      "origini_valutate": 4,
+      "metodo_promosso": "calibrazione_diretta",
+      "dipendenza_fra_i_lati": {
+        "correlazione_di_rango_media": -0.1008,
+        "per_origine": [
+          -0.1065,
+          -0.1087,
+          -0.0984,
+          -0.0896
+        ]
+      },
+      "mae_del_totale_fuori_campione": 1.989,
+      "scostamento_medio_di_copertura": {
+        "diretta": 0.018,
+        "composizione": 0.0105
+      },
+      "copertura_media_effettiva": {
+        "diretta": 0.7821,
+        "composizione": 0.7904
+      },
+      "brier_delle_linee": {
+        "diretta": 0.20608,
+        "composizione": 0.20606
+      },
+      "scarto_di_calibrazione_delle_linee": 0.0328,
+      "larghezza_media": {
+        "diretta": 5.242,
+        "composizione": 5.3183
+      },
+      "verdetto_della_regola_originale": "composizione"
+    }
+  },
+  "resta_aperto": [
+    "la copertura e' ottimista su sei bersagli su sette: l'intervallo che promette l'80% ne copre fra il 78,1% e il 79,9%. Va corretto calibrando il livello per fascia, non cambiando metodo",
+    "la fascia EARLY non e' misurabile in questo disegno: su 28 combinazioni bersaglio-origine compare MATURE 28 volte, DEVELOPING 11, EARLY mai con almeno trenta gare",
+    "l'affidabilita' del totale e la sua soglia assoluta non sono ancora misurate: la soglia va presa dall'errore della migliore baseline del totale, non da quello del modello"
+  ]
+}

@@ -17,11 +17,15 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 
-import { calcolaFeature, gruppiNecessari, gruppoDi } from '../asof/calcolo';
-import { esponenziale, media, deviazione, campione } from '../asof/aggregati';
-import type { IngressoFeature } from '../asof/contratto';
+import { calcolaFeature, gruppiNecessari, gruppoDi } from '../../../apps/web/src/server/iqstats/projection/asof/calcolo';
+import { esponenziale, media, deviazione, campione } from '../../../apps/web/src/server/iqstats/projection/asof/aggregati';
+import type { IngressoFeature } from '../../../apps/web/src/server/iqstats/projection/asof/contratto';
 
-const CARTELLA = resolve(__dirname, '..', '..', 'models', 'output', 'artefatti');
+const CARTELLA = resolve(
+  // Quattro passi: la radice del compilato e' la radice del progetto, perche' i moduli
+  // del motore vivono ora in apps/web e i test restano qui.
+  __dirname, '..', '..', '..', '..', 'models', 'output', 'artefatti',
+);
 const CODA = '-riscontro-asof.json';
 
 /** Tolleranze del piano di validazione: relativa sulle grandezze derivate. */

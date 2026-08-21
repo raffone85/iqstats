@@ -14,6 +14,7 @@
     "test:gateway": "node --experimental-strip-types --test test/iqstats-gateway.test.ts test/iqstats-database-gateway.test.ts",
     "test:database-integration": "node --conditions=react-server --experimental-strip-types --test test/iqstats-database-integration.test.ts",
     "test:database-integration:local": "node scripts/with-local-data1.mjs test",
+    "test:projection-store": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-projection-store.test.ts",
     "test:media": "node --experimental-strip-types --test test/iqstats-media.test.ts",
     "test:stat-engine": "node --conditions=react-server --experimental-strip-types --test test/iqstats-stat-engine.test.ts",
     "test:auth": "node --experimental-strip-types --test test/auth-authorization.test.ts test/auth-email-code.test.ts",

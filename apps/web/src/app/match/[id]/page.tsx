@@ -13,7 +13,12 @@ import {
   type ManagerInfo,
   type MatchWeather,
 } from "@/server/iqstats/match-context";
+import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
+import {
+  getFinishedMatchStats,
+  getMatchIncidents,
+} from "@/server/iqstats/match-finished";
 import {
   getMatchRefereeReading,
   getMatchStandingRows,
@@ -270,8 +275,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
     );
   }
 
-  // La fonte ammette dieci richieste al secondo per indirizzo: il dossier ne fa otto, quindi
-  // partono in due ondate. Prima ciò che regge la pagina, poi il contorno.
+  // La fonte ammette dieci richieste al secondo per indirizzo: il dossier le spezza in
+  // ondate da non più di sei. Prima ciò che regge la pagina, poi il contorno.
   const [prediction, odds, lineups] = await Promise.all([
     getMatchPrediction(eventId),
     getMatchOdds(eventId),
@@ -304,6 +309,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
       : Promise.resolve(null),
     detail.homeTeamId !== null ? getTeamForm(String(detail.homeTeamId)) : Promise.resolve(null),
     detail.awayTeamId !== null ? getTeamForm(String(detail.awayTeamId)) : Promise.resolve(null),
+  ]);
+
+  // Quarta ondata, e solo a gara conclusa: il tabellino con la mappa dei tiri dentro, e la
+  // cronologia. Sono due richieste in tutto — le statistiche e la mappa arrivano insieme —
+  // e su una gara ancora da giocare non partono affatto.
+  const played = detail.status === "finished";
+  const [finishedStats, incidents] = await Promise.all([
+    played ? getFinishedMatchStats(eventId) : Promise.resolve(null),
+    played ? getMatchIncidents(eventId) : Promise.resolve(null),
   ]);
 
   // Motore statistico: lettura sincrona dell'artefatto generato, nessuna chiamata al provider.
@@ -551,6 +565,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayTeam={detail.awayTeam}
           homeForm={homeForm}
           awayForm={awayForm}
+        />
+
+        {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
+        <MatchFinishedSection
+          stats={finishedStats}
+          incidents={incidents}
+          homeTeam={detail.homeTeam}
+          awayTeam={detail.awayTeam}
         />
 
         {/* Chi gioca: previsto o confermato, e la differenza si dice */}

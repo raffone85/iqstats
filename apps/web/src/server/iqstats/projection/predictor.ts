@@ -92,6 +92,73 @@ export function quantileBinomialeNegativa(
 }
 
 /**
+ * Cumulata di Poisson: la probabilita' di non superare un conteggio.
+ *
+ * Stessa ricorrenza del quantile, percorsa fino al conteggio invece che fino al livello.
+ * Serve alle probabilita' delle soglie, che non sono un quantile: il quantile risponde
+ * «quale conteggio», la cumulata risponde «con quale probabilita'».
+ */
+export function cumulataPoisson(conteggio: number, media: number): number {
+  const mu = Math.max(media, ATTESO_MINIMO);
+  const limite = Math.floor(conteggio);
+  if (limite < 0) {
+    return 0;
+  }
+  let densita = Math.exp(-mu);
+  let cumulata = densita;
+  for (let k = 1; k <= limite && k < CONTEGGIO_MASSIMO; k += 1) {
+    densita = (densita * mu) / k;
+    cumulata += densita;
+  }
+  return cumulata > 1 ? 1 : cumulata;
+}
+
+/** Cumulata della binomiale negativa, nella parametrizzazione dell'addestramento. */
+export function cumulataBinomialeNegativa(
+  conteggio: number,
+  numeroSuccessi: number,
+  probabilita: number,
+): number {
+  const limite = Math.floor(conteggio);
+  if (limite < 0) {
+    return 0;
+  }
+  let densita = Math.pow(probabilita, numeroSuccessi);
+  let cumulata = densita;
+  for (let k = 1; k <= limite && k < CONTEGGIO_MASSIMO; k += 1) {
+    densita = (densita * (k + numeroSuccessi - 1) * (1 - probabilita)) / k;
+    cumulata += densita;
+  }
+  return cumulata > 1 ? 1 : cumulata;
+}
+
+/**
+ * La probabilita' di superare una soglia, letta dalla distribuzione calibrata.
+ *
+ * **Il livello nominale non entra qui.** Quel livello corregge gli estremi
+ * dell'intervallo, che su una distribuzione discreta sono conservativi per costruzione:
+ * e' una correzione degli estremi, non della funzione di ripartizione. Applicarlo anche
+ * alle probabilita' le sposterebbe tutte nella stessa direzione senza che nessuno lo
+ * abbia misurato.
+ */
+export function probabilitaSopra(
+  distribuzione: DistribuzioneIntervallo,
+  dispersione: number,
+  valoreAtteso: number,
+  soglia: number,
+): number {
+  const media = Math.max(valoreAtteso, ATTESO_MINIMO);
+  const sotto = distribuzione === 'poisson'
+    ? cumulataPoisson(soglia, media)
+    : cumulataBinomialeNegativa(soglia, media / (dispersione - 1), 1 / dispersione);
+  const sopra = 1 - sotto;
+  if (sopra < 0) {
+    return 0;
+  }
+  return sopra > 1 ? 1 : sopra;
+}
+
+/**
  * Estremi dell'intervallo centrale al livello nominale dell'artefatto.
  *
  * Su una distribuzione discreta l'intervallo e' conservativo per costruzione: per questo

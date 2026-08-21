@@ -1,0 +1,110 @@
+{
+  "schema": "copertura-del-totale/1",
+  "target": "corner_kicks",
+  "modello": "poisson_glm",
+  "obiettivo": 0.8,
+  "origini_valutate": 3,
+  "ripieghi_per_campione_corto": 5,
+  "scostamento_medio": {
+    "unico": 0.0119,
+    "per_fascia": 0.0117
+  },
+  "copertura_media": {
+    "unico": 0.8041,
+    "per_fascia": 0.8051
+  },
+  "larghezza_media": {
+    "unico": 7.589,
+    "per_fascia": 7.622
+  },
+  "origini_vinte_dalla_fascia": 1,
+  "verdetto": "per_fascia",
+  "per_origine": [
+    {
+      "origine": 2,
+      "gare": 624,
+      "livello_unico": 0.76,
+      "unico": {
+        "copertura": 0.7997,
+        "larghezza": 7.548
+      },
+      "per_fascia": {
+        "copertura": 0.8013,
+        "larghezza": 7.587
+      },
+      "fasce": {
+        "EARLY": {
+          "righe_treno": 15,
+          "ripiego": true
+        },
+        "DEVELOPING": {
+          "righe_treno": 30,
+          "ripiego": true
+        },
+        "MATURE": {
+          "righe_treno": 577,
+          "righe_prova": 562,
+          "dispersione": 1.0973,
+          "livello_nominale": 0.76,
+          "ripiego": false
+        }
+      }
+    },
+    {
+      "origine": 3,
+      "gare": 624,
+      "livello_unico": 0.74,
+      "unico": {
+        "copertura": 0.7885,
+        "larghezza": 7.502
+      },
+      "per_fascia": {
+        "copertura": 0.7901,
+        "larghezza": 7.537
+      },
+      "fasce": {
+        "DEVELOPING": {
+          "righe_treno": 80,
+          "ripiego": true
+        },
+        "MATURE": {
+          "righe_treno": 1139,
+          "righe_prova": 609,
+          "dispersione": 1.1702,
+          "livello_nominale": 0.74,
+          "ripiego": false
+        }
+      }
+    },
+    {
+      "origine": 4,
+      "gare": 625,
+      "livello_unico": 0.75,
+      "unico": {
+        "copertura": 0.824,
+        "larghezza": 7.717
+      },
+      "per_fascia": {
+        "copertura": 0.824,
+        "larghezza": 7.741
+      },
+      "fasce": {
+        "EARLY": {
+          "righe_treno": 27,
+          "ripiego": true
+        },
+        "DEVELOPING": {
+          "righe_treno": 95,
+          "ripiego": true
+        },
+        "MATURE": {
+          "righe_treno": 1748,
+          "righe_prova": 619,
+          "dispersione": 1.1673,
+          "livello_nominale": 0.75,
+          "ripiego": false
+        }
+      }
+    }
+  ]
+}

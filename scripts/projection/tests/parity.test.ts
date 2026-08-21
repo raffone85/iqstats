@@ -25,12 +25,16 @@ import {
   caricaArtefattoDaFile,
   leggiArtefatto,
   verificaChecksum,
-} from '../artifact-schema';
-import type { ArtefattoModello } from '../artifact-schema';
-import { preparaFeature } from '../feature-transform';
-import { prevedi, prevediDaOrdine, quantilePoisson } from '../predictor';
+} from '../../../apps/web/src/server/iqstats/projection/artifact-schema';
+import type { ArtefattoModello } from '../../../apps/web/src/server/iqstats/projection/artifact-schema';
+import { preparaFeature } from '../../../apps/web/src/server/iqstats/projection/feature-transform';
+import { prevedi, prevediDaOrdine, quantilePoisson } from '../../../apps/web/src/server/iqstats/projection/predictor';
 
-const CARTELLA_ARTEFATTI = resolve(__dirname, '..', '..', 'models', 'output', 'artefatti');
+const CARTELLA_ARTEFATTI = resolve(
+  // Quattro passi: la radice del compilato e' la radice del progetto, perche' i moduli
+  // del motore vivono ora in apps/web e i test restano qui.
+  __dirname, '..', '..', '..', '..', 'models', 'output', 'artefatti',
+);
 
 interface RigaDiRiscontro {
   readonly event_id: string;

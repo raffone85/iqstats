@@ -1,26 +1,26 @@
 {
   "generato_da": "scripts/projection/dataset/build_observations.py",
   "politica_provenienza": "2026-08-16.1",
-  "gare": 9305,
-  "righe_squadra_gara": 18610,
+  "gare": 10479,
+  "righe_squadra_gara": 20958,
   "colonne_metrica": 69,
-  "gare_senza_pannello": 1400,
-  "righe_con_disciplina_ricostruita": 18410,
+  "gare_senza_pannello": 1427,
+  "righe_con_disciplina_ricostruita": 20752,
   "gare_senza_chiave_di_join": 12,
   "gare_senza_data": 0,
   "valori_per_classe": {
-    "A": 868720,
-    "B": 63462,
-    "C": 73640,
-    "D": 95468,
-    "E": 182800
+    "A": 1002250,
+    "B": 72228,
+    "C": 83008,
+    "D": 102282,
+    "E": 186334
   },
   "quota_per_classe": {
-    "A": 0.676526,
-    "B": 0.049422,
-    "C": 0.057348,
-    "D": 0.074347,
-    "E": 0.142358
+    "A": 0.69307,
+    "B": 0.049947,
+    "C": 0.057401,
+    "D": 0.070729,
+    "E": 0.128853
   },
   "nota_join": "il dettaglio gara ha la precedenza sullo snapshot di contesto; le gare senza chiave restano senza identificativi di squadra e non entrano nelle feature"
 }

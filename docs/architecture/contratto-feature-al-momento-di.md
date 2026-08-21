@@ -94,6 +94,31 @@ sono di 0,0004 di errore assoluto medio contro una deviazione fra origini di 0,0
 esiste un k migliore da difendere**; resta 5, e resta un parametro dichiarato
 nell'artefatto, non un numero nascosto nel codice.
 
+## Da dove arriva, in produzione
+
+Scritto il 20 agosto 2026. Ciò che il calcolo «riceve già calcolato» viene dalle
+osservazioni squadra-gara conservate nel database dell'applicazione, non dalla fonte a
+ogni richiesta: `apps/web/src/server/iqstats/projection-store.ts` legge le righe,
+`projection/snapshot.ts` le compone.
+
+- **medie di lega** e **profilo dell'arbitro**: si calcolano dalle stesse righe, con lo
+  stesso taglio temporale, e non si conservano da nessuna parte;
+- **aggregati di rosa**: si calcolano dalle statistiche per giocatore delle sole gare
+  precedenti della stagione; a parità di minuti l'ordine è quello di prima apparizione
+  nella risposta della fonte, conservato nella colonna `source_ordinal`, perché è
+  l'ordine che decide chi sta negli undici di riferimento;
+- **profilo spaziale per gara**: si conserva in doppia precisione, non in decimali
+  contati: sono quozienti e medie, e cinque decimali li arrotonderebbero senza dare
+  errore.
+
+La politica di provenienza si applica **in lettura**, prima di qualunque media: la classe
+di ogni valore sta nella colonna `value_provenance`, e un valore di classe ambigua o
+mancante resta ignoto.
+
+Una divergenza è nota e misurata: le medie di lega non separate per lato comprendono, sul
+lato che addestra, la riga gemella della gara stessa. Il livello dati esclude l'intera
+gara. Numeri e conseguenze stanno nel §9bis dell'[architettura](architettura-motore-proiezione.md).
+
 ## La parità
 
 Python esporta, accanto all'artefatto, un **campione di riscontro «al momento di»**: per un

@@ -18,10 +18,13 @@ Tre di quegli strumenti appartengono a un componente aggiuntivo a pagamento — 
 denaro e il suo storico — e rispondono `402`. **Restano fuori dal motore statistico**, come
 già stabilito nel catalogo.
 
-Il limite della fonte è **dieci richieste al secondo per indirizzo**, non una quota
-mensile. Il tetto vero è quindi una disciplina di questo progetto, non un vincolo esterno:
-si mantiene la regola già in uso di **due richieste al secondo** per le raccolte e di
-**nessuna ondata sopra sei** nelle pagine.
+**Superato il 20 agosto 2026.** Le regole di frequenza, gli stati della gara, i limiti e
+le novità dei payload stanno ora in [regole e limiti della fonte](fonte-regole-e-limiti.md),
+scritte dalla documentazione corrente e verificate chiamando l'API. In sintesi: nessuna
+quota giornaliera su questo piano, raffica di 25 richieste al secondo per indirizzo sugli
+endpoint in cache, e la disciplina del progetto resta **due richieste al secondo** per le
+raccolte e **nessuna ondata sopra sei** nelle pagine — ora per non disturbare, non per
+rispettare un tetto.
 
 ## Che cosa è già in casa — zero richieste
 
@@ -62,7 +65,10 @@ mentre un visitatore aspetta una pagina.
 - **Migliore quota per esito ed elenco operatori:** porterebbero a nominare un operatore.
 - **Contenuti social:** non è un dato misurabile.
 - **Formazioni previste storiche:** non esistono. Su una gara passata la fonte dà l'undici
-  effettivo. Vedi il limite dichiarato nel dizionario delle metriche.
+  effettivo. Vedi il limite dichiarato nel dizionario delle metriche. **Per il futuro il
+  quadro è cambiato:** `/events/{id}/lineups/` dichiara `lineup_status` e serve una
+  formazione prevista con la sua confidenza fino a due settimane prima del calcio
+  d'inizio. Il dettaglio è in [regole e limiti della fonte](fonte-regole-e-limiti.md).
 
 ## Regole che valgono per ogni raccolta
 

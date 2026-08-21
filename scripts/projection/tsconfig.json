@@ -11,11 +11,14 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "sourceMap": false,
-    "rootDir": ".",
+    "rootDir": "../..",
     "outDir": "build",
     "typeRoots": ["../../apps/web/node_modules/@types"],
     "types": ["node"]
   },
-  "include": ["*.ts", "asof/**/*.ts", "tests/**/*.ts"],
+  "include": [
+    "tests/**/*.ts",
+    "../../apps/web/src/server/iqstats/projection/**/*.ts"
+  ],
   "exclude": ["build", "node_modules"]
 }

@@ -174,6 +174,49 @@ export interface RiferimentoChecksum {
   readonly file: string;
 }
 
+/**
+ * L'incertezza del totale di gara.
+ *
+ * **Il valore atteso del totale non e' qui, ed e' voluto:** e' la somma dei due attesi, e
+ * conservarne una versione propria vorrebbe dire avere un terzo numero capace di
+ * contraddire i due lati. Qui sta solo cio' che la somma non sa: quanto e' dispersa.
+ *
+ * Il metodo e' la calibrazione diretta sui residui della somma. La composizione delle due
+ * marginali con la dipendenza misurata e' stata confrontata fuori campione e non vince:
+ * il registro della decisione e' in `data/registro-totale.json`.
+ */
+export interface TotaleDiGaraArtefatto {
+  readonly metodo: 'calibrazione_diretta';
+  readonly dispersione: number;
+  readonly distribuzione: DistribuzioneIntervallo;
+  readonly livello_nominale: number;
+  readonly livello_dichiarato: number;
+  readonly gare_di_addestramento: number;
+  readonly prova_fuori_campione: Record<string, unknown> | null;
+  readonly calibrazione_delle_linee_sui_due_lati: number | null;
+  readonly avvertenza: string;
+  readonly affidabilita?: AffidabilitaDelTotale | null;
+}
+
+/**
+ * L'affidabilita' del totale: la stessa definizione delle marginali, altra grandezza.
+ *
+ * La soglia assoluta viene dalla migliore baseline **del totale**, non da quella del lato,
+ * e la curva ha una griglia piu' larga perche' il totale ha una scala piu' grande.
+ *
+ * Non c'e' lo strato condizionale: sul totale non e' stato misurato, e il tipo lo dice
+ * invece di lasciare un campo che sarebbe sempre nullo.
+ */
+export type AffidabilitaDelTotale = Omit<Affidabilita, 'condizionale'>;
+
+/** La convenzione delle cinque soglie centrali, dichiarata invece che scritta nel codice. */
+export interface LineeArtefatto {
+  readonly quante: number;
+  readonly passi: readonly number[];
+  readonly regola: string;
+  readonly probabilita_da: string;
+}
+
 export interface ArtefattoModello {
   readonly schema_version: string;
   readonly model_id: string;
@@ -189,6 +232,10 @@ export interface ArtefattoModello {
   readonly calibration: Calibrazione;
   readonly maturita: Maturita | null;
   readonly affidabilita: Affidabilita | null;
+  // Assenti negli artefatti esportati prima del 20 agosto 2026: chi legge si regola
+  // sulla loro assenza invece di darla per scontata.
+  readonly totale?: TotaleDiGaraArtefatto | null;
+  readonly linee?: LineeArtefatto | null;
   readonly training_metadata: MetadatiAddestramento;
   readonly validation_metrics: Record<string, unknown> | null;
   readonly checksum: RiferimentoChecksum;
@@ -303,6 +350,7 @@ export function leggiArtefatto(grezzo: unknown): ArtefattoModello {
 
   verificaMaturita(radice.maturita, ordine as readonly string[]);
   verificaAffidabilita(radice.affidabilita, ordine as readonly string[]);
+  verificaTotale(radice.totale);
 
   return radice as unknown as ArtefattoModello;
 }
@@ -442,21 +490,73 @@ function verificaCondizionale(grezzo: unknown, ordine: readonly string[]): void 
   }
 }
 
+/**
+ * L'incertezza del totale, quando l'artefatto la porta.
+ *
+ * Un artefatto senza il blocco e' valido: gli artefatti esportati prima del 20 agosto
+ * 2026 non ce l'hanno, e chi legge lo tratta come «totale non dichiarato». Un blocco
+ * malformato invece e' un errore, perche' vorrebbe dire che l'esportazione ha scritto
+ * qualcosa che il predittore non sa usare.
+ */
+function verificaTotale(grezzo: unknown): void {
+  if (grezzo === null || grezzo === undefined) {
+    return;
+  }
+  const totale = oggetto(grezzo, 'totale');
+  const metodo = testo(totale.metodo, 'totale.metodo');
+  if (metodo !== 'calibrazione_diretta') {
+    throw new ArtefattoNonValido(
+      `metodo del totale ${metodo} non riconosciuto: il predittore sa solo comporre la `
+      + 'somma dei due attesi e leggerne la dispersione',
+    );
+  }
+  const distribuzione = testo(totale.distribuzione, 'totale.distribuzione');
+  if (distribuzione !== 'poisson' && distribuzione !== 'binomiale_negativa') {
+    throw new ArtefattoNonValido(`distribuzione del totale ${distribuzione} non riconosciuta`);
+  }
+  const dispersione = numero(totale.dispersione, 'totale.dispersione');
+  if (dispersione < 1) {
+    throw new ArtefattoNonValido('la dispersione del totale non puo\' essere minore di uno');
+  }
+  const livello = numero(totale.livello_nominale, 'totale.livello_nominale');
+  if (livello <= 0 || livello >= 1) {
+    throw new ArtefattoNonValido('il livello nominale del totale deve stare fra zero e uno');
+  }
+  // L'affidabilita' del totale e' facoltativa per la stessa ragione del blocco che la
+  // contiene: gli artefatti esportati prima non ce l'hanno. Se c'e', vale la stessa
+  // regola delle marginali, e la soglia e' quella del totale.
+  if (totale.affidabilita !== null && totale.affidabilita !== undefined) {
+    verificaSogliaEPunteggi(totale.affidabilita, 'totale.affidabilita');
+  }
+}
+
 function verificaAffidabilita(grezza: unknown, ordine: readonly string[]): void {
   if (grezza === null || grezza === undefined) {
     return;
   }
-  const affidabilita = oggetto(grezza, 'affidabilita');
-  const soglia = numero(affidabilita.soglia_assoluta, 'affidabilita.soglia_assoluta');
-  if (soglia <= 0) {
-    throw new ArtefattoNonValido('affidabilita.soglia_assoluta deve essere positiva');
-  }
-  verificaPunteggio(affidabilita.complessivo, 'affidabilita.complessivo');
-  const perFascia = oggetto(affidabilita.per_fascia, 'affidabilita.per_fascia');
-  Object.keys(perFascia).forEach((nome) => {
-    verificaPunteggio(perFascia[nome], 'affidabilita.per_fascia.' + nome);
-  });
+  const affidabilita = verificaSogliaEPunteggi(grezza, 'affidabilita');
   verificaCondizionale(affidabilita.condizionale, ordine);
+}
+
+/**
+ * Soglia assoluta, punteggio complessivo e punteggi per fascia: la parte che il bersaglio
+ * e il totale hanno in comune, verificata una volta sola.
+ *
+ * Due verificatori paralleli sarebbero due posti dove la stessa regola puo' divergere, e
+ * questo progetto ne ha gia' pagate tre.
+ */
+function verificaSogliaEPunteggi(grezza: unknown, campo: string): Record<string, unknown> {
+  const blocco = oggetto(grezza, campo);
+  const soglia = numero(blocco.soglia_assoluta, campo + '.soglia_assoluta');
+  if (soglia <= 0) {
+    throw new ArtefattoNonValido(campo + '.soglia_assoluta deve essere positiva');
+  }
+  verificaPunteggio(blocco.complessivo, campo + '.complessivo');
+  const perFascia = oggetto(blocco.per_fascia, campo + '.per_fascia');
+  Object.keys(perFascia).forEach((nome) => {
+    verificaPunteggio(perFascia[nome], campo + '.per_fascia.' + nome);
+  });
+  return blocco;
 }
 
 /**

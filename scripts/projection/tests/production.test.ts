@@ -17,12 +17,16 @@ import { readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 
-import { ArtefattoNonValido, caricaArtefattoDaFile, leggiArtefatto } from '../artifact-schema';
-import type { ArtefattoModello } from '../artifact-schema';
-import { prevedi } from '../predictor';
-import { fasciaDi, proietta } from '../production';
+import { ArtefattoNonValido, caricaArtefattoDaFile, leggiArtefatto } from '../../../apps/web/src/server/iqstats/projection/artifact-schema';
+import type { ArtefattoModello } from '../../../apps/web/src/server/iqstats/projection/artifact-schema';
+import { prevedi } from '../../../apps/web/src/server/iqstats/projection/predictor';
+import { fasciaDi, proietta } from '../../../apps/web/src/server/iqstats/projection/production';
 
-const CARTELLA_ARTEFATTI = resolve(__dirname, '..', '..', 'models', 'output', 'artefatti');
+const CARTELLA_ARTEFATTI = resolve(
+  // Quattro passi: la radice del compilato e' la radice del progetto, perche' i moduli
+  // del motore vivono ora in apps/web e i test restano qui.
+  __dirname, '..', '..', '..', '..', 'models', 'output', 'artefatti',
+);
 
 function artefattiConMaturita(): readonly ArtefattoModello[] {
   return readdirSync(CARTELLA_ARTEFATTI)
