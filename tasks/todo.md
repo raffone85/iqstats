@@ -2662,3 +2662,56 @@ Supabase: solo `public.*` di autenticazione e pagamenti più `private.api_rate_l
 nessuno schema `football`. Finché non c'è, in produzione `IQSTATS_PROJECTION_DATABASE_URL`
 resta non dichiarata e la pagina mostra ENG-1 come sempre: nessuna regressione, nessuna
 proiezione. Lo schema pesa **192 MB** misurati, su un piano free da 500.
+
+### Il livello dati in linea, e la proiezione in produzione — 21 agosto 2026, notte
+
+**Il buco è chiuso.** Il database del motore adesso esiste in linea, e la proiezione si vede
+su `iqstats-indol.vercel.app`.
+
+**Le sei migrazioni sul progetto Supabase**, applicate in ordine con `ON_ERROR_STOP`: tutte
+OK al primo colpo. Registrate in `supabase_migrations.schema_migrations` perché la CLI non
+le riapplichi. Struttura verificata: `football.team_match_observations` con **69 colonne**,
+le stesse del banco locale.
+
+**Il caricamento riconcilia col manifesto**, dal file da 156 MB attraverso il pooler in
+modalità Session:
+
+| | |
+| --- | ---: |
+| osservazioni squadra-gara | 20.918 |
+| righe giocatore | 432.060 |
+| gare · squadre · arbitri | 10.459 · 583 · 673 |
+| scritte / rifiutate | **452.978 / 40** |
+| peso del database | **117 MB** su 500 del piano free |
+
+Le 40 rifiutate sono sempre le stesse venti gare senza lega o senza squadra. Riga di
+giornale `1 · DATA-6 · backfill · completed`, chiusa dall'ultima istruzione del SQL.
+
+**117 MB e non 192**: la stima veniva dal container locale, che porta anche le 9.548 gare
+di DATA-1 e gli indici cresciuti da tre ricariche. Misurato è meno della metà della quota.
+
+**Il ruolo di sola lettura funziona in linea**: `set role iqstats_app_reader` e la tavola
+si legge. È lo stesso ruolo con cui l'applicazione si collega.
+
+**La latenza, misurata invece che temuta.** Il primo colpo contro il database in linea ha
+impiegato 25,5 secondi e sembrava un disastro: era la compilazione a freddo del server di
+sviluppo. A caldo sono **2,6-3,2 secondi**, contro i 2,3 del locale — il remoto costa circa
+mezzo secondo. In produzione la pagina risponde in **4,9 secondi** sulla gara coperta e 3,4
+su quella scoperta.
+
+**In produzione, verificato interrogando il sito:**
+
+| Gara | Esito |
+| --- | --- |
+| Chengdu Rongcheng - Shanghai Shenhua | sezione proiezione, 24 scale di soglie, ENG-1 assente. **Tiri: 17,0 · 11,6 · totale 28,7** |
+| Olympique de Marseille - RC Strasbourg | ENG-1 come prima, proiezione assente (regola della quarta giornata) |
+
+`IQSTATS_PROJECTION_DATABASE_URL` è dichiarata su Vercel come **Sensitive**, solo
+Production, e il rilascio è stato rifatto perché la runtime la vedesse.
+
+**Sulla password.** Non l'ho digitata in nessun modulo: il classificatore lo ha bloccato ed
+è una regola che non si aggira. Vive solo in `.env.local`, che è ignorato da git, e nelle
+variabili di Vercel. **È però passata dalla chat, quindi va rigenerata.**
+
+**Da sistemare:** `npx skills add supabase/agent-skills` ha lasciato `.agents/`,
+`.claude/skills/` e `skills-lock.json` non tracciati e **non ignorati**.
