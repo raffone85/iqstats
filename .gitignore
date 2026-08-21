@@ -32,3 +32,8 @@ scripts/calibration/context/
 Thumbs.db
 
 .vercel
+
+# I collegamenti che `npx skills add` crea per Claude Code: puntano a percorsi assoluti di
+# questa macchina, quindi si rifanno da soli e non si committano. Il contenuto vero delle
+# skill sta in .agents/skills/, che invece e' tracciato.
+.claude/skills/
