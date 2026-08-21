@@ -14,7 +14,7 @@
       "model_version": "1.0.0",
       "target": "corner_kicks",
       "model_type": "poisson_glm",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "corner_kicks__poisson_glm.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -469,7 +469,7 @@
       "model_version": "1.0.0",
       "target": "fouls",
       "model_type": "ridge",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "fouls__ridge.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -602,7 +602,7 @@
       "model_version": "1.0.0",
       "target": "goalkeeper_saves",
       "model_type": "poisson_glm",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "goalkeeper_saves__poisson_glm.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -924,7 +924,7 @@
       "model_version": "1.0.0",
       "target": "offsides",
       "model_type": "poisson_glm",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "offsides__poisson_glm.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -1190,7 +1190,7 @@
       "model_version": "1.0.0",
       "target": "shots_on_target",
       "model_type": "poisson_glm",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "shots_on_target__poisson_glm.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -1589,7 +1589,7 @@
       "model_version": "1.0.0",
       "target": "total_shots",
       "model_type": "ridge",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "total_shots__ridge.json",
       "checksum": {
         "algoritmo": "sha256",
@@ -1722,7 +1722,7 @@
       "model_version": "1.0.0",
       "target": "yellow_cards",
       "model_type": "poisson_glm",
-      "stato": "validated",
+      "stato": "production",
       "artefatto": "yellow_cards__poisson_glm.json",
       "checksum": {
         "algoritmo": "sha256",

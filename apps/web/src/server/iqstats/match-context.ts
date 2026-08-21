@@ -49,6 +49,8 @@ export interface MatchDetail {
   readonly homeScore: number | null;
   readonly awayScore: number | null;
   readonly roundName: string | null;
+  /** Il numero della giornata, che la fonte dichiara a parte dal nome del turno. */
+  readonly roundNumber: number | null;
   readonly leagueId: number | null;
   readonly seasonId: number | null;
   readonly isLocalDerby: boolean | null;
@@ -191,6 +193,7 @@ export async function getMatchDetail(eventId: number): Promise<MatchDetail | nul
     homeScore: asNumber(row.home_score),
     awayScore: asNumber(row.away_score),
     roundName: asString(row.round_name),
+    roundNumber: asNumber(row.round_number),
     leagueId: asNumber(row.league_id),
     seasonId: asNumber(row.season_id),
     isLocalDerby: typeof row.is_local_derby === "boolean" ? row.is_local_derby : null,

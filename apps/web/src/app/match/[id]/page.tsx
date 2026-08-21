@@ -14,6 +14,7 @@ import {
   type MatchWeather,
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
+import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
   getFinishedMatchStats,
@@ -28,6 +29,7 @@ import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
+import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
@@ -328,6 +330,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
     refereeId: detail.refereeId,
   });
 
+  // Motore di proiezione: legge il proprio livello dati, mai la fonte. Senza connessione
+  // dichiarata risponde null e in pagina resta la lettura di ENG-1: i due pannelli non
+  // convivono, perche' mostrerebbero due numeri diversi per la stessa cosa.
+  const proiezioni = await proiezioniDellaGara(detail);
+
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
   const picks = buildMatchPicks(prediction, engineReading, odds, detail.homeTeam, detail.awayTeam);
 
@@ -551,12 +558,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
-        {/* Giocate statistiche: motore proprietario, sotto il verdetto del provider */}
-        <StatEngineSection
-          reading={engineReading}
-          homeTeam={detail.homeTeam}
-          awayTeam={detail.awayTeam}
-        />
+        {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
+        {proiezioni === null ? (
+          <StatEngineSection
+            reading={engineReading}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : (
+          <MatchProjectionSection
+            proiezioni={proiezioni}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        )}
 
         {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
         <MatchStandingsSection

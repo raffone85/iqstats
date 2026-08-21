@@ -2570,3 +2570,95 @@ non resta in un giornale.
 
 **Non ancora fatto:** registrare l'attività pianificata in Windows. È un'azione che resta
 sulla macchina e non l'ho presa da solo.
+
+### Il motore arriva in pagina — 21 agosto 2026, sera
+
+**Il punto che mancava, e che nessuna misura avrebbe chiuso.** Il motore aveva quattordici
+modelli validati e **nessuna pagina che lo chiamasse**: cercando chi importa
+`projection/match.ts` dentro `apps/web/src` rispondevano solo altri file del motore. Zero.
+
+**Una correzione a una cosa che avevo detto poche ore prima.** Avevo scritto che senza il
+livello dati l'applicazione avrebbe mostrato «copertura assente». Falso: `runtime.ts:78`
+dice che senza `IQSTATS_DATABASE_URL` l'applicazione usa `providerGateway()` e legge la
+fonte **in diretta**, senza database. È per questo che dopo ogni commit tutto risultava
+presente e aggiornato, e continuerà a esserlo. La frase giusta era più stretta: il motore
+non ha una superficie in pagina, e non ha un database in linea.
+
+**I sette modelli promossi, che era una decisione dell'utente.** Il registro dice
+`production: scelto da una persona fra i validati: il registro non lo assegna`, quindi non
+l'ho assegnato io. L'evidenza però decide da sola: **per tutti e sette i bersagli il
+modello con il MAE migliore fuori campione è esattamente quello che porta la misura
+completa della gara**. `ridge` su tiri e falli, `poisson_glm` sugli altri cinque.
+
+| Bersaglio | Vince | MAE | Vantaggio | L'altro |
+| --- | --- | ---: | ---: | --- |
+| Tiri | `ridge` | 3,6095 | 4,71% | poisson 3,6177 · 4,50% |
+| Tiri in porta | `poisson_glm` | 1,7663 | 3,85% | ridge 1,7669 · 3,82% |
+| Corner | `poisson_glm` | 2,0637 | 4,75% | ridge 2,0681 · 4,55% |
+| Falli | `ridge` | 2,7870 | 4,81% | poisson 2,7924 · 4,62% |
+| Ammoniti | `poisson_glm` | 1,0541 | 1,39% | ridge 1,0602 · 0,82% · **4/5 origini** |
+| Fuorigioco | `poisson_glm` | 1,0841 | 4,84% | ridge 1,0850 · 4,76% |
+| Parate | `poisson_glm` | 1,4699 | 3,18% | ridge 1,4716 · 3,07% |
+
+**Lo stato lo scrive l'esportatore, non la mia mano.** `export_model.py` aveva
+`"stato": "experimental"` fisso: ora accetta `--stato`, e i sette sono stati **riesportati**
+con `production`. Modificare a mano un artefatto ne avrebbe rotto l'impronta e tolto
+all'esportatore il ruolo di unico scrittore. `registry.py` rigenerato: 7 `production`,
+7 `validated`.
+
+**Gli artefatti entrano nel pacchetto per import statico**, come già fa ENG-1 con
+`ratings-state.generated.json`. `.vercelignore` esclude `scripts/`, quindi da lì non
+sarebbero mai arrivati su Vercel. Vivono in `apps/web/src/server/iqstats/artefatti/`,
+327 KB, e un test nuovo li confronta **byte per byte** con quelli generati da Python,
+verifica l'impronta `.sha256` e pretende che siano esattamente i sette che il registro
+dichiara `production`. La duplicazione c'è ed è rumorosa, non silenziosa.
+
+**`projection-runtime.ts`, tre confini.** Connessione **propria**
+(`IQSTATS_PROJECTION_DATABASE_URL`): usare quella generale farebbe passare *tutta*
+l'applicazione al gateway ibrido, che il motore non ha nessun titolo per decidere.
+Identificativi **risolti** da `source_id`, mai assunti. E **la gara da prevedere non deve
+esistere nel database**: tutte le interrogazioni dello store sono per squadra, stagione,
+arbitro e istante, mai per l'identificativo della gara — così una gara futura si proietta
+dalla storia delle due squadre, e il taglio «al momento di» resta esatto perché quella riga
+non esiste ancora.
+
+**La sezione sostituisce ENG-1, non lo affianca.** Mostrano gli stessi sette bersagli: due
+pannelli con due numeri diversi per «tiri in casa» sarebbero due verità sullo stesso
+schermo. `MatchProjectionSection` riusa le classi del pannello esistente, quindi zero CSS
+nuovo.
+
+**Provato sul server vero, non solo compilato.**
+
+| Gara | Esito |
+| --- | --- |
+| Chengdu Rongcheng - Shanghai Shenhua (23 gare in stagione) | sezione proiezione, **24 scale di soglie**, 4 badge di affidabilità, ENG-1 assente |
+| Olympique de Marseille - RC Strasbourg (34 gare, ma tutte della stagione precedente) | proiezione assente, **ENG-1 come prima** |
+
+Il secondo caso è la regola della quarta giornata che funziona: le 34 osservazioni del
+Marsiglia sono tutte della stagione 317, la gara è nella 1311. Zero gare precedenti nella
+stagione in corso.
+
+**Una regressione trovata e corretta durante la prova.** Nel primo tentativo, sulla gara
+senza storia **non compariva nessuna delle due sezioni**: il motore restituiva un oggetto
+non nullo con zero bersagli mostrabili e la pagina non ripiegava. Ora `proiezioniDellaGara`
+risponde `null` quando nessun bersaglio è completo.
+
+**Due feature mancanti, misurate invece che immaginate.** Sui quattro bersagli che
+ripiegavano: `contesto_turno` e `arbitro_gare_viste`.
+
+- Il **turno** c'era e non lo leggevamo: la fonte dichiara `round_number` sull'evento —
+  `build_observations.py:164` lo usa già — e `match-context.ts` mappava solo `round_name`,
+  che su quella gara è nullo. Mappato: giornata 24 letta, e `corner_kicks` non ripiega più.
+- L'**arbitro** manca davvero: per quella gara la fonte non lo dichiara perché non è ancora
+  designato. Tre bersagli su sette (tiri in porta, falli, ammoniti) restano sul ripiego e
+  mostrano il valore senza intervallo né linee né affidabilità, che è il comportamento
+  giusto: nessuno ha calibrato quelle cose su una baseline.
+
+**Sette suite verdi:** 53/53, 14/14, 20/20, 16/16, 15/15, `test:projection-artefatti` 3/3 e
+`test:projection-store` 1/1. Typecheck e lint di `apps/web` puliti.
+
+**Resta aperto:** il database del motore **non esiste in linea**. Interrogato il progetto
+Supabase: solo `public.*` di autenticazione e pagamenti più `private.api_rate_limits`,
+nessuno schema `football`. Finché non c'è, in produzione `IQSTATS_PROJECTION_DATABASE_URL`
+resta non dichiarata e la pagina mostra ENG-1 come sempre: nessuna regressione, nessuna
+proiezione. Lo schema pesa **192 MB** misurati, su un piano free da 500.

@@ -104,7 +104,8 @@ def metriche_di_validazione(target, nome, suffisso=""):
     }
 
 
-def esporta(target, nome_modello, densita_minima, solo_manifesto=False, suffisso_validazione=""):
+def esporta(target, nome_modello, densita_minima, solo_manifesto=False, suffisso_validazione="",
+            stato="experimental"):
     tavola = evaluate.carica(target)
     colonne, _ = evaluate.colonne_feature(tavola, densita_minima)
     if solo_manifesto:
@@ -140,7 +141,10 @@ def esporta(target, nome_modello, densita_minima, solo_manifesto=False, suffisso
         "model_version": VERSIONE_ARTEFATTO,
         "target": target,
         "model_type": nome_modello,
-        "stato": "experimental",
+        # Lo stato lo dichiara l'artefatto e il registro lo legge (registry.py:152). Il
+        # passaggio a `production` e' una decisione umana: arriva da fuori, non si
+        # calcola qui, e non ha un valore predefinito diverso da `experimental`.
+        "stato": stato,
         "feature_schema": {
             "ordine": list(colonne),
             "preprocessing": {
@@ -724,10 +728,14 @@ def main():
                         help="usa le sole feature promosse dal manifesto per questo target")
     parser.add_argument("--suffisso-validazione", default="",
                         help="suffisso del rapporto di validazione da citare nell'artefatto")
+    parser.add_argument("--stato", default="experimental",
+                        choices=("experimental", "validated", "production", "disabled"),
+                        help="stato dichiarato nell'artefatto: production e' una scelta umana")
     argomenti = parser.parse_args()
 
     esito, errore = esporta(argomenti.target, argomenti.modello, argomenti.densita_minima,
-                            argomenti.solo_manifesto, argomenti.suffisso_validazione)
+                            argomenti.solo_manifesto, argomenti.suffisso_validazione,
+                            argomenti.stato)
     if errore:
         print(errore)
         return 1
