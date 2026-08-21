@@ -1321,3 +1321,1344 @@ colleghi». Serve una sveglia esterna.
 — serve una rotta che restituisca il solo blocco); le statistiche della gara conclusa con
 mappa dei tiri e cronologia (la domanda sul disegno della mappa è rimasta aperta); il
 pannello giocatore con filtraggio profondo; la sezione riscontri.
+
+### Pubblicazione del ramo e la gara giocata — 16 agosto 2026, mattina
+
+**Il segreto della sveglia è configurato e la catena è verificata da un capo all'altro.**
+Segreto generato a 32 byte casuali, scritto come repository secret di Actions con `gh` e
+inserito a mano dall'utente su Vercel (*Sensitive*, Production e Preview): non compare in
+nessun file del progetto. Controllati prima del push anche i due presupposti che nessuno
+aveva verificato: **non esiste un middleware** che intercetti `/api/interno/rinfresca` (il
+manifest del build è vuoto) e sul progetto **non è attiva nessuna protezione dei deploy**.
+A rilascio fatto: la rotta senza credenziali risponde **401** — se la variabile mancasse
+risponderebbe 503 — e il workflow lanciato a mano ha chiuso con `risposta 200`,
+`{"ok":true,"inWindow":0,...}`, zero gare in finestra alle 08:00 italiane, che è il
+risultato giusto.
+
+**`formazioni-e-sveglia` è su `main`** (commit di merge `a47dca85`; `3aa551c6` resta
+intatto). Su `origin/main` c'era un commit non previsto dall'handoff — `b6bc460f`, una riga
+di `README.md` — quindi il merge non poteva essere fast-forward: si è scelto il commit di
+merge invece del rebase, per non riscrivere l'unica copia del lavoro.
+
+**Il primo rilascio è fallito e non per colpa del codice.** Turbopack ha ricevuto tre
+**404 da Google** sui `.woff2` del carattere Archivo: la cache di compilazione restaurata
+conteneva un CSS con URL che Google non serve più. Verificato a mano che quelle URL sono
+davvero sparite e che oggi il carattere risponde su indirizzi diversi e più corti. Rimedio:
+**rilancio senza cache**, verde. Se si ripete, la soluzione stabile è ospitare noi i file
+del carattere invece di scaricarli in compilazione — non fatto, fuori scope.
+
+**La gara giocata.** Nuovo `server/iqstats/match-finished.ts` e
+`components/match-finished-section.tsx`, agganciati al dossier fra «Classifica e forma» e
+«Chi gioca». Due richieste in tutto e solo a gara conclusa, in una quarta ondata.
+- **Otto statistiche in vista** (possesso, tiri, tiri in porta, xG, grandi occasioni,
+  corner, falli, ammoniti) e **le altre trenta in un blocco richiudibile** — scelta
+  dell'utente fra tre opzioni.
+- **Due campi della fonte esclusi di proposito:** `expected_goals` vale `0.0` anche dove
+  l'xG vero è 2,42 — è un campo non popolato e mostrarlo sarebbe spacciare uno zero per una
+  misura — e la media voti è un giudizio, non un dato osservato.
+- **Mappa dei tiri a due mezzi campi affiancati**, scelta dell'utente contro il campo
+  intero e l'elenco senza campo: così nessun colore serve a distinguere le squadre e il
+  verde resta libero di significare «sopra il riferimento». Cinque esiti distinti, area del
+  pallino proporzionale all'xG (il raggio cresce con la radice).
+- **Le coordinate della fonte sono metri dalla linea di porta**, non una scala arbitraria:
+  verificato contando i tiri oltre i 16,5 metri, che coincidono esattamente con
+  `shots_outside_box` di entrambe le squadre. Il campo si ferma al tiro più lontano della
+  gara — con un minimo di trenta metri — ed è **lo stesso per le due squadre**, altrimenti
+  il confronto fra le due metà mentirebbe.
+- **Bug trovato e corretto in verifica:** «Fine gara» compariva prima dei gol del recupero,
+  perché l'ordinamento ignorava il recupero sui fine tempo. Confermato corretto su tre gare
+  diverse con episodi al 90'+4, 90'+6 e 90'+9.
+
+**Verifiche:** sonda Playwright ai quattro viewport sul dossier di una gara conclusa —
+**zero overflow orizzontale, zero controlli sotto 44 px** a 375, 768, 1024 e 1440.
+`typecheck` verde, `lint` verde, **build di produzione verde** (`BUILD_ID`
+`LXJgif4ofLnS70Nz-lKDG`, dev fermato prima). Nota di ambiente: fermare il dev server mentre
+scrive `.next/dev/types/routes.d.ts` lascia il file troncato e la build successiva fallisce
+con errori di sintassi in un file **generato**; si risolve cancellando `.next/dev`.
+
+### Il metodo di proiezione: ricognizione e registri — 16 agosto 2026, sera
+
+**L'utente ha consegnato il suo metodo** (`CLAUDE_CODE_BSD_PROJECTION_MASTER_PROMPT.md`,
+non tracciato, nella root). Prima di eseguirlo si è verificato che cosa esisteva già: la
+ricognizione era stata fatta due volte ma stretta a sette metriche, e la baseline che il
+metodo chiede di battere è ENG-1, già in produzione e già misurata fuori campione.
+
+**Tre decisioni dell'utente, una domanda per volta.**
+1. **Architettura ibrida:** Python addestra, TypeScript prevede. Nessun microservizio.
+   Un modello entra in produzione solo se batte la baseline fuori campione, è
+   serializzabile, è riproducibile in TypeScript e passa un test di parità numerica.
+2. **Nomi neutri in italiano:** il nome della fonte non compare in percorsi, moduli,
+   commit, log o interfaccia. I nomi degli endpoint restano nel livello di integrazione.
+3. **Politica di provenienza a cinque classi** (A osservato, B zero implicito verificato,
+   C ricostruito, D ambiguo, E mancante), applicata prima di ogni media.
+
+**La discovery è chiusa e non è costata una richiesta.** Tutto ciò che il metodo chiede di
+campionare era già su disco: 9.305 payload di gara, 20.151 eventi con squadre e allenatori,
+39 campioni reali delle altre entità.
+
+- **9.305 gare, 29 leghe, dal 22 febbraio 2025 al 28 giugno 2026**, di cui **7.905 col
+  pannello statistico completo**. **76 campi di squadra distinti** — non i sette usati
+  finora — più 42 per tempo, **211.950 tiri** con posizione, xG e xG nello specchio,
+  momentum su 8.252 gare, e 79 campi per giocatore-gara.
+- **Scoperta strutturale:** una riga statistica compare per **entrambe** le squadre o per
+  nessuna. Su 7.905 gare e 76 campi **non esiste una sola presenza asimmetrica**.
+- Per **47 campi** l'assenza della riga non ha nemmeno un controesempio: significa «zero
+  per entrambe». Leggerla come un buco sbaglia sempre nella stessa direzione — sui rossi
+  dà 0,408 per squadra a gara invece di **0,093**, che è il valore reale del calcio.
+- **Due alias verificati** senza differenze su 2.685 confronti: `total_tackles` =
+  `tackles`, `total_saves` = `goalkeeper_saves`. Contarli entrambi gonfierebbe ogni
+  aggregato.
+- **Le formazioni previste storiche non esistono:** su una gara passata la fonte dà
+  l'undici effettivo. Usarlo come feature pre-partita sarebbe contaminazione.
+
+**Regole registrate:** gialli e rossi restano separati e un rosso non diventa mai due
+gialli; `card_points` esiste solo al livello mercato con pesi configurabili e non tocca i
+dati osservati; `MIN_PREVIOUS_MATCHES = 3`, il motore parte dalla quarta gara.
+
+**Prodotti:** `docs/architecture/inventario-fonte.md`, `dizionario-metriche.md`,
+`architettura-motore-proiezione.md`, `piano-validazione-modelli.md`,
+`data/registro-metriche.json` (76 metriche: 12 in classe A, 47 in B, 10 in C, 7 in D) e
+`data/registro-target.json` (**63 target**, di cui 4 subordinati alla ricostruzione dei
+cartellini). Scanner riproducibili in `scripts/projection/discovery/`.
+
+**Verifiche:** i tre script girano puliti sull'archivio completo; i quattro JSON sono
+validi; nessun nome della fonte e nessun segreto nei file nuovi; `.venv` escluso dal
+versionamento.
+
+**Non ancora fatto:** la raccolta degli episodi (7.905 richieste) che sblocca la disciplina
+come target, quella delle statistiche per giocatore e quella del dettaglio gara; il dataset
+al momento di; i modelli.
+
+### Dataset al momento di, baseline e primi modelli — 16 agosto 2026, sera
+
+**Raccolta in corso, staccata dalla sessione.** Tre blocchi in sequenza, 27.915 richieste a
+due al secondo, giornale a scrittura immediata e ripresa senza richieste duplicate. Un
+primo lancio in sottofondo è stato interrotto a 4.336 gare senza perdere nulla: rilanciato
+staccato, prosegue.
+
+**`scripts/projection/dataset/build_observations.py`** — tavola delle osservazioni:
+**18.610 righe squadra-gara × 67 metriche**, con la classe di provenienza accanto a ogni
+valore. Esito: 71,2% osservato, 5,1% zero implicito verificato, 8,7% in attesa della
+ricostruzione, 15,1% mancante nelle 1.400 gare senza pannello. Nessun mancante è diventato
+zero. La chiave di join copre oggi l'81% delle gare e si completerà col terzo blocco.
+
+**`scripts/projection/dataset/build_features.py`** — dataset «al momento di» per un target,
+52 colonne di feature e le sei baseline obbligatorie. Controlli di contaminazione automatici
+a ogni costruzione: righe doppie, feature identiche al bersaglio, prime gare con una media
+che non potrebbe esistere. **Passano su tutti i target provati.**
+
+**Due difetti trovati rileggendo il proprio codice e corretti:** codice morto, e — più
+serio — medie di stagione e di lega calcolate a cavallo di due stagioni, contro la regola
+del progetto. Ora le aggregazioni di stagione, lato e lega vivono dentro la stagione; gli
+orizzonti «ultime 3, 5, 10» attraversano il confine e lo dichiarano nel nome.
+
+**`scripts/projection/models/evaluate.py`** — validazione a finestra avanzante su cinque
+origini, mai uno split casuale. Misura errore, distorsione, errore per lega, per lato e per
+fascia, e la copertura reale dell'intervallo.
+
+**Due correzioni di metodo sugli intervalli.** La dispersione va stimata sui residui del
+modello e non sulla distribuzione grezza, altrimenti l'intervallo è troppo largo; e su una
+distribuzione discreta l'intervallo resta conservativo per costruzione, quindi il livello
+nominale si **calibra sul solo periodo di addestramento**. Copertura misurata dopo la
+correzione: **80,7% contro l'80% dichiarato**.
+
+**Risultati fuori campione, tre target, cinque origini ciascuno:**
+
+| Target | Migliore baseline | Ridge | Vantaggio | Origini vinte |
+| --- | ---: | ---: | ---: | :---: |
+| Corner | 2,1685 | **2,1026** | +3,0% | 5/5 |
+| Tiri totali | 3,7770 | **3,6233** | +4,1% | 5/5 |
+| Tiri in porta | 1,8418 | **1,7833** | +3,2% | 5/5 |
+
+**Tre fatti che orientano il seguito.** La media mobile delle ultime cinque è **la peggiore
+di tutte le baseline** su ogni target: la «forma» recente costa accuratezza. Il gradient
+boosting arriva **sempre terzo**, dietro ai due modelli lineari, e il suo intervallo copre
+il 73% invece dell'80%. E i due modelli che vincono — ridge e Poisson regolarizzato — sono
+esattamente quelli **esportabili in un artefatto riproducibile in TypeScript**.
+
+**Non ancora fatto:** ablazioni per blocco, ricostruzione dei cartellini, blocco giocatori,
+contratto di esportazione, test di parità Python ↔ TypeScript, registro dei modelli.
+
+### La disciplina ricostruita e le prime ablazioni — 16 agosto 2026, notte
+
+**La raccolta era morta** un minuto dopo l'handoff, alle 22:03:31, a 3.142 statistiche per
+giocatore su 9.305. Rilanciata staccata con `Start-Process`, PID **9144**, riprende senza
+richieste duplicate: il giornale ad aggiunta fa il suo lavoro.
+
+**Il test del doppio conteggio è stato eseguito, e il verdetto è più severo della domanda.**
+Il metodo isola un asse per volta: si guardano i soli lati squadra-gara in cui quell'asse è
+presente e gli altri sono assenti. Su un gruppo di controllo di 13.918 lati, episodi e
+pannello concordano al 97,5%.
+
+| Conteggio aggregato | Lati con una seconda ammonizione | Se la si esclude | Se la si include |
+| --- | ---: | ---: | ---: |
+| gialli | 541 | 7,8% | **90,6%** |
+| rossi | 539 | 0,2% | **99,8%** |
+
+**Lo stesso episodio la fonte lo conta già due volte**, una nei gialli e una nei rossi.
+Sommarlo di nuovo sarebbe la terza. I due conteggi aggregati **escono dal registro** e al
+loro posto entrano le quattro nature separate; `yellow_cards` non è più l'aggregato ma
+l'ammonizione semplice.
+
+**Terzo asse, non previsto:** 1.765 cartellini senza identificativo del giocatore, con nome
+e minuto convenzionali. Non sono cartellini alla panchina — quelli sono sei in tutto. Su 894
+lati isolati il pannello concorda al 95,7% **se si escludono**: la fonte non li conta, e
+neppure noi. Restano dichiarati in una colonna propria.
+
+**Ricostruzione su 9.205 gare e 29 leghe**, provenienza C: ammonizione semplice 1,963 per
+squadra a gara, rosso diretto 0,0649, seconda ammonizione 0,0394, panchina 0,0003. Espulsioni
+totali 0,104. I `bench_cards` sono registrati ma **non ammessi come bersaglio**: sei
+osservazioni non sono un bersaglio.
+
+**Registri rigenerati:** 78 metriche (12 in A, 47 in B, **12 in C**, 7 in D), 61 target,
+**nessuno più subordinato alla ricostruzione**. Osservazioni: 18.610 righe, 69 colonne, 5,73%
+di classe C. Gli ammoniti guadagnano copertura: **18.410 righe con bersaglio noto** invece
+di 15.810, perché gli episodi esistono anche dove il pannello manca.
+
+**Ammoniti rimisurati** con la nuova definizione: dispersione esattamente 1,0, migliore
+baseline di nuovo la media di lega nuda, Poisson regolarizzato **+1,3%**, 5 origini su 5.
+
+**Ablazioni per blocco, cinque target, cumulativa e «lascia fuori uno».** Le righe si fissano
+una volta sola sull'insieme completo, altrimenti i confronti non direbbero nulla. Costo
+relativo dell'errore quando il blocco viene tolto dall'insieme completo, Poisson:
+
+| Blocco | Tiri | Tiri in porta | Corner | Falli | Ammoniti |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| avversario | **+5,83%** | **+2,45%** | **+2,55%** | **+3,56%** | +0,21% |
+| base | +0,54% | +0,66% | +0,79% | +0,14% | −0,05% |
+| forma | +0,19% | +0,03% | +0,02% | +0,05% | +0,11% |
+| casa/trasferta | −0,01% | −0,02% | −0,02% | +0,01% | 0,00% |
+| riposo | −0,01% | −0,01% | 0,00% | −0,01% | −0,02% |
+
+**Un blocco solo porta il carico.** L'avversario vale da solo quasi tutto il vantaggio sul
+volume di gioco. Casa/trasferta e giorni di riposo **non pagano su nessun target**, e su
+quattro su cinque tolgono accuratezza. Sugli ammoniti perfino la media di squadra nella
+stagione è superflua: toglierla migliora il modello.
+
+**L'ipotesi dell'arbitro resta in piedi e non è ancora verificabile:** il blocco arbitro,
+allenatore, contesto e giocatori richiede il dettaglio gara e le statistiche per giocatore,
+ancora in raccolta. Lo script dichiara i blocchi non disponibili invece di ignorarli.
+
+**Nuovi script:** `dataset/verify_cards.py`, `dataset/reconstruct_cards.py`,
+`models/ablate.py`. Modificati: `discovery/build_registries.py`,
+`dataset/build_observations.py`, `docs/architecture/dizionario-metriche.md`.
+
+**Non ancora fatto:** ablazioni di arbitro, allenatore, contesto, giocatori e spaziale;
+contratto di esportazione; test di parità Python ↔ TypeScript; registro dei modelli.
+
+### Il ponte fra Python e TypeScript — 16 agosto 2026, notte
+
+**Decisione dell'utente:** il predittore TypeScript nasce **fuori dall'applicazione**, in
+`scripts/projection/`, e ci resta finché un modello non avrà superato backtest, baseline,
+parità e controlli di contaminazione e non avrà raggiunto lo stato `validated` o
+`production` nel registro dei modelli. Non un prototipo: codice tipizzato, deterministico,
+senza dipendenze inutili, con import senza estensione, scritto per traslocare in
+`apps/web/src/server/` senza riscritture. `apps/web` non è stato toccato.
+
+**`models/export_model.py`** scrive l'artefatto versionato e, accanto, una **tavola di
+riscontro** di duecento righe: feature grezze e i valori che Python ottiene da quelle righe.
+
+**Una deviazione deliberata dal contratto scritto:** il checksum non vive dentro
+l'artefatto ma in un file accanto, e copre i **byte** del file. Un checksum calcolato su
+una riscrittura del JSON dipenderebbe da come i due linguaggi scrivono i numeri in virgola
+mobile — l'unico punto in cui divergono senza avvisare. I byte non divergono.
+
+**Tre moduli TypeScript**, uno per responsabilità: `artifact-schema.ts` (forma, coerenza,
+caricamento con verifica dell'impronta), `feature-transform.ts` (ordine dichiarato, rifiuto
+dei mancanti e dei non finiti, standardizzazione), `predictor.ts` (predittore lineare,
+collegamento, taglio, quantili di Poisson e binomiale negativa calcolati per ricorrenza).
+
+**Il test di parità passa su tre artefatti** — `yellow_cards__poisson_glm` con collegamento
+logaritmico e intervallo di Poisson, `total_shots__ridge` e `fouls__ridge` con collegamento
+identità, taglio a zero e intervallo binomiale negativo a due dispersioni diverse.
+**19 prove su 19.** Scarto massimo su 600 righe:
+
+| | Scarto massimo | Tolleranza dichiarata |
+| --- | ---: | ---: |
+| predittore lineare, relativo | **2,4e-16** | 1e-9 |
+| valore atteso, assoluto | **3,6e-15** | 1e-6 |
+| estremi dell'intervallo, assoluto | **0** | 1e-6 |
+
+Sette ordini di grandezza dentro la tolleranza, e gli estremi dell'intervallo coincidono
+esattamente: i quantili discreti calcolati per ricorrenza danno gli stessi interi di SciPy.
+
+Le altre prove coprono i confini del contratto: feature mancante e feature non finita non
+producono una previsione peggiore, non ne producono nessuna; elenco più corto dell'ordine
+dichiarato; feature costante che si standardizza senza dividere per zero; taglio a zero;
+artefatto con lunghezze incoerenti, schema sconosciuto e checksum sbagliato, tutti
+rifiutati.
+
+`npm run test:projection` compila con il `tsc` dell'applicazione — preso a prestito senza
+modificarla — e lancia `node --test`. La cartella `build/` è esclusa dal versionamento.
+
+**Cinque artefatti esportati e cinque validati.** `models/registry.py` scrive
+`data/registro-modelli.json` calcolando lo stato da prove già scritte altrove, condizione
+per condizione: batte la migliore baseline, vince la maggioranza delle origini, passa i
+controlli di contaminazione, supera la parità, ha un intervallo calibrato.
+
+| Modello | Errore | Vantaggio | Origini | Stato |
+| --- | ---: | ---: | :---: | --- |
+| `total_shots__ridge` | 3,6233 | +4,07% | 5/5 | validated |
+| `fouls__ridge` | 2,8263 | +4,25% | 5/5 | validated |
+| `shots_on_target__ridge` | 1,7833 | +3,18% | 5/5 | validated |
+| `corner_kicks__ridge` | 2,1026 | +3,04% | 5/5 | validated |
+| `yellow_cards__poisson_glm` | 1,0675 | +1,32% | 5/5 | validated |
+
+**Il registro non promuove.** `production` resta una decisione umana: il registro la
+prepara e non la prende, altrimenti la promozione diventa un effetto collaterale. Il test
+di parità gira su tutti e cinque, **26 prove su 26**, e scrive il proprio esito in un file
+che il registro cita come prova.
+
+**Non ancora fatto:** ablazioni di arbitro, allenatore, contesto, giocatori e spaziale;
+estensione agli altri 56 target; decisione umana di promozione.
+
+### I blocchi che mancavano, e la selezione per bersaglio — 17 agosto 2026, mattina
+
+**Prima di scrivere un costruttore si è guardato che cosa la fonte restituisce davvero.**
+`discovery/scan_prematch.py` legge i due blocchi raccolti per ultimi — 9.205 dettagli gara
+e 382.318 righe per giocatore — e misura copertura, tipi e distribuzione senza una sola
+richiesta di rete.
+
+**Quattro campi che il metodo chiede non esistono.** Spettatori, girone, gara di andata e
+sostituzione: **zero per cento** su 9.205 gare. **Campo neutro è falso ovunque** e `has_xg`
+pure: due costanti, non due feature. Il **derby** è vero in 55 gare, lo 0,6%.
+
+**Meteo, terreno e distanza di viaggio esistono solo da metà aprile 2026:** 0% fino a
+marzo, 18% ad aprile, 82% a maggio. Non sono un campo sparso, sono un campo **nuovo**: in
+finestra avanzante cadrebbero tutti nell'ultima origine. Dichiarati non addestrabili.
+
+**Le medie già pronte di arbitro e allenatore sono una fotografia di oggi**, non di prima
+di quella gara: `avg_yellow_per_match`, `career_*`, `win_pct`, `preferred_formation`, con
+tanto di `stats_updated_at`. Usarle nel dataset storico sarebbe contaminazione. Si
+ricostruiscono dall'archivio: l'arbitro ha almeno tre gare precedenti nel **68,4%** delle
+gare e cinque nel 57,3%; l'allenatore tre nell'**89,1%** dei lati.
+
+**Il ruolo e la titolarità non esistono** nelle statistiche per giocatore: 79 campi, nessuno
+dei due. Otto campi sono vuoti al 100%. Il blocco giocatori descrive quindi la rotazione,
+non la formazione — ed è il limite del dato, non una scelta.
+
+**Cinque blocchi nuovi**, tutti «al momento di»: arbitro (`build_features.py`, profilo
+calcolato per gara e non per riga, perché le due righe di una gara condividono l'arbitro e
+uno spostamento di una riga farebbe entrare il lato gemello), allenatore, contesto,
+classifica ricostruita da punti e reti, rosa (`build_players.py`, 18.377 righe) e spaziale
+(`build_shots.py`, **211.950 tiri**, sistema di coordinate verificato: sotto la soglia
+dell'area l'xG medio è 0,148 e sopra 0,040). Da 52 a **113 colonne**, controlli di
+contaminazione passati su tutti i target.
+
+**La domanda sull'arbitro ha avuto la sua risposta, in due fasi decise dall'utente.**
+
+*Fase A, misura pulita* sul sottoinsieme con almeno cinque gare precedenti (10.267 righe),
+stesse righe e stesse origini con e senza il blocco: **+0,215%** Poisson e +0,177% ridge.
+Ma il dato che conta è un altro: **in casa +0,134%, in trasferta +0,447%**. In trasferta
+l'arbitro è il primo blocco di tutti, davanti all'avversario. Sul totale di gara, 1,6408 →
+**1,6320**.
+
+*Fase B, produzione* con restringimento verso la media di lega: il guadagno **cresce**
+invece di diluirsi — ammoniti +0,244%, falli +0,411% — perché il restringimento aggiunge
+2.500 righe senza togliere segnale. **La forza del prior è ininfluente:** fra k=3 e k=10 lo
+scarto è 0,0004 di MAE contro una deviazione fra origini di 0,021.
+
+**Ablazioni complete, cinque target, undici blocchi, 12.430 righe.** Costo dell'errore
+togliendo il blocco, Poisson:
+
+| Blocco | Tiri | Tiri in porta | Corner | Falli | Ammoniti |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| avversario | **+2,667%** | +0,514% | +0,885% | **+3,790%** | +0,263% |
+| base | +0,374% | +0,452% | +0,524% | +0,115% | +0,094% |
+| classifica | +0,255% | +0,192% | **+0,577%** | −0,032% | +0,009% |
+| arbitro | +0,008% | +0,051% | −0,038% | **+0,334%** | **+0,216%** |
+| spaziale | +0,066% | **+0,260%** | +0,130% | +0,162% | +0,056% |
+| giocatori | −0,006% | −0,085% | +0,101% | +0,065% | −0,151% |
+| allenatore | −0,028% | −0,028% | +0,043% | +0,011% | +0,038% |
+| casa/trasferta | +0,003% | +0,006% | −0,010% | 0,000% | 0,000% |
+| riposo | −0,006% | −0,011% | −0,005% | 0,000% | −0,009% |
+
+**Casa/trasferta e giorni di riposo escono definitivamente:** sotto lo 0,01% su tutti e
+cinque, con segno negativo in metà dei casi, e con il doppio delle feature attorno.
+
+**La selezione è per bersaglio, non globale**, come deciso dall'utente. `select_features.py`
+misura costo **origine per origine**, importanza per permutazione senza riaddestrare,
+errore per fascia di storico e costo di trasporto in produzione; scarta solo se il guadagno
+è nullo, oppure piccolo **e** instabile **e** costoso da trasportare. Sui modelli lineari il
+contributo di Shapley coincide con il termine lineare standardizzato: si riporta quello
+invece di stimare per campionamento un numero noto in forma chiusa.
+
+Nessun blocco è stato eliminato ovunque: l'arbitro resta sui due bersagli disciplinari, lo
+spaziale su quattro su cinque, la rosa su tiri, corner e falli, la classifica su tre.
+
+**Il manifesto potato batte l'insieme intero su quattro target su cinque**, e batte anche i
+cinque modelli del registro:
+
+| Target | Feature | MAE prima | MAE ora | Vantaggio su baseline | Origini |
+| --- | :---: | ---: | ---: | ---: | :---: |
+| Tiri | 61/111 | 3,6233 | **3,6012** | +4,84% | 5/5 |
+| Falli | 79/111 | 2,8263 | **2,7868** | +4,82% | 5/5 |
+| Corner | 79/111 | 2,1026 | **2,0729** | +4,18% | 5/5 |
+| Tiri in porta | 69/111 | 1,7833 | **1,7680** | +3,64% | 5/5 |
+| Ammoniti | 81/111 | 1,0675 | **1,0553** | +1,28% | 5/5 |
+
+**Prodotti:** `data/manifesto-feature.json`; `discovery/scan_prematch.py`,
+`dataset/build_players.py`, `dataset/build_shots.py`, `models/select_features.py`.
+Modificati: `dataset/build_observations.py` (arbitro, stadio, turno, derby e gol nella
+chiave), `dataset/build_features.py`, `models/ablate.py`, `models/evaluate.py`.
+
+**Non ancora fatto:** il calcolo delle feature «al momento di» in TypeScript e la sua
+parità; il registro dei modelli non è stato rigenerato sui modelli potati; l'affidabilità e
+la gerarchia di ripiego; gli altri 56 target.
+
+### Le feature «al momento di» arrivano in TypeScript — 17 agosto 2026, mattina
+
+**L'ostacolo che bloccava l'integrazione è caduto.** Il predittore sapeva rifare il conto,
+ma le feature esistevano solo in Python: ora esistono in tutti e due i linguaggi e i numeri
+coincidono.
+
+**Prima il contratto, poi il codice.** `docs/architecture/contratto-feature-al-momento-di.md`
+stabilisce che cosa il lato che prevede riceve già calcolato — medie di lega, profilo
+dell'arbitro, aggregati di rosa, tutto ciò che richiede un archivio che una singola gara non
+ha — e che cosa calcola sul posto dalla storia delle due squadre.
+
+**Tre insidie, tutte verificate contro la libreria che addestra prima di scrivere una riga:**
+la finestra «ultime N» conta le **gare**, non i valori noti, quindi una gara senza pannello
+occupa il suo posto e riduce il campione; la deviazione standard divide per n; la media
+esponenziale **non salta** i valori ignoti — escono dalla somma ma il loro posto continua a
+pesare nell'esponente. La formula è stata confrontata con pandas prima di essere tradotta:
+scarto 4,4e-16.
+
+**Quattro moduli, un gruppo per unità di calcolo**, in `scripts/projection/asof/`. Un
+modello che dichiara 61 colonne non ne fa calcolare 113: `calcolo.ts` deduce i gruppi
+necessari dalle colonne e chiama solo quelli. Una colonna che nessun gruppo produce ferma il
+calcolo invece di restituire un vettore incompleto.
+
+**Il campione di riscontro** (`models/export_asof.py`) scrive, per quaranta righe reali per
+target, l'ingresso completo così come il predittore lo riceverà — 1.568-1.668 gare di storia
+serializzate ciascuno — e le feature che Python ha calcolato da quell'ingresso. L'ingresso
+porta il profilo dell'arbitro **non ristretto**: il restringimento è una regola di chi
+prevede, e il test verifica anche quella.
+
+**Test di parità: 12 prove su 12, cinque target.** Su 3.240 confronti per target, oltre il
+90% è fra due numeri veri e non fra due assenze — il test lo pretende e lo dichiara.
+L'unica divergenza trovata è stata corretta: senza prior di lega Python annulla il profilo
+dell'arbitro, e ora anche TypeScript lo annulla invece di tenere il valore grezzo, che fra
+leghe diverse non sarebbe confrontabile.
+
+Il test del predittore continua a passare: **26 prove su 26**. Nuovo script `npm run
+test:asof`. **`apps/web` non è stato toccato.**
+
+**Non ancora fatto:** rigenerare il registro dei modelli sui modelli potati; affidabilità e
+gerarchia di ripiego; il trasporto in produzione di ciò che si riceve già calcolato; gli
+altri 56 target.
+
+### L'effetto casa: di chi è davvero — 17 agosto 2026, pomeriggio
+
+**Domanda dell'utente:** se una squadra in casa è più aggressiva e commette più falli, perché
+il blocco casa/trasferta è stato scartato sui falli?
+
+**La risposta ha richiesto di separare due cose che portavano lo stesso nome.** L'effetto
+casa **della lega** è sempre stato nel modello: `lega_lato_media` e `baseline_lega` sono
+calcolate per lato e stanno nel blocco `base`, che nessun target ha mai scartato. Il blocco
+`casa_trasferta` conteneva un'altra cosa: lo **scostamento personale** di una squadra da
+quell'effetto medio.
+
+**`dataset/verify_home_away.py`, tre prove su 472 squadre-stagione.** L'effetto medio di
+lega, casa meno trasferta: falli **−0,325**, ammoniti −0,234, tiri **+2,355**, tiri in porta
++0,788, corner +0,932. In casa si commettono **meno** falli, non di più: l'intuizione era
+giusta sul fatto che il lato conti, sbagliata sul segno.
+
+Lo scostamento personale, invece, non esiste:
+
+| Metrica | sd fra squadre | sd attesa dal caso | varianza vera | ripetibilità metà su metà |
+| --- | ---: | ---: | ---: | ---: |
+| Falli | 1,278 | 1,324 | **0,0%** | −0,024 |
+| Ammoniti | 0,476 | 0,470 | 2,3% | 0,011 |
+| Tiri | 1,800 | 1,773 | 2,9% | 0,060 |
+
+Sui falli la dispersione osservata è **minore di quella che il caso produce da solo**
+mescolando le etichette. Non c'è niente da imparare, e una feature che pretende di
+impararlo aggiunge solo varianza. Coerenza notevole con l'ablazione: i tiri, unica metrica
+con un residuo di varianza vera, sono anche l'unico target che aveva tenuto il blocco.
+
+**Ma c'era qualcosa di vero da cercare, e non era dove sembrava.** L'effetto casa **cresce
+con la forza**: sugli ammoniti va da 0,127 delle squadre deboli a **0,395** delle forti,
+correlazione con i punti per gara **−0,243**. Quello è un parametro solo, non uno per
+squadra, e si può stimare.
+
+**Nuovo blocco `interazione`**, quattro colonne: l'indicatore esplicito di lato, e il lato
+moltiplicato per divario di classifica, scarto dalla lega e severità dell'arbitro. Un
+modello lineare non può inventare un prodotto.
+
+**Guadagno, stesse righe e stesse origini:** ammoniti **+0,151%**, tiri in porta +0,141%,
+corner +0,072%, falli +0,061%, tiri +0,014%. Positivo su tutti e cinque, tenuto da tutti e
+cinque. E `interazione_casa` risulta **la prima feature per importanza di permutazione** su
+corner (1,52%), tiri in porta (1,09%) e ammoniti (0,29%): l'indicatore di lato, il segnale
+più semplice di tutti, semplicemente **non c'era**.
+
+**Un difetto della selezione, trovato e corretto.** Su `total_shots` il manifesto era sceso
+a 39 feature e il modello peggiorava: la decisione blocco per blocco misura un contributo
+*marginale*, e due blocchi che dicono la stessa cosa sembrano entrambi superflui finché non
+si tolgono insieme. `select_features.py` ha ora un **passo di conferma**: se il set potato
+perde contro l'insieme intero, reintegra il blocco più promettente finché il conto torna.
+Su `total_shots` ha reintegrato `classifica`, da 39 a 45 colonne.
+
+**Vantaggio sulla migliore baseline, manifesto definitivo:** falli **+4,81%**, tiri +4,71%,
+corner +4,26%, tiri in porta **+3,85%**, ammoniti **+1,39%**, tutti 5 origini su 5,
+copertura dell'intervallo 0,795–0,804 contro 0,80 dichiarato. Rispetto al manifesto senza
+interazioni: meglio su quattro target, appena sotto sui tiri.
+
+**Un fatto che resta:** l'errore è sistematicamente più alto sulla squadra in trasferta —
+falli 2,863 contro 2,711, ammoniti 1,077 contro 1,031. Prevedere l'ospite è più difficile, e
+non è un caso che sia proprio lì che l'arbitro conta di più.
+
+**Il modulo e i ruoli non sono disponibili:** le formazioni non sono state raccolte, e le
+statistiche per giocatore non portano né posizione né titolarità. Servirebbe la raccolta
+delle formazioni, circa 9.200 richieste, da cui ricavare il modulo più usato nelle gare
+precedenti — che sarebbe legittimo, perché guarda solo al passato.
+
+### Il registro allineato e la regola della quarta giornata — 17 agosto 2026, sera
+
+**Il registro descriveva i modelli di ieri.** Gli artefatti erano addestrati sulle 52
+colonne precedenti mentre il manifesto ne prescriveva 45-88, e finché il registro non
+descrive i modelli che si vogliono promuovere, promuovere è impossibile.
+
+`export_model.py` non sapeva leggere il manifesto né citare il rapporto giusto: ora accetta
+`--solo-manifesto` e `--suffisso-validazione`, e ogni artefatto **dichiara da dove vengono
+le sue colonne** — due modelli con lo stesso nome e feature diverse sono due modelli
+diversi. `registry.py` inciampava sui campioni `-riscontro-asof.json`: ora riconosce un
+artefatto dallo schema e non dal nome.
+
+**Dieci artefatti, non cinque:** entrambi i modelli riproducibili su tutti e cinque i
+bersagli, perché la scelta di quale promuovere è una decisione umana e va fatta sui numeri.
+
+| Bersaglio | Poisson | ridge | migliore | vantaggio | origini |
+| --- | ---: | ---: | :---: | ---: | :---: |
+| Tiri | 3,6177 | **3,6095** | ridge | +4,71% | 5/5 |
+| Falli | 2,7924 | **2,7870** | ridge | +4,81% | 5/5 |
+| Corner | **2,0764** | 2,0788 | Poisson | +4,26% | 5/5 |
+| Tiri in porta | **1,7663** | 1,7669 | Poisson | +3,85% | 5/5 |
+| Ammoniti | **1,0541** | 1,0602 | Poisson | +1,39% | 5/5 |
+
+Su corner e tiri in porta i due sono appaiati alla terza cifra. Sugli ammoniti Poisson è
+l'unico dei due a vincere tutte e cinque le origini.
+
+**La domanda aperta sulla quarta giornata ha avuto la sua misura.** Il motore deve partire
+da tre gare precedenti, e quel caso non era mai stato misurato davvero. Il perché è
+quantificato: le righe con 3-4 gare precedenti sono **770 in tutto, ma 578 cadono in
+agosto-settembre 2025** — l'inizio della stagione europea, che sta interamente
+nell'addestramento. Nel periodo di prova ne restano **87**, con cui il MAE si stima a ±10%.
+
+Correzione dell'utente, decisiva: **non si riaddestra su un campione ridotto per simulare
+l'inizio stagione.** Ciò che scarseggia alla quarta giornata è lo storico *della squadra*,
+non quello di addestramento. `validate_maturity.py` misura quindi con la stessa finestra
+avanzante della validazione principale, stratificando l'errore per fascia.
+
+**Il motore alla quarta giornata regge.** In fascia EARLY nessun ripiego batte il modello
+oltre il rumore: gli scarti appaiati fra modello completo, modello ridotto e baseline con
+restringimento stanno sotto 2,4 errori standard su tutti e cinque i bersagli. L'unico
+metodo nettamente peggiore è la baseline dell'avversario, da 1,8 a 5,4 errori standard: con
+tre gare il profilo dell'avversario è troppo rumoroso per essere il cardine.
+
+**Ma tre gare non dicono la stessa cosa a tutte le metriche.** Il peso della miscela fra
+modello e baseline, stimato sui treni dove le righe in fascia sono centinaia:
+
+| Bersaglio | EARLY | DEVELOPING | MATURE |
+| --- | :---: | :---: | :---: |
+| Tiri | 0,75 | 0,95 | 1,00 |
+| Tiri in porta | 0,75 | 1,00 | 1,00 |
+| Corner | 0,90 | 1,00 | 1,00 |
+| Ammoniti | 0,90 | 1,00 | 1,00 |
+| Falli | 0,95 | 0,80 | 1,00 |
+
+I tiri hanno bisogno del doppio di restringimento degli ammoniti. **Il congelamento non
+costa nulla:** peso congelato contro peso ristimato a ogni origine, gli scarti sono nella
+terza cifra (corner 2,0602 contro 2,0561, ammoniti 1,0173 contro 1,0173).
+
+**L'ordine dei gradini di ripiego è misurato, non fisso.** Il metodo mette la baseline
+dell'avversario prima di quella con restringimento; sui dati è vero solo sui tiri a storico
+pieno, e mai in fascia EARLY. L'ordine sta nell'artefatto, fascia per fascia, con l'errore
+che lo giustifica. Un test lo ha dimostrato trovando un errore vero: sotto il minimo di gare
+i ripieghi venivano ordinati come a stagione inoltrata.
+
+**L'affidabilità sintetica non è stata scritta, ed è una decisione, non una dimenticanza.**
+La strada naturale — la stabilità dell'errore fra periodi — è misurabilmente inutilizzabile
+dove serve: in fascia EARLY l'oscillazione osservata fra origini è **minore di quella che il
+caso produce da solo** con ventisei righe per origine, quindi l'instabilità vera risulta
+zero e la formula concluderebbe che la quarta giornata è la fascia più affidabile di tutte.
+
+| Bersaglio | fascia | sd osservata | sd attesa dal caso | instabilità vera |
+| --- | --- | ---: | ---: | ---: |
+| Tiri | EARLY | 0,438 | 0,961 | **0** |
+| Corner | EARLY | 0,425 | 0,575 | **0** |
+| Ammoniti | EARLY | 0,153 | 0,183 | **0** |
+| Ammoniti | MATURE | 0,030 | 0,021 | 0,021 |
+
+La proiezione espone quindi le **componenti misurate** e il livello resta nullo. Le altre
+strade valutate: la copertura dell'intervallo è calibrata a 0,80 ovunque per costruzione e
+non distingue le fasce; il vantaggio sulla previsione banale vale 0,01-0,05, vero e
+inutilizzabile.
+
+**Nuovo modulo `production.ts`:** fascia, miscela, intervallo calibrato dentro la fascia,
+gerarchia di ripiego, componenti dell'affidabilità. Il ripiego **non dichiara un
+intervallo**, perché nessuno lo ha calibrato su quelle baseline. Lo schema dell'artefatto
+rifiuta un peso fuori da zero e uno o una colonna di miscela che il modello non riceve.
+
+**Verifiche: `test:projection` 41 su 41, `test:asof` 12 su 12, `test:production` 12 su 12.**
+
+**Pubblicazione, su decisione dell'utente:** `main` invariato e in produzione;
+`gara-giocata` spinto com'è; il motore su un ramo nuovo **`motore-proiezione`** nato da
+`main`, così non eredita la gara giocata. Nessun merge fra i tre rami senza decisione
+esplicita. I dati grezzi (636 MB) e i dataset derivati (275 MB) restano fuori dal
+repository e **non sono in alcun backup**.
+
+**Non ancora fatto:** l'affidabilità sintetica; il modello a feature ridotte come gradino
+del ripiego, competitivo ma non distinguibile dal completo; il ponte verso l'applicazione
+per ciò che il predittore riceve già calcolato; la distribuzione predittiva con le cinque
+linee; gli altri 56 bersagli.
+
+### Curve, discriminazione e i due bersagli nuovi — 19 agosto 2026, pomeriggio
+
+**La curva di accuratezza entra nei rapporti di maturità.** Non più un errore medio soltanto,
+ma la quota di righe entro ciascuna soglia — undici soglie da 0,5 a 8, con intervallo di
+Wilson — misurata fuori campione, complessiva, per fascia e per lega. Aggiunta additiva:
+schema del rapporto a `validazione-maturita/2`, nessun consumatore legge quella stringa.
+**Non-regressione superata:** il MAE con peso congelato riproduce esattamente i valori
+precedenti (corner EARLY 2,0602 · ammoniti EARLY 1,0173).
+
+**L'analisi di discriminazione, su tutti e sette i bersagli.** La domanda è: che cosa separa
+le gare in cui il modello azzecca da quelle in cui sbaglia? Risposta misurata, e in parte
+scomoda.
+
+**Le tre fasce di maturità non discriminano.** Su nessun bersaglio, a nessuna soglia: gli
+intervalli di EARLY contengono sempre MATURE. Su falli e tiri in porta la fascia con meno
+storico è persino migliore. Un punteggio costruito sulla fascia ripeterebbe l'errore già
+scartato con la stabilità temporale.
+
+**Ciò che discrimina è la statura della gara, non la disponibilità dei dati.** In ordine:
+livello atteso della proiezione (da −6,0 a −9,9 punti, segno sempre negativo: più alta la
+previsione, meno si azzecca), ampiezza dell'intervallo, lega, scarto dalla media di lega,
+scarto fra le classifiche. **Non discriminano affatto:** storico della squadra,
+dell'avversario e dei giocatori, allenatore, turno, giorni di riposo, qualità del confronto,
+stabilità della rosa, periodo di prova. **L'arbitro serve con un solo numero e su un solo
+bersaglio:** ammoniti medi dell'arbitro sugli ammoniti, −7,6 punti a 5,4 errori standard.
+
+**Un errore vero trovato e corretto** in `discriminate.py`: la verifica di coerenza contava
+come concorde solo uno scarto positivo, quindi scartava i discriminatori più forti perché
+vanno in direzione opposta.
+
+**Il motore si estende a fuorigioco e parate**, con la pipeline esistente e senza toccare i
+cinque già validati. Fuorigioco Poisson MAE 1,0841, +4,84% sulla migliore baseline, 5 origini
+su 5, 56 feature; parate ridge MAE 1,4752, +2,89%, 5 su 5, 70 feature. **Le parate sono
+l'unico bersaglio che continua a mescolare con la baseline anche a storico pieno:** peso
+MATURE 0,95. `MIN_PREVIOUS_MATCHES = 3` resta anche per i due nuovi: nessuna regola diversa
+perché sono nuovi.
+
+**Una cancellazione evitata:** `select_features.py` riscriveva il manifesto invece di
+fonderlo, quindi `--target offsides` avrebbe azzerato le cinque voci esistenti. Corretto
+prima di lanciarlo, perché il file è stato letto prima di essere usato.
+
+### L'affidabilità prende un numero — 19 agosto 2026, sera
+
+**La parità as-of falliva su `offsides`, e la causa non era di `offsides`.** Il lato
+TypeScript non conosceva affatto la famiglia `interazione_casa*` — le quattro colonne
+dell'effetto casa — e `gruppoDi` non le assegnava a nessun gruppo. I cinque bersagli validati
+non lo mostravano perché i loro campioni di riscontro erano fermi al 17 agosto alle 09:54,
+**precedenti** alla riselezione delle feature delle 16:34: verificavano 61-81 colonne mentre
+gli artefatti ne dichiaravano 45-88. Aggiunto il gruppo `interazione` in `asof/gruppi.ts`,
+rileggendo i fattori dai gruppi che li producono invece di ricalcolarli; rigenerati i cinque
+campioni scaduti. Ora le colonne verificate coincidono **esattamente** con il manifesto su
+tutti e sette.
+
+**L'affidabilità è definita, ed è una decisione dell'utente.** È la probabilità, misurata
+fuori campione, che lo scarto resti entro una **soglia assoluta specifica del bersaglio**,
+esposta come punteggio 0-100 con fasce di lettura. La soglia non è scelta a mano: è l'errore
+assoluto medio della migliore baseline arrotondato all'unità — sotto quella distanza il
+modello vale più del non sapere nulla. Una regola sola per tutti e sette.
+
+| Bersaglio | Migliore baseline | MAE | Soglia | Punteggio |
+| --- | --- | ---: | :---: | ---: |
+| Tiri | attacco contro concesso | 3,7880 | 4 | 62 |
+| Tiri in porta | restringimento | 1,8370 | 2 | 63 |
+| Corner | restringimento | 2,1687 | 2 | 55 |
+| Falli | restringimento | 2,9278 | 3 | 61 |
+| Ammoniti | lega | 1,0690 | 1 | 54 |
+| Fuorigioco | lega | 1,1392 | 1 | 54 |
+| Parate | lega | 1,5191 | 2 | 73 |
+
+Il criterio era misurato solo sui cinque; esteso qui ai due nuovi. **La curva intera resta
+nell'artefatto:** cambiare soglia domani non costa un riaddestramento.
+
+**Il punteggio si legge dentro la fascia**, perché è lì che è misurato sulla miscela
+congelata, e porta la sua incertezza binomiale: in EARLY è larga venti punti e non si
+nasconde. **Sotto un ripiego il livello non si dichiara affatto** — nessuno lo ha misurato su
+quella baseline. Lo schema rifiuta l'artefatto se il punteggio non viene dalla quota che
+dichiara o se l'incertezza non lo contiene.
+
+**Riesportazione puramente additiva su tutti e quattordici gli artefatti:** coefficienti,
+intercetta, schema delle feature, calibrazione e metadati identici bit per bit; le tavole di
+riscontro del predittore differiscono solo nel checksum. Nessun riaddestramento effettivo.
+
+**Una prova falliva, ed era un'assunzione sbagliata del test, non del codice.** «A storico
+maturo il valore atteso è quello del modello, senza miscela» valeva quando i bersagli erano
+cinque, tutti con peso 1,00. Le parate no. Prima della riesportazione il test non lo vedeva,
+perché i due bersagli nuovi non avevano ancora i parametri di maturità nell'artefatto e
+venivano saltati. Ora verifica che si applichi **il peso dichiarato**, non che sia uno.
+
+**Verifiche: `test:projection` 53/53, `test:asof` 14/14, `test:production` 17/17, registro 14
+modelli su 14 `validated`.** I quattro artefatti nuovi sono passati da `experimental` a
+`validated`.
+
+**Registrata in architettura l'estensione `match-context-pace`** (§8ter): contesto e ritmo
+della gara come **gruppo di feature del motore esistente**, non un motore nuovo, con ablazione
+bersaglio per bersaglio, selezione target-specific, nessun peso a mano, e il vincolo che non
+entra automaticamente nell'affidabilità. Il §8bis non dice più «affidabilità non definita»; la
+definizione sta nel nuovo §8quater.
+
+**Non ancora fatto:** lo strato condizionale dell'affidabilità, che entra solo se batte fuori
+campione la costante per fascia; la costruzione di `match-context-pace`; quale modello passa a
+`production`; se pubblicare `gara-giocata`; il ponte verso l'applicazione.
+
+### Contesto e ritmo della gara, e l'affidabilità che cambia partita per partita — 19 agosto 2026, notte
+
+**L'archivio conteneva già quasi tutto, e non era mai stato usato.** Fino a stasera le feature
+leggevano dal pannello statistico la sola colonna del bersaglio più le quattro della severità
+arbitrale. Possesso, territorio, duelli, contrasti, reti attese, occasioni nitide, palle
+inattive: raccolti su 15.810 righe su 18.610, completi al 100% dove il pannello c'è, e fermi.
+
+**`match-context-pace` è nato da lì**, spezzato in **sette famiglie** invece che in un blocco
+unico, perché la selezione lavora per blocco e un blocco da 140 colonne entrerebbe o uscirebbe
+tutto insieme. Trentasei metriche, quattro viste ciascuna — prodotto, concesso, e le stesse due
+per l'avversario — da 117 colonne candidate a 257. Nessuna sotto la soglia di densità, e il
+costo in copertura è **zero righe** su tiri e fuorigioco, 54 su 16.662 sugli ammoniti.
+
+**Un errore vero, trovato prima di sprecare il calcolo.** `evaluate.py` teneva una **seconda
+copia** dell'elenco dei prefissi delle feature e non conosceva i nuovi: il dataset aveva 257
+colonne, l'ablazione ne vedeva 115, e nessun errore lo diceva. Le due liste ora sono allineate,
+con scritto sopra perché la copia esiste e che cosa succede se divergono.
+
+| Famiglia | Bersagli che la promuovono |
+| --- | --- |
+| `territorio` | tiri, tiri in porta, corner, ammoniti, parate |
+| `intensita` | corner, parate |
+| `incrociato` | tiri, parate |
+| `ambiente_tiro` | parate |
+| `ambiente_gol` | ammoniti |
+| `circolazione` | nessuno |
+| `inattive` | nessuno |
+
+**Possesso, passaggi, accuratezza, palle lunghe, punizioni, rimesse e rinvii non servono a
+niente, su nessuno dei sette.** È un risultato quanto gli altri: quella strada è percorsa.
+
+**In produzione, per decisione dell'utente, solo dove pesa:** corner 2,0764 → **2,0637**
+(+0,61%) e parate 1,4804 → **1,4699** (+0,71%, cinque origini su cinque). Il guadagno
+end-to-end è quattro volte quello del singolo blocco nell'ablazione, perché la riselezione ha
+tolto blocchi che facevano più danno che bene: sulle parate sono usciti `avversario`, `forma`,
+`riposo`, `giocatori`, `arbitro`, `spaziale` e `contesto`. Le righe utilizzabili **aumentano**.
+Sulle parate il modello migliore passa da ridge a poisson.
+
+**L'affidabilità non è più una costante.** Una regressione logistica stima per la singola gara
+la probabilità che lo scarto resti entro la soglia, da valore atteso, gare precedenti delle due
+squadre e scarto normalizzato dalla lega. **Non si addestra sugli errori del proprio periodo di
+addestramento**, dove sarebbero ottimisti: si addestra sugli errori fuori campione delle
+origini precedenti e si valuta sulla successiva.
+
+| Bersaglio | Esito | Guadagno di Brier |
+| --- | --- | ---: |
+| Tiri | promosso 4/4 | +1,26% |
+| Tiri in porta | promosso 4/4 | +0,99% |
+| Corner | promosso 3/4 | +0,49% |
+| Falli | **costante** 2/4 | +0,35% |
+| Ammoniti | promosso 4/4 | +0,74% |
+| Fuorigioco | promosso 3/4 | +0,63% |
+| Parate | promosso 4/4 | **+1,85%** |
+
+**I falli sono passati da promossi a non promossi, ed è la correzione più istruttiva della
+serata.** La prima misura usava `scarto_dalla_lega`, che non è fra le colonne che il modello
+dei falli riceve: una condizione che in produzione non sarebbe mai arrivata. Ristretto
+l'insieme a ciò che è davvero disponibile, i falli scendono a 2 origini su 4 e restano alla
+costante.
+
+**La lega è stata provata e scartata.** Batteva la costante su cinque bersagli, ma non batte
+mai il condizionale semplice: da −0,12% a −0,76% su tutti e sette. Nessuna tabella di leghe
+nell'artefatto, e la cautela dell'utente sugli estremi scelti dai dati era fondata.
+
+**Il punteggio ora si muove davvero.** Su ammoniti e fuorigioco scende con meno storico — 55 a
+41 e 55 a 35 — che è una distinzione che la costante non poteva esprimere. Sul ripiego resta
+assente, e se una condizione manca si torna alla costante della fascia, mai a zero.
+
+**Verifiche: `test:projection` 53/53, `test:asof` 14/14, `test:production` 20/20, registro 14
+modelli su 14 `validated`.** La parità copre anche le 96 colonne nuove delle parate e le 52 dei
+corner, verificate cifra per cifra su 40 righe reali per bersaglio.
+
+**Deciso dall'utente e registrato:** la raccolta delle formazioni è **riaperta come blocco
+separato**, con `PRE_LINEUP` e `CONFIRMED_LINEUP` come due istantanee distinte e il vincolo che
+la formazione ufficiale non entri mai nel modello provvisorio. Non è ancora iniziata.
+
+**Non ancora fatto:** il ponte verso l'applicazione — `production.ts` vive ancora in
+`scripts/projection/` e `apps/web` non ne importa una riga; la distribuzione predittiva con le
+cinque linee; le fasi B, C e D delle formazioni; quale modello passa a `production`; se
+pubblicare `gara-giocata`.
+
+### Il motore entra nell'applicazione, e il livello dati prende una tavola — 20 agosto 2026
+
+**Il trasloco e' fatto e non e' costato una riga di modifica.** Gli otto moduli puri —
+artefatto, trasformazione, predittore, produzione e i quattro dell'as-of — sono in
+`apps/web/src/server/iqstats/projection/`. I test di parita' restano in
+`scripts/projection/tests/`, perche' consumano i campioni di riscontro che Python produce
+e appartengono al lato che ricerca: il loro `tsconfig` ora ha la radice del progetto come
+radice del compilato. **53/53, 14/14, 20/20 prima e dopo**, piu' typecheck e lint di
+`apps/web` puliti.
+
+**Decisione dell'utente: la storia viene dal database, non dalla fonte a ogni richiesta.**
+La ragione e' misurata. Ricostruire l'ingresso di una gara dalla fonte costerebbe circa
+centoventi richieste per le due squadre, e le **medie di lega «al momento di» non sarebbero
+comunque ricostruibili**: richiedono tutte le gare della competizione fino a quell'istante.
+Lo schema `football` aveva gare, squadre, arbitri e classifiche, ma **nessuna tavola di
+statistiche**.
+
+**Due tavole nuove**, `football.team_match_observations` e
+`football.player_match_observations`. La prima porta 46 colonne metriche — le sette
+famiglie del pannello, la disciplina ricostruita dagli episodi, il profilo della mappa dei
+tiri — piu' identita', contorno, reti, la classe di provenienza per singolo valore e lo
+stato di ciascuna delle tre letture. La seconda esiste perche' i quindici `giocatori_*`
+promossi su corner e falli si costruiscono dalle statistiche per giocatore, e senza quelle
+non esistono.
+
+**Un errore vero, trovato prima che costasse.** Il profilo della mappa dei tiri era
+`numeric` a cinque decimali: sono quozienti e medie in doppia precisione, e il test di
+parita' li confronta con scarto relativo 1e-9. Cinque decimali li arrotondano **senza dare
+errore**. Ora sono `double precision`. Le tre metriche continue del pannello restano
+`numeric(8,4)`: misurate, hanno al massimo due decimali.
+
+**Un secondo errore vero, nella funzione di scrittura.** Era scritta con tabelle
+temporanee e `search_path` vuoto — la scelta di sicurezza gia' fatta dalle altre funzioni
+dello schema — e con `search_path` vuoto una temporanea non si risolve senza qualificarla.
+Riscritta in CTE: il problema non c'e' piu' invece di essere aggirato.
+
+**La divergenza sulla media di lega, misurata e dichiarata.** Il lato che addestra sposta
+di una **riga** e non di una **gara**: le due righe di una gara stanno nello stesso gruppo,
+quindi per una delle due la media di lega comprende la riga gemella, che e' informazione
+della gara stessa.
+
+| Grandezza | Righe identiche | Righe diverse | Scarto massimo |
+| --- | ---: | ---: | ---: |
+| `lega_lato_media` | 40 su 40 | 0 | 0 |
+| `lega_lato_campione` | 40 su 40 | 0 | 0 |
+| `lega_media` (fuorigioco) | 15 su 40 | 25 | 0,0287 su 2,05 |
+| `rif_lega_ammoniti` | 15 su 40 | 25 | 0,0217 su 1,96 |
+| `rif_lega_falli` | 15 su 40 | 25 | 0,0552 su 11,97 |
+
+Le medie di lato sono pulite perche' il lato di campo separa le due righe in gruppi
+diversi. Il livello dati esclude l'intera gara, che e' la semantica «al momento di» e sara'
+comunque la realta' in produzione. **Il test verifica che riaggiungendo la riga gemella si
+riottenga esattamente il numero di Python**: la differenza e' spiegata riga per riga, non
+assorbita in una tolleranza. Correggere il lato che addestra vorrebbe dire ricostruire i
+quattordici modelli, e non si fa senza decisione.
+
+**`test:snapshot`, 16 prove.** Ricostruisce l'ingresso di quarantadue righe reali — sei per
+bersaglio — dalle osservazioni e lo confronta con quello che Python ha esportato. Copertura
+reale, contata dal test stesso perche' un test che salta in silenzio e' peggio di un test
+che non c'e': **1.995 gare, 42 profili d'arbitro, 42 rose per 714 campi, 20.736 metriche di
+contesto.** Il taglio temporale e' verificato prima di tutto il resto, gara per gara.
+
+**Il lotto per il database e' prodotto e non tocca la fonte.** `export_observations_batch.py`
+impacchetta le osservazioni gia' normalizzate — le stesse righe su cui i modelli sono stati
+addestrati — con gli identificativi della fonte: **9.305 gare, 18.610 righe squadra-gara,
+382.318 righe giocatore, 24 lotti, 125 MB, zero righe scartate**, 100 gare senza statistiche
+per giocatore. La normalizzazione non e' stata riscritta in un secondo linguaggio, ed e'
+deliberato.
+
+**Non ancora fatto:** applicare la migrazione e caricare i lotti — Docker e' spento e non
+c'e' un Postgres locale, quindi la migrazione **non e' mai stata eseguita da un motore**;
+l'aggiornamento incrementale per le gare nuove, che richiede di estendere la raccolta
+Python e un tetto di richieste autorizzato; il totale di gara, che richiede la dipendenza
+fra i due processi; le cinque linee; le fasi B, C e D.
+
+### Il totale di gara, le cinque linee, e la documentazione nuova della fonte — 20 agosto 2026, sera
+
+**La dipendenza fra i due lati esiste, e' stabile, e non serve.** Confrontati fuori campione,
+su quattro origini per bersaglio, due modi di costruire l'incertezza del totale: **A**
+calibrazione diretta sui residui della somma, **B** composizione delle due marginali con la
+correlazione misurata, attraverso una copula gaussiana. Il centro e' la somma in entrambi, per
+vincolo dell'utente, quindi errore assoluto e scostamento non distinguono niente: distinguono
+copertura, larghezza e Brier delle linee.
+
+| Bersaglio | rho | Scost. copertura A | B | Brier A | B |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Tiri | −0,249 | 0,0190 | 0,0197 | 0,23982 | 0,24012 |
+| Tiri in porta | −0,067 | 0,0272 | 0,0308 | 0,21894 | 0,21918 |
+| Corner | −0,180 | 0,0173 | 0,0162 | 0,22125 | 0,22148 |
+| Falli | +0,072 | 0,0173 | 0,0165 | 0,23848 | 0,23837 |
+| Ammoniti | +0,166 | 0,0149 | 0,0173 | 0,18362 | 0,18362 |
+| Fuorigioco | −0,062 | 0,0195 | 0,0153 | 0,16791 | 0,16800 |
+| Parate | −0,101 | 0,0180 | 0,0105 | 0,20608 | 0,20606 |
+
+**Scarto massimo di Brier fra i due metodi su 28 combinazioni: 0,00058.** I tiri hanno la
+correlazione piu' forte e piu' stabile e lì la composizione perde: la dispersione della somma
+**contiene gia' la covarianza**.
+
+**L'unica eccezione era apparente, e l'ho misurata invece di assumerla.** Sulle parate la
+composizione copriva meglio in tutte e quattro le origini. Allargando la diretta alla stessa
+larghezza, con il livello cercato sul solo treno: 0,7871 contro 0,7904, cioe' **due terzi del
+vantaggio recuperati**. Il residuo e' granularita' — i quantili interi si muovono a scatti — non
+dipendenza. Su due origini su quattro il livello non ha potuto muoversi affatto.
+
+**Deciso: calibrazione diretta su tutti e sette.** `data/registro-totale.json` e §8quinquies.
+Costo evitato: un generatore di numeri casuali dentro il predittore, da riprodurre in
+TypeScript cifra per cifra, per 0,003 di copertura su un bersaglio.
+
+**Tre errori veri nel confronto stesso, trovati prima che sporcassero la decisione.** Il
+livello nominale era calibrato per A e non per B, il che faceva vincere A per costruzione: sul
+fuorigioco il verdetto si e' ribaltato una volta corretto. Il campo della soglia riportava il
+MAE del modello sotto il nome di soglia assoluta, che e' un'altra regola. E il modello dei
+**falli** e' `ridge` nell'artefatto e `poisson_glm` nel manifesto: comanda l'artefatto, ed e' la
+terza verita' scritta in due posti di questa settimana.
+
+**Le cinque linee sui due lati, mai misurate prima.** Il termine di paragone e' la tabella che
+il metodo vieta — la quota storica per posizione — e la distribuzione calibrata la batte su
+tutti e sette, in 4 origini su 4 su cinque bersagli. Ma il margine va guardato: 4,0% sul
+fuorigioco, 1,6% sulle parate, **0,15% sui tiri**. Scarto di calibrazione fra 0,0130 e 0,0183,
+**migliore del totale**, che sta fra 0,020 e 0,034.
+
+**Portato in produzione.** Gli artefatti hanno due blocchi nuovi, `totale` e `linee`;
+riesportazione verificata **puramente additiva su tutti e quattordici**: zero chiavi cambiate,
+zero rimosse. Il valore atteso del totale **non e' nell'artefatto**, ed e' voluto: e' la somma,
+e conservarne una versione propria vorrebbe dire avere un terzo numero capace di contraddire i
+due lati. `match.ts` compone casa, trasferta e totale con le cinque linee; `predictor.ts` ha le
+due cumulate. **`test:match` 13/13**, con 280 coppie reali confrontate cifra per cifra contro
+Python. Le cinque suite: **53/53, 14/14, 20/20, 16/16, 13/13**, typecheck e lint puliti.
+
+**La documentazione nuova della fonte, letta e verificata chiamando l'API.** Il piano e'
+Unlimited, provato due volte: nessuna intestazione `RateLimit` su chiamata autenticata, e
+`odds/best/` e `odds/comparison/` rispondono 200 con 67 operatori invece del 403 previsto senza
+il piano. Scritto in `docs/architecture/fonte-regole-e-limiti.md`.
+
+**Una trappola vera, misurata:** `?status=upcoming` e `?status=live` **non filtrano niente** —
+restituiscono 395.814 righe, che e' il totale senza filtro. Il rifiuto dei parametri sconosciuti
+che la fonte dichiara vale per i **nomi**, non per i **valori**. Il vocabolario vero delle
+risposte e' `notstarted`, `inprogress`, `finished`, `cancelled`, `postponed`, `unresolved`.
+
+**Tre novita' nei payload che l'archivio non ha:** i quattro segnalatori di **xG stimato** —
+e competizioni intere sono stimate da cima a fondo — verificato su 800 payload dove il blocco
+`xg` ha la sola chiave `actual`; il campo **`rescinded`** sui cartellini revocati, zero
+occorrenze su 8.022 cartellini archiviati, che `reconstruct_cards.py` non guarda e che la
+sincronizzazione **deve** escludere per non far dire cose diverse a righe della stessa tavola;
+e le **formazioni previste**, che ora esistono con `lineup_status` e confidenza fino a due
+settimane prima, il che riapre davvero la FASE B.
+
+**Non ancora fatto:** applicare la migrazione — Docker e' spento, non e' mai passata da un
+motore vero; l'aggiornamento incrementale; l'affidabilita' del totale e la sua soglia assoluta;
+la copertura ottimista su sei bersagli su sette, da correggere calibrando il livello per fascia;
+la fascia EARLY, non misurabile in questo disegno.
+
+### La migrazione incontra un motore vero — 20 agosto 2026, notte
+
+**Il presupposto non reggeva, e si è visto alla prima interrogazione.** Il progetto in
+linea non ha lo schema `football`: porta autenticazione, pagamenti e la sola
+`private.api_rate_limits`, e nessuna delle cinque migrazioni del 9 agosto vi risulta
+registrata. La frase «lo schema `football` aveva gare, squadre, arbitri e classifiche, ma
+nessuna tavola di statistiche» era vera **nei file SQL**, non in un database. Applicare
+la migrazione nuova da sola sarebbe fallita alla riga 311, sul `drop constraint` di
+`private.football_sync_runs`.
+
+**Il banco è un Postgres 17 locale**, che è anche l'unico posto che `runtime.ts` accetta
+senza una dichiarazione esplicita: la connessione dev'essere su indirizzo locale, e si
+apre con il ruolo `iqstats_app_reader` in sola lettura. Le sei migrazioni sono state
+applicate in ordine su un motore vuoto; il ruolo se lo crea la terza.
+
+**Sei verifiche, tutte superate.**
+
+| Verifica | Esito |
+| --- | --- |
+| Struttura | 69 e 14 colonne, 8 indici, RLS su entrambe, 2 policy, zero privilegi ad `anon` e `authenticated` |
+| I tipi corretti in precedenza | 7 campi del profilo tiri in `double precision`, 3 continue in `numeric(8,4)` |
+| Vincolo riscritto | `DATA-6` accettato, valore fuori elenco rifiutato |
+| La funzione non inventa | su riferimenti vuoti: **800 righe squadra e 15.987 giocatore rifiutate, zero scritte** |
+| Caricamento dei 24 lotti | **18.570 scritte + 40 rifiutate = 18.610**, e **382.318 righe giocatore, zero rifiuti** |
+| Idempotenza | riapplicati tutti e ventiquattro: impronta identica, `e8e2107a…` |
+
+**La parità dal database, che è la prova che conta.** `test:projection-store` costruisce
+l'ingresso leggendo da `ProjectionObservationStore` — le stesse interrogazioni che farà
+l'applicazione — e lo confronta con Python: **42 righe, 1.995 gare, 20.736 metriche di
+contesto, 42 profili d'arbitro, 42 rose per 714 campi.** Sono gli stessi numeri di
+`test:snapshot`, per un'altra strada. Il test è stato **fatto fallire di proposito**
+alterando una riga nel banco: se ne accorge sulla media di lega alla terza cifra, e il
+ricarico dei lotti lo riporta verde riportando l'impronta a quella di prima.
+
+**I riferimenti vengono dall'archivio, non dalla fonte.** `export_reference_local.py`
+ricava gare, squadre, stagioni, arbitri e competizioni dai payload già raccolti: 9.285
+gare sulle 9.305 dei lotti. Le venti mancanti sono le 40 righe rifiutate, e sono
+dichiarate: dodici hanno una stagione che nessun payload associa a una competizione, otto
+non nominano le squadre. Tutte senza pannello. **I nomi di competizione, stagione e
+arbitro sono segnaposto marcati**: l'archivio non li porta, le tavole li vogliono non
+nulli, il motore non li legge mai.
+
+**Due cose che il manifesto dei lotti non dice.** Trentadue righe su 18.610, in venti
+gare, non nominano né la squadra né l'avversaria, mentre il manifesto dichiara
+`righe_scartate: 0`; e cento gare su 9.305 non hanno un payload di dettaglio archiviato.
+Non toccano i modelli — sono righe senza pannello — ma il manifesto conta le righe
+prodotte, non quelle utilizzabili.
+
+**Un ostacolo tecnico risolto senza toccare il motore.** I moduli traslocati importano
+senza estensione, e il caricatore di Node non li risolve; cambiarli romperebbe il build,
+perché con `module: commonjs` un percorso che finisce in `.ts` non è ammesso. La
+differenza si assorbe in `apps/web/test/risolutore-ts.mjs`, che vive nel lato che prova.
+
+**Le cinque suite restano verdi:** 53/53, 14/14, 20/20, 16/16, 13/13. Typecheck e lint di
+`apps/web` puliti. La sesta, `test:projection-store`, passa con il database e **salta**
+senza.
+
+**Non ancora fatto:** l'aggiornamento incrementale, che richiede un tetto di richieste
+autorizzato; l'affidabilità del totale; la copertura ottimista da calibrare per fascia. E
+resta aperto **dove vivrà il database in produzione**: oggi non esiste da nessuna parte, e
+il progetto in linea non ha lo schema.
+
+### La sincronizzazione, l'affidabilità del totale e una correzione che non funziona — 20 agosto 2026, notte
+
+**La sincronizzazione incrementale esiste e il tetto è obbligatorio.**
+`scripts/projection/harvest/sync_new_matches.py` non parte senza `--max-richieste`: una
+raccolta senza tetto è una decisione che lo script non prende. Riusa rete, ritmo, giornale
+e ripresa di `fetch_blocks.py`, quindi le tre proprietà — incrementale, idempotente,
+riprendibile — sono ereditate e non riscritte. Quattro richieste per gara: il pannello e la
+mappa dei tiri arrivano insieme da `/stats/`, poi episodi, statistiche per giocatore e
+dettaglio. La normalizzazione **non** è stata riscritta: resta quella Python già validata.
+
+**Sui filtri si usa il vocabolario delle risposte:** `status=finished`. La scoperta ha
+trovato **1.171 gare nuove con 32 richieste**, in 21 competizioni sulle 29 seguite, dal 28
+giugno — dove l'archivio si ferma — a oggi. Nessun conteggio è multiplo di 200: nessuna
+lega è stata troncata a una pagina.
+
+**I payload nuovi sono compatibili, verificato prima di scaricare tutto.** Un assaggio di
+venti gare, zero errori, poi il confronto con l'archivio: le novità sono additive —
+`xg_estimated` alla radice, `estimated` dentro `xg`, `through_balls` in più — e nessuna
+delle metriche del motore è sparita. `errors_lead_to_a_shot` manca nel 50% dei lati nuovi
+contro il **70%** dei vecchi: è assenza naturale, non un campo rimosso. Un primo controllo
+diceva che sei metriche erano scomparse: era il controllo a essere sbagliato, perché
+cercava chiavi piatte dove il registro dichiara percorsi annidati (`crosses.total`).
+
+**I cartellini revocati sono esclusi**, come richiesto. Rigenerando i cartellini
+l'archivio attuale resta **identico byte per byte**: zero occorrenze del campo, quindi la
+regola non cambia una riga di ciò che c'è e serve solo perché le righe nuove non contino
+cose diverse da quelle vecchie.
+
+**L'affidabilità del totale, misurata sul totale.** Soglia dalla migliore baseline **del
+totale** — quasi sempre la media di lega, il restringimento solo sui falli — curva
+empirica propria con la griglia estesa oltre l'otto delle marginali.
+
+| Bersaglio | Soglia | Punteggio | MAE modello | MAE baseline | Media dei due lati | Minimo |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tiri | 5 | 61 | 4,595 | 4,730 | 62,7 | 39,2 |
+| Tiri in porta | 3 | 66 | 2,466 | 2,508 | 63,2 | 39,4 |
+| Corner | 3 | 63 | 2,676 | 2,696 | 55,6 | 30,3 |
+| Falli | 4 | 55 | 4,115 | 4,313 | 61,2 | 37,3 |
+| Ammoniti | 2 | 68 | 1,634 | 1,641 | 53,8 | 29,1 |
+| Fuorigioco | 2 | 73 | 1,457 | 1,537 | 54,2 | 28,1 |
+| Parate | 2 | 55 | 2,033 | 2,054 | 73,9 | 53,8 |
+
+**Il divieto era giusto e ora è misurato:** la media dei due lati sbaglia in entrambe le
+direzioni, −19 punti sul fuorigioco e +19 sulle parate; il minimo sbaglia sempre, fino a
+−45. E va detto che **sul totale il modello batte la baseline di poco**: dallo 0,7% sui
+corner al 5,2% sul fuorigioco.
+
+**La copertura per fascia è stata provata e non funziona.** Non per come è scritta: per
+mancanza di campione. Nel treno dell'ultima origine `EARLY` ha **21-36 righe** e
+`DEVELOPING` **91-114**, contro 1.748-2.095 di `MATURE`; le fasce povere ripiegano sul
+livello unico e `MATURE` è il 94-96% delle righe, quindi «per fascia» coincide quasi per
+costruzione con «unico». Su tre bersagli guadagna fra 0,0004 e 0,0025, su due non cambia
+nulla, su due perde fino a 0,0103, e nessuno vince più di una origine su tre. **Il livello
+unico resta.** È la stessa parete della fascia EARLY: non è un metodo sbagliato, è un
+campione che non c'è.
+
+**La catena percorsa per intero, e riconciliata.** Raccolta: **4.604 richieste, zero
+errori**, 1.171 gare. Normalizzazione con gli script già validati: **9.305 → 10.476 gare**
+e **18.610 → 20.952 righe squadra-gara**, esattamente +1.171 e +2.342, colonne invariate,
+gare senza chiave di join ferme a 12. Lotti riesportati: da 24 a 27. Caricamento nel banco:
+**20.912 righe scritte + 40 rifiutate = 20.952**, il manifesto, e **431.935 righe
+giocatore, zero rifiuti**. Le 40 rifiutate sono sempre le stesse venti gare senza squadra
+o senza lega.
+
+**Le sei suite restano verdi dopo la sincronizzazione** — 53/53, 14/14, 20/20, 16/16,
+13/13, più `test:projection-store` — e `test:projection-store` riporta gli **stessi**
+numeri di prima: 1.995 gare, 20.736 metriche di contesto, 714 campi di rosa. È la prova
+che le gare nuove sono tutte posteriori e non hanno toccato la storia anteriore su cui i
+campioni di riscontro sono costruiti.
+
+**Non-regressione verificata su `total.py`**: l'aggiunta delle baseline alle paia di gara
+è additiva, e il rapporto del totale del fuorigioco esce identico byte per byte.
+
+### Il percorso proprio: dove vive il database del motore — 21 agosto 2026, mattina
+
+**Decisione dell'utente: percorso proprio.** Delle tre strade — allineare DATA-1 al
+perimetro del motore, dare alle osservazioni un percorso che scriva anche gare, squadre e
+arbitri, o tenere separati i due livelli dati — è stata scelta la seconda. Due misure
+prese prima della domanda hanno pesato: **DATA-1 non raccoglie arbitri affatto**
+(`data1-harvest.mjs` e `data1-contracts.mjs` non nominano mai l'arbitro, e
+`football.referees` era vuota), e il suo ciclo va **in avanti** dal catalogo delle
+stagioni fresche, quindi le 9.305 gare storiche del motore non ci sarebbero arrivate
+comunque.
+
+**La sesta migrazione è passata sullo stack locale del progetto**, che aveva le cinque del
+9 agosto e non la sesta. Applicata con `supabase migration up --local`; verificata: 69 e
+14 colonne, 8 indici, RLS su entrambe, 2 policy, `DATA-6` accettato dal vincolo riscritto,
+nessun privilegio ad `anon` o `authenticated`.
+
+**L'innesto dei riferimenti non sovrascrive mai.**
+`dataset/load_reference_and_batches.py` è nuovo: costruisce SQL su standard output — non
+c'è un driver Python installato e `psql` è l'unico cliente disponibile ovunque — e ogni
+inserimento è `on conflict do nothing`.
+
+| Tavola | Esistenti | Innestate | Totale |
+| --- | ---: | ---: | ---: |
+| `competitions` | 36 | **0** | 36 |
+| `seasons` | 36 | 27 | 63 |
+| `teams` | 591 | 116 | 707 |
+| `referees` | 0 | 673 | 673 |
+| `matches` | 9.548 | 9.307 | 18.855 |
+
+**Zero competizioni nuove: i perimetri non sono diversi, uno è contenuto nell'altro.** Le
+29 del motore sono già tutte fra le 36 di DATA-1, quindi nessun nome di competizione
+segnaposto è entrato nel database. I segnaposto scritti sono 27 nomi di stagione, 2 di
+squadra e i 673 arbitri. Le 116 squadre e le 9.307 gare nuove confermano i numeri della
+sessione scorsa: 467 squadre su 583 e 1.149 gare su 10.456 esistevano già.
+
+**Le due guardie erano già nello schema e non ne ho aggiunte:** competizioni nuove con
+`is_active = false`, che `app_competition_read_model` filtra; stagioni nuove con
+`ingest_scope = 'held'`, che `app_match_read_model` filtra. Le due viste restano a 33 e
+331 righe.
+
+**Una fuga misurata, che va decisa e non nascosta.** `app_match_read_model` è passata da
+**9.548 a 9.550**: due gare della Chinese Super League del 18 e 19 agosto — 588026 e
+588027 — vere, con nomi e punteggi reali, in una stagione `product_current` che DATA-1 non
+aveva ancora raccolto. Non sono segnaposto e non sono contaminazione, ma dicono che dove
+la stagione è condivisa il percorso del motore **può** scrivere nel perimetro del prodotto.
+
+**Il caricamento riconciliato col manifesto: 20.912 righe scritte + 40 rifiutate =
+20.952**, e **431.935 righe giocatore, zero rifiuti.** Le 40 sono sempre le stesse venti
+gare senza lega o senza squadra.
+
+**Idempotenza dell'intero percorso, innesto compreso.** Riapplicati riferimenti e
+ventisette lotti: **0 inserimenti** su tutte e cinque le tavole di riferimento, gli stessi
+20.912 + 40 e 431.935, e impronta `655a292f30cae6f0872f9ecc9d02bbf8` **identica** prima e
+dopo. Un primo tentativo di questa verifica era andato a vuoto in silenzio — la directory
+corrente era `apps/web`, il percorso dello script non risolveva e `psql` ha letto un
+ingresso vuoto chiudendo con 0 — ed è stato rifatto invece di essere creduto.
+
+**La parità dal database, dal motore del progetto:** `test:projection-store` verde con
+**42 righe, 1.995 gare, 20.736 metriche di contesto, 42 profili d'arbitro, 714 campi di
+rosa** — gli stessi numeri del banco, con 8.399 gare di DATA-1 prive di osservazioni che
+non spostano nulla, perché il calcolo legge `team_match_observations` e non `matches`.
+
+**Le sei suite verdi:** 53/53, 14/14, 20/20, 16/16, 13/13 e `test:projection-store` 1/1.
+Typecheck e lint di `apps/web` puliti.
+
+**Due frasi stantie corrette in §8quinquies**, entrambe contraddette da misure scritte due
+paragrafi sopra: «si corregge calibrando il livello per fascia» — provato, non paga — e
+«l'affidabilità del totale non è ancora misurata» — misurata, ma vive nei sette rapporti
+e non nel blocco `totale` degli artefatti.
+
+**Non ancora fatto:** l'affidabilità del totale negli artefatti, che tocca il contratto e
+attende una decisione; la pianificazione della sincronizzazione periodica; e la fuga delle
+due gare della Chinese Super League, da decidere.
+
+### L'affidabilità del totale entra negli artefatti — 21 agosto 2026, mattina
+
+**Decisione dell'utente: portarla in produzione rispecchiando le marginali**, punteggio per
+fascia compreso. Il blocco `totale.affidabilita` ha soglia assoluta, punteggio complessivo,
+punteggio per fascia con la sua incertezza binomiale e la curva intera. Non ha lo strato
+condizionale, perché sul totale non è stato misurato: il tipo è
+`Omit<Affidabilita, 'condizionale'>`, che lo dichiara assente invece di lasciare un campo
+sempre nullo.
+
+**Il controllo è uno solo.** Soglia e punteggi si verificano in `verificaSogliaEPunteggi`,
+che chiamano sia il bersaglio sia il totale: due verificatori paralleli sarebbero il quarto
+posto dove la stessa regola può divergere.
+
+**La fascia è la più povera dei due lati** — la storia più corta governa l'incertezza —
+che è la stessa con cui il punteggio è stato misurato in `total_reliability.py`. Sotto un
+ripiego non si dichiara.
+
+**Il blocco entra in sette artefatti su quattordici**, e il cancello funziona: il rapporto
+è di un modello solo per bersaglio (`total_shots` e `fouls` `ridge`, gli altri cinque
+`poisson_glm`), e sull'altro modello dello stesso bersaglio viene rifiutato invece di
+attribuirgli una misura che nessuno ha fatto su di lui. Su `shots_on_target` la fascia
+EARLY non compare nel rapporto: non è misurabile, e il test sceglie la fascia più povera
+fra quelle dichiarate invece di dare EARLY per scontata.
+
+**Un arrotondamento scritto in due posti, trovato dal test di parità nuovo.** Sui falli in
+fascia EARLY la quota è **0,525 esatti**: `round()` di Python arrotonda al pari e dà 52,
+`punteggio_da` dell'esportatore fa `floor(x + 0,5)` e dà 53. Il test ha fatto rosso su
+quella cifra. Corretto alla radice: `total_reliability.py` chiama `punteggio_da`. Il
+rapporto dei falli rigenerato è **identico tranne quel punto**, zero chiavi aggiunte e zero
+rimosse — il che conferma anche che i parametri predefiniti sono quelli usati in origine.
+Gli altri sei rapporti non cambiano: il test li confrontava già tutti e falliva solo sui
+falli.
+
+**Sette artefatti su quattordici erano fermi a una versione precedente dell'esportatore.**
+`corner_kicks__ridge`, `fouls__poisson_glm`, `goalkeeper_saves__ridge`, `offsides__ridge`,
+`shots_on_target__ridge`, `total_shots__poisson_glm` e `yellow_cards__ridge` **non avevano
+affatto la chiave `totale`** — assente, non nulla. Riesportandoli oggi hanno guadagnato 22
+chiavi `.totale.*`, con dispersione e livello stimati sui propri residui,
+`prova_fuori_campione` nulla e nessun blocco `linee`. Prima quei sette dichiaravano «la
+somma e basta»; con quelle chiavi avrebbero prodotto intervallo e cinque linee sul totale
+senza che nessuno le avesse misurate fuori campione.
+
+**Era un cambiamento oltre il perimetro della decisione, e l'utente ha chiesto di
+ripristinarli.** I sette sono tornati dalla copia di sicurezza, ciascuno con i suoi tre
+file — artefatto, impronta e riscontro — perché l'impronta copre i byte e il riscontro
+cita l'impronta: ripristinarne uno solo lascerebbe un artefatto che il caricamento
+rifiuta. Verificato su tutti e quattordici: impronta del file uguale a quella dichiarata,
+`checksum_artefatto` del riscontro uguale all'impronta, e la chiave `totale` presente
+esattamente nei **sette** che hanno il rapporto e assente negli altri sette. Le cinque
+suite restano 53/53, 14/14, 20/20, 16/16, 15/15.
+
+**La riesportazione è additiva:** **2.328 chiavi aggiunte, zero rimosse, zero cambiate** sui
+quattordici artefatti. Le uniche quattordici variazioni sono i `checksum_artefatto` dentro i
+file di riscontro, che devono cambiare.
+
+**Le sei suite verdi:** 53/53, 14/14, 20/20, 16/16, **15/15** (`test:match`, due test nuovi)
+e `test:projection-store` 1/1 con gli stessi 42 righe, 1.995 gare, 20.736 metriche, 714
+campi di rosa. Typecheck di `apps/web` pulito.
+
+### La passata notturna e il giornale — 21 agosto 2026, pomeriggio
+
+**Decisione dell'utente: una volta a notte**, e con una richiesta in più — quando le gare
+nuove sono tante, la passata deve prendere **tutto** senza badare al tetto.
+
+**Come sta in piedi senza riaprire una decisione chiusa.** Il tetto resta un argomento
+obbligatorio di `sync_new_matches.py`, ma smette di poter troncare: il pianificatore lo
+**calcola dalla scoperta**, `4 × gare + 50`. Con le 1.171 gare del 20 agosto sarebbero
+4.734 richieste contro le 4.604 realmente usate. Con 80 gare sono 370. L'argomento
+continua a essere esplicito, ma nessuna passata si ferma a metà per un numero scelto a
+mano.
+
+**Che cosa vuol dire «resta indietro di un giorno», visto che l'utente l'ha chiesto.** Fra
+due passate le gare che finiscono durante il giorno non sono nel database. Nel momento
+peggiore la storia del motore non contiene fino a ventiquattro ore di gare concluse, e
+siccome le feature «al momento di» leggono le gare **anteriori** al calcio d'inizio, una
+squadra che ha giocato ieri sera si proietta oggi senza quella gara — che è la più
+informativa. Resta un residuo che la cadenza non toglie: le gare che finiscono **dopo**
+l'orario della passata aspettano la notte dopo, quindi l'orario va messo dopo l'ultimo
+fischio finale della sera.
+
+**`scripts/projection/harvest/sync_nightly.ps1`**, nuovo: scoperta, tetto calcolato,
+raccolta, i cinque script Python già validati, lotti, riferimenti, caricamento. La
+normalizzazione non è stata riscritta.
+
+**Nessuna troncatura silenziosa.** Se la scoperta esaurisce il proprio tetto la passata si
+ferma: una scoperta troncata direbbe «zero gare nuove» dove ce ne sono, ed era l'unico modo
+in cui questa catena poteva mentire senza dare errore. Stessa guardia sulla raccolta.
+
+**Il giornale, come deciso: una riga per passata, fetta `DATA-6`.** Si apre `running`
+**prima** della raccolta, perché una passata che fallisce a metà deve lasciare traccia. La
+chiusura riuscita è l'ultima istruzione del SQL di caricamento e **non** del pianificatore:
+se `psql` si ferma per un errore, `ON_ERROR_STOP` non ci arriva e la riga resta `running`,
+che è la verità. Chiuderla da fuori direbbe «completata» comunque. Il fallimento lo scrive
+il pianificatore in `trap`, con il motivo troncato a 200 caratteri.
+
+**Provato sul database del progetto.** Riga 4 chiusa `completed` con **452.887 righe
+osservate, 452.847 scritte, 40 rifiutate** — cioè 20.952 e 431.935, il manifesto — e 4.636
+richieste su un tetto di 4.984. I conteggi salgono dentro la transazione di ogni lotto: un
+lotto che non passa non è contato. Impronta invariata a `655a292f…` dopo il terzo
+caricamento. La chiusura in fallimento è stata provata a parte, **apostrofo nel motivo
+compreso** (`l'archivio`), e la riga di prova è stata cancellata: un fallimento inventato
+non resta in un giornale.
+
+**Due correzioni fatte perché altrimenti erano sbagliate.**
+
+- **`Out-File` di PowerShell 5.1 non è una condotta di byte.** Un lotto è una riga sola da
+  cinque megabyte. Il caricatore accetta `--sql <file>` e scrive lui: verificato
+  **identico** al SQL prodotto su standard output.
+- **La raccolta non lasciava traccia leggibile**: stampava il rendiconto e basta. Ora lo
+  scrive anche in `harvest/data/raccolta-ultima.json`, come già fa la scoperta.
+
+**Non ancora fatto:** registrare l'attività pianificata in Windows. È un'azione che resta
+sulla macchina e non l'ho presa da solo.
+
+### Il motore arriva in pagina — 21 agosto 2026, sera
+
+**Il punto che mancava, e che nessuna misura avrebbe chiuso.** Il motore aveva quattordici
+modelli validati e **nessuna pagina che lo chiamasse**: cercando chi importa
+`projection/match.ts` dentro `apps/web/src` rispondevano solo altri file del motore. Zero.
+
+**Una correzione a una cosa che avevo detto poche ore prima.** Avevo scritto che senza il
+livello dati l'applicazione avrebbe mostrato «copertura assente». Falso: `runtime.ts:78`
+dice che senza `IQSTATS_DATABASE_URL` l'applicazione usa `providerGateway()` e legge la
+fonte **in diretta**, senza database. È per questo che dopo ogni commit tutto risultava
+presente e aggiornato, e continuerà a esserlo. La frase giusta era più stretta: il motore
+non ha una superficie in pagina, e non ha un database in linea.
+
+**I sette modelli promossi, che era una decisione dell'utente.** Il registro dice
+`production: scelto da una persona fra i validati: il registro non lo assegna`, quindi non
+l'ho assegnato io. L'evidenza però decide da sola: **per tutti e sette i bersagli il
+modello con il MAE migliore fuori campione è esattamente quello che porta la misura
+completa della gara**. `ridge` su tiri e falli, `poisson_glm` sugli altri cinque.
+
+| Bersaglio | Vince | MAE | Vantaggio | L'altro |
+| --- | --- | ---: | ---: | --- |
+| Tiri | `ridge` | 3,6095 | 4,71% | poisson 3,6177 · 4,50% |
+| Tiri in porta | `poisson_glm` | 1,7663 | 3,85% | ridge 1,7669 · 3,82% |
+| Corner | `poisson_glm` | 2,0637 | 4,75% | ridge 2,0681 · 4,55% |
+| Falli | `ridge` | 2,7870 | 4,81% | poisson 2,7924 · 4,62% |
+| Ammoniti | `poisson_glm` | 1,0541 | 1,39% | ridge 1,0602 · 0,82% · **4/5 origini** |
+| Fuorigioco | `poisson_glm` | 1,0841 | 4,84% | ridge 1,0850 · 4,76% |
+| Parate | `poisson_glm` | 1,4699 | 3,18% | ridge 1,4716 · 3,07% |
+
+**Lo stato lo scrive l'esportatore, non la mia mano.** `export_model.py` aveva
+`"stato": "experimental"` fisso: ora accetta `--stato`, e i sette sono stati **riesportati**
+con `production`. Modificare a mano un artefatto ne avrebbe rotto l'impronta e tolto
+all'esportatore il ruolo di unico scrittore. `registry.py` rigenerato: 7 `production`,
+7 `validated`.
+
+**Gli artefatti entrano nel pacchetto per import statico**, come già fa ENG-1 con
+`ratings-state.generated.json`. `.vercelignore` esclude `scripts/`, quindi da lì non
+sarebbero mai arrivati su Vercel. Vivono in `apps/web/src/server/iqstats/artefatti/`,
+327 KB, e un test nuovo li confronta **byte per byte** con quelli generati da Python,
+verifica l'impronta `.sha256` e pretende che siano esattamente i sette che il registro
+dichiara `production`. La duplicazione c'è ed è rumorosa, non silenziosa.
+
+**`projection-runtime.ts`, tre confini.** Connessione **propria**
+(`IQSTATS_PROJECTION_DATABASE_URL`): usare quella generale farebbe passare *tutta*
+l'applicazione al gateway ibrido, che il motore non ha nessun titolo per decidere.
+Identificativi **risolti** da `source_id`, mai assunti. E **la gara da prevedere non deve
+esistere nel database**: tutte le interrogazioni dello store sono per squadra, stagione,
+arbitro e istante, mai per l'identificativo della gara — così una gara futura si proietta
+dalla storia delle due squadre, e il taglio «al momento di» resta esatto perché quella riga
+non esiste ancora.
+
+**La sezione sostituisce ENG-1, non lo affianca.** Mostrano gli stessi sette bersagli: due
+pannelli con due numeri diversi per «tiri in casa» sarebbero due verità sullo stesso
+schermo. `MatchProjectionSection` riusa le classi del pannello esistente, quindi zero CSS
+nuovo.
+
+**Provato sul server vero, non solo compilato.**
+
+| Gara | Esito |
+| --- | --- |
+| Chengdu Rongcheng - Shanghai Shenhua (23 gare in stagione) | sezione proiezione, **24 scale di soglie**, 4 badge di affidabilità, ENG-1 assente |
+| Olympique de Marseille - RC Strasbourg (34 gare, ma tutte della stagione precedente) | proiezione assente, **ENG-1 come prima** |
+
+Il secondo caso è la regola della quarta giornata che funziona: le 34 osservazioni del
+Marsiglia sono tutte della stagione 317, la gara è nella 1311. Zero gare precedenti nella
+stagione in corso.
+
+**Una regressione trovata e corretta durante la prova.** Nel primo tentativo, sulla gara
+senza storia **non compariva nessuna delle due sezioni**: il motore restituiva un oggetto
+non nullo con zero bersagli mostrabili e la pagina non ripiegava. Ora `proiezioniDellaGara`
+risponde `null` quando nessun bersaglio è completo.
+
+**Due feature mancanti, misurate invece che immaginate.** Sui quattro bersagli che
+ripiegavano: `contesto_turno` e `arbitro_gare_viste`.
+
+- Il **turno** c'era e non lo leggevamo: la fonte dichiara `round_number` sull'evento —
+  `build_observations.py:164` lo usa già — e `match-context.ts` mappava solo `round_name`,
+  che su quella gara è nullo. Mappato: giornata 24 letta, e `corner_kicks` non ripiega più.
+- L'**arbitro** manca davvero: per quella gara la fonte non lo dichiara perché non è ancora
+  designato. Tre bersagli su sette (tiri in porta, falli, ammoniti) restano sul ripiego e
+  mostrano il valore senza intervallo né linee né affidabilità, che è il comportamento
+  giusto: nessuno ha calibrato quelle cose su una baseline.
+
+**Sette suite verdi:** 53/53, 14/14, 20/20, 16/16, 15/15, `test:projection-artefatti` 3/3 e
+`test:projection-store` 1/1. Typecheck e lint di `apps/web` puliti.
+
+**Resta aperto:** il database del motore **non esiste in linea**. Interrogato il progetto
+Supabase: solo `public.*` di autenticazione e pagamenti più `private.api_rate_limits`,
+nessuno schema `football`. Finché non c'è, in produzione `IQSTATS_PROJECTION_DATABASE_URL`
+resta non dichiarata e la pagina mostra ENG-1 come sempre: nessuna regressione, nessuna
+proiezione. Lo schema pesa **192 MB** misurati, su un piano free da 500.

@@ -1,0 +1,1388 @@
+{
+  "schema_version": "artefatto-modello/1",
+  "model_id": "offsides__poisson_glm",
+  "model_version": "1.0.0",
+  "target": "offsides",
+  "model_type": "poisson_glm",
+  "stato": "production",
+  "feature_schema": {
+    "ordine": [
+      "prodotto_stagione_media",
+      "prodotto_stagione_sd",
+      "prodotto_stagione_campione",
+      "gare_precedenti",
+      "lega_lato_media",
+      "lega_lato_campione",
+      "lega_media",
+      "lega_sd",
+      "zeta_dalla_lega",
+      "baseline_lega",
+      "baseline_squadra_stagione",
+      "baseline_restringimento",
+      "concesso_ultime3_media",
+      "concesso_ultime5_media",
+      "concesso_ultime10_media",
+      "concesso_ewma",
+      "concesso_stagione_media",
+      "concesso_lato_media",
+      "avv_prodotto_ultime3_media",
+      "avv_prodotto_ultime5_media",
+      "avv_prodotto_ultime10_media",
+      "avv_prodotto_stagione_media",
+      "avv_prodotto_ewma",
+      "avv_prodotto_lato_media",
+      "avv_concesso_ultime3_media",
+      "avv_concesso_ultime5_media",
+      "avv_concesso_ultime10_media",
+      "avv_concesso_stagione_media",
+      "avv_concesso_ewma",
+      "avv_concesso_lato_media",
+      "avv_gare_precedenti",
+      "avv_giorni_di_riposo",
+      "debolezza_difesa_avversario",
+      "confronto_produce_meno_concede",
+      "baseline_attacco_contro_concesso",
+      "prodotto_ultime3_media",
+      "prodotto_ultime3_sd",
+      "prodotto_ultime3_campione",
+      "prodotto_ultime5_media",
+      "prodotto_ultime5_sd",
+      "prodotto_ultime5_campione",
+      "prodotto_ultime10_media",
+      "prodotto_ultime10_sd",
+      "prodotto_ultime10_campione",
+      "prodotto_ewma",
+      "baseline_media_mobile",
+      "allenatore_prodotto_media",
+      "allenatore_concesso_media",
+      "allenatore_campione",
+      "allenatore_prodotto_ewma",
+      "allenatore_gare_con_la_squadra",
+      "allenatore_disponibile",
+      "interazione_casa",
+      "interazione_casa_delta_punti",
+      "interazione_casa_scarto_dalla_lega",
+      "interazione_casa_severita_arbitro"
+    ],
+    "preprocessing": {
+      "tipo": "standardizzazione",
+      "media": [
+        1.7777070664817574,
+        1.3234564956674386,
+        18.130869363086937,
+        19.56539593987293,
+        1.7784933144171176,
+        179.42801797613512,
+        1.7785189026639692,
+        1.4577032176883278,
+        -0.00042356162906008704,
+        1.7784933144171176,
+        1.7777070664817574,
+        1.7782578339620847,
+        1.7633658763365876,
+        1.7660661707732837,
+        1.7685133222150888,
+        1.7700979887509671,
+        1.7814603316561037,
+        1.780181212146008,
+        1.7585748230797043,
+        1.7631489229815591,
+        1.7650809639419587,
+        1.7776720802577042,
+        1.7655940560062195,
+        1.7800030587024072,
+        1.7636112402500128,
+        1.7662831241283126,
+        1.7686657061192157,
+        1.7816855615306175,
+        1.7702907608020784,
+        1.780259307197677,
+        19.56539593987293,
+        7.629770821495601,
+        1.0006808420301028,
+        -0.003069631695852056,
+        1.7639204552121395,
+        1.7585748230797047,
+        0.9528810975082495,
+        2.8363551836355185,
+        1.7632134924324603,
+        1.143909669401222,
+        4.65473423214009,
+        1.7651300367246439,
+        1.2644429823152266,
+        8.69889973655664,
+        1.7656330501538917,
+        1.7632134924324603,
+        1.779080183205847,
+        1.78196042662468,
+        18.564311173097785,
+        1.7647015451512391,
+        20.066480706648072,
+        1.0,
+        0.5,
+        -0.01190300751479979,
+        0.0004935740441119792,
+        -0.0016507615393814782
+      ],
+      "scala": [
+        0.5400754736504298,
+        0.403183449517199,
+        9.64340956444967,
+        10.093385842592808,
+        0.25878441181450035,
+        105.96498111225935,
+        0.22897935889856466,
+        0.1646162195976318,
+        0.3335289580354011,
+        0.25878441181450035,
+        0.5400754736504298,
+        0.4030545358335405,
+        1.0026798058326842,
+        0.8698509481510845,
+        0.7652291936856771,
+        0.7568648056865775,
+        0.7079494604820067,
+        0.8419381548492261,
+        0.9043555249706768,
+        0.7327781055688363,
+        0.5961951244511101,
+        0.5401191701503092,
+        0.594503998369467,
+        0.7130320638141296,
+        1.0027580713991058,
+        0.869985269199565,
+        0.7654125667735928,
+        0.7081513219229403,
+        0.7570597767633096,
+        0.8420044412055582,
+        10.093385842592808,
+        4.8178001177486145,
+        0.44696450694269285,
+        1.0954571513118172,
+        1.0998847833006473,
+        0.9043174450733699,
+        0.634028289844952,
+        0.3972224723420957,
+        0.7327710696624455,
+        0.5421121735954648,
+        0.6151337789217683,
+        0.5961580679242781,
+        0.45396683783855485,
+        1.856796403806773,
+        0.5944643561005567,
+        0.7327710696624455,
+        0.5382310942828276,
+        0.7056652684331096,
+        9.768556475970811,
+        0.5930567878407279,
+        9.971464631258016,
+        1.0,
+        0.5,
+        0.5110528705448006,
+        0.3475804678536455,
+        0.35856227512437505
+      ]
+    },
+    "valori_mancanti": "non ammessi: se una sola feature manca la previsione non si produce, non si sostituisce",
+    "valori_non_finiti": "trattati come mancanti"
+  },
+  "coefficients": [
+    0.012310761103254297,
+    -0.001683872422580678,
+    0.0004324365022757698,
+    -0.0028593716359622693,
+    0.0090731463599209,
+    0.001240697277312672,
+    0.0077510859227410585,
+    -0.004227434097404606,
+    0.013867565596433165,
+    0.0090731463599209,
+    0.012310761103254297,
+    0.025453737974192408,
+    -0.007779994927514976,
+    7.812016445051198e-05,
+    -0.0040629457938166635,
+    -0.004061071934670421,
+    0.0015551489081019458,
+    0.0012240912912755478,
+    0.01040274707115093,
+    -0.00650112923231366,
+    -0.0007308801497205195,
+    -0.008418936749435108,
+    -0.005185701323529868,
+    -0.0010469654910956595,
+    0.021791342717105703,
+    0.01801050197397962,
+    0.0367361115205551,
+    0.04446196714062723,
+    0.037320118398979515,
+    0.017180791598946966,
+    -0.004025424249123466,
+    0.0015612286449850348,
+    0.0176823326970768,
+    -0.01624268176204121,
+    0.008130863956814192,
+    -0.0031109543466323135,
+    -0.00028494704896288607,
+    -0.005790998974610921,
+    -0.0028989824686128547,
+    -0.0042960864225521,
+    0.0055400527771096615,
+    0.009577402815347448,
+    -0.0027276148899233335,
+    0.002145509196138171,
+    0.004129415553990012,
+    -0.0028989824686128547,
+    0.012791944390694917,
+    0.001468690110931424,
+    -0.0007356622166278226,
+    0.0022505966300916795,
+    1.6157661591307703e-05,
+    0.0,
+    0.017692276457101683,
+    0.007743093707795923,
+    -0.0014198103524824606,
+    -0.002539087354523553
+  ],
+  "intercept": 0.534844891702195,
+  "collegamento": "log",
+  "taglio": {
+    "minimo": 0.0,
+    "massimo": null,
+    "applicato_a": "nessuno: il collegamento logaritmico e' gia' positivo"
+  },
+  "calibration": {
+    "dispersione": 1.0549868043990347,
+    "soglia_poisson": 1.05,
+    "distribuzione_intervallo": "binomiale_negativa",
+    "livello_nominale": 0.6000000000000001,
+    "livello_dichiarato": 0.8,
+    "copertura_sul_periodo_di_addestramento": 0.7999,
+    "nota": "la dispersione e' stimata sui residui del modello e il livello nominale e' calibrato sul solo periodo di addestramento"
+  },
+  "training_metadata": {
+    "righe": 12906,
+    "da": "2025-03-15 18:30:00+00:00",
+    "a": "2026-06-14 19:00:00+00:00",
+    "leghe": 25,
+    "min_previous_matches": 3,
+    "feature_candidate": 56,
+    "densita_minima_richiesta": 0.8,
+    "selezione_feature": "data/manifesto-feature.json versione 2026-08-17.1"
+  },
+  "maturita": {
+    "colonna_del_campione": "gare_precedenti",
+    "significato": "maturita' del campione della squadra, mai disponibilita' del motore: con tre gare precedenti il motore prevede",
+    "regola": "il valore atteso e' la miscela fra il modello e la baseline con restringimento, con il peso della fascia; l'intervallo usa dispersione e livello nominale della fascia",
+    "affidabilita": "il punteggio sta nel blocco affidabilita' dell'artefatto, misurato per fascia sulla miscela congelata. Non poggia sulla stabilita' temporale, che in fascia EARLY non e' misurabile: li' l'oscillazione dell'errore fra origini e' minore di quella che il caso produce da solo. L'evidenza per fascia resta qui sotto",
+    "sotto_il_minimo": "con meno di 3 gare precedenti il modello del bersaglio non si applica: si scende nella gerarchia di ripiego",
+    "per_fascia": {
+      "EARLY": {
+        "da": 3,
+        "a": 4,
+        "peso_della_miscela": 0.75,
+        "mescolato_con": "baseline_restringimento",
+        "righe_di_addestramento_nella_fascia": 655,
+        "dispersione": 1.1687,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.63,
+        "copertura_sul_periodo_di_addestramento": 0.8015,
+        "ripiego_ordinato": [
+          {
+            "colonna": "baseline_restringimento",
+            "mae_fuori_campione": 1.1777,
+            "righe_di_prova": 75
+          },
+          {
+            "colonna": "baseline_attacco_contro_concesso",
+            "mae_fuori_campione": 1.5411,
+            "righe_di_prova": 75
+          }
+        ],
+        "evidenza_fuori_campione": {
+          "mae": 1.1514,
+          "errore_standard_mae": 0.0945,
+          "bias": -0.2921,
+          "righe_di_prova": 75,
+          "instabilita_fra_origini": {
+            "origini": 3,
+            "deviazione_osservata": 0.1847,
+            "deviazione_attesa_dal_caso": 0.2144,
+            "deviazione_vera": 0.0
+          },
+          "pesi_per_origine": [
+            0.8,
+            0.75,
+            0.75,
+            0.7,
+            0.7
+          ]
+        }
+      },
+      "DEVELOPING": {
+        "da": 5,
+        "a": 9,
+        "peso_della_miscela": 0.9,
+        "mescolato_con": "baseline_restringimento",
+        "righe_di_addestramento_nella_fascia": 1934,
+        "dispersione": 1.1345,
+        "distribuzione_intervallo": "binomiale_negativa",
+        "livello_nominale": 0.6,
+        "copertura_sul_periodo_di_addestramento": 0.7989,
+        "ripiego_ordinato": [
+          {
+            "colonna": "baseline_restringimento",
+            "mae_fuori_campione": 1.1422,
+            "righe_di_prova": 194
+          },
+          {
+            "colonna": "baseline_attacco_contro_concesso",
+            "mae_fuori_campione": 1.2943,
+            "righe_di_prova": 194
+          }
+        ],
+        "evidenza_fuori_campione": {
+          "mae": 1.0974,
+          "errore_standard_mae": 0.0663,
+          "bias": -0.129,
+          "righe_di_prova": 194,
+          "instabilita_fra_origini": {
+            "origini": 5,
+            "deviazione_osservata": 0.141,
+            "deviazione_attesa_dal_caso": 0.2684,
+            "deviazione_vera": 0.0
+          },
+          "pesi_per_origine": [
+            0.9,
+            0.9,
+            0.9,
+            0.85,
+            0.85
+          ]
+        }
+      },
+      "MATURE": {
+        "da": 10,
+        "a": null,
+        "peso_della_miscela": 1.0,
+        "mescolato_con": "baseline_restringimento",
+        "righe_di_addestramento_nella_fascia": 10317,
+        "dispersione": 1.0315,
+        "distribuzione_intervallo": "poisson",
+        "livello_nominale": 0.61,
+        "copertura_sul_periodo_di_addestramento": 0.8037,
+        "ripiego_ordinato": [
+          {
+            "colonna": "baseline_attacco_contro_concesso",
+            "mae_fuori_campione": 1.1355,
+            "righe_di_prova": 6840
+          },
+          {
+            "colonna": "baseline_restringimento",
+            "mae_fuori_campione": 1.1403,
+            "righe_di_prova": 6840
+          }
+        ],
+        "evidenza_fuori_campione": {
+          "mae": 1.083,
+          "errore_standard_mae": 0.0101,
+          "bias": 0.0046,
+          "righe_di_prova": 6840,
+          "instabilita_fra_origini": {
+            "origini": 5,
+            "deviazione_osservata": 0.0125,
+            "deviazione_attesa_dal_caso": 0.0226,
+            "deviazione_vera": 0.0
+          },
+          "pesi_per_origine": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    }
+  },
+  "affidabilita": {
+    "definizione": "probabilita' misurata fuori campione che lo scarto fra previsto e osservato resti entro la soglia assoluta di questo bersaglio",
+    "soglia_assoluta": 1.0,
+    "come_e_stata_scelta": "errore assoluto medio della migliore baseline (baseline_lega, 1.1392) arrotondato all'unita' del bersaglio",
+    "fasce_di_lettura": [
+      {
+        "da": 0,
+        "fino_a": 50,
+        "nome": "BASSA"
+      },
+      {
+        "da": 50,
+        "fino_a": 70,
+        "nome": "MODERATA"
+      },
+      {
+        "da": 70,
+        "fino_a": 85,
+        "nome": "ALTA"
+      },
+      {
+        "da": 85,
+        "fino_a": 101,
+        "nome": "MOLTO ALTA"
+      }
+    ],
+    "misurata_sulla_miscela_congelata": true,
+    "condizionale": {
+      "condizioni": [
+        "valore_atteso",
+        "gare_precedenti",
+        "zeta_dalla_lega",
+        "avv_gare_precedenti"
+      ],
+      "standardizzazione": {
+        "media": [
+          1.7622376513,
+          24.7538331692,
+          0.0004352857,
+          24.7538331692
+        ],
+        "scala": [
+          0.3850577075,
+          8.1288090548,
+          0.2835103554,
+          8.1288090548
+        ]
+      },
+      "coefficienti": [
+        -0.188516086,
+        0.3968177607,
+        0.0096427434,
+        -0.3960090223
+      ],
+      "intercetta": 0.1670599122,
+      "collegamento": "logistico",
+      "righe_di_addestramento": 7109,
+      "scarto_medio_di_calibrazione": 0.0405,
+      "origini_vinte_su_brier": "3/4",
+      "regola": "regressione logistica sulle condizioni note prima del calcio d'inizio, addestrata sugli errori fuori campione di tutte le origini",
+      "significato": "sostituisce la costante della fascia con una probabilita' stimata per questa gara; l'incertezza dichiarata e' lo scarto medio di calibrazione misurato, non un intervallo binomiale"
+    },
+    "complessivo": {
+      "punteggio": 54,
+      "punteggio_basso": 53,
+      "punteggio_alto": 55,
+      "fascia_di_lettura": "MODERATA",
+      "quota": 0.542,
+      "righe_entro_soglia": 3853,
+      "righe_di_prova": 7109
+    },
+    "per_fascia": {
+      "EARLY": {
+        "punteggio": 47,
+        "punteggio_basso": 36,
+        "punteggio_alto": 58,
+        "fascia_di_lettura": "BASSA",
+        "quota": 0.4667,
+        "righe_entro_soglia": 35,
+        "righe_di_prova": 75
+      },
+      "DEVELOPING": {
+        "punteggio": 57,
+        "punteggio_basso": 50,
+        "punteggio_alto": 64,
+        "fascia_di_lettura": "MODERATA",
+        "quota": 0.5722,
+        "righe_entro_soglia": 111,
+        "righe_di_prova": 194
+      },
+      "MATURE": {
+        "punteggio": 54,
+        "punteggio_basso": 53,
+        "punteggio_alto": 55,
+        "fascia_di_lettura": "MODERATA",
+        "quota": 0.5415,
+        "righe_entro_soglia": 3704,
+        "righe_di_prova": 6840
+      }
+    },
+    "curva_completa": {
+      "soglie": [
+        0.5,
+        1.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0
+      ],
+      "complessivo": [
+        {
+          "soglia": 0.5,
+          "quota": 0.2728,
+          "quota_bassa": 0.2625,
+          "quota_alta": 0.2832,
+          "righe_entro_soglia": 1939,
+          "righe": 7109
+        },
+        {
+          "soglia": 1.0,
+          "quota": 0.542,
+          "quota_bassa": 0.5304,
+          "quota_alta": 0.5535,
+          "righe_entro_soglia": 3853,
+          "righe": 7109
+        },
+        {
+          "soglia": 1.5,
+          "quota": 0.743,
+          "quota_bassa": 0.7327,
+          "quota_alta": 0.753,
+          "righe_entro_soglia": 5282,
+          "righe": 7109
+        },
+        {
+          "soglia": 2.0,
+          "quota": 0.8955,
+          "quota_bassa": 0.8882,
+          "quota_alta": 0.9024,
+          "righe_entro_soglia": 6366,
+          "righe": 7109
+        },
+        {
+          "soglia": 2.5,
+          "quota": 0.9491,
+          "quota_bassa": 0.9437,
+          "quota_alta": 0.954,
+          "righe_entro_soglia": 6747,
+          "righe": 7109
+        },
+        {
+          "soglia": 3.0,
+          "quota": 0.9679,
+          "quota_bassa": 0.9636,
+          "quota_alta": 0.9718,
+          "righe_entro_soglia": 6881,
+          "righe": 7109
+        },
+        {
+          "soglia": 4.0,
+          "quota": 0.9883,
+          "quota_bassa": 0.9856,
+          "quota_alta": 0.9906,
+          "righe_entro_soglia": 7026,
+          "righe": 7109
+        },
+        {
+          "soglia": 5.0,
+          "quota": 0.9956,
+          "quota_bassa": 0.9938,
+          "quota_alta": 0.9969,
+          "righe_entro_soglia": 7078,
+          "righe": 7109
+        },
+        {
+          "soglia": 6.0,
+          "quota": 0.9992,
+          "quota_bassa": 0.9982,
+          "quota_alta": 0.9996,
+          "righe_entro_soglia": 7103,
+          "righe": 7109
+        },
+        {
+          "soglia": 7.0,
+          "quota": 0.9996,
+          "quota_bassa": 0.9988,
+          "quota_alta": 0.9999,
+          "righe_entro_soglia": 7106,
+          "righe": 7109
+        },
+        {
+          "soglia": 8.0,
+          "quota": 1.0,
+          "quota_bassa": 0.9995,
+          "quota_alta": 1.0,
+          "righe_entro_soglia": 7109,
+          "righe": 7109
+        }
+      ],
+      "per_fascia": {
+        "EARLY": [
+          {
+            "soglia": 0.5,
+            "quota": 0.2667,
+            "quota_bassa": 0.1798,
+            "quota_alta": 0.3763,
+            "righe_entro_soglia": 20,
+            "righe": 75
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.4667,
+            "quota_bassa": 0.3582,
+            "quota_alta": 0.5784,
+            "righe_entro_soglia": 35,
+            "righe": 75
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.72,
+            "quota_bassa": 0.6096,
+            "quota_alta": 0.809,
+            "righe_entro_soglia": 54,
+            "righe": 75
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.84,
+            "quota_bassa": 0.7408,
+            "quota_alta": 0.906,
+            "righe_entro_soglia": 63,
+            "righe": 75
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.9467,
+            "quota_bassa": 0.8707,
+            "quota_alta": 0.9791,
+            "righe_entro_soglia": 71,
+            "righe": 75
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.9733,
+            "quota_bassa": 0.9079,
+            "quota_alta": 0.9927,
+            "righe_entro_soglia": 73,
+            "righe": 75
+          },
+          {
+            "soglia": 4.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9513,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 75,
+            "righe": 75
+          },
+          {
+            "soglia": 5.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9513,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 75,
+            "righe": 75
+          },
+          {
+            "soglia": 6.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9513,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 75,
+            "righe": 75
+          },
+          {
+            "soglia": 7.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9513,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 75,
+            "righe": 75
+          },
+          {
+            "soglia": 8.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9513,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 75,
+            "righe": 75
+          }
+        ],
+        "DEVELOPING": [
+          {
+            "soglia": 0.5,
+            "quota": 0.2835,
+            "quota_bassa": 0.2248,
+            "quota_alta": 0.3507,
+            "righe_entro_soglia": 55,
+            "righe": 194
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.5722,
+            "quota_bassa": 0.5018,
+            "quota_alta": 0.6397,
+            "righe_entro_soglia": 111,
+            "righe": 194
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.7268,
+            "quota_bassa": 0.6602,
+            "quota_alta": 0.7846,
+            "righe_entro_soglia": 141,
+            "righe": 194
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.8608,
+            "quota_bassa": 0.8051,
+            "quota_alta": 0.9026,
+            "righe_entro_soglia": 167,
+            "righe": 194
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.9433,
+            "quota_bassa": 0.9013,
+            "quota_alta": 0.968,
+            "righe_entro_soglia": 183,
+            "righe": 194
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.9536,
+            "quota_bassa": 0.9142,
+            "quota_alta": 0.9754,
+            "righe_entro_soglia": 185,
+            "righe": 194
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.9794,
+            "quota_bassa": 0.9482,
+            "quota_alta": 0.992,
+            "righe_entro_soglia": 190,
+            "righe": 194
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.9948,
+            "quota_bassa": 0.9714,
+            "quota_alta": 0.9991,
+            "righe_entro_soglia": 193,
+            "righe": 194
+          },
+          {
+            "soglia": 6.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9806,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 194,
+            "righe": 194
+          },
+          {
+            "soglia": 7.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9806,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 194,
+            "righe": 194
+          },
+          {
+            "soglia": 8.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9806,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 194,
+            "righe": 194
+          }
+        ],
+        "MATURE": [
+          {
+            "soglia": 0.5,
+            "quota": 0.2727,
+            "quota_bassa": 0.2622,
+            "quota_alta": 0.2833,
+            "righe_entro_soglia": 1865,
+            "righe": 6840
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.5415,
+            "quota_bassa": 0.5297,
+            "quota_alta": 0.5533,
+            "righe_entro_soglia": 3704,
+            "righe": 6840
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.7434,
+            "quota_bassa": 0.7329,
+            "quota_alta": 0.7536,
+            "righe_entro_soglia": 5085,
+            "righe": 6840
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.8969,
+            "quota_bassa": 0.8895,
+            "quota_alta": 0.9039,
+            "righe_entro_soglia": 6135,
+            "righe": 6840
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.9496,
+            "quota_bassa": 0.9441,
+            "quota_alta": 0.9545,
+            "righe_entro_soglia": 6495,
+            "righe": 6840
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.9684,
+            "quota_bassa": 0.964,
+            "quota_alta": 0.9723,
+            "righe_entro_soglia": 6624,
+            "righe": 6840
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.9885,
+            "quota_bassa": 0.9856,
+            "quota_alta": 0.9907,
+            "righe_entro_soglia": 6761,
+            "righe": 6840
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.9956,
+            "quota_bassa": 0.9937,
+            "quota_alta": 0.9969,
+            "righe_entro_soglia": 6810,
+            "righe": 6840
+          },
+          {
+            "soglia": 6.0,
+            "quota": 0.9991,
+            "quota_bassa": 0.9981,
+            "quota_alta": 0.9996,
+            "righe_entro_soglia": 6834,
+            "righe": 6840
+          },
+          {
+            "soglia": 7.0,
+            "quota": 0.9996,
+            "quota_bassa": 0.9987,
+            "quota_alta": 0.9999,
+            "righe_entro_soglia": 6837,
+            "righe": 6840
+          },
+          {
+            "soglia": 8.0,
+            "quota": 1.0,
+            "quota_bassa": 0.9994,
+            "quota_alta": 1.0,
+            "righe_entro_soglia": 6840,
+            "righe": 6840
+          }
+        ]
+      },
+      "perche": "si conserva intera perche' una soglia diversa si legga senza riaddestrare, e perche' la diagnostica veda la distribuzione dell'errore e non un punto"
+    },
+    "avvertenza": "affidabilita' del modello e probabilita' dell'evento sono due numeri diversi: non si sommano, non si confrontano e non si sostituiscono a vicenda"
+  },
+  "totale": {
+    "metodo": "calibrazione_diretta",
+    "valore_atteso": "somma dei due attesi: E[casa+trasferta] = E[casa] + E[trasferta], esatta anche con i due processi dipendenti. Nessun terzo valore atteso",
+    "dispersione": 1.0,
+    "distribuzione": "poisson",
+    "soglia_poisson": 1.05,
+    "livello_nominale": 0.6700000000000002,
+    "livello_dichiarato": 0.8,
+    "copertura_sul_periodo_di_addestramento": 0.8011,
+    "gare_di_addestramento": 6452,
+    "prova_fuori_campione": {
+      "origini": 4,
+      "gare_di_prova": 2838,
+      "copertura_media_fuori_campione": 0.8196,
+      "scarto_di_calibrazione_delle_linee": 0.0258,
+      "mae_del_totale": 1.5178,
+      "correlazione_di_rango_fra_i_lati": -0.0621,
+      "confronto_con_la_composizione": {
+        "diretta": 0.0195,
+        "composizione": 0.0153
+      }
+    },
+    "calibrazione_delle_linee_sui_due_lati": 0.013,
+    "avvertenza": "la copertura misurata fuori campione e' piu' bassa di quella dichiarata su sei bersagli su sette: l'intervallo promette l'ottanta per cento e ne copre fra il settantotto e il settantanove virgola nove. Va detto, non nascosto",
+    "affidabilita": {
+      "definizione": "probabilita' misurata fuori campione che lo scarto fra totale previsto e totale osservato resti entro la soglia assoluta del totale",
+      "soglia_assoluta": 2.0,
+      "come_e_stata_scelta": "errore assoluto medio della migliore baseline del totale (baseline_lega, 1.5366) arrotondato all'unita' del bersaglio",
+      "fasce_di_lettura": [
+        {
+          "da": 0,
+          "fino_a": 50,
+          "nome": "BASSA"
+        },
+        {
+          "da": 50,
+          "fino_a": 70,
+          "nome": "MODERATA"
+        },
+        {
+          "da": 70,
+          "fino_a": 85,
+          "nome": "ALTA"
+        },
+        {
+          "da": 85,
+          "fino_a": 101,
+          "nome": "MOLTO ALTA"
+        }
+      ],
+      "misurata_sulla_miscela_congelata": true,
+      "complessivo": {
+        "punteggio": 73,
+        "punteggio_basso": 71,
+        "punteggio_alto": 75,
+        "fascia_di_lettura": "ALTA",
+        "quota": 0.7295,
+        "righe_entro_soglia": 1882,
+        "righe_di_prova": 2580
+      },
+      "per_fascia": {
+        "EARLY": {
+          "punteggio": 75,
+          "punteggio_basso": 58,
+          "punteggio_alto": 87,
+          "fascia_di_lettura": "ALTA",
+          "quota": 0.75,
+          "righe_entro_soglia": 24,
+          "righe_di_prova": 32
+        },
+        "DEVELOPING": {
+          "punteggio": 69,
+          "punteggio_basso": 59,
+          "punteggio_alto": 77,
+          "fascia_di_lettura": "MODERATA",
+          "quota": 0.6882,
+          "righe_entro_soglia": 64,
+          "righe_di_prova": 93
+        },
+        "MATURE": {
+          "punteggio": 73,
+          "punteggio_basso": 71,
+          "punteggio_alto": 75,
+          "fascia_di_lettura": "ALTA",
+          "quota": 0.7308,
+          "righe_entro_soglia": 1794,
+          "righe_di_prova": 2455
+        }
+      },
+      "curva_completa": {
+        "soglie": [
+          0.5,
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          4.0,
+          5.0,
+          6.0,
+          7.0,
+          8.0
+        ],
+        "complessivo": [
+          {
+            "soglia": 0.5,
+            "quota": 0.212,
+            "quota_bassa": 0.1967,
+            "quota_alta": 0.2282,
+            "righe_entro_soglia": 547,
+            "righe": 2580
+          },
+          {
+            "soglia": 1.0,
+            "quota": 0.4,
+            "quota_bassa": 0.3813,
+            "quota_alta": 0.419,
+            "righe_entro_soglia": 1032,
+            "righe": 2580
+          },
+          {
+            "soglia": 1.5,
+            "quota": 0.5833,
+            "quota_bassa": 0.5642,
+            "quota_alta": 0.6022,
+            "righe_entro_soglia": 1505,
+            "righe": 2580
+          },
+          {
+            "soglia": 2.0,
+            "quota": 0.7295,
+            "quota_bassa": 0.712,
+            "quota_alta": 0.7462,
+            "righe_entro_soglia": 1882,
+            "righe": 2580
+          },
+          {
+            "soglia": 2.5,
+            "quota": 0.8554,
+            "quota_bassa": 0.8413,
+            "quota_alta": 0.8685,
+            "righe_entro_soglia": 2207,
+            "righe": 2580
+          },
+          {
+            "soglia": 3.0,
+            "quota": 0.9194,
+            "quota_bassa": 0.9082,
+            "quota_alta": 0.9293,
+            "righe_entro_soglia": 2372,
+            "righe": 2580
+          },
+          {
+            "soglia": 4.0,
+            "quota": 0.9702,
+            "quota_bassa": 0.9629,
+            "quota_alta": 0.9761,
+            "righe_entro_soglia": 2503,
+            "righe": 2580
+          },
+          {
+            "soglia": 5.0,
+            "quota": 0.9849,
+            "quota_bassa": 0.9794,
+            "quota_alta": 0.9889,
+            "righe_entro_soglia": 2541,
+            "righe": 2580
+          },
+          {
+            "soglia": 6.0,
+            "quota": 0.9942,
+            "quota_bassa": 0.9904,
+            "quota_alta": 0.9965,
+            "righe_entro_soglia": 2565,
+            "righe": 2580
+          },
+          {
+            "soglia": 7.0,
+            "quota": 0.9981,
+            "quota_bassa": 0.9955,
+            "quota_alta": 0.9992,
+            "righe_entro_soglia": 2575,
+            "righe": 2580
+          },
+          {
+            "soglia": 8.0,
+            "quota": 0.9996,
+            "quota_bassa": 0.9978,
+            "quota_alta": 0.9999,
+            "righe_entro_soglia": 2579,
+            "righe": 2580
+          }
+        ],
+        "per_fascia": {
+          "EARLY": [
+            {
+              "soglia": 0.5,
+              "quota": 0.2812,
+              "quota_bassa": 0.1556,
+              "quota_alta": 0.4537,
+              "righe_entro_soglia": 9,
+              "righe": 32
+            },
+            {
+              "soglia": 1.0,
+              "quota": 0.5,
+              "quota_bassa": 0.3363,
+              "quota_alta": 0.6637,
+              "righe_entro_soglia": 16,
+              "righe": 32
+            },
+            {
+              "soglia": 1.5,
+              "quota": 0.5938,
+              "quota_bassa": 0.4226,
+              "quota_alta": 0.7448,
+              "righe_entro_soglia": 19,
+              "righe": 32
+            },
+            {
+              "soglia": 2.0,
+              "quota": 0.75,
+              "quota_bassa": 0.5789,
+              "quota_alta": 0.8675,
+              "righe_entro_soglia": 24,
+              "righe": 32
+            },
+            {
+              "soglia": 2.5,
+              "quota": 0.9375,
+              "quota_bassa": 0.7985,
+              "quota_alta": 0.9827,
+              "righe_entro_soglia": 30,
+              "righe": 32
+            },
+            {
+              "soglia": 3.0,
+              "quota": 0.9688,
+              "quota_bassa": 0.8426,
+              "quota_alta": 0.9945,
+              "righe_entro_soglia": 31,
+              "righe": 32
+            },
+            {
+              "soglia": 4.0,
+              "quota": 0.9688,
+              "quota_bassa": 0.8426,
+              "quota_alta": 0.9945,
+              "righe_entro_soglia": 31,
+              "righe": 32
+            },
+            {
+              "soglia": 5.0,
+              "quota": 1.0,
+              "quota_bassa": 0.8928,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 32,
+              "righe": 32
+            },
+            {
+              "soglia": 6.0,
+              "quota": 1.0,
+              "quota_bassa": 0.8928,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 32,
+              "righe": 32
+            },
+            {
+              "soglia": 7.0,
+              "quota": 1.0,
+              "quota_bassa": 0.8928,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 32,
+              "righe": 32
+            },
+            {
+              "soglia": 8.0,
+              "quota": 1.0,
+              "quota_bassa": 0.8928,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 32,
+              "righe": 32
+            }
+          ],
+          "DEVELOPING": [
+            {
+              "soglia": 0.5,
+              "quota": 0.2151,
+              "quota_bassa": 0.1437,
+              "quota_alta": 0.309,
+              "righe_entro_soglia": 20,
+              "righe": 93
+            },
+            {
+              "soglia": 1.0,
+              "quota": 0.4624,
+              "quota_bassa": 0.3645,
+              "quota_alta": 0.5632,
+              "righe_entro_soglia": 43,
+              "righe": 93
+            },
+            {
+              "soglia": 1.5,
+              "quota": 0.5591,
+              "quota_bassa": 0.4579,
+              "quota_alta": 0.6557,
+              "righe_entro_soglia": 52,
+              "righe": 93
+            },
+            {
+              "soglia": 2.0,
+              "quota": 0.6882,
+              "quota_bassa": 0.5881,
+              "quota_alta": 0.7733,
+              "righe_entro_soglia": 64,
+              "righe": 93
+            },
+            {
+              "soglia": 2.5,
+              "quota": 0.828,
+              "quota_bassa": 0.7387,
+              "quota_alta": 0.8912,
+              "righe_entro_soglia": 77,
+              "righe": 93
+            },
+            {
+              "soglia": 3.0,
+              "quota": 0.8925,
+              "quota_bassa": 0.8133,
+              "quota_alta": 0.9405,
+              "righe_entro_soglia": 83,
+              "righe": 93
+            },
+            {
+              "soglia": 4.0,
+              "quota": 0.9462,
+              "quota_bassa": 0.8803,
+              "quota_alta": 0.9768,
+              "righe_entro_soglia": 88,
+              "righe": 93
+            },
+            {
+              "soglia": 5.0,
+              "quota": 0.9677,
+              "quota_bassa": 0.9094,
+              "quota_alta": 0.989,
+              "righe_entro_soglia": 90,
+              "righe": 93
+            },
+            {
+              "soglia": 6.0,
+              "quota": 1.0,
+              "quota_bassa": 0.9603,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 93,
+              "righe": 93
+            },
+            {
+              "soglia": 7.0,
+              "quota": 1.0,
+              "quota_bassa": 0.9603,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 93,
+              "righe": 93
+            },
+            {
+              "soglia": 8.0,
+              "quota": 1.0,
+              "quota_bassa": 0.9603,
+              "quota_alta": 1.0,
+              "righe_entro_soglia": 93,
+              "righe": 93
+            }
+          ],
+          "MATURE": [
+            {
+              "soglia": 0.5,
+              "quota": 0.211,
+              "quota_bassa": 0.1953,
+              "quota_alta": 0.2276,
+              "righe_entro_soglia": 518,
+              "righe": 2455
+            },
+            {
+              "soglia": 1.0,
+              "quota": 0.3963,
+              "quota_bassa": 0.3772,
+              "quota_alta": 0.4158,
+              "righe_entro_soglia": 973,
+              "righe": 2455
+            },
+            {
+              "soglia": 1.5,
+              "quota": 0.5841,
+              "quota_bassa": 0.5645,
+              "quota_alta": 0.6035,
+              "righe_entro_soglia": 1434,
+              "righe": 2455
+            },
+            {
+              "soglia": 2.0,
+              "quota": 0.7308,
+              "quota_bassa": 0.7129,
+              "quota_alta": 0.7479,
+              "righe_entro_soglia": 1794,
+              "righe": 2455
+            },
+            {
+              "soglia": 2.5,
+              "quota": 0.8554,
+              "quota_bassa": 0.8409,
+              "quota_alta": 0.8688,
+              "righe_entro_soglia": 2100,
+              "righe": 2455
+            },
+            {
+              "soglia": 3.0,
+              "quota": 0.9198,
+              "quota_bassa": 0.9083,
+              "quota_alta": 0.9299,
+              "righe_entro_soglia": 2258,
+              "righe": 2455
+            },
+            {
+              "soglia": 4.0,
+              "quota": 0.9711,
+              "quota_bassa": 0.9637,
+              "quota_alta": 0.977,
+              "righe_entro_soglia": 2384,
+              "righe": 2455
+            },
+            {
+              "soglia": 5.0,
+              "quota": 0.9853,
+              "quota_bassa": 0.9798,
+              "quota_alta": 0.9894,
+              "righe_entro_soglia": 2419,
+              "righe": 2455
+            },
+            {
+              "soglia": 6.0,
+              "quota": 0.9939,
+              "quota_bassa": 0.9899,
+              "quota_alta": 0.9963,
+              "righe_entro_soglia": 2440,
+              "righe": 2455
+            },
+            {
+              "soglia": 7.0,
+              "quota": 0.998,
+              "quota_bassa": 0.9952,
+              "quota_alta": 0.9991,
+              "righe_entro_soglia": 2450,
+              "righe": 2455
+            },
+            {
+              "soglia": 8.0,
+              "quota": 0.9996,
+              "quota_bassa": 0.9977,
+              "quota_alta": 0.9999,
+              "righe_entro_soglia": 2454,
+              "righe": 2455
+            }
+          ]
+        },
+        "perche": "si conserva intera perche' una soglia diversa si legga senza riaddestrare, e perche' la diagnostica veda la distribuzione dell'errore e non un punto"
+      },
+      "avvertenza": "sul totale il modello batte la migliore baseline di poco, dallo zero virgola sette al cinque virgola due per cento: e' un margine piu' sottile di quello delle marginali. E non e' l'affidabilita' di nessuno dei due lati: la media dei due punteggi sbaglia in entrambe le direzioni e il minimo sbaglia sempre"
+    }
+  },
+  "linee": {
+    "quante": 5,
+    "regola": "il centro e' l'atteso arrotondato meno mezzo, poi due soglie sotto e due sopra a passo di una unita'",
+    "passi": [
+      -2.0,
+      -1.0,
+      0.0,
+      1.0,
+      2.0
+    ],
+    "probabilita_da": "la funzione di ripartizione della distribuzione calibrata, mai la distanza dal valore atteso",
+    "senza_il_livello_nominale": "il livello nominale corregge l'intervallo, non la funzione di ripartizione: sulle probabilita' non si applica"
+  },
+  "validation_metrics": {
+    "metodo": "finestra avanzante su 5 origini",
+    "mae": 1.0841,
+    "rmse": 1.3694,
+    "bias": -0.0021,
+    "mae_mediano": 0.8712,
+    "copertura_intervallo": 0.8014,
+    "migliore_baseline": "baseline_lega",
+    "mae_migliore_baseline": 1.1392,
+    "vantaggio_su_migliore_baseline": 0.04837,
+    "origini_vinte_su_migliore_baseline": "5/5"
+  },
+  "checksum": {
+    "algoritmo": "sha256",
+    "ambito": "byte del file dell'artefatto",
+    "file": "offsides__poisson_glm.json.sha256"
+  }
+}

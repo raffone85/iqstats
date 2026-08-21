@@ -1,0 +1,208 @@
+{
+  "generato_da": "scripts/projection/dataset/verify_cards.py",
+  "gare_con_episodi": 9205,
+  "gare_con_pannello": 7905,
+  "gare_con_riga_gialli": 7711,
+  "gare_con_riga_rossi": 1792,
+  "episodi_per_natura": {
+    "yellow": 37775,
+    "yellowRed": 741,
+    "red": 1310
+  },
+  "episodi_senza_lato": 0,
+  "gialli": {
+    "controllo": {
+      "lati": 13918,
+      "accordo": 0.975068,
+      "scarto_totale": -121
+    },
+    "assi": {
+      "seconda": {
+        "lati": 541,
+        "accordo_escluso": 0.077634,
+        "accordo_incluso": 0.90573,
+        "scarto_totale_escluso": -513,
+        "scarto_totale_incluso": 37,
+        "verdetto": "compreso nel conteggio aggregato",
+        "esempi_di_disaccordo": [
+          {
+            "event_id": "166",
+            "lato": "home",
+            "pannello": 5,
+            "episodi": {
+              "giallo": 3,
+              "rosso_diretto": 1,
+              "seconda": 1,
+              "non_attribuiti": 0,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "544",
+            "lato": "away",
+            "pannello": 4,
+            "episodi": {
+              "giallo": 2,
+              "rosso_diretto": 0,
+              "seconda": 1,
+              "non_attribuiti": 0,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "580",
+            "lato": "away",
+            "pannello": 5,
+            "episodi": {
+              "giallo": 3,
+              "rosso_diretto": 0,
+              "seconda": 1,
+              "non_attribuiti": 0,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "838",
+            "lato": "away",
+            "pannello": 8,
+            "episodi": {
+              "giallo": 6,
+              "rosso_diretto": 0,
+              "seconda": 1,
+              "non_attribuiti": 0,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "886",
+            "lato": "away",
+            "pannello": 5,
+            "episodi": {
+              "giallo": 6,
+              "rosso_diretto": 2,
+              "seconda": 1,
+              "non_attribuiti": 0,
+              "panchina": 0
+            }
+          }
+        ]
+      },
+      "non_attribuiti": {
+        "lati": 894,
+        "accordo_escluso": 0.957494,
+        "accordo_incluso": 0.02349,
+        "scarto_totale_escluso": -2,
+        "scarto_totale_incluso": 923,
+        "verdetto": "non compreso nel conteggio aggregato",
+        "esempi_di_disaccordo": [
+          {
+            "event_id": "659",
+            "lato": "away",
+            "pannello": 3,
+            "episodi": {
+              "giallo": 4,
+              "rosso_diretto": 0,
+              "seconda": 0,
+              "non_attribuiti": 1,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "1047",
+            "lato": "away",
+            "pannello": 2,
+            "episodi": {
+              "giallo": 3,
+              "rosso_diretto": 1,
+              "seconda": 0,
+              "non_attribuiti": 1,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "3362",
+            "lato": "away",
+            "pannello": 1,
+            "episodi": {
+              "giallo": 2,
+              "rosso_diretto": 0,
+              "seconda": 0,
+              "non_attribuiti": 1,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "3364",
+            "lato": "home",
+            "pannello": 1,
+            "episodi": {
+              "giallo": 2,
+              "rosso_diretto": 0,
+              "seconda": 0,
+              "non_attribuiti": 1,
+              "panchina": 0
+            }
+          },
+          {
+            "event_id": "4323",
+            "lato": "home",
+            "pannello": 2,
+            "episodi": {
+              "giallo": 3,
+              "rosso_diretto": 0,
+              "seconda": 0,
+              "non_attribuiti": 1,
+              "panchina": 0
+            }
+          }
+        ]
+      },
+      "panchina": {
+        "lati": 0,
+        "accordo_escluso": null,
+        "accordo_incluso": null,
+        "scarto_totale_escluso": 0,
+        "scarto_totale_incluso": 0,
+        "verdetto": "campione insufficiente",
+        "esempi_di_disaccordo": []
+      }
+    }
+  },
+  "rossi": {
+    "controllo": {
+      "lati": 2791,
+      "accordo": 0.9957,
+      "scarto_totale": -8
+    },
+    "assi": {
+      "seconda": {
+        "lati": 539,
+        "accordo_escluso": 0.001855,
+        "accordo_incluso": 0.998145,
+        "scarto_totale_escluso": -547,
+        "scarto_totale_incluso": 1,
+        "verdetto": "compreso nel conteggio aggregato",
+        "esempi_di_disaccordo": []
+      },
+      "non_attribuiti": {
+        "lati": 185,
+        "accordo_escluso": 0.983784,
+        "accordo_incluso": 0.016216,
+        "scarto_totale_escluso": -3,
+        "scarto_totale_incluso": 188,
+        "verdetto": "non compreso nel conteggio aggregato",
+        "esempi_di_disaccordo": []
+      },
+      "panchina": {
+        "lati": 0,
+        "accordo_escluso": null,
+        "accordo_incluso": null,
+        "scarto_totale_escluso": 0,
+        "scarto_totale_incluso": 0,
+        "verdetto": "campione insufficiente",
+        "esempi_di_disaccordo": []
+      }
+    }
+  },
+  "nota_metodo": "per ogni asse si contano i soli lati in cui quell'asse e' presente e gli altri due sono assenti: il confronto e' quindi isolato e non confuso"
+}

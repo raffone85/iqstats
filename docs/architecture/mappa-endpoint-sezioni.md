@@ -34,7 +34,8 @@ Due scoperte del 16 agosto cambiano il conto in meglio:
 | `/events/{id}/` | dettaglio gara, con i precedenti dentro | dossier (testata, contorno, testa a testa) |
 | `/events/{id}/odds/comparison/` | undici mercati | dossier (modello e mercato) — **usato solo in parte** |
 | `/events/{id}/lineups/` | undici confermato o previsto con confidenza | dossier (chi gioca) |
-| `/events/{id}/stats/` | statistiche di squadra | scheda squadra (medie) — **usato solo in parte** |
+| `/events/{id}/stats/` | statistiche di squadra e mappa dei tiri | scheda squadra (medie), dossier (la gara giocata) — **momentum e xG cumulato ancora inutilizzati** |
+| `/events/{id}/incidents/` | gol, cartellini, cambi al minuto | dossier (come si è svolta) |
 | `/events/{id}/player-stats/` | statistiche per giocatore | scheda squadra (rosa) |
 | `/predictions/` | modello della fonte | dossier (verdetto), `/pronostici` |
 | `/leagues/` | catalogo competizioni | ovunque, con stemmi |
@@ -51,14 +52,16 @@ Due scoperte del 16 agosto cambiano il conto in meglio:
 | Endpoint | Che cosa dà | Dove va | Costo |
 |---|---|---|---|
 | *(già scaricato)* `total_corners` | 17 linee da 3,5 a 16,5 | confronto sulla lettura «Il gioco» | **0** |
-| *(già scaricato)* `/stats/` shotmap | ogni tiro con xG ed esito | mappa dei tiri della gara conclusa | **0** oltre alla richiesta stats |
 | *(già scaricato)* `/stats/` momentum e xG cumulato | l'andamento della gara | come si è svolta la gara conclusa | **0** |
-| `/events/{id}/stats/` nel dossier | le due colonne di statistiche | gara conclusa | 1, solo a gara conclusa |
-| `/events/{id}/incidents/` | gol, cartellini, cambi, VAR al minuto | cronologia della gara conclusa | 1, solo a gara conclusa |
-| `/leagues/{id}/standings/` nel dossier | posizione, punti, forma delle due squadre | classifica e forma | 1, cache lunga |
 
-Conto del dossier dopo queste aggiunte: **dieci richieste a gara futura, dodici a gara
-conclusa**, in tre ondate da non più di sei. Sotto il tetto.
+Fatte il 16 agosto, ora in pagina: `/events/{id}/stats/` (le due colonne di statistiche **e**
+la mappa dei tiri, una richiesta sola), `/events/{id}/incidents/` (cronologia) e
+`/leagues/{id}/standings/` (classifica e forma). Restano da usare il momentum e l'xG
+cumulato, che arrivano con la stessa richiesta delle statistiche e quindi costano zero.
+
+Conto del dossier: **dodici richieste a gara futura, quattordici a gara conclusa**, in
+quattro ondate da non più di sei. Le due della gara conclusa stanno in un'ondata a sé e su
+una gara ancora da giocare non partono affatto. Sotto il tetto.
 
 ## Da usare con la raccolta notturna
 

@@ -1,0 +1,1696 @@
+{
+  "target": "fouls",
+  "modello": "ridge",
+  "schema": "discriminazione-affidabilita/1",
+  "forma_misurata": "miscela congelata, cioe' il valore che il predittore produce",
+  "pesi_della_miscela": {
+    "EARLY": 0.95,
+    "DEVELOPING": 0.8,
+    "MATURE": 1.0
+  },
+  "soglia_di_lettura": 2.5,
+  "significato_della_soglia": "la distanza su cui si legge la discriminazione, scelta vicino alla mediana dell'errore perche' li' l'indicatore ha varianza massima; non e' la soglia dell'affidabilita', che non e' stata scelta",
+  "righe_di_prova": 7348,
+  "righe_scartate_per_feature_mancanti": 1023,
+  "quota_complessiva_entro_soglia": 0.5297,
+  "regola_di_promozione": {
+    "righe_minime_per_gruppo": 150,
+    "rapporto_minimo": 2.0,
+    "quota_minima_di_coerenza": 0.75
+  },
+  "condizioni_promosse": [
+    {
+      "condizione": "lega",
+      "colonna": "league_id",
+      "gruppo_migliore": "14",
+      "gruppo_peggiore": "20",
+      "punti_di_scarto": 11.1,
+      "errori_standard": 2.81
+    },
+    {
+      "condizione": "scarto dalla media di lega",
+      "colonna": "zeta_dalla_lega",
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "punti_di_scarto": -5.0,
+      "errori_standard": -3.51
+    }
+  ],
+  "condizioni": [
+    {
+      "condizione": "lega",
+      "forma": "categoria",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "1",
+          "righe": 464,
+          "entro_soglia": 274,
+          "quota": 0.5905,
+          "quota_bassa": 0.5452,
+          "quota_alta": 0.6343,
+          "mae": 2.5942
+        },
+        {
+          "gruppo": "10",
+          "righe": 354,
+          "entro_soglia": 187,
+          "quota": 0.5282,
+          "quota_bassa": 0.4762,
+          "quota_alta": 0.5797,
+          "mae": 2.7031
+        },
+        {
+          "gruppo": "11",
+          "righe": 334,
+          "entro_soglia": 181,
+          "quota": 0.5419,
+          "quota_bassa": 0.4883,
+          "quota_alta": 0.5946,
+          "mae": 2.8511
+        },
+        {
+          "gruppo": "12",
+          "righe": 654,
+          "entro_soglia": 364,
+          "quota": 0.5566,
+          "quota_bassa": 0.5183,
+          "quota_alta": 0.5942,
+          "mae": 2.5646
+        },
+        {
+          "gruppo": "13",
+          "righe": 258,
+          "entro_soglia": 132,
+          "quota": 0.5116,
+          "quota_bassa": 0.4509,
+          "quota_alta": 0.572,
+          "mae": 2.8707
+        },
+        {
+          "gruppo": "14",
+          "righe": 362,
+          "entro_soglia": 216,
+          "quota": 0.5967,
+          "quota_bassa": 0.5454,
+          "quota_alta": 0.6459,
+          "mae": 2.5444
+        },
+        {
+          "gruppo": "15",
+          "righe": 264,
+          "entro_soglia": 133,
+          "quota": 0.5038,
+          "quota_bassa": 0.4439,
+          "quota_alta": 0.5636,
+          "mae": 2.9173
+        },
+        {
+          "gruppo": "17",
+          "righe": 414,
+          "entro_soglia": 216,
+          "quota": 0.5217,
+          "quota_bassa": 0.4736,
+          "quota_alta": 0.5694,
+          "mae": 2.8536
+        },
+        {
+          "gruppo": "2",
+          "righe": 387,
+          "entro_soglia": 202,
+          "quota": 0.522,
+          "quota_bassa": 0.4722,
+          "quota_alta": 0.5713,
+          "mae": 2.8817
+        },
+        {
+          "gruppo": "20",
+          "righe": 280,
+          "entro_soglia": 136,
+          "quota": 0.4857,
+          "quota_bassa": 0.4278,
+          "quota_alta": 0.5441,
+          "mae": 3.0017
+        },
+        {
+          "gruppo": "23",
+          "righe": 332,
+          "entro_soglia": 165,
+          "quota": 0.497,
+          "quota_bassa": 0.4435,
+          "quota_alta": 0.5505,
+          "mae": 2.9251
+        },
+        {
+          "gruppo": "24",
+          "righe": 289,
+          "entro_soglia": 151,
+          "quota": 0.5225,
+          "quota_bassa": 0.465,
+          "quota_alta": 0.5794,
+          "mae": 2.8918
+        },
+        {
+          "gruppo": "25",
+          "righe": 298,
+          "entro_soglia": 159,
+          "quota": 0.5336,
+          "quota_bassa": 0.4768,
+          "quota_alta": 0.5894,
+          "mae": 2.801
+        },
+        {
+          "gruppo": "3",
+          "righe": 462,
+          "entro_soglia": 233,
+          "quota": 0.5043,
+          "quota_bassa": 0.4589,
+          "quota_alta": 0.5497,
+          "mae": 2.8313
+        },
+        {
+          "gruppo": "38",
+          "righe": 570,
+          "entro_soglia": 284,
+          "quota": 0.4982,
+          "quota_bassa": 0.4573,
+          "quota_alta": 0.5392,
+          "mae": 2.8881
+        },
+        {
+          "gruppo": "4",
+          "righe": 474,
+          "entro_soglia": 235,
+          "quota": 0.4958,
+          "quota_bassa": 0.451,
+          "quota_alta": 0.5406,
+          "mae": 2.9559
+        },
+        {
+          "gruppo": "49",
+          "righe": 327,
+          "entro_soglia": 188,
+          "quota": 0.5749,
+          "quota_bassa": 0.5208,
+          "quota_alta": 0.6273,
+          "mae": 2.5621
+        },
+        {
+          "gruppo": "5",
+          "righe": 377,
+          "entro_soglia": 194,
+          "quota": 0.5146,
+          "quota_bassa": 0.4642,
+          "quota_alta": 0.5646,
+          "mae": 2.6664
+        },
+        {
+          "gruppo": "6",
+          "righe": 346,
+          "entro_soglia": 184,
+          "quota": 0.5318,
+          "quota_bassa": 0.4792,
+          "quota_alta": 0.5837,
+          "mae": 2.833
+        }
+      ],
+      "gruppo_migliore": "14",
+      "gruppo_peggiore": "20",
+      "estremi_scelti_dai_dati": true,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.111,
+        "errore_standard": 0.0395,
+        "rapporto": 2.81
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 4,
+        "concordi": 4,
+        "quota": 1.0
+      },
+      "coerenza_fra_leghe": null,
+      "promossa": true,
+      "perche": "scarto ampio e segno stabile",
+      "colonna": "league_id"
+    },
+    {
+      "condizione": "lato del campo",
+      "forma": "categoria",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "away",
+          "righe": 3675,
+          "entro_soglia": 1897,
+          "quota": 0.5162,
+          "quota_bassa": 0.5,
+          "quota_alta": 0.5323,
+          "mae": 2.8632
+        },
+        {
+          "gruppo": "home",
+          "righe": 3673,
+          "entro_soglia": 1995,
+          "quota": 0.5432,
+          "quota_bassa": 0.527,
+          "quota_alta": 0.5592,
+          "mae": 2.7109
+        }
+      ],
+      "gruppo_migliore": "home",
+      "gruppo_peggiore": "away",
+      "estremi_scelti_dai_dati": true,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.027,
+        "errore_standard": 0.0116,
+        "rapporto": 2.32
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 5,
+        "quota": 1.0
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 20,
+        "concordi": 14,
+        "quota": 0.7
+      },
+      "promossa": false,
+      "perche": "segno non stabile fra origini o leghe",
+      "colonna": "lato"
+    },
+    {
+      "condizione": "derby",
+      "colonna": "contesto_derby",
+      "stato": "nessun gruppo abbastanza popoloso"
+    },
+    {
+      "condizione": "storico della squadra",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2205,
+          "entro_soglia": 1166,
+          "quota": 0.5288,
+          "quota_bassa": 0.5079,
+          "quota_alta": 0.5496,
+          "mae": 2.796
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2728,
+          "entro_soglia": 1443,
+          "quota": 0.529,
+          "quota_bassa": 0.5102,
+          "quota_alta": 0.5476,
+          "mae": 2.8108
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2415,
+          "entro_soglia": 1283,
+          "quota": 0.5313,
+          "quota_bassa": 0.5113,
+          "quota_alta": 0.5511,
+          "mae": 2.7521
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0002,
+        "errore_standard": 0.0143,
+        "rapporto": -0.01
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 4,
+        "concordi": 2,
+        "quota": 0.5
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 17,
+        "concordi": 6,
+        "quota": 0.353
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "gare_precedenti"
+    },
+    {
+      "condizione": "storico dell'avversario",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2205,
+          "entro_soglia": 1171,
+          "quota": 0.5311,
+          "quota_bassa": 0.5102,
+          "quota_alta": 0.5518,
+          "mae": 2.7935
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2727,
+          "entro_soglia": 1439,
+          "quota": 0.5277,
+          "quota_bassa": 0.5089,
+          "quota_alta": 0.5464,
+          "mae": 2.8061
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2416,
+          "entro_soglia": 1282,
+          "quota": 0.5306,
+          "quota_bassa": 0.5107,
+          "quota_alta": 0.5505,
+          "mae": 2.7598
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0034,
+        "errore_standard": 0.0143,
+        "rapporto": 0.24
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 4,
+        "concordi": 2,
+        "quota": 0.5
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 17,
+        "concordi": 10,
+        "quota": 0.588
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "avv_gare_precedenti"
+    },
+    {
+      "condizione": "giorni di riposo",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2447,
+          "entro_soglia": 1287,
+          "quota": 0.526,
+          "quota_bassa": 0.5061,
+          "quota_alta": 0.5457,
+          "mae": 2.8028
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2564,
+          "entro_soglia": 1371,
+          "quota": 0.5347,
+          "quota_bassa": 0.5154,
+          "quota_alta": 0.554,
+          "mae": 2.7713
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2337,
+          "entro_soglia": 1234,
+          "quota": 0.528,
+          "quota_bassa": 0.5078,
+          "quota_alta": 0.5482,
+          "mae": 2.7879
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0088,
+        "errore_standard": 0.0141,
+        "rapporto": -0.62
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 20,
+        "concordi": 11,
+        "quota": 0.55
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "giorni_di_riposo"
+    },
+    {
+      "condizione": "gare ravvicinate",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 812,
+          "entro_soglia": 454,
+          "quota": 0.5591,
+          "quota_bassa": 0.5248,
+          "quota_alta": 0.5929,
+          "mae": 2.6971
+        },
+        {
+          "gruppo": "basso",
+          "righe": 3188,
+          "entro_soglia": 1688,
+          "quota": 0.5295,
+          "quota_bassa": 0.5121,
+          "quota_alta": 0.5468,
+          "mae": 2.7871
+        },
+        {
+          "gruppo": "medio",
+          "righe": 3348,
+          "entro_soglia": 1750,
+          "quota": 0.5227,
+          "quota_bassa": 0.5058,
+          "quota_alta": 0.5396,
+          "mae": 2.8089
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0296,
+        "errore_standard": 0.0195,
+        "rapporto": 1.52
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 7,
+        "concordi": 5,
+        "quota": 0.714
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "contesto_gare_recenti"
+    },
+    {
+      "condizione": "turno di campionato",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2135,
+          "entro_soglia": 1135,
+          "quota": 0.5316,
+          "quota_bassa": 0.5104,
+          "quota_alta": 0.5527,
+          "mae": 2.7802
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2761,
+          "entro_soglia": 1428,
+          "quota": 0.5172,
+          "quota_bassa": 0.4986,
+          "quota_alta": 0.5358,
+          "mae": 2.842
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2452,
+          "entro_soglia": 1329,
+          "quota": 0.542,
+          "quota_bassa": 0.5222,
+          "quota_alta": 0.5616,
+          "mae": 2.7312
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0144,
+        "errore_standard": 0.0144,
+        "rapporto": 1.0
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 4,
+        "concordi": 3,
+        "quota": 0.75
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 15,
+        "concordi": 11,
+        "quota": 0.733
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "contesto_turno"
+    },
+    {
+      "condizione": "variabilita' della squadra",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1280,
+          "quota": 0.5227,
+          "quota_bassa": 0.5029,
+          "quota_alta": 0.5424,
+          "mae": 2.8436
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1314,
+          "quota": 0.5363,
+          "quota_bassa": 0.5165,
+          "quota_alta": 0.556,
+          "mae": 2.7226
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1298,
+          "quota": 0.53,
+          "quota_bassa": 0.5102,
+          "quota_alta": 0.5497,
+          "mae": 2.7951
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0137,
+        "errore_standard": 0.0143,
+        "rapporto": -0.96
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 17,
+        "concordi": 5,
+        "quota": 0.294
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "prodotto_stagione_sd"
+    },
+    {
+      "condizione": "scarto dalla media di lega",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1232,
+          "quota": 0.5031,
+          "quota_bassa": 0.4833,
+          "quota_alta": 0.5228,
+          "mae": 2.9245
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1355,
+          "quota": 0.5531,
+          "quota_bassa": 0.5333,
+          "quota_alta": 0.5727,
+          "mae": 2.6501
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1305,
+          "quota": 0.5329,
+          "quota_bassa": 0.5131,
+          "quota_alta": 0.5526,
+          "mae": 2.7866
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.05,
+        "errore_standard": 0.0142,
+        "rapporto": -3.51
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 5,
+        "quota": 1.0
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 15,
+        "quota": 0.789
+      },
+      "promossa": true,
+      "perche": "scarto ampio e segno stabile",
+      "colonna": "zeta_dalla_lega"
+    },
+    {
+      "condizione": "qualita' del confronto",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2430,
+          "entro_soglia": 1251,
+          "quota": 0.5148,
+          "quota_bassa": 0.4949,
+          "quota_alta": 0.5346,
+          "mae": 2.8269
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2460,
+          "entro_soglia": 1336,
+          "quota": 0.5431,
+          "quota_bassa": 0.5234,
+          "quota_alta": 0.5627,
+          "mae": 2.7414
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2458,
+          "entro_soglia": 1305,
+          "quota": 0.5309,
+          "quota_bassa": 0.5112,
+          "quota_alta": 0.5506,
+          "mae": 2.7934
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0283,
+        "errore_standard": 0.0143,
+        "rapporto": -1.98
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 12,
+        "quota": 0.632
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "confronto_produce_meno_concede"
+    },
+    {
+      "condizione": "forza d'attacco",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1227,
+          "quota": 0.501,
+          "quota_bassa": 0.4812,
+          "quota_alta": 0.5208,
+          "mae": 2.9142
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1326,
+          "quota": 0.5412,
+          "quota_bassa": 0.5214,
+          "quota_alta": 0.5609,
+          "mae": 2.6821
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1339,
+          "quota": 0.5468,
+          "quota_bassa": 0.527,
+          "quota_alta": 0.5664,
+          "mae": 2.765
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0402,
+        "errore_standard": 0.0143,
+        "rapporto": -2.82
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 14,
+        "quota": 0.737
+      },
+      "promossa": false,
+      "perche": "segno non stabile fra origini o leghe",
+      "colonna": "forza_attacco"
+    },
+    {
+      "condizione": "debolezza difensiva avversaria",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1278,
+          "quota": 0.5218,
+          "quota_bassa": 0.502,
+          "quota_alta": 0.5416,
+          "mae": 2.8539
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1309,
+          "quota": 0.5343,
+          "quota_bassa": 0.5145,
+          "quota_alta": 0.554,
+          "mae": 2.718
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1305,
+          "quota": 0.5329,
+          "quota_bassa": 0.5131,
+          "quota_alta": 0.5526,
+          "mae": 2.7893
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0124,
+        "errore_standard": 0.0143,
+        "rapporto": -0.87
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 11,
+        "quota": 0.579
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "debolezza_difesa_avversario"
+    },
+    {
+      "condizione": "storico dei giocatori",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2182,
+          "entro_soglia": 1156,
+          "quota": 0.5298,
+          "quota_bassa": 0.5088,
+          "quota_alta": 0.5507,
+          "mae": 2.7908
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2750,
+          "entro_soglia": 1453,
+          "quota": 0.5284,
+          "quota_bassa": 0.5097,
+          "quota_alta": 0.547,
+          "mae": 2.8109
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2416,
+          "entro_soglia": 1283,
+          "quota": 0.531,
+          "quota_bassa": 0.5111,
+          "quota_alta": 0.5509,
+          "mae": 2.7566
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0014,
+        "errore_standard": 0.0143,
+        "rapporto": 0.1
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 4,
+        "concordi": 2,
+        "quota": 0.5
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 17,
+        "concordi": 11,
+        "quota": 0.647
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "giocatori_gare_precedenti"
+    },
+    {
+      "condizione": "minuti di volti nuovi",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2439,
+          "entro_soglia": 1292,
+          "quota": 0.5297,
+          "quota_bassa": 0.5099,
+          "quota_alta": 0.5495,
+          "mae": 2.7504
+        },
+        {
+          "gruppo": "basso",
+          "righe": 3772,
+          "entro_soglia": 1985,
+          "quota": 0.5262,
+          "quota_bassa": 0.5103,
+          "quota_alta": 0.5421,
+          "mae": 2.8124
+        },
+        {
+          "gruppo": "medio",
+          "righe": 1137,
+          "entro_soglia": 615,
+          "quota": 0.5409,
+          "quota_bassa": 0.5118,
+          "quota_alta": 0.5697,
+          "mae": 2.7818
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0035,
+        "errore_standard": 0.013,
+        "rapporto": 0.27
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 9,
+        "quota": 0.474
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "giocatori_minuti_nuovi"
+    },
+    {
+      "condizione": "ampiezza della rosa usata",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2348,
+          "entro_soglia": 1217,
+          "quota": 0.5183,
+          "quota_bassa": 0.4981,
+          "quota_alta": 0.5385,
+          "mae": 2.8501
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2908,
+          "entro_soglia": 1574,
+          "quota": 0.5413,
+          "quota_bassa": 0.5231,
+          "quota_alta": 0.5593,
+          "mae": 2.7051
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2092,
+          "entro_soglia": 1101,
+          "quota": 0.5263,
+          "quota_bassa": 0.5049,
+          "quota_alta": 0.5476,
+          "mae": 2.8304
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.023,
+        "errore_standard": 0.0138,
+        "rapporto": -1.66
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 16,
+        "concordi": 10,
+        "quota": 0.625
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "giocatori_rosa_usata"
+    },
+    {
+      "condizione": "stabilita' della rosa",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2421,
+          "entro_soglia": 1275,
+          "quota": 0.5266,
+          "quota_bassa": 0.5067,
+          "quota_alta": 0.5465,
+          "mae": 2.7737
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1290,
+          "quota": 0.5265,
+          "quota_bassa": 0.5067,
+          "quota_alta": 0.5462,
+          "mae": 2.8087
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2477,
+          "entro_soglia": 1327,
+          "quota": 0.5357,
+          "quota_bassa": 0.516,
+          "quota_alta": 0.5553,
+          "mae": 2.7787
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0001,
+        "errore_standard": 0.0143,
+        "rapporto": 0.01
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 2,
+        "quota": 0.4
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 7,
+        "quota": 0.368
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "giocatori_stabilita"
+    },
+    {
+      "condizione": "allenatore noto",
+      "colonna": "allenatore_disponibile",
+      "stato": "nessun gruppo abbastanza popoloso"
+    },
+    {
+      "condizione": "gare dell'allenatore con la squadra",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2404,
+          "entro_soglia": 1272,
+          "quota": 0.5291,
+          "quota_bassa": 0.5091,
+          "quota_alta": 0.549,
+          "mae": 2.8077
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2613,
+          "entro_soglia": 1386,
+          "quota": 0.5304,
+          "quota_bassa": 0.5113,
+          "quota_alta": 0.5495,
+          "mae": 2.785
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2331,
+          "entro_soglia": 1234,
+          "quota": 0.5294,
+          "quota_bassa": 0.5091,
+          "quota_alta": 0.5496,
+          "mae": 2.7681
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0013,
+        "errore_standard": 0.0141,
+        "rapporto": -0.09
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 3,
+        "concordi": 2,
+        "quota": 0.667
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 9,
+        "quota": 0.474
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "allenatore_gare_con_la_squadra"
+    },
+    {
+      "condizione": "scarto fra le classifiche",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2445,
+          "entro_soglia": 1310,
+          "quota": 0.5358,
+          "quota_bassa": 0.516,
+          "quota_alta": 0.5555,
+          "mae": 2.7469
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2453,
+          "entro_soglia": 1295,
+          "quota": 0.5279,
+          "quota_bassa": 0.5081,
+          "quota_alta": 0.5476,
+          "mae": 2.8039
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2450,
+          "entro_soglia": 1287,
+          "quota": 0.5253,
+          "quota_bassa": 0.5055,
+          "quota_alta": 0.545,
+          "mae": 2.8104
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0079,
+        "errore_standard": 0.0143,
+        "rapporto": 0.55
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 8,
+        "quota": 0.421
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "classifica_delta_punti"
+    },
+    {
+      "condizione": "arbitro noto",
+      "colonna": "arbitro_disponibile",
+      "stato": "nessun gruppo abbastanza popoloso"
+    },
+    {
+      "condizione": "gare viste dell'arbitro",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2190,
+          "entro_soglia": 1188,
+          "quota": 0.5425,
+          "quota_bassa": 0.5215,
+          "quota_alta": 0.5632,
+          "mae": 2.7427
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2602,
+          "entro_soglia": 1353,
+          "quota": 0.52,
+          "quota_bassa": 0.5008,
+          "quota_alta": 0.5391,
+          "mae": 2.8348
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2556,
+          "entro_soglia": 1351,
+          "quota": 0.5286,
+          "quota_bassa": 0.5092,
+          "quota_alta": 0.5479,
+          "mae": 2.7765
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0225,
+        "errore_standard": 0.0145,
+        "rapporto": 1.55
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 2,
+        "quota": 0.4
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 16,
+        "concordi": 6,
+        "quota": 0.375
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_gare_viste"
+    },
+    {
+      "condizione": "campione dell'arbitro",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2070,
+          "entro_soglia": 1116,
+          "quota": 0.5391,
+          "quota_bassa": 0.5176,
+          "quota_alta": 0.5605,
+          "mae": 2.7663
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2801,
+          "entro_soglia": 1466,
+          "quota": 0.5234,
+          "quota_bassa": 0.5049,
+          "quota_alta": 0.5418,
+          "mae": 2.8173
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2477,
+          "entro_soglia": 1310,
+          "quota": 0.5289,
+          "quota_bassa": 0.5092,
+          "quota_alta": 0.5485,
+          "mae": 2.7703
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0157,
+        "errore_standard": 0.0145,
+        "rapporto": 1.09
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 2,
+        "quota": 0.4
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 15,
+        "concordi": 6,
+        "quota": 0.4
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_campione"
+    },
+    {
+      "condizione": "qualita' della storia dell'arbitro",
+      "colonna": "arbitro_qualita_storia",
+      "stato": "troppo pochi valori distinti per tagliare i gruppi"
+    },
+    {
+      "condizione": "falli medi dell'arbitro",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2448,
+          "entro_soglia": 1262,
+          "quota": 0.5155,
+          "quota_bassa": 0.4957,
+          "quota_alta": 0.5353,
+          "mae": 2.8821
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2451,
+          "entro_soglia": 1345,
+          "quota": 0.5488,
+          "quota_bassa": 0.529,
+          "quota_alta": 0.5684,
+          "mae": 2.6656
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1285,
+          "quota": 0.5247,
+          "quota_bassa": 0.5049,
+          "quota_alta": 0.5444,
+          "mae": 2.8136
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0332,
+        "errore_standard": 0.0142,
+        "rapporto": -2.33
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 10,
+        "concordi": 5,
+        "quota": 0.5
+      },
+      "promossa": false,
+      "perche": "segno non stabile fra origini o leghe",
+      "colonna": "arbitro_falli_media"
+    },
+    {
+      "condizione": "ammoniti medi dell'arbitro",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2448,
+          "entro_soglia": 1266,
+          "quota": 0.5172,
+          "quota_bassa": 0.4974,
+          "quota_alta": 0.5369,
+          "mae": 2.8371
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2505,
+          "entro_soglia": 1316,
+          "quota": 0.5253,
+          "quota_bassa": 0.5058,
+          "quota_alta": 0.5449,
+          "mae": 2.8113
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2395,
+          "entro_soglia": 1310,
+          "quota": 0.547,
+          "quota_bassa": 0.527,
+          "quota_alta": 0.5668,
+          "mae": 2.7107
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0082,
+        "errore_standard": 0.0142,
+        "rapporto": -0.58
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 15,
+        "concordi": 5,
+        "quota": 0.333
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_ammoniti_media"
+    },
+    {
+      "condizione": "severita' dell'arbitro sui falli",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1279,
+          "quota": 0.5223,
+          "quota_bassa": 0.5025,
+          "quota_alta": 0.542,
+          "mae": 2.8076
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1321,
+          "quota": 0.5392,
+          "quota_bassa": 0.5194,
+          "quota_alta": 0.5588,
+          "mae": 2.7556
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1292,
+          "quota": 0.5276,
+          "quota_bassa": 0.5078,
+          "quota_alta": 0.5473,
+          "mae": 2.7981
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0169,
+        "errore_standard": 0.0143,
+        "rapporto": -1.19
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 14,
+        "quota": 0.737
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_severita_falli"
+    },
+    {
+      "condizione": "severita' dell'arbitro sugli ammoniti",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1289,
+          "quota": 0.5263,
+          "quota_bassa": 0.5065,
+          "quota_alta": 0.5461,
+          "mae": 2.7639
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1260,
+          "quota": 0.5143,
+          "quota_bassa": 0.4945,
+          "quota_alta": 0.534,
+          "mae": 2.8712
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1343,
+          "quota": 0.5484,
+          "quota_bassa": 0.5286,
+          "quota_alta": 0.568,
+          "mae": 2.7262
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0121,
+        "errore_standard": 0.0143,
+        "rapporto": 0.84
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 3,
+        "quota": 0.6
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 10,
+        "quota": 0.526
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_severita_ammoniti"
+    },
+    {
+      "condizione": "scarto dell'arbitro dalla lega",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1279,
+          "quota": 0.5223,
+          "quota_bassa": 0.5025,
+          "quota_alta": 0.542,
+          "mae": 2.8076
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1321,
+          "quota": 0.5392,
+          "quota_bassa": 0.5194,
+          "quota_alta": 0.5588,
+          "mae": 2.7556
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1292,
+          "quota": 0.5276,
+          "quota_bassa": 0.5078,
+          "quota_alta": 0.5473,
+          "mae": 2.7981
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0169,
+        "errore_standard": 0.0143,
+        "rapporto": -1.19
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 4,
+        "quota": 0.8
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 19,
+        "concordi": 14,
+        "quota": 0.737
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "arbitro_scarto_dalla_lega"
+    },
+    {
+      "condizione": "squadra per severita' dell'arbitro",
+      "colonna": "interazione_casa_severita_arbitro",
+      "stato": "troppo pochi valori distinti per tagliare i gruppi"
+    },
+    {
+      "condizione": "livello atteso della proiezione",
+      "forma": "terzili",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "alto",
+          "righe": 2449,
+          "entro_soglia": 1237,
+          "quota": 0.5051,
+          "quota_bassa": 0.4853,
+          "quota_alta": 0.5249,
+          "mae": 2.9591
+        },
+        {
+          "gruppo": "basso",
+          "righe": 2450,
+          "entro_soglia": 1385,
+          "quota": 0.5653,
+          "quota_bassa": 0.5456,
+          "quota_alta": 0.5848,
+          "mae": 2.5568
+        },
+        {
+          "gruppo": "medio",
+          "righe": 2449,
+          "entro_soglia": 1270,
+          "quota": 0.5186,
+          "quota_bassa": 0.4988,
+          "quota_alta": 0.5383,
+          "mae": 2.8454
+        }
+      ],
+      "gruppo_migliore": "alto",
+      "gruppo_peggiore": "basso",
+      "estremi_scelti_dai_dati": false,
+      "scarto_fra_gli_estremi": {
+        "differenza": -0.0602,
+        "errore_standard": 0.0142,
+        "rapporto": -4.23
+      },
+      "coerenza_fra_origini": {
+        "pezzi": 5,
+        "concordi": 5,
+        "quota": 1.0
+      },
+      "coerenza_fra_leghe": {
+        "pezzi": 10,
+        "concordi": 7,
+        "quota": 0.7
+      },
+      "promossa": false,
+      "perche": "segno non stabile fra origini o leghe",
+      "colonna": "previsto"
+    },
+    {
+      "condizione": "periodo di prova",
+      "forma": "categoria",
+      "soglia": 2.5,
+      "gruppi": [
+        {
+          "gruppo": "2025-12-07",
+          "righe": 1472,
+          "entro_soglia": 763,
+          "quota": 0.5183,
+          "quota_bassa": 0.4928,
+          "quota_alta": 0.5438,
+          "mae": 2.8379
+        },
+        {
+          "gruppo": "2026-01-18",
+          "righe": 1462,
+          "entro_soglia": 789,
+          "quota": 0.5397,
+          "quota_bassa": 0.5141,
+          "quota_alta": 0.5651,
+          "mae": 2.7036
+        },
+        {
+          "gruppo": "2026-02-21",
+          "righe": 1473,
+          "entro_soglia": 783,
+          "quota": 0.5316,
+          "quota_bassa": 0.506,
+          "quota_alta": 0.5569,
+          "mae": 2.7697
+        },
+        {
+          "gruppo": "2026-03-21",
+          "righe": 1470,
+          "entro_soglia": 775,
+          "quota": 0.5272,
+          "quota_bassa": 0.5017,
+          "quota_alta": 0.5526,
+          "mae": 2.8237
+        },
+        {
+          "gruppo": "2026-04-25",
+          "righe": 1471,
+          "entro_soglia": 782,
+          "quota": 0.5316,
+          "quota_bassa": 0.5061,
+          "quota_alta": 0.557,
+          "mae": 2.8
+        }
+      ],
+      "gruppo_migliore": "2026-01-18",
+      "gruppo_peggiore": "2025-12-07",
+      "estremi_scelti_dai_dati": true,
+      "scarto_fra_gli_estremi": {
+        "differenza": 0.0213,
+        "errore_standard": 0.0184,
+        "rapporto": 1.16
+      },
+      "coerenza_fra_origini": null,
+      "coerenza_fra_leghe": {
+        "pezzi": 16,
+        "concordi": 10,
+        "quota": 0.625
+      },
+      "promossa": false,
+      "perche": "scarto sotto due errori standard",
+      "colonna": "origine"
+    }
+  ]
+}

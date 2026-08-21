@@ -1,0 +1,3541 @@
+{
+  "generato_da": "scripts/projection/discovery/scan_archive.py",
+  "sorgente": "archivio locale gia' scaricato, nessuna richiesta di rete",
+  "gare_scansionate": 9305,
+  "leghe": 29,
+  "intervallo_date": {
+    "da": "2025-02-22",
+    "a": "2026-06-28",
+    "gare_con_data": 9305
+  },
+  "blocchi_di_primo_livello": {
+    "event_id": 9305,
+    "stats": 9305,
+    "shotmap": 9305,
+    "momentum": 9305,
+    "average_positions": 9305,
+    "xg_per_minute": 9305
+  },
+  "gare_senza_statistiche": 0,
+  "gare_con_pannello_completo": 7905,
+  "analisi_assenze": {
+    "accurate_passes": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "aerial_duels": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "attack": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "attack_pct": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "ball_possession": {
+      "riga_presente": 7903,
+      "riga_assente": 2,
+      "quota_assente": 0.000253,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "ball_safe": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "ball_safe_pct": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "big_chances": {
+      "riga_presente": 7341,
+      "riga_assente": 564,
+      "quota_assente": 0.071347,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "big_chances_missed": {
+      "riga_presente": 6896,
+      "riga_assente": 1009,
+      "quota_assente": 0.127641,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "big_chances_scored": {
+      "riga_presente": 6129,
+      "riga_assente": 1776,
+      "quota_assente": 0.224668,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "big_saves": {
+      "riga_presente": 5146,
+      "riga_assente": 2759,
+      "quota_assente": 0.34902,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "blocked_shots": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 19,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "clearances": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "corner_kicks": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "crosses": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "dangerous_attack": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "dangerous_attack_pct": {
+      "riga_presente": 852,
+      "riga_assente": 7053,
+      "quota_assente": 0.89222,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "dispossessed": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "dribbles": {
+      "riga_presente": 7898,
+      "riga_assente": 7,
+      "quota_assente": 0.000886,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "duels": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "errors_lead_to_a_goal": {
+      "riga_presente": 2087,
+      "riga_assente": 5818,
+      "quota_assente": 0.73599,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "errors_lead_to_a_shot": {
+      "riga_presente": 4387,
+      "riga_assente": 3518,
+      "quota_assente": 0.445035,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "expected_goals": {
+      "riga_presente": 7860,
+      "riga_assente": 45,
+      "quota_assente": 0.005693,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "final_third_entries": {
+      "riga_presente": 7459,
+      "riga_assente": 446,
+      "quota_assente": 0.05642,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "final_third_phase": {
+      "riga_presente": 7749,
+      "riga_assente": 156,
+      "quota_assente": 0.019734,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "fouled_in_final_third": {
+      "riga_presente": 7350,
+      "riga_assente": 555,
+      "quota_assente": 0.070209,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "fouls": {
+      "riga_presente": 7894,
+      "riga_assente": 11,
+      "quota_assente": 0.001392,
+      "gare_con_entrambe_a_zero": 1,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "free_kicks": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 1,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "goal_kicks": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "goalkeeper_saves": {
+      "riga_presente": 7867,
+      "riga_assente": 38,
+      "quota_assente": 0.004807,
+      "gare_con_entrambe_a_zero": 3,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "goals_prevented": {
+      "riga_presente": 6085,
+      "riga_assente": 1820,
+      "quota_assente": 0.230234,
+      "gare_con_entrambe_a_zero": 3,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "ground_duels": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "high_claims": {
+      "riga_presente": 5421,
+      "riga_assente": 2484,
+      "quota_assente": 0.314231,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "hit_woodwork": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 4070,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "interceptions": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "long_balls": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "offsides": {
+      "riga_presente": 7518,
+      "riga_assente": 387,
+      "quota_assente": 0.048956,
+      "gare_con_entrambe_a_zero": 46,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "pass_accuracy_pct": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "passes": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "penalty_saves": {
+      "riga_presente": 381,
+      "riga_assente": 7524,
+      "quota_assente": 0.951803,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "punches": {
+      "riga_presente": 4325,
+      "riga_assente": 3580,
+      "quota_assente": 0.452878,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "recoveries": {
+      "riga_presente": 7459,
+      "riga_assente": 446,
+      "quota_assente": 0.05642,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "red_cards": {
+      "riga_presente": 1792,
+      "riga_assente": 6113,
+      "quota_assente": 0.773308,
+      "gare_con_entrambe_a_zero": 326,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "shots_inside_box": {
+      "riga_presente": 7900,
+      "riga_assente": 5,
+      "quota_assente": 0.000633,
+      "gare_con_entrambe_a_zero": 1,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "shots_off_target": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "shots_on_target": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 1,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "shots_outside_box": {
+      "riga_presente": 7900,
+      "riga_assente": 5,
+      "quota_assente": 0.000633,
+      "gare_con_entrambe_a_zero": 2,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "tackles": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 10,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "tackles_won": {
+      "riga_presente": 7459,
+      "riga_assente": 446,
+      "quota_assente": 0.05642,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "through_balls": {
+      "riga_presente": 4785,
+      "riga_assente": 3120,
+      "quota_assente": 0.394687,
+      "gare_con_entrambe_a_zero": 84,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "throw_ins": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "total_saves": {
+      "riga_presente": 7867,
+      "riga_assente": 38,
+      "quota_assente": 0.004807,
+      "gare_con_entrambe_a_zero": 3,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "total_shots": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "total_tackles": {
+      "riga_presente": 7899,
+      "riga_assente": 6,
+      "quota_assente": 0.000759,
+      "gare_con_entrambe_a_zero": 10,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "touches_in_penalty_area": {
+      "riga_presente": 7749,
+      "riga_assente": 156,
+      "quota_assente": 0.019734,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": true
+    },
+    "xg": {
+      "riga_presente": 7905,
+      "riga_assente": 0,
+      "quota_assente": 0.0,
+      "gare_con_entrambe_a_zero": 0,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    },
+    "yellow_cards": {
+      "riga_presente": 7711,
+      "riga_assente": 194,
+      "quota_assente": 0.024541,
+      "gare_con_entrambe_a_zero": 6,
+      "presenze_asimmetriche": 0,
+      "assenza_significa_zero": false
+    }
+  },
+  "statistiche_squadra": {
+    "accurate_passes": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 67,
+        "max": 924,
+        "media": 339.341689,
+        "sd": 110.709221,
+        "dispersione": 36.118555,
+        "quota_zeri": 0.0
+      }
+    },
+    "aerial_duels": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "dict": 15796,
+        "str": 2
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "value": 29,
+          "total": 47,
+          "pct": 62
+        },
+        {
+          "value": 18,
+          "total": 47,
+          "pct": 38
+        },
+        {
+          "value": 18,
+          "total": 37,
+          "pct": 49
+        }
+      ]
+    },
+    "aerial_duels.pct": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 0,
+        "max": 100,
+        "media": 49.852684,
+        "sd": 10.888295,
+        "dispersione": 2.378106,
+        "quota_zeri": 0.000127
+      }
+    },
+    "aerial_duels.total": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 4,
+        "max": 85,
+        "media": 29.612307,
+        "sd": 11.277822,
+        "dispersione": 4.295149,
+        "quota_zeri": 0.0
+      }
+    },
+    "aerial_duels.value": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 0,
+        "max": 46,
+        "media": 14.74905,
+        "sd": 6.363261,
+        "dispersione": 2.745335,
+        "quota_zeri": 0.000127
+      }
+    },
+    "attack": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 3,
+        "max": 199,
+        "media": 80.915852,
+        "sd": 20.979981,
+        "dispersione": 5.43972,
+        "quota_zeri": 0.0
+      }
+    },
+    "attack_pct": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 1,
+        "max": 64,
+        "media": 24.369707,
+        "sd": 6.334129,
+        "dispersione": 1.646355,
+        "quota_zeri": 0.0
+      }
+    },
+    "ball_possession": {
+      "osservazioni": 16134,
+      "presenti": 16134,
+      "nulli": 0,
+      "tasso_presenza": 0.866953,
+      "tasso_assenza": 0.133047,
+      "tipi": {
+        "int": 16134
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 16134,
+        "min": 0,
+        "max": 85,
+        "media": 49.962811,
+        "sd": 11.00223,
+        "dispersione": 2.422783,
+        "quota_zeri": 0.000744
+      }
+    },
+    "ball_safe": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 1,
+        "max": 156,
+        "media": 74.693811,
+        "sd": 15.960988,
+        "dispersione": 3.410633,
+        "quota_zeri": 0.0
+      }
+    },
+    "ball_safe_pct": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 0,
+        "max": 92,
+        "media": 46.504343,
+        "sd": 9.911729,
+        "dispersione": 2.112542,
+        "quota_zeri": 0.000543
+      }
+    },
+    "big_chances": {
+      "osservazioni": 14682,
+      "presenti": 14682,
+      "nulli": 0,
+      "tasso_presenza": 0.788931,
+      "tasso_assenza": 0.211069,
+      "tipi": {
+        "int": 14682
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 14682,
+        "min": 0,
+        "max": 13,
+        "media": 2.30929,
+        "sd": 1.730054,
+        "dispersione": 1.296107,
+        "quota_zeri": 0.120828
+      }
+    },
+    "big_chances_missed": {
+      "osservazioni": 13792,
+      "presenti": 13792,
+      "nulli": 0,
+      "tasso_presenza": 0.741107,
+      "tasso_assenza": 0.258893,
+      "tipi": {
+        "int": 13792
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 13792,
+        "min": 0,
+        "max": 12,
+        "media": 1.518997,
+        "sd": 1.319446,
+        "dispersione": 1.146111,
+        "quota_zeri": 0.222375
+      }
+    },
+    "big_chances_scored": {
+      "osservazioni": 12258,
+      "presenti": 12258,
+      "nulli": 0,
+      "tasso_presenza": 0.658678,
+      "tasso_assenza": 0.341322,
+      "tipi": {
+        "int": 12258
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 12258,
+        "min": 0,
+        "max": 7,
+        "media": 1.063387,
+        "sd": 0.953211,
+        "dispersione": 0.854449,
+        "quota_zeri": 0.298499
+      }
+    },
+    "big_saves": {
+      "osservazioni": 10292,
+      "presenti": 10292,
+      "nulli": 0,
+      "tasso_presenza": 0.553036,
+      "tasso_assenza": 0.446964,
+      "tipi": {
+        "int": 10292
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 10292,
+        "min": 0,
+        "max": 6,
+        "media": 0.875534,
+        "sd": 0.848031,
+        "dispersione": 0.821392,
+        "quota_zeri": 0.364652
+      }
+    },
+    "blocked_shots": {
+      "osservazioni": 15826,
+      "presenti": 15826,
+      "nulli": 0,
+      "tasso_presenza": 0.850403,
+      "tasso_assenza": 0.149597,
+      "tipi": {
+        "int": 15826
+      },
+      "leghe_coperte": 27,
+      "numerico": {
+        "n": 15826,
+        "min": 0,
+        "max": 19,
+        "media": 3.41337,
+        "sd": 2.373499,
+        "dispersione": 1.650421,
+        "quota_zeri": 0.067421
+      }
+    },
+    "clearances": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 0,
+        "max": 84,
+        "media": 25.079567,
+        "sd": 10.565043,
+        "dispersione": 4.450641,
+        "quota_zeri": 0.000127
+      }
+    },
+    "corner_kicks": {
+      "osservazioni": 16228,
+      "presenti": 16228,
+      "nulli": 0,
+      "tasso_presenza": 0.872004,
+      "tasso_assenza": 0.127996,
+      "tipi": {
+        "int": 16228
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 16228,
+        "min": 0,
+        "max": 28,
+        "media": 4.842371,
+        "sd": 2.839807,
+        "dispersione": 1.665404,
+        "quota_zeri": 0.024526
+      }
+    },
+    "crosses": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "dict": 15796,
+        "str": 2
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "value": 5,
+          "total": 17,
+          "pct": 29
+        },
+        {
+          "value": 5,
+          "total": 20,
+          "pct": 25
+        },
+        {
+          "value": 7,
+          "total": 26,
+          "pct": 27
+        }
+      ]
+    },
+    "crosses.pct": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 0,
+        "max": 100,
+        "media": 24.807356,
+        "sd": 12.247559,
+        "dispersione": 6.046703,
+        "quota_zeri": 0.034439
+      }
+    },
+    "crosses.total": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 0,
+        "max": 68,
+        "media": 17.808243,
+        "sd": 8.256017,
+        "dispersione": 3.827544,
+        "quota_zeri": 0.000317
+      }
+    },
+    "crosses.value": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 0,
+        "max": 23,
+        "media": 4.385857,
+        "sd": 2.750575,
+        "dispersione": 1.725013,
+        "quota_zeri": 0.030641
+      }
+    },
+    "dangerous_attack": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 4,
+        "max": 125,
+        "media": 44.075461,
+        "sd": 15.428348,
+        "dispersione": 5.4006,
+        "quota_zeri": 0.0
+      }
+    },
+    "dangerous_attack_pct": {
+      "osservazioni": 1842,
+      "presenti": 1842,
+      "nulli": 0,
+      "tasso_presenza": 0.098979,
+      "tasso_assenza": 0.901021,
+      "tipi": {
+        "int": 1842
+      },
+      "leghe_coperte": 22,
+      "numerico": {
+        "n": 1842,
+        "min": 1,
+        "max": 73,
+        "media": 29.12595,
+        "sd": 8.672056,
+        "dispersione": 2.582046,
+        "quota_zeri": 0.0
+      }
+    },
+    "dispossessed": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 0,
+        "max": 25,
+        "media": 7.934232,
+        "sd": 3.354679,
+        "dispersione": 1.418395,
+        "quota_zeri": 0.001393
+      }
+    },
+    "dribbles": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "dict": 15794,
+        "str": 2
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "value": 8,
+          "total": 17,
+          "pct": 47
+        },
+        {
+          "value": 8,
+          "total": 19,
+          "pct": 42
+        },
+        {
+          "value": 6,
+          "total": 15,
+          "pct": 40
+        }
+      ]
+    },
+    "dribbles.pct": {
+      "osservazioni": 15794,
+      "presenti": 15794,
+      "nulli": 0,
+      "tasso_presenza": 0.848684,
+      "tasso_assenza": 0.151316,
+      "tipi": {
+        "int": 15794
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15794,
+        "min": 0,
+        "max": 100,
+        "media": 48.37185,
+        "sd": 15.86847,
+        "dispersione": 5.20568,
+        "quota_zeri": 0.002723
+      }
+    },
+    "dribbles.total": {
+      "osservazioni": 15794,
+      "presenti": 15794,
+      "nulli": 0,
+      "tasso_presenza": 0.848684,
+      "tasso_assenza": 0.151316,
+      "tipi": {
+        "int": 15794
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15794,
+        "min": 1,
+        "max": 58,
+        "media": 14.823984,
+        "sd": 5.495786,
+        "dispersione": 2.037486,
+        "quota_zeri": 0.0
+      }
+    },
+    "dribbles.value": {
+      "osservazioni": 15794,
+      "presenti": 15794,
+      "nulli": 0,
+      "tasso_presenza": 0.848684,
+      "tasso_assenza": 0.151316,
+      "tipi": {
+        "int": 15794
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15794,
+        "min": 0,
+        "max": 40,
+        "media": 7.247499,
+        "sd": 3.809387,
+        "dispersione": 2.002267,
+        "quota_zeri": 0.002723
+      }
+    },
+    "duels": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 24,
+        "max": 71,
+        "media": 49.299468,
+        "sd": 6.127161,
+        "dispersione": 0.761511,
+        "quota_zeri": 0.0
+      }
+    },
+    "errors_lead_to_a_goal": {
+      "osservazioni": 4174,
+      "presenti": 4174,
+      "nulli": 0,
+      "tasso_presenza": 0.224288,
+      "tasso_assenza": 0.775712,
+      "tipi": {
+        "int": 4174
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 4174,
+        "min": 0,
+        "max": 4,
+        "media": 0.599904,
+        "sd": 0.619875,
+        "dispersione": 0.640511,
+        "quota_zeri": 0.467178
+      }
+    },
+    "errors_lead_to_a_shot": {
+      "osservazioni": 8774,
+      "presenti": 8774,
+      "nulli": 0,
+      "tasso_presenza": 0.471467,
+      "tasso_assenza": 0.528533,
+      "tipi": {
+        "int": 8774
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 8774,
+        "min": 0,
+        "max": 11,
+        "media": 0.886027,
+        "sd": 0.974137,
+        "dispersione": 1.071009,
+        "quota_zeri": 0.377935
+      }
+    },
+    "expected_goals": {
+      "osservazioni": 16052,
+      "presenti": 16052,
+      "nulli": 0,
+      "tasso_presenza": 0.862547,
+      "tasso_assenza": 0.137453,
+      "tipi": {
+        "float": 15894,
+        "int": 158
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 16052,
+        "min": 0,
+        "max": 13.91,
+        "media": 1.409173,
+        "sd": 0.876941,
+        "dispersione": 0.545728,
+        "quota_zeri": 0.000311
+      }
+    },
+    "final_third_entries": {
+      "osservazioni": 14918,
+      "presenti": 14918,
+      "nulli": 0,
+      "tasso_presenza": 0.801612,
+      "tasso_assenza": 0.198388,
+      "tipi": {
+        "int": 14918
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 14918,
+        "min": 12,
+        "max": 145,
+        "media": 54.265451,
+        "sd": 13.930796,
+        "dispersione": 3.576255,
+        "quota_zeri": 0.0
+      }
+    },
+    "final_third_phase": {
+      "osservazioni": 15498,
+      "presenti": 15498,
+      "nulli": 0,
+      "tasso_presenza": 0.832778,
+      "tasso_assenza": 0.167222,
+      "tipi": {
+        "dict": 15496,
+        "str": 2
+      },
+      "leghe_coperte": 25,
+      "esempi": [
+        {
+          "value": 97,
+          "total": 143,
+          "pct": 68
+        },
+        {
+          "value": 48,
+          "total": 92,
+          "pct": 52
+        },
+        {
+          "value": 107,
+          "total": 146,
+          "pct": 73
+        }
+      ]
+    },
+    "final_third_phase.pct": {
+      "osservazioni": 15496,
+      "presenti": 15496,
+      "nulli": 0,
+      "tasso_presenza": 0.832671,
+      "tasso_assenza": 0.167329,
+      "tipi": {
+        "int": 15496
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 15496,
+        "min": 15,
+        "max": 94,
+        "media": 66.382292,
+        "sd": 10.062502,
+        "dispersione": 1.525316,
+        "quota_zeri": 0.0
+      }
+    },
+    "final_third_phase.total": {
+      "osservazioni": 15496,
+      "presenti": 15496,
+      "nulli": 0,
+      "tasso_presenza": 0.832671,
+      "tasso_assenza": 0.167329,
+      "tipi": {
+        "int": 15496
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 15496,
+        "min": 13,
+        "max": 510,
+        "media": 114.835183,
+        "sd": 43.86429,
+        "dispersione": 16.755109,
+        "quota_zeri": 0.0
+      }
+    },
+    "final_third_phase.value": {
+      "osservazioni": 15496,
+      "presenti": 15496,
+      "nulli": 0,
+      "tasso_presenza": 0.832671,
+      "tasso_assenza": 0.167329,
+      "tipi": {
+        "int": 15496
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 15496,
+        "min": 3,
+        "max": 476,
+        "media": 78.968831,
+        "sd": 39.681985,
+        "dispersione": 19.940271,
+        "quota_zeri": 0.0
+      }
+    },
+    "fouled_in_final_third": {
+      "osservazioni": 14700,
+      "presenti": 14700,
+      "nulli": 0,
+      "tasso_presenza": 0.789898,
+      "tasso_assenza": 0.210102,
+      "tipi": {
+        "int": 14700
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 14700,
+        "min": 0,
+        "max": 10,
+        "media": 2.153605,
+        "sd": 1.541604,
+        "dispersione": 1.103518,
+        "quota_zeri": 0.121156
+      }
+    },
+    "fouls": {
+      "osservazioni": 16026,
+      "presenti": 16026,
+      "nulli": 0,
+      "tasso_presenza": 0.86115,
+      "tasso_assenza": 0.13885,
+      "tipi": {
+        "int": 16026
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 16026,
+        "min": 0,
+        "max": 62,
+        "media": 12.331586,
+        "sd": 4.166298,
+        "dispersione": 1.407608,
+        "quota_zeri": 0.000374
+      }
+    },
+    "free_kicks": {
+      "osservazioni": 16122,
+      "presenti": 16122,
+      "nulli": 0,
+      "tasso_presenza": 0.866308,
+      "tasso_assenza": 0.133692,
+      "tipi": {
+        "int": 16122
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 16122,
+        "min": 0,
+        "max": 38,
+        "media": 11.668465,
+        "sd": 4.544443,
+        "dispersione": 1.769895,
+        "quota_zeri": 0.005396
+      }
+    },
+    "goal_kicks": {
+      "osservazioni": 15830,
+      "presenti": 15830,
+      "nulli": 0,
+      "tasso_presenza": 0.850618,
+      "tasso_assenza": 0.149382,
+      "tipi": {
+        "int": 15830
+      },
+      "leghe_coperte": 27,
+      "numerico": {
+        "n": 15830,
+        "min": 0,
+        "max": 32,
+        "media": 7.844283,
+        "sd": 3.391837,
+        "dispersione": 1.466617,
+        "quota_zeri": 0.001516
+      }
+    },
+    "goalkeeper_saves": {
+      "osservazioni": 15734,
+      "presenti": 15734,
+      "nulli": 0,
+      "tasso_presenza": 0.845459,
+      "tasso_assenza": 0.154541,
+      "tipi": {
+        "int": 15734
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15734,
+        "min": 0,
+        "max": 14,
+        "media": 2.987861,
+        "sd": 1.970106,
+        "dispersione": 1.29903,
+        "quota_zeri": 0.068705
+      }
+    },
+    "goals_prevented": {
+      "osservazioni": 12170,
+      "presenti": 12170,
+      "nulli": 0,
+      "tasso_presenza": 0.653949,
+      "tasso_assenza": 0.346051,
+      "tipi": {
+        "float": 11757,
+        "int": 413
+      },
+      "leghe_coperte": 19,
+      "numerico": {
+        "n": 12170,
+        "min": -3.87,
+        "max": 3.73,
+        "media": 0.010954,
+        "sd": 0.786728,
+        "dispersione": 56.503739,
+        "quota_zeri": 0.02917
+      }
+    },
+    "ground_duels": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "dict": 15796,
+        "str": 2
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "value": 34,
+          "total": 68,
+          "pct": 50
+        },
+        {
+          "value": 27,
+          "total": 55,
+          "pct": 49
+        },
+        {
+          "value": 28,
+          "total": 55,
+          "pct": 51
+        }
+      ]
+    },
+    "ground_duels.pct": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 20,
+        "max": 74,
+        "media": 49.179539,
+        "sd": 7.156053,
+        "dispersione": 1.041268,
+        "quota_zeri": 0.0
+      }
+    },
+    "ground_duels.total": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 33,
+        "max": 184,
+        "media": 70.450684,
+        "sd": 16.225511,
+        "dispersione": 3.7369,
+        "quota_zeri": 0.0
+      }
+    },
+    "ground_duels.value": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 10,
+        "max": 75,
+        "media": 34.283996,
+        "sd": 7.4892,
+        "dispersione": 1.635986,
+        "quota_zeri": 0.0
+      }
+    },
+    "high_claims": {
+      "osservazioni": 10842,
+      "presenti": 10842,
+      "nulli": 0,
+      "tasso_presenza": 0.58259,
+      "tasso_assenza": 0.41741,
+      "tipi": {
+        "int": 10842
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 10842,
+        "min": 0,
+        "max": 7,
+        "media": 0.955267,
+        "sd": 0.954282,
+        "dispersione": 0.953298,
+        "quota_zeri": 0.354363
+      }
+    },
+    "hit_woodwork": {
+      "osservazioni": 15814,
+      "presenti": 15814,
+      "nulli": 0,
+      "tasso_presenza": 0.849758,
+      "tasso_assenza": 0.150242,
+      "tipi": {
+        "int": 15814
+      },
+      "leghe_coperte": 27,
+      "numerico": {
+        "n": 15814,
+        "min": 0,
+        "max": 5,
+        "media": 0.336537,
+        "sd": 0.592358,
+        "dispersione": 1.042644,
+        "quota_zeri": 0.718604
+      }
+    },
+    "interceptions": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 0,
+        "max": 34,
+        "media": 8.740727,
+        "sd": 3.872624,
+        "dispersione": 1.715786,
+        "quota_zeri": 0.000506
+      }
+    },
+    "long_balls": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "dict": 15796,
+        "str": 2
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "value": 29,
+          "total": 51,
+          "pct": 57
+        },
+        {
+          "value": 24,
+          "total": 70,
+          "pct": 34
+        },
+        {
+          "value": 25,
+          "total": 56,
+          "pct": 45
+        }
+      ]
+    },
+    "long_balls.pct": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 11,
+        "max": 85,
+        "media": 45.608382,
+        "sd": 11.045291,
+        "dispersione": 2.674913,
+        "quota_zeri": 0.0
+      }
+    },
+    "long_balls.total": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 14,
+        "max": 104,
+        "media": 52.353001,
+        "sd": 12.052209,
+        "dispersione": 2.774545,
+        "quota_zeri": 0.0
+      }
+    },
+    "long_balls.value": {
+      "osservazioni": 15796,
+      "presenti": 15796,
+      "nulli": 0,
+      "tasso_presenza": 0.848791,
+      "tasso_assenza": 0.151209,
+      "tipi": {
+        "int": 15796
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15796,
+        "min": 3,
+        "max": 63,
+        "media": 23.558053,
+        "sd": 6.962848,
+        "dispersione": 2.057948,
+        "quota_zeri": 0.0
+      }
+    },
+    "offsides": {
+      "osservazioni": 15346,
+      "presenti": 15346,
+      "nulli": 0,
+      "tasso_presenza": 0.82461,
+      "tasso_assenza": 0.17539,
+      "tipi": {
+        "int": 15346
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 15346,
+        "min": 0,
+        "max": 15,
+        "media": 1.760915,
+        "sd": 1.471343,
+        "dispersione": 1.22939,
+        "quota_zeri": 0.191255
+      }
+    },
+    "pass_accuracy_pct": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "float": 14238,
+        "int": 1560
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 42,
+        "max": 94.5,
+        "media": 80.170237,
+        "sd": 6.77172,
+        "dispersione": 0.571985,
+        "quota_zeri": 0.0
+      }
+    },
+    "passes": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 137,
+        "max": 995,
+        "media": 416.131219,
+        "sd": 108.742001,
+        "dispersione": 28.416091,
+        "quota_zeri": 0.0
+      }
+    },
+    "penalty_saves": {
+      "osservazioni": 762,
+      "presenti": 762,
+      "nulli": 0,
+      "tasso_presenza": 0.040946,
+      "tasso_assenza": 0.959054,
+      "tipi": {
+        "int": 762
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 762,
+        "min": 0,
+        "max": 2,
+        "media": 0.507874,
+        "sd": 0.507752,
+        "dispersione": 0.50763,
+        "quota_zeri": 0.496063
+      }
+    },
+    "punches": {
+      "osservazioni": 8650,
+      "presenti": 8650,
+      "nulli": 0,
+      "tasso_presenza": 0.464804,
+      "tasso_assenza": 0.535196,
+      "tipi": {
+        "int": 8650
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 8650,
+        "min": 0,
+        "max": 7,
+        "media": 0.792023,
+        "sd": 0.816793,
+        "dispersione": 0.842337,
+        "quota_zeri": 0.405665
+      }
+    },
+    "recoveries": {
+      "osservazioni": 14918,
+      "presenti": 14918,
+      "nulli": 0,
+      "tasso_presenza": 0.801612,
+      "tasso_assenza": 0.198388,
+      "tipi": {
+        "int": 14918
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 14918,
+        "min": 20,
+        "max": 80,
+        "media": 47.10913,
+        "sd": 7.502506,
+        "dispersione": 1.194834,
+        "quota_zeri": 0.0
+      }
+    },
+    "red_cards": {
+      "osservazioni": 4334,
+      "presenti": 4334,
+      "nulli": 0,
+      "tasso_presenza": 0.232886,
+      "tasso_assenza": 0.767114,
+      "tipi": {
+        "int": 4334
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 4334,
+        "min": 0,
+        "max": 3,
+        "media": 0.408399,
+        "sd": 0.543267,
+        "dispersione": 0.722675,
+        "quota_zeri": 0.616751
+      }
+    },
+    "shots_inside_box": {
+      "osservazioni": 15800,
+      "presenti": 15800,
+      "nulli": 0,
+      "tasso_presenza": 0.849006,
+      "tasso_assenza": 0.150994,
+      "tipi": {
+        "int": 15800
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15800,
+        "min": 0,
+        "max": 34,
+        "media": 8.114051,
+        "sd": 3.947668,
+        "dispersione": 1.920629,
+        "quota_zeri": 0.003481
+      }
+    },
+    "shots_off_target": {
+      "osservazioni": 15826,
+      "presenti": 15826,
+      "nulli": 0,
+      "tasso_presenza": 0.850403,
+      "tasso_assenza": 0.149597,
+      "tipi": {
+        "int": 15826
+      },
+      "leghe_coperte": 27,
+      "numerico": {
+        "n": 15826,
+        "min": 0,
+        "max": 22,
+        "media": 4.967522,
+        "sd": 2.633895,
+        "dispersione": 1.396552,
+        "quota_zeri": 0.01447
+      }
+    },
+    "shots_on_target": {
+      "osservazioni": 15866,
+      "presenti": 15866,
+      "nulli": 0,
+      "tasso_presenza": 0.852552,
+      "tasso_assenza": 0.147448,
+      "tipi": {
+        "int": 15866
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 15866,
+        "min": 0,
+        "max": 16,
+        "media": 4.347977,
+        "sd": 2.455937,
+        "dispersione": 1.387226,
+        "quota_zeri": 0.024455
+      }
+    },
+    "shots_outside_box": {
+      "osservazioni": 15800,
+      "presenti": 15800,
+      "nulli": 0,
+      "tasso_presenza": 0.849006,
+      "tasso_assenza": 0.150994,
+      "tipi": {
+        "int": 15800
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15800,
+        "min": 0,
+        "max": 20,
+        "media": 4.628038,
+        "sd": 2.634808,
+        "dispersione": 1.500034,
+        "quota_zeri": 0.021392
+      }
+    },
+    "tackles": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 0,
+        "max": 38,
+        "media": 15.005064,
+        "sd": 5.644205,
+        "dispersione": 2.123086,
+        "quota_zeri": 0.006646
+      }
+    },
+    "tackles_won": {
+      "osservazioni": 14918,
+      "presenti": 14918,
+      "nulli": 0,
+      "tasso_presenza": 0.801612,
+      "tasso_assenza": 0.198388,
+      "tipi": {
+        "int": 14918
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 14918,
+        "min": 0,
+        "max": 100,
+        "media": 61.319413,
+        "sd": 13.462169,
+        "dispersione": 2.955508,
+        "quota_zeri": 0.000469
+      }
+    },
+    "through_balls": {
+      "osservazioni": 9570,
+      "presenti": 9570,
+      "nulli": 0,
+      "tasso_presenza": 0.51424,
+      "tasso_assenza": 0.48576,
+      "tipi": {
+        "int": 9570
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 9570,
+        "min": 0,
+        "max": 11,
+        "media": 0.886938,
+        "sd": 0.960542,
+        "dispersione": 1.040253,
+        "quota_zeri": 0.387252
+      }
+    },
+    "throw_ins": {
+      "osservazioni": 15834,
+      "presenti": 15834,
+      "nulli": 0,
+      "tasso_presenza": 0.850833,
+      "tasso_assenza": 0.149167,
+      "tipi": {
+        "int": 15834
+      },
+      "leghe_coperte": 27,
+      "numerico": {
+        "n": 15834,
+        "min": 2,
+        "max": 49,
+        "media": 19.4976,
+        "sd": 5.930763,
+        "dispersione": 1.804015,
+        "quota_zeri": 0.0
+      }
+    },
+    "total_saves": {
+      "osservazioni": 15734,
+      "presenti": 15734,
+      "nulli": 0,
+      "tasso_presenza": 0.845459,
+      "tasso_assenza": 0.154541,
+      "tipi": {
+        "int": 15734
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15734,
+        "min": 0,
+        "max": 14,
+        "media": 2.987861,
+        "sd": 1.970106,
+        "dispersione": 1.29903,
+        "quota_zeri": 0.068705
+      }
+    },
+    "total_shots": {
+      "osservazioni": 15810,
+      "presenti": 15810,
+      "nulli": 0,
+      "tasso_presenza": 0.849543,
+      "tasso_assenza": 0.150457,
+      "tipi": {
+        "int": 15810
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15810,
+        "min": 0,
+        "max": 42,
+        "media": 12.743833,
+        "sd": 5.293908,
+        "dispersione": 2.199139,
+        "quota_zeri": 0.000316
+      }
+    },
+    "total_tackles": {
+      "osservazioni": 15798,
+      "presenti": 15798,
+      "nulli": 0,
+      "tasso_presenza": 0.848898,
+      "tasso_assenza": 0.151102,
+      "tipi": {
+        "int": 15798
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 15798,
+        "min": 0,
+        "max": 38,
+        "media": 15.005064,
+        "sd": 5.644205,
+        "dispersione": 2.123086,
+        "quota_zeri": 0.006646
+      }
+    },
+    "touches_in_penalty_area": {
+      "osservazioni": 15498,
+      "presenti": 15498,
+      "nulli": 0,
+      "tasso_presenza": 0.832778,
+      "tasso_assenza": 0.167222,
+      "tipi": {
+        "int": 15498
+      },
+      "leghe_coperte": 25,
+      "numerico": {
+        "n": 15498,
+        "min": 0,
+        "max": 86,
+        "media": 22.542715,
+        "sd": 10.25894,
+        "dispersione": 4.66873,
+        "quota_zeri": 0.000323
+      }
+    },
+    "xg": {
+      "osservazioni": 18610,
+      "presenti": 18610,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "dict": 18610
+      },
+      "leghe_coperte": 29,
+      "esempi": [
+        {
+          "actual": 2.11
+        },
+        {
+          "actual": 1.41
+        },
+        {
+          "actual": 2.13
+        }
+      ]
+    },
+    "xg.actual": {
+      "osservazioni": 18610,
+      "presenti": 15939,
+      "nulli": 2671,
+      "tasso_presenza": 0.856475,
+      "tasso_assenza": 0.143525,
+      "tipi": {
+        "float": 15807,
+        "null": 2671,
+        "int": 132
+      },
+      "leghe_coperte": 29,
+      "numerico": {
+        "n": 15939,
+        "min": 0,
+        "max": 13.91,
+        "media": 1.397419,
+        "sd": 0.880335,
+        "dispersione": 0.554586,
+        "quota_zeri": 6.3e-05
+      }
+    },
+    "yellow_cards": {
+      "osservazioni": 16304,
+      "presenti": 16304,
+      "nulli": 0,
+      "tasso_presenza": 0.876088,
+      "tasso_assenza": 0.123912,
+      "tipi": {
+        "int": 16304
+      },
+      "leghe_coperte": 28,
+      "numerico": {
+        "n": 16304,
+        "min": 0,
+        "max": 10,
+        "media": 2.141192,
+        "sd": 1.402301,
+        "dispersione": 0.918389,
+        "quota_zeri": 0.099914
+      }
+    }
+  },
+  "statistiche_per_tempo": {
+    "accurate_passes": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 17,
+        "max": 517,
+        "media": 170.002728,
+        "sd": 62.253321,
+        "dispersione": 22.796552,
+        "quota_zeri": 0.0
+      }
+    },
+    "aerial_duels": {
+      "osservazioni": 28954,
+      "presenti": 28954,
+      "nulli": 0,
+      "tasso_presenza": 1.55583,
+      "tasso_assenza": -0.55583,
+      "tipi": {
+        "dict": 28954
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "value": 12,
+          "total": 25,
+          "pct": 48
+        },
+        {
+          "value": 13,
+          "total": 25,
+          "pct": 52
+        },
+        {
+          "value": 17,
+          "total": 22,
+          "pct": 77
+        }
+      ]
+    },
+    "ball_possession": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 11,
+        "max": 89,
+        "media": 50.0,
+        "sd": 12.330113,
+        "dispersione": 3.040634,
+        "quota_zeri": 0.0
+      }
+    },
+    "big_chances": {
+      "osservazioni": 28496,
+      "presenti": 28496,
+      "nulli": 0,
+      "tasso_presenza": 1.53122,
+      "tasso_assenza": -0.53122,
+      "tipi": {
+        "int": 28496
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28496,
+        "min": 0,
+        "max": 9,
+        "media": 1.159952,
+        "sd": 1.169831,
+        "dispersione": 1.179795,
+        "quota_zeri": 0.339662
+      }
+    },
+    "big_chances_missed": {
+      "osservazioni": 26772,
+      "presenti": 26772,
+      "nulli": 0,
+      "tasso_presenza": 1.438581,
+      "tasso_assenza": -0.438581,
+      "tipi": {
+        "int": 26772
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 26772,
+        "min": 0,
+        "max": 8,
+        "media": 0.763484,
+        "sd": 0.91989,
+        "dispersione": 1.108336,
+        "quota_zeri": 0.477999
+      }
+    },
+    "big_chances_scored": {
+      "osservazioni": 23808,
+      "presenti": 23808,
+      "nulli": 0,
+      "tasso_presenza": 1.279312,
+      "tasso_assenza": -0.279312,
+      "tipi": {
+        "int": 23808
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 23808,
+        "min": 0,
+        "max": 6,
+        "media": 0.53356,
+        "sd": 0.699137,
+        "dispersione": 0.916097,
+        "quota_zeri": 0.570481
+      }
+    },
+    "blocked_shots": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 14,
+        "media": 1.732493,
+        "sd": 1.586204,
+        "dispersione": 1.452268,
+        "quota_zeri": 0.233874
+      }
+    },
+    "clearances": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 58,
+        "media": 12.792576,
+        "sd": 6.480093,
+        "dispersione": 3.282498,
+        "quota_zeri": 0.001312
+      }
+    },
+    "corner_kicks": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 15,
+        "media": 2.433909,
+        "sd": 1.873093,
+        "dispersione": 1.441499,
+        "quota_zeri": 0.135186
+      }
+    },
+    "crosses": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "dict": 28960
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "value": 3,
+          "total": 7,
+          "pct": 43
+        },
+        {
+          "value": 3,
+          "total": 4,
+          "pct": 75
+        },
+        {
+          "value": 2,
+          "total": 10,
+          "pct": 20
+        }
+      ]
+    },
+    "dispossessed": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 18,
+        "media": 3.995166,
+        "sd": 2.229444,
+        "dispersione": 1.244108,
+        "quota_zeri": 0.023999
+      }
+    },
+    "dribbles": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "dict": 28960
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "value": 5,
+          "total": 9,
+          "pct": 56
+        },
+        {
+          "value": 2,
+          "total": 4,
+          "pct": 50
+        },
+        {
+          "value": 3,
+          "total": 8,
+          "pct": 38
+        }
+      ]
+    },
+    "duels": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 18,
+        "max": 82,
+        "media": 49.99779,
+        "sd": 7.462827,
+        "dispersione": 1.113925,
+        "quota_zeri": 0.0
+      }
+    },
+    "expected_goals": {
+      "osservazioni": 23474,
+      "presenti": 23474,
+      "nulli": 0,
+      "tasso_presenza": 1.261365,
+      "tasso_assenza": -0.261365,
+      "tipi": {
+        "float": 23103,
+        "int": 371
+      },
+      "leghe_coperte": 19,
+      "numerico": {
+        "n": 23474,
+        "min": 0,
+        "max": 4.56,
+        "media": 0.695888,
+        "sd": 0.542106,
+        "dispersione": 0.422308,
+        "quota_zeri": 0.010224
+      }
+    },
+    "final_third_entries": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 5,
+        "max": 86,
+        "media": 27.112051,
+        "sd": 8.427575,
+        "dispersione": 2.619647,
+        "quota_zeri": 0.0
+      }
+    },
+    "fouled_in_final_third": {
+      "osservazioni": 28532,
+      "presenti": 28532,
+      "nulli": 0,
+      "tasso_presenza": 1.533154,
+      "tasso_assenza": -0.533154,
+      "tipi": {
+        "int": 28532
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28532,
+        "min": 0,
+        "max": 9,
+        "media": 1.07991,
+        "sd": 1.07009,
+        "dispersione": 1.06036,
+        "quota_zeri": 0.347855
+      }
+    },
+    "fouls": {
+      "osservazioni": 20986,
+      "presenti": 20986,
+      "nulli": 0,
+      "tasso_presenza": 1.127673,
+      "tasso_assenza": -0.127673,
+      "tipi": {
+        "int": 20986
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 20986,
+        "min": 0,
+        "max": 21,
+        "media": 6.031735,
+        "sd": 2.580643,
+        "dispersione": 1.104113,
+        "quota_zeri": 0.003907
+      }
+    },
+    "free_kicks": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 20,
+        "media": 6.029006,
+        "sd": 2.569058,
+        "dispersione": 1.094717,
+        "quota_zeri": 0.002901
+      }
+    },
+    "goal_kicks": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 18,
+        "media": 3.925967,
+        "sd": 2.215226,
+        "dispersione": 1.249941,
+        "quota_zeri": 0.030767
+      }
+    },
+    "goalkeeper_saves": {
+      "osservazioni": 28812,
+      "presenti": 28812,
+      "nulli": 0,
+      "tasso_presenza": 1.5482,
+      "tasso_assenza": -0.5482,
+      "tipi": {
+        "int": 28812
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28812,
+        "min": 0,
+        "max": 10,
+        "media": 1.497605,
+        "sd": 1.328607,
+        "dispersione": 1.178679,
+        "quota_zeri": 0.25
+      }
+    },
+    "ground_duels": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "dict": 28960
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "value": 11,
+          "total": 28,
+          "pct": 39
+        },
+        {
+          "value": 17,
+          "total": 28,
+          "pct": 61
+        },
+        {
+          "value": 23,
+          "total": 40,
+          "pct": 57
+        }
+      ]
+    },
+    "hit_woodwork": {
+      "osservazioni": 28956,
+      "presenti": 28956,
+      "nulli": 0,
+      "tasso_presenza": 1.555938,
+      "tasso_assenza": -0.555938,
+      "tipi": {
+        "int": 28956
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28956,
+        "min": 0,
+        "max": 5,
+        "media": 0.171502,
+        "sd": 0.419197,
+        "dispersione": 1.024632,
+        "quota_zeri": 0.84397
+      }
+    },
+    "interceptions": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 15,
+        "media": 4.18567,
+        "sd": 2.274792,
+        "dispersione": 1.236284,
+        "quota_zeri": 0.020373
+      }
+    },
+    "long_balls": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "dict": 28960
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "value": 16,
+          "total": 27,
+          "pct": 59
+        },
+        {
+          "value": 16,
+          "total": 36,
+          "pct": 44
+        },
+        {
+          "value": 13,
+          "total": 24,
+          "pct": 54
+        }
+      ]
+    },
+    "offsides": {
+      "osservazioni": 27428,
+      "presenti": 27428,
+      "nulli": 0,
+      "tasso_presenza": 1.473831,
+      "tasso_assenza": -0.473831,
+      "tipi": {
+        "int": 27428
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 27428,
+        "min": 0,
+        "max": 8,
+        "media": 0.888289,
+        "sd": 0.983006,
+        "dispersione": 1.087823,
+        "quota_zeri": 0.421686
+      }
+    },
+    "pass_accuracy_pct": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "float": 26044,
+        "int": 2916
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 36.2,
+        "max": 97.4,
+        "media": 79.77866,
+        "sd": 7.925802,
+        "dispersione": 0.787408,
+        "quota_zeri": 0.0
+      }
+    },
+    "passes": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 40,
+        "max": 549,
+        "media": 208.467714,
+        "sd": 61.295244,
+        "dispersione": 18.022488,
+        "quota_zeri": 0.0
+      }
+    },
+    "recoveries": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 4,
+        "max": 48,
+        "media": 23.515193,
+        "sd": 4.843537,
+        "dispersione": 0.997647,
+        "quota_zeri": 0.0
+      }
+    },
+    "red_cards": {
+      "osservazioni": 5248,
+      "presenti": 5248,
+      "nulli": 0,
+      "tasso_presenza": 0.281999,
+      "tasso_assenza": 0.718001,
+      "tipi": {
+        "int": 5248
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 5248,
+        "min": 0,
+        "max": 3,
+        "media": 0.285442,
+        "sd": 0.478264,
+        "dispersione": 0.80134,
+        "quota_zeri": 0.726372
+      }
+    },
+    "shots_inside_box": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 24,
+        "media": 4.11913,
+        "sd": 2.589189,
+        "dispersione": 1.627504,
+        "quota_zeri": 0.042541
+      }
+    },
+    "shots_off_target": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 13,
+        "media": 2.512914,
+        "sd": 1.761948,
+        "dispersione": 1.235402,
+        "quota_zeri": 0.102728
+      }
+    },
+    "shots_on_target": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 12,
+        "media": 2.193405,
+        "sd": 1.645874,
+        "dispersione": 1.235021,
+        "quota_zeri": 0.139814
+      }
+    },
+    "shots_outside_box": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 15,
+        "media": 2.309254,
+        "sd": 1.73329,
+        "dispersione": 1.30098,
+        "quota_zeri": 0.128764
+      }
+    },
+    "tackles": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 23,
+        "media": 7.839572,
+        "sd": 3.263014,
+        "dispersione": 1.358143,
+        "quota_zeri": 0.000863
+      }
+    },
+    "tackles_won": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 100,
+        "media": 61.424724,
+        "sd": 19.81121,
+        "dispersione": 6.389675,
+        "quota_zeri": 0.012258
+      }
+    },
+    "through_balls": {
+      "osservazioni": 16804,
+      "presenti": 16804,
+      "nulli": 0,
+      "tasso_presenza": 0.902955,
+      "tasso_assenza": 0.097045,
+      "tipi": {
+        "int": 16804
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 16804,
+        "min": 0,
+        "max": 5,
+        "media": 0.430314,
+        "sd": 0.647234,
+        "dispersione": 0.973503,
+        "quota_zeri": 0.643121
+      }
+    },
+    "throw_ins": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 32,
+        "media": 9.693405,
+        "sd": 3.765542,
+        "dispersione": 1.462779,
+        "quota_zeri": 0.000483
+      }
+    },
+    "total_saves": {
+      "osservazioni": 28812,
+      "presenti": 28812,
+      "nulli": 0,
+      "tasso_presenza": 1.5482,
+      "tasso_assenza": -0.5482,
+      "tipi": {
+        "int": 28812
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28812,
+        "min": 0,
+        "max": 10,
+        "media": 1.497605,
+        "sd": 1.328607,
+        "dispersione": 1.178679,
+        "quota_zeri": 0.25
+      }
+    },
+    "total_shots": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 29,
+        "media": 6.424344,
+        "sd": 3.412857,
+        "dispersione": 1.81304,
+        "quota_zeri": 0.009599
+      }
+    },
+    "total_tackles": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "int": 28960
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28960,
+        "min": 0,
+        "max": 23,
+        "media": 7.839572,
+        "sd": 3.263014,
+        "dispersione": 1.358143,
+        "quota_zeri": 0.000863
+      }
+    },
+    "xg": {
+      "osservazioni": 28960,
+      "presenti": 28960,
+      "nulli": 0,
+      "tasso_presenza": 1.556153,
+      "tasso_assenza": -0.556153,
+      "tipi": {
+        "dict": 28960
+      },
+      "leghe_coperte": 24,
+      "esempi": [
+        {
+          "actual": 1.239
+        },
+        {
+          "actual": 0.811
+        },
+        {
+          "actual": 0.971
+        }
+      ]
+    },
+    "yellow_cards": {
+      "osservazioni": 28186,
+      "presenti": 28186,
+      "nulli": 0,
+      "tasso_presenza": 1.514562,
+      "tasso_assenza": -0.514562,
+      "tipi": {
+        "int": 28186
+      },
+      "leghe_coperte": 24,
+      "numerico": {
+        "n": 28186,
+        "min": 0,
+        "max": 8,
+        "media": 1.073796,
+        "sd": 1.077473,
+        "dispersione": 1.081164,
+        "quota_zeri": 0.355034
+      }
+    }
+  },
+  "campi_del_tiro": {
+    "added": {
+      "osservazioni": 22587,
+      "presenti": 22587,
+      "nulli": 0,
+      "tasso_presenza": 0.106568,
+      "tasso_assenza": 0.893432,
+      "tipi": {
+        "int": 22587
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 22587,
+        "min": 1,
+        "max": 22,
+        "media": 3.732767,
+        "sd": 2.499364,
+        "dispersione": 1.67351,
+        "quota_zeri": 0.0
+      }
+    },
+    "block": {
+      "osservazioni": 115868,
+      "presenti": 115868,
+      "nulli": 0,
+      "tasso_presenza": 0.546676,
+      "tasso_assenza": 0.453324,
+      "tipi": {
+        "dict": 115868
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "x": 5.1,
+          "y": 53.6,
+          "z": 0
+        },
+        {
+          "x": 1.5,
+          "y": 52.9,
+          "z": 0
+        },
+        {
+          "x": 6.6,
+          "y": 42.4,
+          "z": 0
+        }
+      ]
+    },
+    "body": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "str": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "right-foot",
+        "left-foot",
+        "head"
+      ]
+    },
+    "gm": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "dict": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "x": 0,
+          "y": 47.2,
+          "z": 1.9
+        },
+        {
+          "x": 0,
+          "y": 46.1,
+          "z": 8.9
+        },
+        {
+          "x": 0,
+          "y": 11.3,
+          "z": 13.9
+        }
+      ]
+    },
+    "gml": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "str": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "low-right",
+        "right",
+        "high-centre"
+      ]
+    },
+    "gtype": {
+      "osservazioni": 23212,
+      "presenti": 23212,
+      "nulli": 0,
+      "tasso_presenza": 0.109516,
+      "tasso_assenza": 0.890484,
+      "tipi": {
+        "str": 23212
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "regular",
+        "penalty",
+        "own"
+      ]
+    },
+    "home": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "bool": 211950
+      },
+      "leghe_coperte": 26
+    },
+    "min": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "int": 211950
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 211950,
+        "min": 0,
+        "max": 145,
+        "media": 50.390219,
+        "sd": 26.720977,
+        "dispersione": 14.169627,
+        "quota_zeri": 5e-06
+      }
+    },
+    "player_id": {
+      "osservazioni": 211950,
+      "presenti": 211805,
+      "nulli": 145,
+      "tasso_presenza": 0.999316,
+      "tasso_assenza": 0.000684,
+      "tipi": {
+        "int": 211805,
+        "null": 145
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 211805,
+        "min": 2,
+        "max": 64708,
+        "media": 11101.242652,
+        "sd": 12845.489324,
+        "dispersione": 14863.795085,
+        "quota_zeri": 0.0
+      }
+    },
+    "pos": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "dict": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        {
+          "x": 10.1,
+          "y": 38.7,
+          "z": 0
+        },
+        {
+          "x": 10.2,
+          "y": 46.6,
+          "z": 0
+        },
+        {
+          "x": 8.9,
+          "y": 38.9,
+          "z": 0
+        }
+      ]
+    },
+    "sit": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "str": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "fast-break",
+        "regular",
+        "set-piece"
+      ]
+    },
+    "type": {
+      "osservazioni": 211950,
+      "presenti": 211950,
+      "nulli": 0,
+      "tasso_presenza": 1.0,
+      "tasso_assenza": 0.0,
+      "tipi": {
+        "str": 211950
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "goal",
+        "miss",
+        "save"
+      ]
+    },
+    "xg": {
+      "osservazioni": 211950,
+      "presenti": 207980,
+      "nulli": 3970,
+      "tasso_presenza": 0.981269,
+      "tasso_assenza": 0.018731,
+      "tipi": {
+        "float": 207980,
+        "null": 3970
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 207980,
+        "min": 0.0001,
+        "max": 0.9983,
+        "media": 0.111688,
+        "sd": 0.154156,
+        "dispersione": 0.212773,
+        "quota_zeri": 0.0
+      }
+    },
+    "xgot": {
+      "osservazioni": 211950,
+      "presenti": 56226,
+      "nulli": 155724,
+      "tasso_presenza": 0.26528,
+      "tasso_assenza": 0.73472,
+      "tipi": {
+        "null": 155724,
+        "float": 56213,
+        "int": 13
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 56226,
+        "min": 0,
+        "max": 0.9968,
+        "media": 0.326482,
+        "sd": 0.295253,
+        "dispersione": 0.267011,
+        "quota_zeri": 0.000231
+      }
+    }
+  },
+  "campi_posizioni_medie": {
+    "n": {
+      "osservazioni": 255416,
+      "presenti": 255416,
+      "nulli": 0,
+      "tasso_presenza": 42569.333333,
+      "tasso_assenza": -42568.333333,
+      "tipi": {
+        "int": 255416
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 255416,
+        "min": 0,
+        "max": 194,
+        "media": 47.318336,
+        "sd": 27.951987,
+        "dispersione": 16.511857,
+        "quota_zeri": 0.000125
+      }
+    },
+    "name": {
+      "osservazioni": 255416,
+      "presenti": 255416,
+      "nulli": 0,
+      "tasso_presenza": 42569.333333,
+      "tasso_assenza": -42568.333333,
+      "tipi": {
+        "str": 255416
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "W. Endo",
+        "C. Jones",
+        "D. Szoboszlai"
+      ]
+    },
+    "player_id": {
+      "osservazioni": 255416,
+      "presenti": 255363,
+      "nulli": 53,
+      "tasso_presenza": 42560.5,
+      "tasso_assenza": -42559.5,
+      "tipi": {
+        "int": 255363,
+        "null": 53
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 255363,
+        "min": 1,
+        "max": 66070,
+        "media": 11437.536068,
+        "sd": 13168.814756,
+        "dispersione": 15162.153898,
+        "quota_zeri": 0.0
+      }
+    },
+    "pos": {
+      "osservazioni": 255416,
+      "presenti": 255416,
+      "nulli": 0,
+      "tasso_presenza": 42569.333333,
+      "tasso_assenza": -42568.333333,
+      "tipi": {
+        "str": 255416
+      },
+      "leghe_coperte": 26,
+      "esempi": [
+        "M",
+        "D",
+        "F"
+      ]
+    },
+    "x": {
+      "osservazioni": 255416,
+      "presenti": 255416,
+      "nulli": 0,
+      "tasso_presenza": 42569.333333,
+      "tasso_assenza": -42568.333333,
+      "tipi": {
+        "float": 229449,
+        "int": 25967
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 255416,
+        "min": 0,
+        "max": 99.9,
+        "media": 48.311779,
+        "sd": 15.951012,
+        "dispersione": 5.266516,
+        "quota_zeri": 4e-06
+      }
+    },
+    "y": {
+      "osservazioni": 255416,
+      "presenti": 255416,
+      "nulli": 0,
+      "tasso_presenza": 42569.333333,
+      "tasso_assenza": -42568.333333,
+      "tipi": {
+        "float": 229296,
+        "int": 26120
+      },
+      "leghe_coperte": 26,
+      "numerico": {
+        "n": 255416,
+        "min": 0,
+        "max": 100,
+        "media": 50.030192,
+        "sd": 20.42741,
+        "dispersione": 8.340545,
+        "quota_zeri": 8.6e-05
+      }
+    }
+  },
+  "volumi": {
+    "tiri_totali": 211950,
+    "tiri_per_gara_media": 22.778,
+    "gare_con_shotmap": 8269,
+    "gare_con_momentum": 8252,
+    "momentum_punti_media": 82.833,
+    "gare_con_xg_per_minuto": 8137
+  },
+  "copertura_per_lega": {
+    "1": {
+      "gare": 380,
+      "campi_sempre_presenti": 35,
+      "campi_mai_presenti": 0
+    },
+    "2": {
+      "gare": 308,
+      "campi_sempre_presenti": 34,
+      "campi_mai_presenti": 0
+    },
+    "3": {
+      "gare": 380,
+      "campi_sempre_presenti": 35,
+      "campi_mai_presenti": 0
+    },
+    "4": {
+      "gare": 380,
+      "campi_sempre_presenti": 37,
+      "campi_mai_presenti": 0
+    },
+    "5": {
+      "gare": 308,
+      "campi_sempre_presenti": 36,
+      "campi_mai_presenti": 0
+    },
+    "6": {
+      "gare": 309,
+      "campi_sempre_presenti": 33,
+      "campi_mai_presenti": 0
+    },
+    "9": {
+      "gare": 444,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "10": {
+      "gare": 321,
+      "campi_sempre_presenti": 32,
+      "campi_mai_presenti": 0
+    },
+    "11": {
+      "gare": 306,
+      "campi_sempre_presenti": 35,
+      "campi_mai_presenti": 0
+    },
+    "12": {
+      "gare": 557,
+      "campi_sempre_presenti": 34,
+      "campi_mai_presenti": 0
+    },
+    "13": {
+      "gare": 234,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "14": {
+      "gare": 321,
+      "campi_sempre_presenti": 34,
+      "campi_mai_presenti": 0
+    },
+    "15": {
+      "gare": 230,
+      "campi_sempre_presenti": 14,
+      "campi_mai_presenti": 0
+    },
+    "17": {
+      "gare": 306,
+      "campi_sempre_presenti": 34,
+      "campi_mai_presenti": 0
+    },
+    "18": {
+      "gare": 540,
+      "campi_sempre_presenti": 35,
+      "campi_mai_presenti": 0
+    },
+    "19": {
+      "gare": 170,
+      "campi_sempre_presenti": 34,
+      "campi_mai_presenti": 0
+    },
+    "20": {
+      "gare": 167,
+      "campi_sempre_presenti": 37,
+      "campi_mai_presenti": 0
+    },
+    "22": {
+      "gare": 294,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "23": {
+      "gare": 321,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "24": {
+      "gare": 260,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "25": {
+      "gare": 306,
+      "campi_sempre_presenti": 37,
+      "campi_mai_presenti": 0
+    },
+    "26": {
+      "gare": 254,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "28": {
+      "gare": 379,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "38": {
+      "gare": 468,
+      "campi_sempre_presenti": 32,
+      "campi_mai_presenti": 0
+    },
+    "47": {
+      "gare": 240,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "49": {
+      "gare": 362,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    },
+    "52": {
+      "gare": 240,
+      "campi_sempre_presenti": 2,
+      "campi_mai_presenti": 0
+    },
+    "53": {
+      "gare": 224,
+      "campi_sempre_presenti": 3,
+      "campi_mai_presenti": 0
+    },
+    "82": {
+      "gare": 296,
+      "campi_sempre_presenti": 1,
+      "campi_mai_presenti": 0
+    }
+  },
+  "contesto": {
+    "disponibile": true,
+    "snapshot": "2026-07-23",
+    "entita": {
+      "events": {
+        "file": 69
+      },
+      "managers": {
+        "file": 500
+      },
+      "players": {
+        "file": 2298
+      },
+      "rosters": {
+        "file": 427
+      },
+      "team-context": {
+        "file": 445
+      },
+      "transfers": {
+        "file": 445
+      }
+    },
+    "eventi_calibrazione": {
+      "totale": 7534,
+      "con_entrambi_gli_allenatori": 7446,
+      "campi": {
+        "eventId": 7534,
+        "eventDate": 7534,
+        "date": 7534,
+        "status": 7534,
+        "seasonId": 7534,
+        "homeTeamId": 7530,
+        "awayTeamId": 7530,
+        "homeCoachId": 7446,
+        "awayCoachId": 7446,
+        "missingFields": 88
+      }
+    }
+  }
+}

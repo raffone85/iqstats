@@ -13,7 +13,13 @@ import {
   type ManagerInfo,
   type MatchWeather,
 } from "@/server/iqstats/match-context";
+import { MatchFinishedSection } from "@/components/match-finished-section";
+import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
+import {
+  getFinishedMatchStats,
+  getMatchIncidents,
+} from "@/server/iqstats/match-finished";
 import {
   getMatchRefereeReading,
   getMatchStandingRows,
@@ -23,6 +29,7 @@ import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
+import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
@@ -270,8 +277,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
     );
   }
 
-  // La fonte ammette dieci richieste al secondo per indirizzo: il dossier ne fa otto, quindi
-  // partono in due ondate. Prima ciò che regge la pagina, poi il contorno.
+  // La fonte ammette dieci richieste al secondo per indirizzo: il dossier le spezza in
+  // ondate da non più di sei. Prima ciò che regge la pagina, poi il contorno.
   const [prediction, odds, lineups] = await Promise.all([
     getMatchPrediction(eventId),
     getMatchOdds(eventId),
@@ -306,6 +313,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
     detail.awayTeamId !== null ? getTeamForm(String(detail.awayTeamId)) : Promise.resolve(null),
   ]);
 
+  // Quarta ondata, e solo a gara conclusa: il tabellino con la mappa dei tiri dentro, e la
+  // cronologia. Sono due richieste in tutto — le statistiche e la mappa arrivano insieme —
+  // e su una gara ancora da giocare non partono affatto.
+  const played = detail.status === "finished";
+  const [finishedStats, incidents] = await Promise.all([
+    played ? getFinishedMatchStats(eventId) : Promise.resolve(null),
+    played ? getMatchIncidents(eventId) : Promise.resolve(null),
+  ]);
+
   // Motore statistico: lettura sincrona dell'artefatto generato, nessuna chiamata al provider.
   const engineReading = getStatEngineReading({
     leagueId: detail.leagueId,
@@ -313,6 +329,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
     awayTeamId: detail.awayTeamId,
     refereeId: detail.refereeId,
   });
+
+  // Motore di proiezione: legge il proprio livello dati, mai la fonte. Senza connessione
+  // dichiarata risponde null e in pagina resta la lettura di ENG-1: i due pannelli non
+  // convivono, perche' mostrerebbero due numeri diversi per la stessa cosa.
+  const proiezioni = await proiezioniDellaGara(detail);
 
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
   const picks = buildMatchPicks(prediction, engineReading, odds, detail.homeTeam, detail.awayTeam);
@@ -537,12 +558,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
-        {/* Giocate statistiche: motore proprietario, sotto il verdetto del provider */}
-        <StatEngineSection
-          reading={engineReading}
-          homeTeam={detail.homeTeam}
-          awayTeam={detail.awayTeam}
-        />
+        {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
+        {proiezioni === null ? (
+          <StatEngineSection
+            reading={engineReading}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : (
+          <MatchProjectionSection
+            proiezioni={proiezioni}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        )}
 
         {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
         <MatchStandingsSection
@@ -551,6 +580,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayTeam={detail.awayTeam}
           homeForm={homeForm}
           awayForm={awayForm}
+        />
+
+        {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
+        <MatchFinishedSection
+          stats={finishedStats}
+          incidents={incidents}
+          homeTeam={detail.homeTeam}
+          awayTeam={detail.awayTeam}
         />
 
         {/* Chi gioca: previsto o confermato, e la differenza si dice */}

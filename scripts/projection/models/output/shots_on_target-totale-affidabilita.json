@@ -1,0 +1,329 @@
+{
+  "schema": "affidabilita-del-totale/1",
+  "target": "shots_on_target",
+  "modello": "poisson_glm",
+  "origini_valutate": 4,
+  "gare": 2531,
+  "soglia_assoluta": 3.0,
+  "soglia_dalla_baseline": "baseline_lega",
+  "mae_baseline_del_totale": {
+    "baseline_attacco_contro_concesso": 2.6110273705405223,
+    "baseline_lega": 2.508436419324317,
+    "baseline_media_mobile": 2.7244238114052415,
+    "baseline_restringimento": 2.537220187449437,
+    "baseline_squadra_lato": 2.6304310787588925,
+    "baseline_squadra_stagione": 2.5798600104816094
+  },
+  "mae_del_modello": 2.466280669470291,
+  "punteggio": 66,
+  "punto": {
+    "soglia": 3.0,
+    "quota": 0.6559,
+    "quota_bassa": 0.6371,
+    "quota_alta": 0.6741,
+    "righe_entro_soglia": 1660,
+    "righe": 2531
+  },
+  "curva_di_accuratezza": [
+    {
+      "soglia": 0.5,
+      "quota": 0.1339,
+      "quota_bassa": 0.1212,
+      "quota_alta": 0.1478,
+      "righe_entro_soglia": 339,
+      "righe": 2531
+    },
+    {
+      "soglia": 1.0,
+      "quota": 0.2537,
+      "quota_bassa": 0.2371,
+      "quota_alta": 0.271,
+      "righe_entro_soglia": 642,
+      "righe": 2531
+    },
+    {
+      "soglia": 1.5,
+      "quota": 0.3667,
+      "quota_bassa": 0.3481,
+      "quota_alta": 0.3856,
+      "righe_entro_soglia": 928,
+      "righe": 2531
+    },
+    {
+      "soglia": 2.0,
+      "quota": 0.4729,
+      "quota_bassa": 0.4535,
+      "quota_alta": 0.4924,
+      "righe_entro_soglia": 1197,
+      "righe": 2531
+    },
+    {
+      "soglia": 2.5,
+      "quota": 0.5638,
+      "quota_bassa": 0.5444,
+      "quota_alta": 0.583,
+      "righe_entro_soglia": 1427,
+      "righe": 2531
+    },
+    {
+      "soglia": 3.0,
+      "quota": 0.6559,
+      "quota_bassa": 0.6371,
+      "quota_alta": 0.6741,
+      "righe_entro_soglia": 1660,
+      "righe": 2531
+    },
+    {
+      "soglia": 4.0,
+      "quota": 0.8021,
+      "quota_bassa": 0.7861,
+      "quota_alta": 0.8171,
+      "righe_entro_soglia": 2030,
+      "righe": 2531
+    },
+    {
+      "soglia": 5.0,
+      "quota": 0.9052,
+      "quota_bassa": 0.8931,
+      "quota_alta": 0.916,
+      "righe_entro_soglia": 2291,
+      "righe": 2531
+    },
+    {
+      "soglia": 6.0,
+      "quota": 0.9534,
+      "quota_bassa": 0.9445,
+      "quota_alta": 0.9609,
+      "righe_entro_soglia": 2413,
+      "righe": 2531
+    },
+    {
+      "soglia": 7.0,
+      "quota": 0.9798,
+      "quota_bassa": 0.9736,
+      "quota_alta": 0.9846,
+      "righe_entro_soglia": 2480,
+      "righe": 2531
+    },
+    {
+      "soglia": 8.0,
+      "quota": 0.9937,
+      "quota_bassa": 0.9898,
+      "quota_alta": 0.9961,
+      "righe_entro_soglia": 2515,
+      "righe": 2531
+    }
+  ],
+  "per_fascia": {
+    "DEVELOPING": {
+      "righe": 96,
+      "punteggio": 64,
+      "punto": {
+        "soglia": 3.0,
+        "quota": 0.6354,
+        "quota_bassa": 0.5357,
+        "quota_alta": 0.7248,
+        "righe_entro_soglia": 61,
+        "righe": 96
+      },
+      "curva_di_accuratezza": [
+        {
+          "soglia": 0.5,
+          "quota": 0.125,
+          "quota_bassa": 0.073,
+          "quota_alta": 0.2059,
+          "righe_entro_soglia": 12,
+          "righe": 96
+        },
+        {
+          "soglia": 1.0,
+          "quota": 0.2083,
+          "quota_bassa": 0.1391,
+          "quota_alta": 0.3,
+          "righe_entro_soglia": 20,
+          "righe": 96
+        },
+        {
+          "soglia": 1.5,
+          "quota": 0.3021,
+          "quota_bassa": 0.2193,
+          "quota_alta": 0.4001,
+          "righe_entro_soglia": 29,
+          "righe": 96
+        },
+        {
+          "soglia": 2.0,
+          "quota": 0.3958,
+          "quota_bassa": 0.3038,
+          "quota_alta": 0.4959,
+          "righe_entro_soglia": 38,
+          "righe": 96
+        },
+        {
+          "soglia": 2.5,
+          "quota": 0.5208,
+          "quota_bassa": 0.422,
+          "quota_alta": 0.618,
+          "righe_entro_soglia": 50,
+          "righe": 96
+        },
+        {
+          "soglia": 3.0,
+          "quota": 0.6354,
+          "quota_bassa": 0.5357,
+          "quota_alta": 0.7248,
+          "righe_entro_soglia": 61,
+          "righe": 96
+        },
+        {
+          "soglia": 4.0,
+          "quota": 0.8021,
+          "quota_bassa": 0.7114,
+          "quota_alta": 0.8695,
+          "righe_entro_soglia": 77,
+          "righe": 96
+        },
+        {
+          "soglia": 5.0,
+          "quota": 0.9375,
+          "quota_bassa": 0.8703,
+          "quota_alta": 0.971,
+          "righe_entro_soglia": 90,
+          "righe": 96
+        },
+        {
+          "soglia": 6.0,
+          "quota": 0.9479,
+          "quota_bassa": 0.8838,
+          "quota_alta": 0.9776,
+          "righe_entro_soglia": 91,
+          "righe": 96
+        },
+        {
+          "soglia": 7.0,
+          "quota": 0.9688,
+          "quota_bassa": 0.9121,
+          "quota_alta": 0.9893,
+          "righe_entro_soglia": 93,
+          "righe": 96
+        },
+        {
+          "soglia": 8.0,
+          "quota": 0.9896,
+          "quota_bassa": 0.9433,
+          "quota_alta": 0.9982,
+          "righe_entro_soglia": 95,
+          "righe": 96
+        }
+      ]
+    },
+    "MATURE": {
+      "righe": 2410,
+      "punteggio": 66,
+      "punto": {
+        "soglia": 3.0,
+        "quota": 0.656,
+        "quota_bassa": 0.6368,
+        "quota_alta": 0.6747,
+        "righe_entro_soglia": 1581,
+        "righe": 2410
+      },
+      "curva_di_accuratezza": [
+        {
+          "soglia": 0.5,
+          "quota": 0.1336,
+          "quota_bassa": 0.1206,
+          "quota_alta": 0.1478,
+          "righe_entro_soglia": 322,
+          "righe": 2410
+        },
+        {
+          "soglia": 1.0,
+          "quota": 0.2556,
+          "quota_bassa": 0.2386,
+          "quota_alta": 0.2734,
+          "righe_entro_soglia": 616,
+          "righe": 2410
+        },
+        {
+          "soglia": 1.5,
+          "quota": 0.3693,
+          "quota_bassa": 0.3502,
+          "quota_alta": 0.3888,
+          "righe_entro_soglia": 890,
+          "righe": 2410
+        },
+        {
+          "soglia": 2.0,
+          "quota": 0.4747,
+          "quota_bassa": 0.4548,
+          "quota_alta": 0.4947,
+          "righe_entro_soglia": 1144,
+          "righe": 2410
+        },
+        {
+          "soglia": 2.5,
+          "quota": 0.5643,
+          "quota_bassa": 0.5444,
+          "quota_alta": 0.584,
+          "righe_entro_soglia": 1360,
+          "righe": 2410
+        },
+        {
+          "soglia": 3.0,
+          "quota": 0.656,
+          "quota_bassa": 0.6368,
+          "quota_alta": 0.6747,
+          "righe_entro_soglia": 1581,
+          "righe": 2410
+        },
+        {
+          "soglia": 4.0,
+          "quota": 0.8017,
+          "quota_bassa": 0.7853,
+          "quota_alta": 0.8171,
+          "righe_entro_soglia": 1932,
+          "righe": 2410
+        },
+        {
+          "soglia": 5.0,
+          "quota": 0.9033,
+          "quota_bassa": 0.8909,
+          "quota_alta": 0.9145,
+          "righe_entro_soglia": 2177,
+          "righe": 2410
+        },
+        {
+          "soglia": 6.0,
+          "quota": 0.9535,
+          "quota_bassa": 0.9444,
+          "quota_alta": 0.9612,
+          "righe_entro_soglia": 2298,
+          "righe": 2410
+        },
+        {
+          "soglia": 7.0,
+          "quota": 0.9801,
+          "quota_bassa": 0.9737,
+          "quota_alta": 0.9849,
+          "righe_entro_soglia": 2362,
+          "righe": 2410
+        },
+        {
+          "soglia": 8.0,
+          "quota": 0.9938,
+          "quota_bassa": 0.9898,
+          "quota_alta": 0.9962,
+          "righe_entro_soglia": 2395,
+          "righe": 2410
+        }
+      ]
+    }
+  },
+  "confronto_vietato": {
+    "soglia_marginale": 2.0,
+    "quota_media_dei_due_lati": 0.6317661003555907,
+    "quota_minimo_dei_due_lati": 0.3935203476886606,
+    "nota": "riportate come termine di paragone, non come affidabilita' del totale"
+  }
+}

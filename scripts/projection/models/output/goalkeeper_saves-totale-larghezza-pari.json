@@ -1,0 +1,85 @@
+{
+  "target": "goalkeeper_saves",
+  "modello": "poisson_glm",
+  "schema": "totale-larghezza-pari/1",
+  "domanda": "la composizione copre meglio perche' descrive la dipendenza, o soltanto perche' produce un intervallo piu' largo?",
+  "come_e_stato_misurato": "il livello nominale che pareggia la larghezza si cerca sul periodo di addestramento e si applica alla prova: cercarlo sulla prova sarebbe sceglierlo guardando la risposta",
+  "confronto_per_origine": [
+    {
+      "origine": 2,
+      "gare_di_prova": 747,
+      "diretta": {
+        "livello_nominale": 0.7,
+        "copertura": 0.7724,
+        "larghezza": 5.1178
+      },
+      "composizione": {
+        "livello_nominale": 0.71,
+        "copertura": 0.7858,
+        "larghezza": 5.3026
+      },
+      "diretta_a_larghezza_pari": {
+        "livello_nominale": 0.715,
+        "copertura": 0.7871,
+        "larghezza": 5.3333
+      }
+    },
+    {
+      "origine": 3,
+      "gare_di_prova": 747,
+      "diretta": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7938,
+        "larghezza": 5.344
+      },
+      "composizione": {
+        "livello_nominale": 0.73,
+        "copertura": 0.8019,
+        "larghezza": 5.3817
+      },
+      "diretta_a_larghezza_pari": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7938,
+        "larghezza": 5.344
+      }
+    },
+    {
+      "origine": 4,
+      "gare_di_prova": 746,
+      "diretta": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7869,
+        "larghezza": 5.2909
+      },
+      "composizione": {
+        "livello_nominale": 0.73,
+        "copertura": 0.7895,
+        "larghezza": 5.3276
+      },
+      "diretta_a_larghezza_pari": {
+        "livello_nominale": 0.725,
+        "copertura": 0.7922,
+        "larghezza": 5.3378
+      }
+    },
+    {
+      "origine": 5,
+      "gare_di_prova": 747,
+      "diretta": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7751,
+        "larghezza": 5.2155
+      },
+      "composizione": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7845,
+        "larghezza": 5.2612
+      },
+      "diretta_a_larghezza_pari": {
+        "livello_nominale": 0.72,
+        "copertura": 0.7751,
+        "larghezza": 5.2155
+      }
+    }
+  ]
+}
