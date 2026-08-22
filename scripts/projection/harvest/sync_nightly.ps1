@@ -18,13 +18,23 @@
 # Uso:
 #     powershell -ExecutionPolicy Bypass -File scripts\projection\harvest\sync_nightly.ps1
 #
-# Ambiente letto, nessuno obbligatorio tranne dove detto:
-#     IQSTATS_DATABASE_URL  connessione del livello dati; senza, la catena si ferma dopo
-#                           i lotti e stampa il comando che resta da dare
-#     IQSTATS_PSQL          nome o percorso del cliente psql (predefinito: psql)
-#     IQSTATS_PG_CONTAINER  nome del container dove vive il psql da usare; utente e
-#                           database si ricavano da IQSTATS_DATABASE_URL. Serve finche'
-#                           il database del motore vive in un container locale
+# **Il caricamento arriva a piu' di un database.** Deciso il 22 agosto 2026: la passata
+# aggiornava soltanto il container locale, e la produzione restava ferma. Lo stesso SQL,
+# gia' idempotente, si applica a ogni destinazione dichiarata - prima il locale, poi
+# quello in linea - con la propria riga di giornale. Ogni destinazione genera il proprio
+# file: l'identificativo della riga e' cucito dentro il SQL, lotto per lotto.
+#
+# Ambiente letto, nessuno obbligatorio tranne dove detto. Le due connessioni si leggono
+# dall'ambiente e, se non e' dichiarato, da `.env.local` nella radice: il segreto sta in
+# un posto solo e si aggiorna in un posto solo quando viene rigenerato.
+#     IQSTATS_DATABASE_URL         connessione del livello dati locale; senza nessuna
+#                                  connessione la catena si ferma dopo i lotti e stampa
+#                                  il comando che resta da dare
+#     IQSTATS_REMOTE_DATABASE_URL  connessione del database in linea, con un ruolo che
+#                                  sappia scrivere: senza, la produzione non si aggiorna
+#     IQSTATS_PSQL                 nome o percorso del cliente psql (predefinito: psql)
+#     IQSTATS_PG_CONTAINER         nome del container dove vive il psql da usare. Serve
+#                                  finche' sull'ospite non c'e' un cliente vero
 
 $ErrorActionPreference = 'Stop'
 
@@ -48,74 +58,122 @@ function Passo($titolo, $file, $argomenti) {
 #
 # Due strade. Se `IQSTATS_PG_CONTAINER` e' dichiarata si usa il `psql` che vive dentro
 # quel container, perche' su questa macchina non ce n'e' un altro e senza il caricamento
-# la passata si fermerebbe ai lotti. Utente e database si ricavano dalla connessione, non
-# si indovinano. Il ponte serve finche' il database del motore vive in un container
-# locale: su un ospite con un cliente vero basta non dichiarare la variabile.
+# la passata si fermerebbe ai lotti. Utente, database, ospite e porta si ricavano dalla
+# connessione, non si indovinano. Il ponte serve finche' sull'ospite non c'e' un cliente
+# vero: con uno, basta non dichiarare la variabile.
 $psql = $env:IQSTATS_PSQL
 if ([string]::IsNullOrWhiteSpace($psql)) { $psql = 'psql' }
-$connessione = $env:IQSTATS_DATABASE_URL
 $container = $env:IQSTATS_PG_CONTAINER
-$utente = $null
-$database = $null
-$conDatabase = $false
 
-if (-not [string]::IsNullOrWhiteSpace($connessione)) {
-    if (-not [string]::IsNullOrWhiteSpace($container)) {
-        $indirizzo = [uri]$connessione
-        $utente = $indirizzo.UserInfo.Split(':')[0]
-        $database = $indirizzo.AbsolutePath.TrimStart('/')
-        if ([string]::IsNullOrWhiteSpace($utente) -or [string]::IsNullOrWhiteSpace($database)) {
-            throw "IQSTATS_DATABASE_URL non dichiara utente e database: servono per il psql del container"
-        }
+# Una destinazione del caricamento. `locale` dice che il database vive dentro il
+# container stesso: li' l'ospite e la porta della connessione sono quelli dell'ospite e
+# non risponderebbero, quindi si passa dal socket interno con il solo utente e database.
+function Destinazione($nome, $connessione) {
+    if ([string]::IsNullOrWhiteSpace($connessione)) { return $null }
+    $indirizzo = [uri]$connessione
+    $credenziali = $indirizzo.UserInfo.Split(':')
+    $utente = [uri]::UnescapeDataString($credenziali[0])
+    $database = [uri]::UnescapeDataString($indirizzo.AbsolutePath.TrimStart('/'))
+    if ([string]::IsNullOrWhiteSpace($utente) -or [string]::IsNullOrWhiteSpace($database)) {
+        throw "la connessione $nome non dichiara utente e database: servono per il psql del container"
+    }
+    return @{
+        nome = $nome
+        connessione = $connessione
+        utente = $utente
+        database = $database
+        parola = if ($credenziali.Count -gt 1) { [uri]::UnescapeDataString($credenziali[1]) } else { '' }
+        ospite = $indirizzo.Host
+        porta = "$($indirizzo.Port)"
+        locale = ($indirizzo.Host -in @('127.0.0.1', 'localhost', '::1'))
+        giornale = $null
+    }
+}
+
+# Il segreto vive in un posto solo. `.env.local` e' ignorato da git ed e' la copia che si
+# aggiorna quando la parola d'ordine viene rigenerata: l'ambiente vince se dichiarato,
+# altrimenti si legge da li', invece di tenere una terza copia nel registro dell'utente.
+function Connessione($nome) {
+    $valore = [Environment]::GetEnvironmentVariable($nome)
+    if (-not [string]::IsNullOrWhiteSpace($valore)) { return $valore }
+    $file = Join-Path $radice '.env.local'
+    if (-not (Test-Path $file)) { return $null }
+    $riga = Select-String -Path $file -Pattern ('^\s*' + $nome + '\s*=') | Select-Object -First 1
+    if (-not $riga) { return $null }
+    return ($riga.Line -replace ('^\s*' + $nome + '\s*='), '').Trim().Trim('"').Trim("'")
+}
+
+$destinazioni = @(@(
+    (Destinazione 'locale' (Connessione 'IQSTATS_DATABASE_URL')),
+    (Destinazione 'in linea' (Connessione 'IQSTATS_REMOTE_DATABASE_URL'))
+) | Where-Object { $_ })
+
+$conDatabase = $false
+if ($destinazioni.Count -gt 0) {
+    if ($container) {
         $conDatabase = [bool](Get-Command docker -ErrorAction SilentlyContinue)
     } else {
         $conDatabase = [bool](Get-Command $psql -ErrorAction SilentlyContinue)
     }
 }
 
-function Sql($istruzione) {
-    if ($container) {
-        $esito = & docker exec $container psql -U $utente -d $database -At -v ON_ERROR_STOP=1 -c $istruzione
-    } else {
-        $esito = & $psql $connessione -At -v ON_ERROR_STOP=1 -c $istruzione
+# La connessione non passa mai come argomento: `docker exec -e NOME` senza valore
+# inoltra la variabile per nome, quindi la parola d'ordine non compare nella riga di
+# comando ne' nei log della passata.
+function Psql($dest, $argomenti) {
+    if (-not $container) { return & $psql $dest.connessione @argomenti }
+    $env:PGUSER = $dest.utente
+    $env:PGDATABASE = $dest.database
+    $env:PGPASSWORD = $dest.parola
+    $ambiente = @('-e', 'PGUSER', '-e', 'PGDATABASE', '-e', 'PGPASSWORD')
+    if (-not $dest.locale) {
+        $env:PGHOST = $dest.ospite
+        $env:PGPORT = $dest.porta
+        $ambiente += @('-e', 'PGHOST', '-e', 'PGPORT')
     }
-    if ($LASTEXITCODE -ne 0) { throw "istruzione SQL fallita (uscita $LASTEXITCODE)" }
+    return & docker exec @ambiente $container psql @argomenti
+}
+
+function Sql($dest, $istruzione) {
+    $esito = Psql $dest @('-At', '-v', 'ON_ERROR_STOP=1', '-c', $istruzione)
+    if ($LASTEXITCODE -ne 0) { throw "istruzione SQL fallita su $($dest.nome) (uscita $LASTEXITCODE)" }
     return $esito
 }
 
 # La riga del giornale si apre **prima** della raccolta: una passata che fallisce a meta'
 # deve lasciare traccia, e chiudere da fuori direbbe «completata» comunque, quindi la
 # chiusura riuscita la scrive il SQL del caricamento. Qui si chiude solo il fallimento.
-$giornale = $null
 if ($conDatabase) {
-    # `psql` stampa anche l'etichetta del comando - `INSERT 0 1` - e PowerShell la
-    # raccoglie insieme all'identificativo: si prende la prima riga e si pretende che sia
-    # un numero, altrimenti finirebbe dentro il SQL successivo.
-    $risposta = Sql @"
+    foreach ($dest in $destinazioni) {
+        # `psql` stampa anche l'etichetta del comando - `INSERT 0 1` - e PowerShell la
+        # raccoglie insieme all'identificativo: si prende la prima riga e si pretende che
+        # sia un numero, altrimenti finirebbe dentro il SQL successivo.
+        $risposta = Sql $dest @"
 insert into private.football_sync_runs (data_slice, run_mode, status)
 values ('DATA-6', 'incremental', 'running') returning id
 "@
-    $giornale = @($risposta | Where-Object { $_ -match '^\d+$' }) | Select-Object -First 1
-    if (-not $giornale) { throw "il giornale non ha restituito un identificativo: $risposta" }
-    Write-Output "giornale: riga $giornale aperta"
+        $dest.giornale = @($risposta | Where-Object { $_ -match '^\d+$' }) | Select-Object -First 1
+        if (-not $dest.giornale) { throw "il giornale $($dest.nome) non ha restituito un identificativo: $risposta" }
+        Write-Output "giornale $($dest.nome): riga $($dest.giornale) aperta"
+    }
 } else {
     Write-Output 'senza database: nessuna riga nel giornale, nessun caricamento'
 }
 
+# Il fallimento lo scrive chi pianifica, la riuscita la scrive il SQL del caricamento.
+# `where status = 'running'` fa il resto: una destinazione gia' chiusa `completed` non
+# viene toccata, quindi un locale riuscito e un remoto fallito restano due verita'
+# distinte.
 trap {
-    if ($giornale) {
-        $motivo = ($_.Exception.Message -replace "'", "''")
-        if ($motivo.Length -gt 200) { $motivo = $motivo.Substring(0, 200) }
-        $chiusura = @"
+    $motivo = ($_.Exception.Message -replace "'", "''")
+    if ($motivo.Length -gt 200) { $motivo = $motivo.Substring(0, 200) }
+    foreach ($dest in $destinazioni) {
+        if (-not $dest.giornale) { continue }
+        Psql $dest @('-At', '-c', @"
 update private.football_sync_runs
 set status = 'failed', completed_at = now(), error_code = '$motivo'
-where id = $giornale and status = 'running'
-"@
-        if ($container) {
-            & docker exec $container psql -U $utente -d $database -At -c $chiusura
-        } else {
-            & $psql $connessione -At -c $chiusura
-        }
+where id = $($dest.giornale) and status = 'running'
+"@)
     }
     break
 }
@@ -136,13 +194,14 @@ Write-Output "gare nuove scoperte: $gare (in $($elenco.competizioni_esaminate) c
 
 if ($gare -eq 0) {
     Write-Output 'niente da raccogliere: la passata finisce qui'
-    if ($giornale) {
-        Sql @"
+    foreach ($dest in $destinazioni) {
+        if (-not $dest.giornale) { continue }
+        Sql $dest @"
 update private.football_sync_runs
 set status = 'completed', completed_at = now(),
     requests_limit = 200, requests_started = $($elenco.richieste_usate),
     requests_completed = $($elenco.richieste_usate)
-where id = $giornale
+where id = $($dest.giornale)
 "@ | Out-Null
     }
     exit 0
@@ -180,32 +239,41 @@ if (Test-Path $raccolta) {
 # affidabile, e un lotto e' una riga sola da qualche megabyte. La chiusura riuscita della
 # riga del giornale sta dentro questo SQL, in coda: se `psql` si ferma prima, non ci
 # arriva e la riga resta `running`, che e' la verita'.
-$sql = Join-Path $riferimenti 'carico.sql'
-$carico = @($riferimenti, '--sql', $sql)
-if ($giornale) {
-    $carico += @('--giornale', "$giornale", '--richieste', "$richieste", '--tetto', "$($tetto + 200)")
-}
-Passo 'SQL di caricamento' (Join-Path $dataset 'load_reference_and_batches.py') $carico
-
 if (-not $conDatabase) {
+    $sql = Join-Path $riferimenti 'carico.sql'
+    Passo 'SQL di caricamento' (Join-Path $dataset 'load_reference_and_batches.py') @($riferimenti, '--sql', $sql)
     Write-Output "senza database: il caricamento non parte."
     Write-Output "resta da dare:  psql `"<connessione>`" -v ON_ERROR_STOP=1 -f `"$sql`""
     exit 0
 }
 
-Write-Output '== caricamento'
-if ($container) {
-    # Il `psql` del container non vede il disco dell'ospite: il file entra con `docker cp`
-    # invece di passare da una condotta, che su righe da cinque megabyte non regge.
-    & docker cp $sql "${container}:/tmp/carico.sql"
-    if ($LASTEXITCODE -ne 0) { throw "copia del SQL nel container fallita (uscita $LASTEXITCODE)" }
-    & docker exec $container psql -U $utente -d $database -v ON_ERROR_STOP=1 -f /tmp/carico.sql
-    $uscita = $LASTEXITCODE
-    & docker exec $container rm -f /tmp/carico.sql
-    if ($uscita -ne 0) { throw "caricamento fallito (uscita $uscita)" }
-} else {
-    & $psql $connessione -v ON_ERROR_STOP=1 -f $sql
-    if ($LASTEXITCODE -ne 0) { throw "caricamento fallito (uscita $LASTEXITCODE)" }
+# Una destinazione per volta, nell'ordine in cui sono dichiarate: prima il locale, poi
+# quello in linea. Il SQL si rigenera per ognuna perche' porta dentro l'identificativo
+# della propria riga di giornale, lotto per lotto, e la chiusura `completed` in coda.
+foreach ($dest in $destinazioni) {
+    $etichetta = ($dest.nome -replace '[^a-z0-9]', '-')
+    $sql = Join-Path $riferimenti "carico-$etichetta.sql"
+    $carico = @($riferimenti, '--sql', $sql)
+    if ($dest.giornale) {
+        $carico += @('--giornale', "$($dest.giornale)", '--richieste', "$richieste", '--tetto', "$($tetto + 200)")
+    }
+    Passo "SQL di caricamento ($($dest.nome))" (Join-Path $dataset 'load_reference_and_batches.py') $carico
+
+    Write-Output "== caricamento ($($dest.nome))"
+    if ($container) {
+        # Il `psql` del container non vede il disco dell'ospite: il file entra con
+        # `docker cp` invece di passare da una condotta, che su righe da cinque megabyte
+        # non regge.
+        & docker cp $sql "${container}:/tmp/$etichetta.sql"
+        if ($LASTEXITCODE -ne 0) { throw "copia del SQL nel container fallita (uscita $LASTEXITCODE)" }
+        Psql $dest @('-v', 'ON_ERROR_STOP=1', '-f', "/tmp/$etichetta.sql")
+        $uscita = $LASTEXITCODE
+        & docker exec $container rm -f "/tmp/$etichetta.sql"
+        if ($uscita -ne 0) { throw "caricamento su $($dest.nome) fallito (uscita $uscita)" }
+    } else {
+        Psql $dest @('-v', 'ON_ERROR_STOP=1', '-f', $sql)
+        if ($LASTEXITCODE -ne 0) { throw "caricamento su $($dest.nome) fallito (uscita $LASTEXITCODE)" }
+    }
+    Remove-Item $sql -Force
 }
-Remove-Item $sql -Force
-Write-Output "passata completata: $gare gare, $richieste richieste"
+Write-Output "passata completata: $gare gare, $richieste richieste, $($destinazioni.Count) destinazioni"

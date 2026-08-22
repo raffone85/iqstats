@@ -7,7 +7,12 @@ import { calcolaFeature } from "./projection/asof/calcolo.ts";
 import { proiezioneDiGara, type ProiezioneDiGara } from "./projection/match.ts";
 import { proietta } from "./projection/production.ts";
 import { componiIngresso } from "./projection/snapshot.ts";
-import { ProjectionObservationStore, type GaraDaPrevedere } from "./projection-store.ts";
+import {
+  mediaOsservata,
+  ProjectionObservationStore,
+  type GaraDaPrevedere,
+  type MediaOsservata,
+} from "./projection-store.ts";
 import type { MatchDetail } from "./match-context.ts";
 
 /**
@@ -121,8 +126,20 @@ function turnoDa(nome: string | null): number | null {
   return Number.isSafeInteger(numero) && numero > 0 ? numero : null;
 }
 
+export interface OsservatoDelBersaglio {
+  /** La squadra di casa, nelle sue gare in casa. */
+  readonly casa: MediaOsservata | null;
+  /** La squadra ospite, nelle sue gare fuori casa. */
+  readonly trasferta: MediaOsservata | null;
+}
+
 export interface ProiezioniDellaGara {
   readonly bersagli: readonly ProiezioneDiGara[];
+  /**
+   * Quanto ciascuna squadra ha prodotto davvero, dallo stesso lato del campo, prima di
+   * questa gara: il numero osservato accanto a quello previsto.
+   */
+  readonly osservate: Readonly<Record<string, OsservatoDelBersaglio>>;
   /** Da quando e' aggiornata la storia su cui poggiano queste proiezioni. */
   readonly ultimaOsservazione: string | null;
 }
@@ -182,7 +199,19 @@ export async function proiezioniDellaGara(
         storia[0].quando,
       );
 
-    return { bersagli, ultimaOsservazione: ultima };
+    // L'osservato costa zero richieste e zero interrogazioni nuove: sono le stesse righe
+    // gia' lette per proiettare, contate invece che modellate.
+    const osservate: Record<string, OsservatoDelBersaglio> = {};
+    for (const bersaglio of completi) {
+      osservate[bersaglio.target] = {
+        casa: mediaOsservata(materialeCasa.squadra, bersaglio.target, "home", gara.seasonId),
+        trasferta: mediaOsservata(
+          materialeTrasferta.squadra, bersaglio.target, "away", gara.seasonId,
+        ),
+      };
+    }
+
+    return { bersagli, osservate, ultimaOsservazione: ultima };
   } catch {
     // Una proiezione che non si puo' calcolare non rompe il dossier: la sezione sparisce.
     // Il resto della pagina non dipende da questo livello dati.

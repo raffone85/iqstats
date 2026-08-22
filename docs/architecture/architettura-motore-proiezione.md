@@ -750,6 +750,60 @@ motivo compreso.
 di byte affidabile e un lotto è una riga sola da cinque megabyte: il caricatore accetta
 `--sql <file>`, e il file prodotto è identico a quello che manderebbe su standard output.
 
+### Due destinazioni, dal 22 agosto 2026
+
+**La passata aggiornava il container locale e non la produzione.** Misurato il 22 agosto:
+l'attività aveva girato alle 03:00:01 con esito 0 su `127.0.0.1:54322`, il locale era a
+20.948 osservazioni e il database in linea a 20.918, fermo alla riga di giornale del
+backfill del 21 agosto. Il divario era di 30 righe — quindici gare per due lati — e non si
+sarebbe mai chiuso da solo.
+
+**Lo stesso SQL, applicato a ogni destinazione dichiarata**, prima il locale e poi quello in
+linea. Il caricamento era già idempotente e il carico completo sul remoto era già stato
+misurato in tre minuti e sette secondi: non serviva un percorso incrementale, serviva che il
+file arrivasse anche dall'altra parte. `IQSTATS_DATABASE_URL` resta il locale,
+`IQSTATS_REMOTE_DATABASE_URL` è quello in linea; senza la seconda la passata è identica a
+prima.
+
+**Le due connessioni si leggono dall'ambiente e, se non è dichiarato, da `.env.local`.** Il
+segreto vive in due posti soli — quel file, ignorato da git, e le variabili di Vercel — e
+quando la parola d'ordine viene rigenerata si aggiorna in un posto solo. Una terza copia nel
+registro dell'utente sarebbe una terza cosa da tenere allineata.
+
+**La connessione non passa mai come argomento.** Sull'ospite non c'è un `psql`, quindi anche
+il remoto si raggiunge con quello del container: `docker exec -e PGHOST -e PGPORT -e PGUSER
+-e PGDATABASE -e PGPASSWORD` inoltra le variabili **per nome**, e la parola d'ordine non
+compare nella riga di comando né nei log della passata. Il locale continua a passare dal
+socket interno con il solo utente e database: dentro il container, l'ospite e la porta della
+sua connessione non risponderebbero.
+
+**Una riga di giornale per destinazione.** La chiusura riuscita resta l'ultima istruzione del
+SQL — quindi ogni destinazione chiude la propria — e il fallimento lo scrive chi pianifica,
+con `where status = 'running'`: un locale riuscito e un remoto fallito restano **due verità
+distinte**, non una media. Il SQL si rigenera per ogni destinazione, perché l'identificativo
+della riga è cucito dentro ogni lotto.
+
+Che cosa ha fatto la prima passata a due destinazioni, il 22 agosto alle 21:51:
+
+| Verifica | Esito |
+| --- | --- |
+| Scoperta e raccolta | **66 gare nuove** in 29 competizioni, **296 richieste** su un tetto di 514, errori 0 |
+| Giornale locale, riga 10 | `completed`, 23'07", **456.540 osservate / 456.500 scritte / 40 rifiutate** |
+| Giornale in linea, riga 2 | `completed`, 25'48" — la riga si apre prima della raccolta — con gli **stessi** numeri |
+| Parità | **21.080 osservazioni su entrambi**: +132 sul locale (66 × 2), +162 sul remoto, che recupera anche le quindici gare della notte — (15 + 66) × 2 |
+| In linea, dopo | 10.540 gare, 680 arbitri, ultima gara giocata il 22 agosto alle 17:30 UTC |
+
+**Quello che costa, e non è ancora deciso.** Il database in linea è passato da **117 MB a
+175 MB** su 500 per 162 righe nuove: `player_match_observations` 101 MB con 435.420 righe
+vive e zero morte, `team_match_observations` 54 MB con 21.080 vive e **4.937 morte**,
+autovacuum passato alle 20:16 e alle 20:17 UTC. La causa è il percorso stesso — ogni passata
+riscrive tutte le 453.000 righe, non le 162 cambiate — e l'autovacuum recupera lo spazio come
+riutilizzabile senza restituirlo al filesystem. **Se la crescita fosse lineare la quota
+finirebbe in meno di sei notti**; la previsione è che si stabilizzi intorno al doppio dello
+spazio utile, perché gli upsert successivi riusano le pagine liberate. È una previsione, non
+una misura: si guarda il peso dopo la passata successiva. Se cresce, la strada è caricare
+soltanto i lotti che contengono gare nuove.
+
 ## 10. Vincoli
 
 - La fonte si legge solo lato server; nessuna chiave in codice, log o output.

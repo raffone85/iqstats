@@ -1,5 +1,8 @@
 # Piano di esecuzione — IQstatS
 
+> **Dove siamo adesso:** `docs/product/implementation-status.md`. Questo piano dice che cosa
+> manca e in che ordine; quella pagina dice che cosa esiste davvero, misurato.
+
 ## Obiettivo
 
 Costruire IQstatS come applicazione originale di intelligence calcistica: dashboard per
@@ -208,7 +211,16 @@ senza overflow, con accesso/errore espliciti e ritorno che preserva i filtri.
   percorso felice autenticato con contesto di ritorno preservato.
 - [x] APP-5M: stemmi squadra del dossier tramite proxy media interno, entitlement e
   validazione binaria; nessuna persistenza o cache provider.
-- [ ] APP-6: prima categoria statistica con confronto casa/trasferta.
+- [x] APP-6: prima categoria statistica con confronto casa/trasferta, il 22 agosto 2026.
+  Sotto il nome di ciascuna squadra, nella sezione delle giocate statistiche, compare
+  quanto ha prodotto **davvero** prima di quella gara, dallo stesso lato del campo e nella
+  stessa stagione, con il campione. **Costo: zero richieste alla fonte e zero
+  interrogazioni nuove** — sono le stesse righe che il motore legge gia' per proiettare.
+- [ ] APP-6B: lo stesso confronto **dove la proiezione non c'e'**. Oggi l'osservato vive
+  dentro quella sezione, quindi sotto la quarta giornata e fuori dalle competizioni
+  raccolte non compare. La strada alternativa — `getTeamSeasonSplits` dalla fonte — costa
+  **una richiesta per gara**, circa quaranta per dossier: va risolta con un read model,
+  non con altre chiamate.
 
 **Checkpoint:** un utente apre una gara reale e può leggere dati, fonte, freschezza e
 assenze fino al dettaglio, senza link fittizi.
@@ -394,6 +406,37 @@ scansione pattern sensibili. Nessuna build UI è richiesta finché l'app non cam
 
 **Checkpoint:** nessuna baseline sospetta o metrica incompleta entra nell'app senza
 evidenza, caveat e conferma umana.
+
+### Fase 5B — Motore di proiezione (agosto 2026)
+
+**Questa fase non era nel piano.** È cresciuta accanto a esso fra il 19 e il 22 agosto 2026 e
+va scritta dov'è realmente finita, perché nel disegno originale la modellazione stava in fase
+5 come calibrazione isolata e i segnali in APP-10, in fondo. Le caselle qui sotto sono chiuse
+e verificate; le voci APP-6…APP-10 e DATA-2…DATA-5 restano aperte e **non sono state
+sostituite** da questo lavoro.
+
+- [x] PROJ-1: quattordici modelli addestrati e validati fuori campione sui sette bersagli
+  osservati (tiri, tiri in porta, corner, falli, ammoniti, fuorigioco, parate).
+- [x] PROJ-2: sette modelli promossi a `production` dall'esportatore, mai a mano; artefatti
+  nel pacchetto dell'app e confrontati byte per byte con quelli generati da Python.
+- [x] PROJ-3: livello dati del motore — due tavole nello schema `football`, RLS attiva,
+  ruolo di sola lettura per l'applicazione, taglio temporale «al momento di» dichiarato in un
+  posto solo.
+- [x] PROJ-4: il livello dati esiste **in linea** su Supabase e la sezione proiezione è
+  visibile nel dossier della gara in produzione.
+- [x] PROJ-5: passata notturna che alimenta la storia del motore, dal 22 agosto 2026 su due
+  destinazioni — container locale e Supabase — con una riga di giornale per destinazione.
+- [ ] PROJ-6: la passata gira **solo a sessione aperta** e **non scrive un log**; l'attività
+  Windows dipende dal PC dell'utente. Da decidere se spostarla fuori.
+- [ ] PROJ-7: la proiezione vive **solo** nel dossier della gara; niente in `/partite`,
+  `/pronostici`, `/oggi` né sulla scheda squadra.
+
+**Limiti dichiarati, non difetti:** sotto la quarta giornata di campionato la sezione non
+compare, e senza arbitro designato tre bersagli su sette ripiegano senza intervallo né linee.
+
+**Checkpoint:** lo stato reale di ogni pezzo dell'applicazione sta in
+`docs/product/implementation-status.md`, che è l'unica pagina da leggere per sapere a che
+punto siamo. Questo piano dice che cosa manca; quella pagina dice che cosa c'è.
 
 ### Fase 6 — Quality gate di rilascio
 

@@ -10,8 +10,8 @@
  * incompleto. Una feature che manca non e' una feature che vale zero.
  */
 
-import { Feature, IngressoFeature } from './contratto';
-import { GRUPPI, NomeGruppo } from './gruppi';
+import type { Feature, IngressoFeature } from './contratto';
+import { GRUPPI, type NomeGruppo } from './gruppi';
 
 interface RegolaDiGruppo {
   gruppo: NomeGruppo;

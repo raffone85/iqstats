@@ -588,6 +588,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-split + .engine-split { padding-top: 8px; border-top: 1px solid var(--card-stroke); }
 .engine-who { min-width: 0; font-size: 13px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 .engine-exp { font-family: var(--font-mono, monospace); font-size: 14px; font-weight: 600; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; }
+.engine-obs { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
 .engine-ladder { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0 0 2px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(60px, 1fr); gap: 5px; overflow-x: auto; }
 .engine-step { padding: 5px 4px; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel-2); text-align: center; }
 .engine-step.is-central { border-color: var(--card-brand); background: var(--card-brand-pale); }

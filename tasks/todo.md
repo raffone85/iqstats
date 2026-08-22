@@ -2715,3 +2715,132 @@ variabili di Vercel. **È però passata dalla chat, quindi va rigenerata.**
 
 **Da sistemare:** `npx skills add supabase/agent-skills` ha lasciato `.agents/`,
 `.claude/skills/` e `skills-lock.json` non tracciati e **non ignorati**.
+
+### La passata notturna arriva in produzione — 22 agosto 2026, sera
+
+**Il divario, misurato prima di toccare qualcosa.** L'attività «IQstatS - sincronizzazione
+notturna» aveva girato alle **03:00:01** con `LastTaskResult 0`, ma su
+`IQSTATS_DATABASE_URL` = `127.0.0.1:54322`, il container locale. Locale a **20.948**
+osservazioni, database in linea a **20.918**, fermo alla riga di giornale del backfill del
+21 agosto (21:44 UTC): **30 righe di divario**, quindici gare per due lati, che non si
+sarebbero chiuse da sole. Sull'ospite non esiste un `psql` — `command -v psql` non risponde
+— e l'unico cliente è quello dentro `supabase_db_IQstatS`.
+
+**Perché non serve un percorso incrementale.** Il caricamento completo sul remoto era già
+misurato: riga 1 del giornale, `started_at` 21:40:53 → `completed_at` 21:44:01, **tre minuti
+e sette secondi** per 453.018 righe. Il SQL è uno solo, già idempotente: il problema non era
+generarne uno più piccolo, era farlo arrivare anche dall'altra parte.
+
+**Che cosa è cambiato in `sync_nightly.ps1`.**
+
+- Due destinazioni: `IQSTATS_DATABASE_URL` (locale) e `IQSTATS_REMOTE_DATABASE_URL` (in
+  linea). Senza la seconda, la passata è identica a prima.
+- Le connessioni si leggono dall'ambiente e, se non è dichiarato, da **`.env.local`**: il
+  segreto resta in due posti soli — quel file e le variabili di Vercel — e si aggiorna in un
+  posto solo quando la parola d'ordine viene rigenerata.
+- Il remoto passa dallo stesso `psql` del container: `docker exec -e PGHOST -e PGPORT -e
+  PGUSER -e PGDATABASE -e PGPASSWORD` inoltra le variabili **per nome**, quindi la parola
+  d'ordine non compare mai negli argomenti né nei log. Il locale continua a passare dal
+  socket interno con il solo utente e database, perché dentro il container l'ospite e la
+  porta della sua connessione non risponderebbero.
+- Una riga di giornale per destinazione. La chiusura riuscita resta in coda al SQL, il
+  fallimento lo scrive chi pianifica con `where status = 'running'`: un locale riuscito e un
+  remoto fallito restano **due verità distinte**.
+
+**Verifiche sui rami, prima di lanciare.**
+
+| Verifica | Esito |
+| --- | --- |
+| Parse dello script | OK |
+| `Destinazione` su connessione con caratteri codificati | `pa%24s%3Aword` → `pa$s:word`, ospite, porta, utente e database corretti |
+| Precedenza | l'ambiente vince su `.env.local`; chiave assente → `null` |
+| Ramo non locale, contro il locale via `host.docker.internal:54322` | `ramo-remoto-ok`, porta 5432 dentro il container, 20.948 osservazioni lette |
+| Ramo non locale, contro la produzione | pooler Session, utente `postgres.vthvi…`, `has_table_privilege(…,'insert') = t` |
+
+**La prima passata a due destinazioni, 21:51–22:17 Europe/Rome.**
+
+| | |
+| --- | --- |
+| Gare nuove | **66** in 29 competizioni, 32 richieste di scoperta |
+| Richieste | **296** su un tetto di 514 (66 × 4 + 50 + 200), errori 0 |
+| Giornale locale, riga 10 | `completed`, **23'07"**, 456.540 osservate / **456.500 scritte** / 40 rifiutate |
+| Giornale in linea, riga 2 | `completed`, **25'48"** — si apre prima della raccolta — con gli **stessi** numeri |
+| Parità | **21.080 osservazioni su entrambi**: +132 sul locale, +162 sul remoto, che recupera anche le quindici gare della notte — (15 + 66) × 2 |
+| In linea, dopo | 10.540 gare, 680 arbitri, ultima gara giocata il 22 agosto alle 17:30 UTC |
+
+Le 40 righe rifiutate sono sempre le stesse venti gare senza lega o senza squadra.
+
+**Quello che costa, e non è ancora deciso.** Il database in linea è passato da **117 MB a
+175 MB** su 500 del piano free, per 162 righe nuove: `player_match_observations` **101 MB**
+con 435.420 righe vive e zero morte, `team_match_observations` **54 MB** con 21.080 vive e
+**4.937 morte**, autovacuum passato alle 20:16 e 20:17 UTC. Ogni passata riscrive tutte le
+453.000 righe, non le 162 cambiate, e l'autovacuum recupera lo spazio come riutilizzabile
+senza restituirlo al filesystem. **Se la crescita fosse lineare — 58 MB a notte — la quota
+finirebbe in meno di sei notti.** La previsione è che si stabilizzi intorno al doppio dello
+spazio utile, perché gli upsert successivi riusano le pagine liberate: **è una previsione,
+non una misura**, e si guarda il peso dopo la passata delle 03:00. Se cresce, la strada è
+caricare soltanto i lotti che contengono gare nuove.
+
+**Resta aperto.** L'attività pianificata **non scrive un log**: di stanotte sapevamo solo
+`LastTaskResult 0`. E gira ancora soltanto a sessione aperta: `S4U` era stato rifiutato
+perché la sessione non era amministratore.
+
+### APP-6: il numero osservato accanto a quello previsto — 22 agosto 2026, notte
+
+**La casella del piano ferma dal 2 agosto.** «Prima categoria statistica con confronto
+casa/trasferta»: sotto il nome di ogni squadra, nella sezione delle giocate statistiche,
+adesso c'è quanto ha prodotto **davvero** prima di quella gara — dallo stesso lato del campo,
+nella stessa stagione — con il campione su cui poggia.
+
+**La strada scartata, con il suo numero.** `getTeamSeasonSplits` esiste già e produce medie
+casa/trasferta per gruppo di metriche, ma il commento del gateway lo dice e il codice lo
+conferma: **una richiesta per gara**. Su una stagione avviata sono circa venti richieste per
+squadra, **quaranta per dossier**, su una pagina che in produzione impiega già 4,9 secondi e
+con un tetto di dieci richieste al secondo. Non è la strada.
+
+**La strada presa.** Le righe servono già: `store.materiale(gara, lato)` legge tutte le
+osservazioni delle due squadre fino all'istante del calcio d'inizio, ed è quello che il
+motore usa per proiettare. L'osservato è una **riduzione su quelle stesse righe**: zero
+richieste alla fonte, zero interrogazioni nuove, nessuna latenza aggiunta.
+
+**Tre filtri, e ognuno sa diventare rosso.** `mediaOsservata` in `projection-store.ts` tiene
+solo le righe dello **stesso lato** — una media che somma casa e trasferta non risponde alla
+domanda «quanto produce in casa» — e della **stessa stagione**, perché mescolarne due dice di
+che cosa parla la media solo a chi l'ha scritta. Un valore assente **esce dal campione** e non
+diventa zero; senza nemmeno una gara utile la risposta è `null`, e in pagina non compare nulla.
+
+**Il verde è stato fatto diventare rosso.** Tolto il filtro sul lato, `test:projection-osservato`
+passa da 3/3 a **1 su 3**, con le due asserzioni giuste in rosso. Filtro ripristinato e
+verificato.
+
+**Reso e verificato sul server vero**, gara 211877, Śląsk Wrocław - Widzew Łódź (Ekstraklasa),
+HTTP 200 in 8,5 s a freddo: sette metriche, ognuna con l'osservato su entrambi i lati.
+
+| Metrica | Atteso casa | Osservato casa | Osservato trasferta |
+| --- | ---: | ---: | ---: |
+| Tiri | 14,5 | **12,5 su 2 gare** | 16,0 su 2 gare |
+| Tiri in porta | 4,0 | 3,0 su 2 | 4,0 su 2 |
+| Corner | 5,1 | 4,0 su 2 | 3,5 su 2 |
+| Falli | — | 11,5 su 2 | 15,0 su 2 |
+| Cartellini gialli | — | 0,5 su 2 | 3,5 su 2 |
+| Fuorigioco | — | 2,5 su 2 | 0,5 su 2 |
+| Parate | — | 4,0 su 2 | 3,0 su 2 |
+
+**Il numero è stato controllato fuori dall'applicazione**, in SQL sul livello dati:
+`casa 12.50 su 2` e `trasferta 16.00 su 2`, identici a quelli resi in pagina. Un numero che
+si verifica solo con il codice che lo produce non è verificato.
+
+**Due correzioni raccolte per strada.** `calcolo.ts` importava `Feature`, `IngressoFeature` e
+`NomeGruppo` come valori invece che come tipi: con Next passava, con lo strip-types di Node il
+modulo non si caricava affatto e nessun test poteva toccare quella catena. Ora sono `import
+type`, e la catena del motore è raggiungibile dai test.
+
+**Verifiche:** `test:projection-osservato` 3/3 · `test:projection-artefatti` 3/3 ·
+`test:projection-store` 1/1 dal database locale · `test:gateway` 25/25 · `test:stat-engine`
+9/9 · `test:media` 4/4 · dalla radice 53/53, 14/14, 20/20, 16/16, 15/15 · `tsc --noEmit` e
+`eslint` a zero · `npm run build` pulita.
+
+**Il limite, dichiarato e non aggirato.** L'osservato vive **dentro** la sezione della
+proiezione: dove quella non c'è — sotto la quarta giornata, o fuori dalle competizioni
+raccolte — non compare nemmeno il confronto. È APP-6B nel piano, e la strada non è chiamare la
+fonte quaranta volte: è un read model.

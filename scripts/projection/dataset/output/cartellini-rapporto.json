@@ -1,62 +1,62 @@
 {
   "generato_da": "scripts/projection/dataset/reconstruct_cards.py",
   "sorgente": "/events/{id}/incidents/",
-  "gare_con_episodi_acquisiti": 10379,
-  "gare_ricostruite": 10379,
+  "gare_con_episodi_acquisiti": 10460,
+  "gare_ricostruite": 10460,
   "gare_con_lista_episodi_vuota": 0,
-  "righe_squadra_gara": 20758,
+  "righe_squadra_gara": 20920,
   "leghe_coperte": 29,
   "episodi_senza_lato": 0,
   "cartellini_non_attribuiti": {
-    "totale": 1880,
-    "gare_interessate": 1256,
+    "totale": 1888,
+    "gare_interessate": 1259,
     "trattamento": "fuori dai quattro conteggi, perche' il conteggio aggregato del pannello non li comprende; dichiarati in colonna propria"
   },
   "distribuzioni": {
     "yellow_cards": {
-      "media": 1.964399,
-      "sd": 1.402493,
-      "dispersione": 1.001317,
+      "media": 1.962237,
+      "sd": 1.402575,
+      "dispersione": 1.002538,
       "min": 0,
       "max": 12,
-      "quota_zeri": 0.151412,
-      "osservazioni": 20758
+      "quota_zeri": 0.151769,
+      "osservazioni": 20920
     },
     "second_yellow_red": {
-      "media": 0.038539,
-      "sd": 0.195721,
-      "dispersione": 0.993961,
+      "media": 0.038528,
+      "sd": 0.195669,
+      "dispersione": 0.99373,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.962087,
-      "osservazioni": 20758
+      "quota_zeri": 0.962094,
+      "osservazioni": 20920
     },
     "red_cards_direct": {
-      "media": 0.06518,
-      "sd": 0.259218,
-      "dispersione": 1.030903,
+      "media": 0.065249,
+      "sd": 0.25924,
+      "dispersione": 1.02999,
       "min": 0,
       "max": 3,
-      "quota_zeri": 0.937807,
-      "osservazioni": 20758
+      "quota_zeri": 0.937715,
+      "osservazioni": 20920
     },
     "bench_cards": {
-      "media": 0.002601,
-      "sd": 0.052795,
-      "dispersione": 1.071473,
+      "media": 0.002772,
+      "sd": 0.054369,
+      "dispersione": 1.066193,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.997495,
-      "osservazioni": 20758
+      "quota_zeri": 0.997323,
+      "osservazioni": 20920
     },
     "unattributed_cards": {
-      "media": 0.090567,
-      "sd": 0.380651,
-      "dispersione": 1.599858,
+      "media": 0.090249,
+      "sd": 0.380299,
+      "dispersione": 1.602548,
       "min": 0,
       "max": 6,
-      "quota_zeri": 0.929425,
-      "osservazioni": 20758
+      "quota_zeri": 0.92978,
+      "osservazioni": 20920
     }
   },
   "provenienza": "C"

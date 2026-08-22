@@ -193,6 +193,38 @@ function accoppia(righe: readonly RigaOsservazione[]): OsservazioneSquadraGara[]
 
 type Sql = ReturnType<typeof postgres>;
 
+export interface MediaOsservata {
+  readonly media: number;
+  readonly campione: number;
+}
+
+/**
+ * La media di un bersaglio sulle gare gia' giocate dalla squadra **dallo stesso lato del
+ * campo** e **nella stessa stagione**.
+ *
+ * Due vincoli, nessuno dei due estetico. Il lato, perche' una media che somma casa e
+ * trasferta non risponde alla domanda «quanto produce in casa». La stagione, perche'
+ * mescolarne due dice di che cosa parla la media solo a chi la ha scritta. Senza nemmeno
+ * una gara utile si risponde `null`: un'assenza non diventa zero.
+ */
+export function mediaOsservata(
+  righe: readonly OsservazioneSquadraGara[],
+  target: string,
+  lato: Lato,
+  stagione: number,
+): MediaOsservata | null {
+  let somma = 0;
+  let campione = 0;
+  for (const riga of righe) {
+    if (riga.lato !== lato || riga.stagione !== stagione) continue;
+    const valore = riga.prodotte[target];
+    if (valore === null || valore === undefined) continue;
+    somma += valore;
+    campione += 1;
+  }
+  return campione === 0 ? null : { media: somma / campione, campione };
+}
+
 /**
  * Il livello dati del motore: dalle osservazioni conservate al materiale di una gara.
  *
