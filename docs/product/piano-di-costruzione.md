@@ -32,7 +32,7 @@ occupato il posto che spettava alle sezioni di dati osservati.
 **Decaduta la proposta di degradare la proiezione a riga di supporto.**
 
 Il §2 diceva di far diventare la proiezione una nota dentro le sezioni osservate. Le
-quarantotto schermate in `foto frontend app iqstats/` dicono l'opposto e l'utente ha
+cinquanta schermate in `../foto-frontend-iqstats/` dicono l'opposto e l'utente ha
 confermato: la proiezione **è** il prodotto, ma organizzata **per famiglia statistica**,
 una card per bersaglio invece di un pannello unico con sette numeri dentro. Ogni card
 porta l'atteso per squadra, il totale, la griglia delle linee con le probabilità sopra e
@@ -120,7 +120,7 @@ oggi, mostrerebbe numeri senza nomi.
 | --- | --- | --- | --- | --- |
 | ~~**1**~~ | ~~**Riordino della navigazione**~~ **fatto il 23 agosto**, vedi sotto | nessuno | — | — |
 | ~~**2**~~ | ~~**Sezione Gol nel dossier**~~ **fatta il 23 agosto**, vedi sotto | `expected_goals` | **già in linea** | — |
-| ~~**3**~~ | ~~**Scala doppia e linea accesa**~~ **fatta il 23 agosto**, vedi sotto. Resta fuori la forma a card con testata colorata: il design system non la prevede | il motore, già in produzione | **già pronto** | — |
+| ~~**3**~~ | ~~**Scala doppia e linea accesa**~~ **fatta il 23 agosto**, vedi sotto — **card per famiglia con la fascia colorata compresa**, chiusa lo stesso giorno | il motore, già in produzione | **già pronto** | — |
 | ~~**4**~~ | ~~**Area Arbitri**~~ **fatta il 23 agosto**, anagrafica compresa | `referee_id` + anagrafica | **tutto in linea** | — |
 | **5** | **Area Squadre**: Confronto, Dettagli (forma, statistiche, storico), Classifiche | osservazioni squadra-gara | **già in linea** | La tabella completa delle foto è quasi tutta coperta: mancano cross accurati, key passes, attacchi |
 | **6** | **Ritardi** (da quante gare una squadra non subisce gol, non prende un cartellino, non supera una linea) | osservazioni squadra-gara | **già in linea** | Si calcola sulle righe che il motore già legge |
@@ -243,9 +243,82 @@ solo le scartate.
 cui il caso Gremio. `tsc`, `eslint` e `build` puliti; tutte le suite verdi; la scala riletta
 sulla gara 7231.
 
-**Non fatto, e dichiarato**: la forma a card per famiglia con la testata colorata delle foto.
-Le sette famiglie restano righe dentro un pannello unico. La testata colorata chiederebbe
-colori fuori dalla tavolozza del master, e il §5 di questo piano lo vieta.
+### Punto 3, il seguito: le card per famiglia, chiuse il 23 agosto
+
+Le sette famiglie erano righe dentro un pannello unico. Ora sono **sette card, ognuna con
+la sua fascia piena in testata**, come nelle foto. L'utente ha scelto la fascia piena
+sapendo che cosa costava, e il costo è stato **scritto nel master invece che aggirato**:
+
+- **Un errore mio, corretto misurando.** Avevo detto — e il piano lo ripeteva — che una
+  testata colorata chiedeva colori fuori dalla tavolozza. Falso: `MASTER.md` ha già
+  `--card-brand` `#6E1522` con l'etichetta «brand, **testate**». Fuori dalla tavolozza era
+  solo il colore **diverso per famiglia**.
+- **Le regole toccate sono due, non una.** «Il colore dichiara un verso» prende
+  un'eccezione nominata: le sette famiglie, dove il colore dichiara un'identità che è anche
+  **scritta** accanto, quindi nessuna informazione vive solo nel colore. E «un solo blocco
+  ad alto contrasto per pagina» prende una deroga limitata al dossier, che passa da uno a
+  otto blocchi. Entrambe stanno in `MASTER.md` con la data e il perché.
+- **Le sette tinte, con il contrasto misurato** del testo `#FBF7F3` sopra la fascia: tiri
+  bordeaux `#6E1522` **10,99**, tiri in porta tabacco `#7A4E1D` **6,71**, falli indaco
+  `#3E3A8C` **9,00**, corner petrolio `#1F5673` **7,47**, gialli senape `#7A5C00` **5,87**,
+  parate prugna `#5B3A6E` **8,66**, fuorigioco grafite `#403E3A` **10,01**. Il minimo è
+  5,87 contro il 4,5 di AA. Nessuna tinta entra negli intervalli del verde (162°) e del
+  mattone (8°), che dicono un verso.
+- **Nome e tinta stanno nella stessa tabella** in `match-projection-section.tsx`: due
+  tabelle separate divergerebbero al primo bersaglio nuovo, e una famiglia senza tinta
+  prenderebbe il bordeaux in silenzio, cioè due card dello stesso colore.
+- **La fascia è alta 43 px**, quanto una riga di titolo: è la condizione a cui la deroga
+  regge. E a 375 px se ne vede **una alla volta**, perché una card è alta più di uno
+  schermo: il rischio «sette fasce che gridano insieme» non si materializza.
+
+**Un difetto vero, precedente e trovato solo perché i 375 px non erano mai stati
+guardati.** `ul.engine-rows` era una griglia con colonna implicita `auto`, che si dimensiona
+sul contenuto invece che sul contenitore: nella sezione Gol la colonna risolveva a **348 px**
+dentro un contenitore di **278**, e la pagina andava in **overflow orizzontale** —
+`scrollWidth` 387 contro un viewport di 371. Corretto con `grid-template-columns:
+minmax(0, 1fr)`, una riga che vale per tutti e quattro i chiamanti di `.engine-rows`: dopo,
+`scrollWidth` **360** su **375**, nessun overflow.
+
+**Verificato**: `tsc --noEmit`, `eslint` e `build` puliti; suite verdi — 53 · 14 · 20 · 16 ·
+15 · 9 dalla radice, 61 da `apps/web` con due che si saltano senza connessione; le sette
+card rilette in pagina a **1440 px** e a **375 px**, con le tinte lette da
+`getComputedStyle` e non dedotte dal codice.
+
+**Non verificato**: 768 e 1024 px. `resize_window` dell'estensione risponde «riuscito» e
+lascia la finestra a 1366 — misurato, `window.outerWidth` non cambia. I 375 px sono stati
+misurati con un iframe della stessa origine largo 375, dove le media query rispondono al
+viewport dell'iframe.
+
+### Le soglie impossibili, chiuse il 23 agosto
+
+**Trovate guardando la pagina a 375 px, non leggendo il codice.** `soglieDi` in `match.ts:88`
+centra cinque soglie su `Math.round(atteso) - 0,5` senza pavimento: dove l'atteso è basso le
+prime finiscono sotto zero. Sul dossier 7231 erano **5 scale su 21**, con **6 soglie
+negative** — cartellini gialli su entrambi i lati, fuorigioco su entrambi (due sole sul
+Bragantino: `-1,5 -0,5 0,5 1,5 2,5`), parate in casa.
+
+**Non era uno slot sprecato, era una lettura falsata.** La regola dell'accensione confronta
+**le tre centrali**: sul fuorigioco del Bragantino le tre erano `-0,5`, `0,5` e `1,5`, e la
+più decisa è `-0,5` **al 100%** — una casella accesa su un evento certo, che spingeva fuori
+l'unica soglia vera.
+
+**Corretto dove il numero si mostra, non nel motore, e la ragione è misurata.** Il primo
+tentativo ha filtrato in `soglieDi`: `test:match` è diventato rosso su **5 prove su 15** —
+`goalkeeper_saves`, `offsides`, `yellow_cards` — perché **le stesse cinque soglie le
+costruisce Python** (`total.py:312`) e il campione di riscontro le confronta una per una.
+Togliere le negative al motore vuol dire rigenerare i campioni di riscontro e gli artefatti
+di calibrazione: è una decisione sul modello, e resta aperta. Il filtro vive in
+`soglieReali`, dentro `linea-scelta.ts`, e la pagina lo applica **prima** di disegnare la
+scala e **prima** di scegliere che cosa accendere.
+
+**La pagina lo dice.** Dove si vedono meno di cinque soglie, il testo della sezione spiega
+perché: le altre cadrebbero sotto zero, e un conteggio non scende sotto zero.
+
+**Verificato**: due prove nuove in `test:linea-scelta`, che passa da 7 a **9**, e **fatte
+fallire** togliendo il filtro — due rosse su nove, fra cui quella che mostra la regola
+accendere `-0,5`. `test:match` torna **15 su 15**, quindi la parità con Python è intatta.
+`tsc`, `eslint` e `build` puliti. Pagina riletta: **157 soglie, zero negative**, contro le
+sei di prima.
 
 ### Punto 4, chiuso il 23 agosto: l'area Arbitri
 
@@ -338,9 +411,10 @@ Ognuna di queste è già stata valutata con un numero, non è un'opinione.
   58 MB a notte e la quota non è a rischio.
 - La passata notturna non scrive un log e gira solo a sessione aperta.
 - La proiezione non compare sotto la quarta giornata né fuori dalle 29 competizioni raccolte.
-- La cartella `foto frontend app iqstats/` sta dentro il repository con **23 MB in 50
-  immagini** e git la vede come non tracciata. Sono schermate di un prodotto di terzi: non
-  vanno committate. Da decidere se spostarle fuori dal workspace o ignorarle.
+- ~~La cartella delle schermate dentro il repository~~ **sciolto il 23 agosto**: le **50
+  immagini**, **23 MB** di schermate di un prodotto di terzi, sono state spostate fuori
+  dalla radice in `../foto-frontend-iqstats/`. La riga `foto frontend app iqstats/` resta
+  in `.gitignore` come rete se rientrassero.
 - L'area Arbitri chiede **indici** che le foto mostrano già costruiti (disciplinare,
   rigori, generale, con una scala a cinque fasce). Sono formule del prodotto di
   riferimento: `AGENTS.md` vieta di copiarle. Vanno progettate, con la loro scala e la

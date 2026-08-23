@@ -23,6 +23,13 @@ quale sia il numero. Da qui discendono le due regole che tengono insieme tutto i
 1. **Il colore dichiara un verso, non decora.** Verde e mattone compaiono solo dove un
    valore sta sopra o sotto un riferimento — media, metro di lega, forma. Dove un numero
    non ha un verso, resta inchiostro.
+   **Un'eccezione sola, aggiunta il 23 agosto 2026:** le sette famiglie statistiche del
+   dossier hanno una tinta ciascuna, e lì il colore dichiara **un'identità**. Regge a tre
+   condizioni, tutte e tre necessarie: l'identità è **scritta** nella testata, quindi
+   nessuna informazione vive solo nel colore; nessuna delle sette tinte entra negli
+   intervalli del verde (162°) e del mattone (8°), che dicono un verso; le sette sono un
+   **insieme chiuso e nominato**, non una tavolozza libera. Fuori da queste sette famiglie
+   la regola non cambia.
 2. **Il monospazio è la voce della provenienza, la prosa è la voce della lettura.**
    Fonte, freschezza, campione, identificativi e cifre in mono; giudizi e spiegazioni in
    prosa. Discende dal vincolo non negoziabile: ogni valore mostrato dichiara da dove
@@ -49,6 +56,13 @@ spiega.** Non introdurre colori fuori da questa tabella.
 | Mattone — sotto il riferimento | `#A6321F` | `--card-down`, `--amber` | 6,27 |
 | Filetto | `#E3DED4` | `--card-stroke`, `--line` | bordo, mai testo |
 | Testo su bordeaux | `#FBF7F3` | `--card-on-brand` | 10,99 su `#6E1522` |
+| Famiglia — tiri | `#6E1522` | `--fam-tiri` | 10,99 col testo chiaro sopra |
+| Famiglia — tiri in porta | `#7A4E1D` | `--fam-tiri-porta` | 6,71 |
+| Famiglia — falli | `#3E3A8C` | `--fam-falli` | 9,00 |
+| Famiglia — corner | `#1F5673` | `--fam-corner` | 7,47 |
+| Famiglia — cartellini gialli | `#7A5C00` | `--fam-gialli` | 5,87 |
+| Famiglia — parate | `#5B3A6E` | `--fam-parate` | 8,66 |
+| Famiglia — fuorigioco | `#403E3A` | `--fam-fuorigioco` | 10,01 |
 
 **Nessuna modalità scura.** Il tema è unico. Il ribaltamento su `prefers-color-scheme`
 esisteva ed è stato rimosso: i componenti dell'identità non lo seguivano, e la cornice
@@ -69,7 +83,7 @@ Space Grotesk: la geometrica da interfaccia scura non regge la carta.
 **La carta non ha ombre, ha filetti.** `--shadow-sm` e `--shadow-md` valgono `none`: la
 gerarchia si costruisce con bordo da 1 px, superficie tenue e spaziatura.
 
-### Un solo blocco ad alto contrasto per pagina
+### Un solo blocco ad alto contrasto per pagina, e la deroga del dossier
 
 Un blocco ad alto contrasto è una superficie bordeaux piena con testo chiaro sopra: la
 hero della gara, il campo della porta d'ingresso, il pannello «Cosa non fa IQstatS» di
@@ -82,6 +96,17 @@ azzerava la gerarchia: se tutto grida, nulla si distingue. Il corollario pratico
 scegliere il blocco pieno significa **decidere il protagonista della pagina**, non
 decorare un riquadro. Se due candidati sembrano meritarlo, la pagina ha due argomenti e
 il problema è la pagina.
+
+**Deroga, decisa dall'utente il 23 agosto 2026 e scritta qui invece che aggirata.** Nel
+dossier gara le sette famiglie statistiche portano una **fascia piena in testata**, una
+per card. Con `.oggi-hero`, che resta il protagonista, la pagina passa da **uno a otto**
+blocchi pieni. La deroga vale **solo lì** e a due condizioni: le fasce sono **strette**
+— alte quanto una riga di titolo, non pannelli — e sono **tutte dello stesso rango**,
+quindi non competono con la hero per il primo sguardo, la segmentano. Fuori dal dossier
+la regola resta uno per pagina.
+
+Il rischio noto è quello misurato su `/metodo`: sette fasce che gridano insieme
+affaticano. Va riletto in pagina, non dedotto.
 
 ## La porta d'ingresso
 

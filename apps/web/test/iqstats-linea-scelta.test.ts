@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   daAccendere,
   decisione,
+  soglieReali,
   type LineaProbabile,
 } from "../src/server/iqstats/projection/linea-scelta.ts";
 
@@ -78,4 +79,41 @@ test("quando tutte le vicine sono monete, si accende comunque la meno moneta", (
   const scelta = daAccendere(piatte);
   assert.ok(scelta.prima >= 1 && scelta.prima <= 3, "sempre fra le tre centrali");
   assert.equal(piatte[scelta.prima].soglia, 7.5);
+});
+
+/**
+ * Il caso vero: fuorigioco di Red Bull Bragantino sul dossier 7231, 23 agosto 2026, atteso
+ * 1,0. Il motore costruisce `-1,5 -0,5 0,5 1,5 2,5`: due soglie che un conteggio non può
+ * scendere a superare, e che entravano fra le tre centrali confrontate dalla regola.
+ */
+const FUORIGIOCO_BRAGANTINO = [
+  linea(-1.5, 1),
+  linea(-0.5, 1),
+  linea(0.5, 0.63),
+  linea(1.5, 0.26),
+  linea(2.5, 0.08),
+];
+
+test("le soglie sotto zero non arrivano in pagina", () => {
+  const scala = soglieReali(FUORIGIOCO_BRAGANTINO);
+  assert.deepEqual(scala.map((l) => l.soglia), [0.5, 1.5, 2.5], "restano le tre vere");
+  assert.equal(soglieReali([]).length, 0, "un elenco vuoto resta vuoto");
+  assert.deepEqual(
+    soglieReali([linea(6.5, 0.75), linea(7.5, 0.65)]).map((l) => l.soglia),
+    [6.5, 7.5],
+    "dove nessuna soglia è negativa non si toglie niente",
+  );
+});
+
+test("senza il filtro la regola accenderebbe una soglia impossibile", () => {
+  // Con le cinque grezze, le tre centrali sono -0,5 · 0,5 · 1,5, e la più decisa è -0,5
+  // al 100%: una casella accesa su un evento certo, che non è una lettura.
+  const grezza = daAccendere(FUORIGIOCO_BRAGANTINO);
+  assert.equal(FUORIGIOCO_BRAGANTINO[grezza.prima].soglia, -0.5, "il difetto, se non si filtra");
+
+  // Filtrata, le centrali sono la sola 1,5, e la regola accende quella.
+  const scala = soglieReali(FUORIGIOCO_BRAGANTINO);
+  const scelta = daAccendere(scala);
+  assert.equal(scala[scelta.prima].soglia, 1.5, "resta la sola soglia vera fra le estreme");
+  assert.equal(scelta.seconda, null);
 });

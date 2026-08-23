@@ -4,23 +4,31 @@
 // Sostituisce la lettura del motore ENG-1 quando c'è, invece di affiancarla: due pannelli
 // con due numeri diversi per «tiri in casa» sarebbero due verità sullo stesso schermo.
 // Riusa le classi del pannello esistente, così l'aspetto resta quello e non nasce CSS.
+import type { CSSProperties } from "react";
 import type {
   OsservatoDelBersaglio,
   ProiezioniDellaGara,
 } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
-import { daAccendere, type Accensione } from "@/server/iqstats/projection/linea-scelta";
+import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
 
-const NOMI: Record<string, string> = {
-  total_shots: "Tiri",
-  shots_on_target: "Tiri in porta",
-  fouls: "Falli",
-  corner_kicks: "Corner",
-  yellow_cards: "Cartellini gialli",
-  goalkeeper_saves: "Parate",
-  offsides: "Fuorigioco",
+// Nome e tinta stanno nella **stessa** tabella apposta: due tabelle separate divergono al
+// primo bersaglio nuovo, e una famiglia senza tinta prenderebbe il bordeaux in silenzio,
+// cioè due card dello stesso colore senza che nessuno se ne accorga.
+//
+// La tinta è l'unica eccezione alla regola «il colore dichiara un verso» del design system:
+// qui dichiara un'identità, che è anche **scritta** nella testata, quindi nessuna
+// informazione vive solo nel colore.
+const FAMIGLIE: Record<string, { readonly nome: string; readonly tinta: string }> = {
+  total_shots: { nome: "Tiri", tinta: "var(--fam-tiri)" },
+  shots_on_target: { nome: "Tiri in porta", tinta: "var(--fam-tiri-porta)" },
+  fouls: { nome: "Falli", tinta: "var(--fam-falli)" },
+  corner_kicks: { nome: "Corner", tinta: "var(--fam-corner)" },
+  yellow_cards: { nome: "Cartellini gialli", tinta: "var(--fam-gialli)" },
+  goalkeeper_saves: { nome: "Parate", tinta: "var(--fam-parate)" },
+  offsides: { nome: "Fuorigioco", tinta: "var(--fam-fuorigioco)" },
 };
 
 function valore(numero: number): string {
@@ -145,7 +153,10 @@ function Voce({ chi, atteso, linee, osservato, dove }: {
   readonly osservato?: MediaOsservata | null;
   readonly dove?: string;
 }) {
-  const scelta = linee === null ? { prima: -1, seconda: null } : daAccendere(linee);
+  // Le soglie sotto zero non si mostrano: un conteggio non scende sotto zero, e
+  // «Over -0,5 al 100%» entrerebbe fra le tre centrali che la regola confronta.
+  const scala = linee === null ? null : soglieReali(linee);
+  const scelta = scala === null ? { prima: -1, seconda: null } : daAccendere(scala);
   return (
     <li className="engine-split">
       <span className="engine-who">
@@ -161,10 +172,10 @@ function Voce({ chi, atteso, linee, osservato, dove }: {
         {valore(atteso)}
         <span className="engine-obs">atteso</span>
       </span>
-      {linee === null ? null : (
+      {scala === null || scala.length === 0 ? null : (
         <>
           <ol className="engine-ladder">
-            {linee.map((linea, indice) => (
+            {scala.map((linea, indice) => (
               <Soglia
                 key={linea.soglia}
                 linea={linea}
@@ -175,7 +186,7 @@ function Voce({ chi, atteso, linee, osservato, dove }: {
               />
             ))}
           </ol>
-          <p className="engine-why">{spiegazione(linee, scelta)}</p>
+          <p className="engine-why">{spiegazione(scala, scelta)}</p>
         </>
       )}
     </li>
@@ -208,10 +219,14 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
   const lCasa = bersaglio.casa;
   const lTrasferta = bersaglio.trasferta;
   if (!prevista(lCasa) || !prevista(lTrasferta)) return null;
+  const famiglia = FAMIGLIE[bersaglio.target];
 
   return (
-    <li className="engine-row">
-      <p className="engine-metric">{NOMI[bersaglio.target] ?? bersaglio.target}</p>
+    <li
+      className="engine-row is-famiglia"
+      style={{ "--famiglia": famiglia?.tinta ?? "var(--card-brand)" } as CSSProperties}
+    >
+      <p className="engine-metric">{famiglia?.nome ?? bersaglio.target}</p>
       <ul className="engine-splits">
         <Voce
           chi={casa}
@@ -256,7 +271,7 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
 
   const senzaCopertura = proiezioni.bersagli
     .filter((bersaglio) => !mostrabili.includes(bersaglio))
-    .map((bersaglio) => NOMI[bersaglio.target] ?? bersaglio.target);
+    .map((bersaglio) => FAMIGLIE[bersaglio.target]?.nome ?? bersaglio.target);
 
   return (
     <section className="dossier-panel" aria-labelledby="projection-title">
@@ -279,9 +294,11 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
 
       <p className="dossier-src">
         Ogni bersaglio è letto tre volte: quanto ne produce ciascuna squadra e quanto ne esce
-        dalla gara. Il numero grande a sinistra è il valore atteso; accanto, cinque soglie con
-        <b>entrambi i lati</b>, Over e Under, così due linee si confrontano senza fare il
-        complemento a mente. Il totale è la somma dei due lati, sempre. È una lettura
+        dalla gara. Il numero grande a sinistra è il valore atteso; accanto, fino a cinque
+        soglie con <b>entrambi i lati</b>, Over e Under, così due linee si confrontano senza
+        fare il complemento a mente. Dove se ne vedono meno di cinque è perché le altre
+        cadrebbero sotto zero: un conteggio non scende sotto zero, e &laquo;Over -0,5 al
+        100%&raquo; non è una lettura. Il totale è la somma dei due lati, sempre. È una lettura
         probabilistica, non un consiglio di giocata.
       </p>
 

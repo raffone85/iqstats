@@ -43,6 +43,25 @@ export function decisione(linea: LineaProbabile): number {
   return Math.abs(linea.probabilitaSopra - 0.5);
 }
 
+/**
+ * Le soglie che un conteggio puo' davvero superare.
+ *
+ * Il motore costruisce cinque soglie attorno all'atteso arrotondato, e quando l'atteso e'
+ * basso le prime finiscono sotto zero: sul dossier 7231 sono **5 scale su 21**, con il
+ * fuorigioco di una squadra che arriva a `-1,5 -0,5 0,5 1,5 2,5`. «Over -0,5 al 100%» non
+ * e' una lettura, e non e' solo uno slot sprecato: `daAccendere` confronta **le tre
+ * centrali**, quindi una soglia impossibile entrava fra le candidate e ne spingeva fuori
+ * una vera.
+ *
+ * Si filtra qui, dove il numero si mostra, e **non** in `soglieDi`: le cinque soglie sono
+ * anche quelle di Python, e il campione di riscontro le confronta una per una. Toglierle
+ * al motore vuol dire rigenerare campioni e artefatti di calibrazione, che e' una
+ * decisione sul modello e non una riga di presentazione.
+ */
+export function soglieReali<T extends LineaProbabile>(linee: readonly T[]): readonly T[] {
+  return linee.filter((linea) => linea.soglia > 0);
+}
+
 /** La linea da accendere e l'eventuale seconda quasi identica. */
 export function daAccendere(linee: readonly LineaProbabile[]): Accensione {
   // Con meno di tre soglie non esistono «le centrali»: non si accende niente invece di

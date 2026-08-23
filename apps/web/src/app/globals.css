@@ -313,6 +313,16 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   --card-up: #0F6B4F; --card-up-pale: #E7F1EC;
   --card-down: #A6321F; --card-down-pale: #FBEDE9;
   --card-stroke: #E3DED4;
+  /* Le sette famiglie statistiche del dossier, 23 agosto 2026. Sono l'unica eccezione
+     alla regola «il colore dichiara un verso»: qui il colore dichiara un'identita', e
+     l'identita' e' scritta accanto nella testata, quindi nessuna informazione vive solo
+     nel colore. Nessuna tinta entra negli intervalli del verde (162°) e del mattone (8°),
+     che dicono sopra e sotto. Contrasti del testo #FBF7F3 sopra la fascia, misurati:
+     tiri 10,99 · tiri in porta 6,71 · falli 9,00 · corner 7,47 · gialli 5,87 ·
+     parate 8,66 · fuorigioco 10,01. */
+  --fam-tiri: #6E1522; --fam-tiri-porta: #7A4E1D; --fam-falli: #3E3A8C;
+  --fam-corner: #1F5673; --fam-gialli: #7A5C00; --fam-parate: #5B3A6E;
+  --fam-fuorigioco: #403E3A;
   --font-display: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -579,7 +589,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* Giocate statistiche — motore IQstatS (ENG-1). */
 .engine-badge { display: inline-flex; align-items: center; margin: 0 0 14px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--card-brand-soft); background: var(--card-brand-pale); font: 700 11px/1.3 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-brand-strong); }
 .engine-badge.is-previous { border-color: var(--card-down); background: var(--card-down-pale); color: var(--card-down); }
-.engine-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+/* `minmax(0, 1fr)` e non `auto`: la colonna implicita si dimensiona sul contenuto, e a
+   375 px la sezione Gol la faceva risolvere a 348 px dentro un contenitore di 278 —
+   scrollWidth 387 contro un viewport di 371, cioe' overflow orizzontale di pagina.
+   Misurato il 23 agosto 2026 sul dossier 7231. */
+.engine-rows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 .engine-rows.is-previous { padding: 12px; border-radius: var(--r-control); border: 1px dashed var(--card-down); background: var(--card-panel-2); }
 .engine-row { padding: 11px 13px; border-radius: var(--r-control); background: var(--card-panel-2); border: 1px solid var(--card-stroke); }
 .engine-metric { margin: 0 0 8px; font-family: var(--font-display); font-size: 15px; color: var(--card-ink); }
@@ -607,6 +621,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* Perché è accesa quella linea: senza questa riga un riquadro acceso è letto come un
    consiglio, che è esattamente quello che non è. */
 .engine-why { grid-column: 1 / -1; margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--card-ink-3); }
+/* Card per famiglia con la fascia piena in testata. Vale solo dove la famiglia ha una
+   tinta dichiarata (`--famiglia`): `.engine-row` resta com'era per l'area Arbitri, la
+   sezione Gol e il motore ENG-1, che famiglie colorate non ne hanno. */
+.engine-row.is-famiglia { padding: 0 0 11px; overflow: hidden; background: var(--card-panel); }
+.engine-row.is-famiglia .engine-metric { margin: 0; padding: 10px 13px; background: var(--famiglia); color: var(--card-on-brand); }
+.engine-row.is-famiglia .engine-splits { padding: 11px 13px 0; }
+.engine-row.is-famiglia .engine-badge { margin: 11px 13px 0; }
 @media (min-width: 768px) {
   .engine-split { grid-template-columns: minmax(110px, 1fr) auto minmax(0, 2.4fr); align-items: center; }
   .engine-ladder { grid-column: auto; padding-bottom: 0; }
