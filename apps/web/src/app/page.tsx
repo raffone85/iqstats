@@ -137,10 +137,15 @@ export default async function HomePage() {
         </p>
 
         <div className="home-grid">
-          {/* Riquadro protagonista: unico blocco ad alto contrasto, come la hero del sistema. */}
-          <Link className="home-tile home-tile-wide home-tile-feature" href="/oggi">
+          {/* Riquadro protagonista: unico blocco ad alto contrasto, come la hero del sistema.
+              Porta dritto al dossier della gara in evidenza, che è dove «si apre tutto»;
+              se oggi non c'è una gara leggibile ripiega sul calendario. */}
+          <Link
+            className="home-tile home-tile-wide home-tile-feature"
+            href={feature ? `/match/${feature.eventId}` : "/partite"}
+          >
             <span className="home-tile-head">
-              <span className="home-tile-name">Oggi</span>
+              <span className="home-tile-name">{feature ? "La gara di oggi" : "Partite"}</span>
               <span className="home-tile-count">
                 {!available
                   ? "non disponibile"
@@ -149,7 +154,9 @@ export default async function HomePage() {
                     : counter(todayMatches.length, "gara", "gare")}
               </span>
             </span>
-            <span className="home-tile-sub">La gara in evidenza e le letture del giorno</span>
+            <span className="home-tile-sub">
+              {feature ? "Apri il dossier: gol, tiri, corner, falli, fuorigioco" : "Il calendario delle gare"}
+            </span>
 
             <span className="home-feature">
               {feature ? (
@@ -296,23 +303,27 @@ export default async function HomePage() {
             </span>
           </div>
 
-          <div className="home-tile home-tile-soon">
+          <Link className="home-tile" href="/arbitri">
             <span className="home-tile-head">
               <span className="home-tile-name">Arbitri</span>
-              <span className="home-tile-count">in arrivo</span>
+              <span className="home-tile-count">681 direttori</span>
             </span>
             <span className="home-tile-sub">
               Falli e cartellini di ogni direttore, con il metro della competizione accanto
             </span>
-          </div>
+            <span className="home-tile-go" aria-hidden="true">
+              Apri
+            </span>
+          </Link>
 
           <div className="home-tile home-tile-wide home-tile-soon">
             <span className="home-tile-head">
-              <span className="home-tile-name">Le mie giocate</span>
+              <span className="home-tile-name">Expected</span>
               <span className="home-tile-count">in arrivo</span>
             </span>
             <span className="home-tile-sub">
-              Lo storico delle tue letture salvate, legato al tuo accesso
+              Due squadre qualsiasi e l&apos;arbitro che scegli tu, anche se non si incontrano:
+              un banco di prova, non il dossier di una gara in calendario
             </span>
           </div>
         </div>

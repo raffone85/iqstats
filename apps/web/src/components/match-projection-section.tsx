@@ -9,6 +9,7 @@ import type {
   ProiezioniDellaGara,
 } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
+import { daAccendere, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
 
@@ -45,20 +46,92 @@ function prevista(esito: ProiezioneDiGara["casa"]): esito is ProiezioneDiProduzi
   return esito.stato === "prevista";
 }
 
-/** Una soglia: si mostra il lato più probabile, l'altro è il complemento. */
-function Soglia({ linea, centrale }: { readonly linea: Linea; readonly centrale: boolean }) {
-  const sopra = percento(linea.probabilitaSopra);
-  const sotto = percento(linea.probabilitaSotto);
-  // Con le due percentuali mostrate identiche non c'è un lato più probabile: indicarne
-  // uno sarebbe un segnale che la distribuzione non dà.
-  const pari = sopra === sotto;
-  const guidaSopra = linea.probabilitaSopra > linea.probabilitaSotto;
+/** Il verso di una linea in parole, o `null` quando i due lati sono pari. */
+function verso(linea: Linea): { lato: string; quota: number } | null {
+  if (percento(linea.probabilitaSopra) === percento(linea.probabilitaSotto)) return null;
+  return linea.probabilitaSopra > linea.probabilitaSotto
+    ? { lato: "Over", quota: linea.probabilitaSopra }
+    : { lato: "Under", quota: linea.probabilitaSotto };
+}
+
+/**
+ * La frase che spiega perché è accesa quella linea e non un'altra.
+ *
+ * Non è ornamento: senza, un riquadro acceso viene letto come un consiglio. Qui si dice
+ * il criterio e si nominano i numeri che lo reggono.
+ */
+function spiegazione(linee: readonly Linea[], scelta: Accensione) {
+  if (scelta.prima < 0) return null;
+  const linea = linee[scelta.prima];
+  const v = verso(linea);
+  if (v === null) {
+    return "Su questo lato nessuna soglia vicina al valore atteso ha un verso deciso: "
+      + "la lettura resta aperta, e accendere una casella direbbe più di quanto i numeri sanno.";
+  }
+
+  // Si nominano solo le soglie **scartate**: elencare fra le fiacche anche la seconda
+  // accesa faceva contraddire la frase con se stessa.
+  const scartate = linee
+    .map((altra, i) => ({ altra, i }))
+    .filter(({ i }) => i > 0 && i < linee.length - 1 && i !== scelta.prima && i !== scelta.seconda)
+    .map(({ altra }) => {
+      const suo = verso(altra);
+      return suo === null
+        ? `${valore(altra.soglia)} è una moneta`
+        : `${valore(altra.soglia)} sta al ${percento(suo.quota)}`;
+    });
+  const piuFiacca = scartate.join(", ");
+
+  const seconda = scelta.seconda === null ? null : linee[scelta.seconda];
+  const versoSeconda = seconda === null ? null : verso(seconda);
 
   return (
-    <li className={centrale ? "engine-step is-central" : "engine-step"}>
+    <>
+      <b>{v.lato} {valore(linea.soglia)} al {percento(v.quota)}</b> è la lettura più decisa fra
+      le soglie vicine al valore atteso
+      {scartate.length === 0 ? "" : `: ${piuFiacca}, cioè troppo a ridosso del previsto perché il verso conti`}.
+      {" "}Le due soglie agli estremi non si accendono mai: la loro forza viene dalla distanza,
+      non da un&apos;informazione.
+      {seconda !== null && versoSeconda !== null ? (
+        <>
+          {" "}
+          <b>{versoSeconda.lato} {valore(seconda.soglia)} al {percento(versoSeconda.quota)}</b> le
+          sta a meno di tre punti: fra le due il modello non sa distinguere, e sono accese
+          entrambe apposta.
+        </>
+      ) : null}
+    </>
+  );
+}
+
+/**
+ * Una soglia con **entrambi** i lati, come nel materiale di riferimento.
+ *
+ * Prima se ne mostrava uno solo, il più probabile, lasciando l'altro implicito: chi legge
+ * non poteva confrontare due linee senza fare il complemento a mente.
+ */
+function Soglia({ linea, acceso }: {
+  readonly linea: Linea;
+  readonly acceso: "piena" | "tenue" | null;
+}) {
+  const sopra = percento(linea.probabilitaSopra);
+  const sotto = percento(linea.probabilitaSotto);
+  const guidaSopra = linea.probabilitaSopra > linea.probabilitaSotto;
+  const pari = sopra === sotto;
+  const classe = acceso === "piena"
+    ? "engine-step is-central"
+    : acceso === "tenue" ? "engine-step is-quasi" : "engine-step";
+
+  return (
+    <li className={classe}>
       <span className="engine-step-line">{valore(linea.soglia)}</span>
       <span className="engine-step-prob">
-        {pari ? "pari 50%" : (guidaSopra ? "Over " + sopra : "Under " + sotto)}
+        <span className={!pari && guidaSopra ? "engine-side is-lead" : "engine-side"}>
+          O {sopra}
+        </span>
+        <span className={!pari && !guidaSopra ? "engine-side is-lead" : "engine-side"}>
+          U {sotto}
+        </span>
       </span>
     </li>
   );
@@ -72,26 +145,38 @@ function Voce({ chi, atteso, linee, osservato, dove }: {
   readonly osservato?: MediaOsservata | null;
   readonly dove?: string;
 }) {
-  // La soglia centrale è la terza delle cinque: è la convenzione del lato che misura.
-  const centrale = linee === null ? -1 : Math.floor(linee.length / 2);
+  const scelta = linee === null ? { prima: -1, seconda: null } : daAccendere(linee);
   return (
     <li className="engine-split">
       <span className="engine-who">
         {chi}
         {osservato === null || osservato === undefined ? null : (
           <span className="engine-obs">
-            {dove} {valore(osservato.media)} su {osservato.campione}{" "}
+            osservato {dove} {valore(osservato.media)} su {osservato.campione}{" "}
             {osservato.campione === 1 ? "gara" : "gare"}
           </span>
         )}
       </span>
-      <span className="engine-exp">{valore(atteso)}</span>
+      <span className="engine-exp">
+        {valore(atteso)}
+        <span className="engine-obs">atteso</span>
+      </span>
       {linee === null ? null : (
-        <ol className="engine-ladder">
-          {linee.map((linea, indice) => (
-            <Soglia key={linea.soglia} linea={linea} centrale={indice === centrale} />
-          ))}
-        </ol>
+        <>
+          <ol className="engine-ladder">
+            {linee.map((linea, indice) => (
+              <Soglia
+                key={linea.soglia}
+                linea={linea}
+                acceso={
+                  indice === scelta.prima ? "piena"
+                    : indice === scelta.seconda ? "tenue" : null
+                }
+              />
+            ))}
+          </ol>
+          <p className="engine-why">{spiegazione(linee, scelta)}</p>
+        </>
       )}
     </li>
   );
@@ -195,10 +280,20 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
       <p className="dossier-src">
         Ogni bersaglio è letto tre volte: quanto ne produce ciascuna squadra e quanto ne esce
         dalla gara. Il numero grande a sinistra è il valore atteso; accanto, cinque soglie con
-        il lato più probabile &mdash; l&apos;altro lato è il complemento a 100%. Il totale è la
-        somma dei due lati, sempre. È una lettura probabilistica, non un consiglio di giocata.
+        <b>entrambi i lati</b>, Over e Under, così due linee si confrontano senza fare il
+        complemento a mente. Il totale è la somma dei due lati, sempre. È una lettura
+        probabilistica, non un consiglio di giocata.
       </p>
 
+      <p className="dossier-src">
+        <b>La casella accesa non è un consiglio, è una regola dichiarata.</b> Si accende la
+        soglia su cui il verso è più deciso <b>fra le tre vicine al valore atteso</b>. Le due
+        agli estremi non si accendono mai: con un atteso di 9,3 un &laquo;Over 6,5 al 75%&raquo;
+        è vero e inutile, perché la sua forza viene dalla distanza e non da un&apos;informazione.
+        A ridosso del previsto, invece, il verso è quasi una moneta. Quando due letture distano
+        meno di tre punti sono accese entrambe, la seconda tratteggiata: il modello non sa
+        distinguerle, e sceglierne una fingerebbe una precisione che non ha.
+      </p>
       <p className="dossier-src">
         Sotto il nome di ogni squadra c&apos;è quanto ha prodotto <b>davvero</b> prima di
         questa gara, dallo stesso lato del campo e nella stessa stagione: la squadra di casa

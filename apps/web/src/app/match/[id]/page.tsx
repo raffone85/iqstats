@@ -14,6 +14,7 @@ import {
   type MatchWeather,
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
+import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
@@ -249,7 +250,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
       <ProductShell>
         <div className="oggi-backdrop" aria-hidden="true" />
         <div className="dossier">
-          <Link className="dossier-back" href="/oggi">← Oggi</Link>
+          <Link className="dossier-back" href="/partite">← Partite</Link>
           <div className="oggi-empty">
             <h2>Identificativo gara non valido</h2>
             <p>Il collegamento non è corretto. Torna alla dashboard per scegliere una gara.</p>
@@ -267,7 +268,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
       <ProductShell>
         <div className="oggi-backdrop" aria-hidden="true" />
         <div className="dossier">
-          <Link className="dossier-back" href="/oggi">← Oggi</Link>
+          <Link className="dossier-back" href="/partite">← Partite</Link>
           <div className="oggi-empty">
             <h2>Dossier non disponibile</h2>
             <p>La fonte non espone i dettagli di questa gara al momento. Nessun contenuto viene simulato.</p>
@@ -398,7 +399,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
     <ProductShell>
       <div className="oggi-backdrop" aria-hidden="true" />
       <div className="dossier">
-        <Link className="dossier-back" href="/oggi">← Oggi</Link>
+        <Link className="dossier-back" href="/partite">← Partite</Link>
 
         {/* Testata con sfondo stadio */}
         <article className="oggi-hero">
@@ -558,8 +559,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
+        {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
+        {proiezioni?.gol ? (
+          <MatchGolSection
+            gol={proiezioni.gol}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : null}
+
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
-        {proiezioni === null ? (
+        {proiezioni === null || proiezioni.bersagli.length === 0 ? (
           <StatEngineSection
             reading={engineReading}
             homeTeam={detail.homeTeam}

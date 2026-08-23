@@ -2844,3 +2844,19 @@ type`, e la catena del motore è raggiungibile dai test.
 proiezione: dove quella non c'è — sotto la quarta giornata, o fuori dalle competizioni
 raccolte — non compare nemmeno il confronto. È APP-6B nel piano, e la strada non è chiamare la
 fonte quaranta volte: è un read model.
+
+**Misurato in produzione dopo il rilascio `6bc07c4d`, su sei gare.** Quattro hanno
+previsione, consiglio e motore; due — entrambe **Club Friendlies** — non hanno nulla e lo
+dichiarano: «questo campionato non ha una baseline calibrata da IQstatS: copertura assente,
+nessun valore viene inventato», e la fonte non espone nemmeno il pronostico 1X2.
+
+Due casi che spiegano quando l'osservato **non** compare pur essendoci la proiezione:
+
+- **Stoiximan Super League, gara 219742**: proiezione presente, osservato assente su tutte
+  e sei le metriche. Non è un difetto: la gara è nella stagione **23**, mentre le **16 righe
+  in casa** e le **19 in trasferta** delle due squadre sono tutte della stagione **69**.
+  L'osservato non mescola stagioni; la proiezione guarda anche più indietro. L'asimmetria è
+  voluta, ma va conosciuta.
+- **Super League svizzera, gara 211386**: sette metriche e **tredici osservati su
+  quattordici**. La riga mancante è una squadra senza gare da quel lato nella stagione: tace
+  invece di mostrare uno zero.

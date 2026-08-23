@@ -1,7 +1,8 @@
 # Piano di esecuzione — IQstatS
 
-> **Dove siamo adesso:** `docs/product/implementation-status.md`. Questo piano dice che cosa
-> manca e in che ordine; quella pagina dice che cosa esiste davvero, misurato.
+> **Questo file è lo storico delle fasi 0-6.** Il piano attivo dal 23 agosto 2026 è
+> `docs/product/piano-di-costruzione.md`: gerarchia, ordine dei lavori e cose da non fare.
+> **Dove siamo adesso:** `docs/product/implementation-status.md`, misurato.
 
 ## Obiettivo
 

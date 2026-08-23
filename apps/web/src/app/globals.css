@@ -596,6 +596,17 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-step.is-central .engine-step-line { color: var(--card-brand-strong); font-weight: 600; }
 .engine-step-prob { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); white-space: nowrap; }
 .engine-step.is-central .engine-step-prob { color: var(--card-ink); }
+/* Entrambi i lati su ogni soglia: chi legge confronta due linee senza fare il complemento
+   a mente. Il lato che guida si distingue per peso e inchiostro, non per il solo colore. */
+.engine-side { display: block; }
+.engine-side.is-lead { color: var(--card-ink); font-weight: 600; }
+.engine-step.is-central .engine-side.is-lead { color: var(--card-brand-strong); }
+/* La seconda accensione: stessa forma, tono più tenue. Il tratteggio la distingue dalla
+   prima anche senza colore, come vuole il master. */
+.engine-step.is-quasi { border-style: dashed; border-color: var(--card-brand); }
+/* Perché è accesa quella linea: senza questa riga un riquadro acceso è letto come un
+   consiglio, che è esattamente quello che non è. */
+.engine-why { grid-column: 1 / -1; margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--card-ink-3); }
 @media (min-width: 768px) {
   .engine-split { grid-template-columns: minmax(110px, 1fr) auto minmax(0, 2.4fr); align-items: center; }
   .engine-ladder { grid-column: auto; padding-bottom: 0; }
@@ -1024,6 +1035,45 @@ a.home-tile-feature:hover { border-color: var(--card-brand-soft); }
 @media (max-width: 520px) {
   .home-tile-head { flex-direction: column; align-items: flex-start; gap: 2px; }
 }
+
+/* Movimento della dashboard. Tre gesti soli, e ognuno dice qualcosa: la pagina si
+   compone dall'alto (gerarchia), la tessera si solleva sotto il puntatore (è apribile),
+   il riquadro protagonista si illumina dal punto in cui lo guardi (è il primo).
+   Niente libreria: `animation` e `transition` bastano, e il blocco
+   `prefers-reduced-motion` in testa al file le spegne già tutte.
+   `backwards` è deliberato: se l'animazione non partisse, la tessera resta visibile
+   invece di restare a zero. */
+@keyframes homeRise { from { opacity: 0; transform: translateY(14px); } }
+
+.home-title, .home-lede { animation: homeRise 520ms cubic-bezier(.16, 1, .3, 1) backwards; }
+.home-lede { animation-delay: 70ms; }
+
+.home-grid > * { animation: homeRise 520ms cubic-bezier(.16, 1, .3, 1) backwards; }
+.home-grid > :nth-child(1) { animation-delay: 130ms; }
+.home-grid > :nth-child(2) { animation-delay: 190ms; }
+.home-grid > :nth-child(3) { animation-delay: 250ms; }
+.home-grid > :nth-child(4) { animation-delay: 310ms; }
+.home-grid > :nth-child(5) { animation-delay: 370ms; }
+.home-grid > :nth-child(6) { animation-delay: 430ms; }
+.home-grid > :nth-child(7) { animation-delay: 490ms; }
+.home-grid > :nth-child(8) { animation-delay: 550ms; }
+.home-grid > :nth-child(9) { animation-delay: 610ms; }
+
+/* Il sollevamento è di due pixel: si sente, non si vede. L'ombra è tinta di bordeaux
+   come vuole il master, mai nera sulla carta. */
+.home-tile { transition: border-color 200ms ease, transform 200ms cubic-bezier(.16, 1, .3, 1), box-shadow 200ms ease; }
+a.home-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px rgba(110, 21, 34, .38); }
+a.home-tile:active { transform: translateY(0); }
+
+/* L'alone segue il lato da cui arrivi: due sorgenti fisse, una per lato, accese dal
+   passaggio. Senza puntatore (tastiera, tocco) si accende quella centrale col focus. */
+.home-tile-feature::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  background: radial-gradient(120% 90% at 18% 0%, rgba(242, 218, 223, .20), transparent 62%);
+  opacity: 0; transition: opacity 260ms ease; pointer-events: none;
+}
+a.home-tile-feature:hover::before, a.home-tile-feature:focus-visible::before { opacity: 1; }
+.home-tile-feature > * { position: relative; z-index: 1; }
 
 /* Accesso — la presentazione vive qui: che cos'è, come si legge, che cosa contiene.
    Il riquadro di accesso non deve più occupare da solo tutta l'altezza. */

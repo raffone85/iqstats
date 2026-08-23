@@ -1,10 +1,10 @@
 {
   "generato_da": "scripts/projection/dataset/reconstruct_cards.py",
   "sorgente": "/events/{id}/incidents/",
-  "gare_con_episodi_acquisiti": 10460,
-  "gare_ricostruite": 10460,
+  "gare_con_episodi_acquisiti": 10499,
+  "gare_ricostruite": 10499,
   "gare_con_lista_episodi_vuota": 0,
-  "righe_squadra_gara": 20920,
+  "righe_squadra_gara": 20998,
   "leghe_coperte": 29,
   "episodi_senza_lato": 0,
   "cartellini_non_attribuiti": {
@@ -14,49 +14,49 @@
   },
   "distribuzioni": {
     "yellow_cards": {
-      "media": 1.962237,
-      "sd": 1.402575,
-      "dispersione": 1.002538,
+      "media": 1.962092,
+      "sd": 1.402952,
+      "dispersione": 1.003151,
       "min": 0,
       "max": 12,
-      "quota_zeri": 0.151769,
-      "osservazioni": 20920
+      "quota_zeri": 0.151729,
+      "osservazioni": 20998
     },
     "second_yellow_red": {
-      "media": 0.038528,
-      "sd": 0.195669,
-      "dispersione": 0.99373,
+      "media": 0.03848,
+      "sd": 0.195544,
+      "dispersione": 0.993698,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.962094,
-      "osservazioni": 20920
+      "quota_zeri": 0.962139,
+      "osservazioni": 20998
     },
     "red_cards_direct": {
-      "media": 0.065249,
-      "sd": 0.25924,
-      "dispersione": 1.02999,
+      "media": 0.065197,
+      "sd": 0.259108,
+      "dispersione": 1.029763,
       "min": 0,
       "max": 3,
-      "quota_zeri": 0.937715,
-      "osservazioni": 20920
+      "quota_zeri": 0.937756,
+      "osservazioni": 20998
     },
     "bench_cards": {
-      "media": 0.002772,
-      "sd": 0.054369,
-      "dispersione": 1.066193,
+      "media": 0.002905,
+      "sd": 0.055562,
+      "dispersione": 1.062669,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.997323,
-      "osservazioni": 20920
+      "quota_zeri": 0.99719,
+      "osservazioni": 20998
     },
     "unattributed_cards": {
-      "media": 0.090249,
-      "sd": 0.380299,
-      "dispersione": 1.602548,
+      "media": 0.089913,
+      "sd": 0.379632,
+      "dispersione": 1.602883,
       "min": 0,
       "max": 6,
-      "quota_zeri": 0.92978,
-      "osservazioni": 20920
+      "quota_zeri": 0.930041,
+      "osservazioni": 20998
     }
   },
   "provenienza": "C"

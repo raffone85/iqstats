@@ -3,13 +3,14 @@ import Link from "next/link";
 import { signOutAction } from "@/app/actions/session";
 import { createSupabaseServerClient } from "@/server/supabase/server";
 
+/** `teams` non ha una voce nella barra: la scheda squadra si raggiunge da una gara o
+ *  dalla dashboard, e nessuna voce risulta attiva mentre la si legge. È voluto. */
 type ProductSection =
   | "home"
-  | "today"
   | "matches"
   | "predictions"
-  | "database"
-  | "mybets"
+  | "teams"
+  | "referees"
   | "method"
   | "billing"
   | "account";
@@ -19,11 +20,16 @@ type ProductShellProps = Readonly<{
   activeSection?: ProductSection;
 }>;
 
+/**
+ * Solo le pagine che esistono davvero. Le entità confermate il 23 agosto — Arbitri,
+ * Squadre, Giocatori, Expected — stanno sulle tessere della dashboard ed entrano qui una
+ * alla volta, quando la loro pagina c'è: Arbitri è entrata lo stesso giorno. Il tetto
+ * resta cinque destinazioni, come vuole l'architettura informativa su mobile.
+ */
 const PRIMARY_NAV: ReadonlyArray<{ section: ProductSection; href: string; label: string; short: string }> = [
   { section: "home", href: "/", label: "Home", short: "Home" },
-  { section: "today", href: "/oggi", label: "Oggi", short: "Oggi" },
   { section: "matches", href: "/partite", label: "Partite", short: "Partite" },
-  { section: "predictions", href: "/pronostici", label: "Pronostici", short: "Pronostici" },
+  { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
   { section: "method", href: "/metodo", label: "Metodo", short: "Metodo" },
 ];
 

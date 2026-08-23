@@ -1,12 +1,16 @@
 import "server-only";
 
-import postgres from "postgres";
+import type postgres from "postgres";
 
+import { connessione } from "./lettura.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import { calcolaFeature } from "./projection/asof/calcolo.ts";
+import { attesiDellaGara, mercatiGol, type MercatiGol } from "./projection/gol.ts";
 import { proiezioneDiGara, type ProiezioneDiGara } from "./projection/match.ts";
 import { proietta } from "./projection/production.ts";
 import { componiIngresso } from "./projection/snapshot.ts";
+import type { MaterialeDellaGara, OsservazioneSquadraGara } from "./projection/snapshot.ts";
+import type { Lato } from "./projection/asof/contratto.ts";
 import {
   mediaOsservata,
   ProjectionObservationStore,
@@ -20,11 +24,9 @@ import type { MatchDetail } from "./match-context.ts";
  *
  * Tre confini che questo modulo non supera.
  *
- * **La connessione e' sua.** `IQSTATS_PROJECTION_DATABASE_URL` e non
- * `IQSTATS_DATABASE_URL`: quest'ultima cambierebbe la strada con cui *tutta*
- * l'applicazione legge le gare — `runtime.ts` passerebbe all'ibrido — e il motore non ha
- * nessun motivo di decidere quello. Senza la variabile non si proietta e non si finge: la
- * sezione non compare.
+ * **La connessione non e' sua**: vive in `lettura.ts`, condivisa con le altre pagine che
+ * leggono il livello dati. Senza la variabile non si proietta e non si finge: la sezione
+ * non compare.
  *
  * **Gli identificativi si risolvono, non si assumono.** La pagina conosce quelli della
  * fonte, il livello dati i propri: la traduzione passa da `source_id`. Una squadra che il
@@ -36,27 +38,6 @@ import type { MatchDetail } from "./match-context.ts";
  * che serve. E' anche il motivo per cui il taglio «al momento di» resta esatto: la riga di
  * quella gara non esiste ancora.
  */
-
-let cliente: ReturnType<typeof postgres> | undefined;
-
-function connessione(): ReturnType<typeof postgres> | null {
-  const indirizzo = process.env.IQSTATS_PROJECTION_DATABASE_URL?.trim();
-  if (!indirizzo) return null;
-  cliente ??= postgres(indirizzo, {
-    max: 3,
-    idle_timeout: 20,
-    connect_timeout: 5,
-    prepare: false,
-    connection: {
-      application_name: "iqstats-projection",
-      default_transaction_read_only: true,
-      statement_timeout: 10_000,
-      role: "iqstats_app_reader",
-    },
-    onnotice: () => undefined,
-  });
-  return cliente;
-}
 
 interface RigaIdentificativi {
   readonly season_id: string | null;
@@ -133,15 +114,92 @@ export interface OsservatoDelBersaglio {
   readonly trasferta: MediaOsservata | null;
 }
 
+export interface GolDellaGara {
+  readonly mercati: MercatiGol;
+  /** Su quante gare poggia ciascuna delle due forze, e il metro di lega. */
+  readonly campioneCasa: number;
+  readonly campioneTrasferta: number;
+  readonly campioneLega: number;
+}
+
 export interface ProiezioniDellaGara {
+  /** Vuoto quando nessun bersaglio ha storia a sufficienza: la sezione Gol puo' esserci lo stesso. */
   readonly bersagli: readonly ProiezioneDiGara[];
   /**
    * Quanto ciascuna squadra ha prodotto davvero, dallo stesso lato del campo, prima di
    * questa gara: il numero osservato accanto a quello previsto.
    */
   readonly osservate: Readonly<Record<string, OsservatoDelBersaglio>>;
+  /** I mercati dei gol, che non dipendono dai modelli: `null` se manca il materiale. */
+  readonly gol: GolDellaGara | null;
   /** Da quando e' aggiornata la storia su cui poggiano queste proiezioni. */
   readonly ultimaOsservazione: string | null;
+}
+
+/**
+ * La media di `expected_goals` sulle righe utili, prodotto o concesso.
+ *
+ * Gemella di `mediaOsservata`, che guarda solo il prodotto: qui serve anche il concesso,
+ * perche' i gol attesi di una squadra dipendono da quanto l'altra ne lascia fare. Stessi
+ * due vincoli, lato e stagione, per la stessa ragione.
+ */
+function mediaXg(
+  righe: readonly OsservazioneSquadraGara[],
+  verso: "prodotte" | "concesse",
+  lato: Lato,
+  stagione: number,
+): { media: number; campione: number } | null {
+  let somma = 0;
+  let campione = 0;
+  for (const riga of righe) {
+    if (riga.lato !== lato || riga.stagione !== stagione) continue;
+    const valore = riga[verso].expected_goals;
+    if (valore === null || valore === undefined) continue;
+    somma += valore;
+    campione += 1;
+  }
+  return campione === 0 ? null : { media: somma / campione, campione };
+}
+
+/**
+ * I gol attesi e i mercati che ne discendono, dal materiale gia' letto per proiettare.
+ *
+ * Zero interrogazioni nuove: sono le stesse righe. Restituisce `null` appena manca uno dei
+ * quattro ingredienti — attacco e difesa delle due squadre — o il metro di lega: una
+ * probabilita' costruita su un pezzo mancante e' peggio di una sezione che non compare.
+ */
+function golDellaGara(
+  materialeCasa: MaterialeDellaGara,
+  materialeTrasferta: MaterialeDellaGara,
+  stagione: number,
+): GolDellaGara | null {
+  const attaccoCasa = mediaXg(materialeCasa.squadra, "prodotte", "home", stagione);
+  const difesaCasa = mediaXg(materialeCasa.squadra, "concesse", "home", stagione);
+  const attaccoTrasferta = mediaXg(materialeTrasferta.squadra, "prodotte", "away", stagione);
+  const difesaTrasferta = mediaXg(materialeTrasferta.squadra, "concesse", "away", stagione);
+  const legaCasa = mediaXg(materialeCasa.lega, "prodotte", "home", stagione);
+  const legaTrasferta = mediaXg(materialeCasa.lega, "prodotte", "away", stagione);
+  if (
+    attaccoCasa === null || difesaCasa === null || attaccoTrasferta === null
+    || difesaTrasferta === null || legaCasa === null || legaTrasferta === null
+  ) return null;
+
+  const attesi = attesiDellaGara({
+    attaccoCasa,
+    difesaCasa,
+    attaccoTrasferta,
+    difesaTrasferta,
+    legaCasa: legaCasa.media,
+    legaTrasferta: legaTrasferta.media,
+  });
+  if (attesi === null) return null;
+
+  return {
+    mercati: mercatiGol(attesi.casa, attesi.trasferta),
+    campioneCasa: attaccoCasa.campione,
+    campioneTrasferta: attaccoTrasferta.campione,
+    campioneLega: legaCasa.campione + legaTrasferta.campione,
+  };
 }
 
 /**
@@ -180,14 +238,19 @@ export async function proiezioniDellaGara(
       bersagli.push(proiezioneDiGara(artefatto, casa, trasferta));
     }
 
-    // Senza nemmeno un bersaglio completo non c'e' una proiezione: si risponde `null`
-    // cosi' chi chiama torna alla lettura di ENG-1. Restituire un oggetto vuoto
-    // lascerebbe la pagina senza nessuna delle due sezioni, che e' peggio di entrambe.
     const completi = bersagli.filter(
       (bersaglio) => bersaglio.casa.stato === "prevista"
         && bersaglio.trasferta.stato === "prevista",
     );
-    if (completi.length === 0) return null;
+
+    // I gol non passano dai modelli: bastano le medie, quindi la sezione Gol vive anche
+    // dove i sette bersagli non arrivano — sotto la quarta giornata, per esempio.
+    const gol = golDellaGara(materialeCasa, materialeTrasferta, gara.seasonId);
+
+    // Senza nemmeno un bersaglio completo **e** senza i gol non c'e' niente da mostrare:
+    // si risponde `null` cosi' chi chiama torna alla lettura di ENG-1. Con i soli gol si
+    // risponde comunque, e chi chiama vede `bersagli` vuoto.
+    if (completi.length === 0 && gol === null) return null;
 
     // Gli istanti sono ISO normalizzati dallo store, quindi l'ordine lessicografico e'
     // l'ordine temporale: nessuna conversione a data per trovare il piu' recente.
@@ -211,7 +274,7 @@ export async function proiezioniDellaGara(
       };
     }
 
-    return { bersagli, osservate, ultimaOsservazione: ultima };
+    return { bersagli: completi.length === 0 ? [] : bersagli, osservate, gol, ultimaOsservazione: ultima };
   } catch {
     // Una proiezione che non si puo' calcolare non rompe il dossier: la sezione sparisce.
     // Il resto della pagina non dipende da questo livello dati.

@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: TeamPageProps): Promise<Metad
 
 function EmptyPage({ title, message }: Readonly<{ title: string; message: string }>) {
   return (
-    <ProductShell activeSection="database">
+    <ProductShell activeSection="teams">
       <div className="oggi-backdrop" aria-hidden="true" />
       <div className="dossier">
         <Link className="dossier-back" href="/partite">
@@ -355,7 +355,7 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
     : "nessuna competizione con gare concluse";
 
   return (
-    <ProductShell activeSection="database">
+    <ProductShell activeSection="teams">
       <div className="oggi-backdrop" aria-hidden="true" />
       <div className="dossier squad-page">
         <Link className="dossier-back" href="/partite">
