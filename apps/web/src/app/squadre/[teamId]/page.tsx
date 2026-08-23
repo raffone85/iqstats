@@ -7,10 +7,12 @@ import { LeagueIdentity, numericId } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { TeamSplitsSection } from "@/components/team-splits-section";
+import { TeamMetroSection } from "@/components/team-metro-section";
 import { TeamRefereesSection } from "@/components/team-referees-section";
 import { TeamSquadSection } from "@/components/team-squad-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { countryCode } from "@/server/iqstats/country-names";
+import { metroDiLega } from "@/server/iqstats/team-metro";
 import {
   getSeasons,
   getStandingRow,
@@ -152,6 +154,29 @@ async function SplitsBlock({
       seasonId={selection.seasonId}
     />
   );
+}
+
+/**
+ * Dove sta la squadra fra le altre del suo campionato, dalle nostre osservazioni.
+ *
+ * E' l'unico blocco della pagina che non legge dal provider: se la connessione al livello
+ * dati non c'e', o la squadra non ha il campione minimo, non compare niente. Una sezione
+ * appare solo quando il suo contratto dati c'e'.
+ */
+async function MetroBlock({
+  teamSourceId,
+  competitionSourceId,
+  seasonSourceId,
+  teamName,
+}: Readonly<{
+  teamSourceId: number;
+  competitionSourceId: number;
+  seasonSourceId: number;
+  teamName: string;
+}>) {
+  const metro = await metroDiLega(teamSourceId, competitionSourceId, seasonSourceId);
+  if (metro === null) return null;
+  return <TeamMetroSection metro={metro} teamName={teamName} />;
 }
 
 async function SquadBlock({
@@ -495,6 +520,17 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
             </dl>
           )}
         </section>
+
+        {selected ? (
+          <Suspense fallback={<PanelSkeleton label="Dove sta nel campionato" />}>
+            <MetroBlock
+              teamSourceId={Number(teamId)}
+              competitionSourceId={Number(selected.leagueId)}
+              seasonSourceId={Number(selected.seasonId)}
+              teamName={profile.name}
+            />
+          </Suspense>
+        ) : null}
 
         {selected ? (
           <Suspense fallback={<PanelSkeleton label="Casa contro trasferta" />}>
