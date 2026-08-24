@@ -122,7 +122,7 @@ oggi, mostrerebbe numeri senza nomi.
 | ~~**2**~~ | ~~**Sezione Gol nel dossier**~~ **fatta il 23 agosto**, vedi sotto | `expected_goals` | **già in linea** | — |
 | ~~**3**~~ | ~~**Scala doppia e linea accesa**~~ **fatta il 23 agosto**, vedi sotto — **card per famiglia con la fascia colorata compresa**, chiusa lo stesso giorno | il motore, già in produzione | **già pronto** | — |
 | ~~**4**~~ | ~~**Area Arbitri**~~ **fatta il 23 agosto**, anagrafica compresa | `referee_id` + anagrafica | **tutto in linea** | — |
-| **5** | **Area Squadre**: Confronto, Dettagli (forma, statistiche, storico), Classifiche | osservazioni squadra-gara | **già in linea** | La tabella completa delle foto è quasi tutta coperta: mancano cross accurati, key passes, attacchi |
+| ~~**5**~~ | ~~**Area Squadre**~~ **fatta il 24 agosto**, vedi sotto — resta fuori lo storico delle gare giocate | osservazioni squadra-gara | **già in linea** | — |
 | **6** | **Ritardi** (da quante gare una squadra non subisce gol, non prende un cartellino, non supera una linea) | osservazioni squadra-gara | **già in linea** | Si calcola sulle righe che il motore già legge |
 | **7** | **Nomi dei giocatori**, poi l'area Giocatori | anagrafica giocatore | **assente**: la tavola ha solo `player_source_id` | 437.059 righe inutilizzabili finché non hanno un nome. Blocca il punto 8 |
 | **8** | **Gol per giocatore** e marcatori | gol per giocatore | **assenti** dalla tavola | Sono negli episodi già archiviati: si ricostruiscono come è stato fatto per i cartellini |
@@ -319,6 +319,69 @@ fallire** togliendo il filtro — due rosse su nove, fra cui quella che mostra l
 accendere `-0,5`. `test:match` torna **15 su 15**, quindi la parità con Python è intatta.
 `tsc`, `eslint` e `build` puliti. Pagina riletta: **157 soglie, zero negative**, contro le
 sei di prima.
+
+### Punto 5, chiuso il 24 agosto: l'Area Squadre
+
+**La decisione che teneva fermo tutto il resto: su quale finestra poggiano le statistiche.**
+L'utente ha scelto gli **ultimi 365 giorni** per le descrittive e il Confronto; le
+classifiche restano dentro competizione e stagione, dove la finestra non si sceglie.
+
+**I numeri che hanno deciso**, misurati sul container locale. Sui tiri per gara la
+variabilità **dentro** la stessa squadra vale `sd = 4,86`, la differenza vera **fra** squadre
+`sd = 2,15`. Con le 7,1 gare medie della stagione corrente l'errore della media è **1,84**,
+cioè l'**85%** della differenza che si vorrebbe misurare, e **281 squadre su 590** non
+arrivano nemmeno a cinque gare. Con le **30,9** gare medie dei 365 giorni l'errore scende a
+**0,87**, il 40% della differenza vera, e le squadre sopra soglia salgono a **534 su 590**.
+La finestra è **scritta in pagina** con la prima e l'ultima gara che la compongono, perché
+scavalca il confine di stagione e chi legge deve saperlo.
+
+**Venti bersagli, dieci aperti e dieci a richiesta**, come ha chiesto l'utente. I dieci
+principali sono i sette del motore più gol fatti, subiti e attesi: le stesse parole che il
+dossier e il metro usano già. I dieci di dettaglio — possesso, tiri in area, grandi
+occasioni, passaggi e precisione, cross, dribbling, contrasti, intercetti, duelli — stanno
+**nella stessa riga del database**, quindi non costano una richiesta in più: costano una riga
+di tabella ciascuno. Stanno dentro un menù richiudibile perché venti righe aperte insieme non
+si leggono.
+
+**Il Confronto porta il suo errore, ed è il pezzo che vale.** Due medie diverse non sono due
+squadre diverse: ogni riga dice se lo scarto supera **due errori standard**, e quando non li
+supera lo scrive. Su FC Cincinnati contro Inter Miami i **gol fatti** differiscono di 0,67
+con errore ±0,37 e **non reggono**; i **gol attesi** di 0,53 con errore ±0,22 e **reggono**.
+Fra due letture si sceglie quella che regge, non quella con il numero più alto.
+
+**Che cosa c'è in pagina.** `/squadre` con Classifiche e Confronto, filtro per competizione e
+per bersaglio; nella scheda squadra, sotto «Dove sta nel campionato», la sezione «Che cosa fa
+in una gara» con le stesse venti voci e il campione di ciascuna — sul Corinthians i tiri
+poggiano su 42 gare, i gialli su 41, il fuorigioco su 39.
+
+**`Squadre` entra nella barra**, che arriva a cinque voci, il tetto dichiarato
+dall'architettura informativa. Segue il precedente di Arbitri: una voce entra quando la sua
+pagina esiste.
+
+**Zero CSS nuovo.** `details.squad-group`, `.squad-metric-*` e `.squad-stat` esistevano già
+nella scheda squadra. Niente verde e niente mattone: qui «più falli» non è meglio né peggio.
+
+**Un difetto mio, corretto rileggendo la pagina.** La differenza usciva con due decimali dove
+le medie ne avevano uno — medie 13,6 e 14,7, differenza «1,05» — e chi sottraeva non
+ritrovava il numero. Ora le tre quantità della riga si leggono con le stesse cifre, e lo
+scarto stampato è quello fra i due numeri stampati; il criterio «regge» resta sulla
+differenza vera.
+
+**Verificato**: `tsc --noEmit`, `eslint` e `build` puliti; diciotto suite verdi — 53 · 14 ·
+20 · 16 · 15 · 9 dalla radice, 3 · 2 · 5 · 10 · 9 · 9 · 4 · 25 · 7 · 2 · 3 · 3 da
+`apps/web`. Le tre prove nuove di `test:team-stats` sono state **fatte fallire**: **89 contro
+53** togliendo la finestra dei 365 giorni, **21 contro 58** togliendo il filtro di stagione,
+`expected false / actual true` abbassando la soglia dei due errori standard. Le pagine
+rilette nell'HTML servito.
+
+**Non verificato**: l'aspetto in pagina a qualunque larghezza. Il browser guidato
+dall'assistente non rende le pagine — resta sul fallback di `app/loading.tsx` con il
+contenuto presente nel DOM ma dentro un `div hidden`, e il marcatore Suspense nel body è
+`$~` — mentre le stesse pagine si vedono normalmente in un browser comune, verificato
+dall'utente sulla produzione. È un limite dello strumento, non del prodotto.
+
+**Resta fuori**: lo **storico delle gare giocate** nella scheda squadra, che il punto 5
+elencava fra i Dettagli.
 
 ### Punto 4, chiuso il 23 agosto: l'area Arbitri
 
