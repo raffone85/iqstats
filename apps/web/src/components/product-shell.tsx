@@ -3,8 +3,10 @@ import Link from "next/link";
 import { signOutAction } from "@/app/actions/session";
 import { createSupabaseServerClient } from "@/server/supabase/server";
 
-/** `teams` non ha una voce nella barra: la scheda squadra si raggiunge da una gara o
- *  dalla dashboard, e nessuna voce risulta attiva mentre la si legge. È voluto. */
+/** `teams` è entrata nella barra il 24 agosto 2026, quando `/squadre` è diventata una
+ *  pagina vera: la regola stabilita con Arbitri è che una voce entra quando la sua pagina
+ *  esiste, e una voce che apre il vuoto è peggio di una voce che non c'è. Con Squadre la
+ *  barra arriva a cinque voci, che è il tetto dichiarato dall'architettura informativa. */
 type ProductSection =
   | "home"
   | "matches"
@@ -30,6 +32,7 @@ const PRIMARY_NAV: ReadonlyArray<{ section: ProductSection; href: string; label:
   { section: "home", href: "/", label: "Home", short: "Home" },
   { section: "matches", href: "/partite", label: "Partite", short: "Partite" },
   { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
+  { section: "teams", href: "/squadre", label: "Squadre", short: "Squadre" },
   { section: "method", href: "/metodo", label: "Metodo", short: "Metodo" },
 ];
 
