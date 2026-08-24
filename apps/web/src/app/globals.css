@@ -1139,3 +1139,20 @@ a.home-tile-feature:hover::before, a.home-tile-feature:focus-visible::before { o
 @media (max-width: 640px) {
   .product-account-id { display: none; }
 }
+
+/* Menu di ingresso: la prossima giornata, campionato per campionato.
+   Nessun valore scritto a mano: raggi, altezze e colori vengono dai token del sistema. */
+.giornata { margin-top: 22px; }
+.giornata + .giornata { border-top: 1px solid var(--card-stroke); padding-top: 18px; }
+.giornata-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; min-height: var(--h-control); font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
+summary.giornata-head { cursor: pointer; }
+summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
+.giornata-head i { font-style: normal; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
+/* La giornata si spalma su piu' giorni: la colonna dell'ora ne ospita due righe. */
+.giornata-row { grid-template-columns: 84px minmax(0, 1fr) auto; }
+.giornata-quando { display: grid; gap: 2px; line-height: 1.2; }
+.giornata-quando i { font-style: normal; font-size: 15px; color: var(--card-ink); }
+.giornata-tag { display: flex; gap: 6px; flex-wrap: wrap; }
+.giornata-tag .oggi-chip { padding: 2px 9px; gap: 5px; border-radius: var(--r-inset); font-size: 11px; }
+.giornata-altre { margin-top: 26px; }
+.giornata-altre > .giornata-head { color: var(--card-ink-2); }

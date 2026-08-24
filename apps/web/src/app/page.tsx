@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { CalendarioGiornate } from "@/components/calendario-giornate";
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { competitionRank } from "@/server/iqstats/competition-rank";
-import { getMatchesByDate, type MatchListItem } from "@/server/iqstats/matches";
+import { coperturaDelleGare } from "@/server/iqstats/copertura";
+import { prossimeGiornate } from "@/server/iqstats/giornate";
+import { getMatchesByDate, getMatchesInRange, type MatchListItem } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
 import { medieDiMercato, sbilanciDelGiorno, type Sbilancio } from "@/server/iqstats/sbilanci";
 
@@ -29,6 +32,33 @@ const LONG_DAY: Intl.DateTimeFormatOptions = {
   day: "numeric",
   month: "long",
 };
+
+/** Quanto avanti si guarda per trovare la prossima giornata di ogni campionato. */
+const GIORNI_AVANTI = 10;
+
+/**
+ * I cinque campionati sempre aperti, con l'identificativo della fonte.
+ *
+ * Sono i cinque che il livello dati copre da piu' tempo: Premier League 389 gare, La Liga
+ * 394, Serie A 388, Ligue 1 318, Bundesliga 308. Il resto va nel menu a tendina.
+ */
+const PRINCIPALI: readonly number[] = [1, 3, 4, 5, 6];
+
+/** Le coppe europee: compaiono solo quando hanno gare nella finestra. */
+const EUROPEE: readonly number[] = [7, 8, 83];
+
+/**
+ * Il giorno universale a `quanti` giorni da un giorno dato.
+ *
+ * Si parte dalla data e non dall'orologio: `Date.now()` durante il render e' impuro, e la
+ * regola `react-hooks/purity` lo rifiuta a ragione. La data di partenza e' gia' quella
+ * italiana del prodotto, quindi la finestra resta ancorata allo stesso giorno dei conteggi.
+ */
+function giornoPiu(dateIso: string, quanti: number): string {
+  const data = new Date(`${dateIso}T12:00:00Z`);
+  data.setUTCDate(data.getUTCDate() + quanti);
+  return data.toISOString().slice(0, 10);
+}
 
 /** Il giorno del prodotto è quello italiano, come il taglio usato per leggere le gare. */
 function todayKey(): string {
@@ -120,11 +150,26 @@ export default async function HomePage() {
   const today = todayKey();
   // Gare e letture dello stesso giorno: due grandezze diverse, e il loro rapporto è la
   // copertura del modello. Un numero solo mentirebbe su una delle due.
-  const [matchesResult, predictionsResult, medie] = await Promise.all([
+  const fino = giornoPiu(today, GIORNI_AVANTI);
+  const [matchesResult, predictionsResult, medie, finestra] = await Promise.all([
     getMatchesByDate(today),
     getPredictionsByDate(today),
     medieDiMercato(),
+    getMatchesInRange(today, fino),
   ]);
+
+  // La prossima giornata di ogni competizione, e che cosa si trovera' aprendo ogni gara.
+  const giornate = prossimeGiornate(finestra.matches);
+  const principali = PRINCIPALI
+    .map((id) => giornate.find((g) => g.leagueId === id))
+    .filter((g): g is NonNullable<typeof g> => g !== undefined);
+  const europee = giornate.filter((g) => EUROPEE.includes(g.leagueId));
+  const altre = giornate.filter(
+    (g) => !PRINCIPALI.includes(g.leagueId) && !EUROPEE.includes(g.leagueId),
+  );
+  const coperture = await coperturaDelleGare(
+    [...principali, ...europee, ...altre].flatMap((g) => g.gare),
+  );
 
   const todayMatches = matchesResult.matches;
   const matchIds = new Set(todayMatches.map((m) => m.eventId));
@@ -262,6 +307,14 @@ export default async function HomePage() {
           </Link>
 
         </div>
+
+        <CalendarioGiornate
+          principali={principali}
+          europee={europee}
+          altre={altre}
+          coperture={coperture}
+          giorni={GIORNI_AVANTI}
+        />
 
         {sbilanci.length > 1 ? (
           <ol className="partite-rows">

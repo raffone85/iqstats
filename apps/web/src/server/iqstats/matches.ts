@@ -31,6 +31,10 @@ export interface MatchListItem {
   readonly homeScore: number | null;
   readonly awayScore: number | null;
   readonly roundName: string | null;
+  /** Il numero di giornata dichiarato dalla fonte: serve a raggruppare per turno. */
+  readonly roundNumber: number | null;
+  /** L'arbitro designato, quando la fonte lo dichiara: prima della vigilia spesso e' nullo. */
+  readonly refereeId: number | null;
 }
 
 export interface MatchesByDateResult {
@@ -142,6 +146,8 @@ function normalizeMatch(row: unknown, leagues: Map<number, LeagueMeta>): MatchLi
     homeScore: asNumber(r.home_score),
     awayScore: asNumber(r.away_score),
     roundName: asString(r.round_name),
+    roundNumber: asNumber(r.round_number),
+    refereeId: asNumber(r.referee_id),
   };
 }
 
@@ -172,6 +178,50 @@ async function fetchAllRows(
  * tiene solo ciò che in Italia cade davvero in quel giorno.
  * Fail-closed → lista vuota con motivo. `dateIso` deve essere già validato dal chiamante.
  */
+const rangeCache = new Map<string, { value: MatchesByDateResult; expiresAt: number }>();
+
+/**
+ * Le gare fra due giorni universali, in una lettura sola.
+ *
+ * `getMatchesByDate` chiede un giorno per volta perche' i conteggi del giorno devono
+ * tornare esatti in ora italiana. Qui serve l'opposto: una finestra larga, perche' la
+ * prossima giornata di un campionato si spalma su tre o quattro giorni e chiederla giorno
+ * per giorno costerebbe una richiesta per giorno.
+ */
+export async function getMatchesInRange(
+  daIso: string,
+  aIso: string,
+): Promise<MatchesByDateResult> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(daIso) || !/^\d{4}-\d{2}-\d{2}$/.test(aIso)) {
+    return { matches: [], source: "unavailable", reason: "invalid_date" };
+  }
+  const cacheKey = `${daIso}:${aIso}`;
+  const now = Date.now();
+  const cached = rangeCache.get(cacheKey);
+  if (cached && cached.expiresAt > now) return cached.value;
+
+  const config = resolveProviderConfig();
+  if (!config) return { matches: [], source: "unavailable", reason: "source_not_configured" };
+
+  const leagues = await getLeaguesIndex();
+  const query = new URLSearchParams({ date_from: daIso, date_to: aIso });
+  const collected = await fetchAllRows("/api/v2/events/", query);
+  if (collected === null) {
+    return { matches: [], source: "unavailable", reason: "source_unavailable" };
+  }
+
+  const matches = collected.rows
+    .map((row) => normalizeMatch(row, leagues))
+    .filter((m): m is MatchListItem => m !== null)
+    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
+
+  const value: MatchesByDateResult = {
+    matches, source: "provider", truncated: collected.truncated, lettoIl: new Date(now).toISOString(),
+  };
+  rangeCache.set(cacheKey, { value, expiresAt: now + MATCHES_TTL_MS });
+  return value;
+}
+
 export async function getMatchesByDate(dateIso: string, leagueId?: number): Promise<MatchesByDateResult> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateIso)) {
     return { matches: [], source: "unavailable", reason: "invalid_date" };
