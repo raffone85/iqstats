@@ -35,6 +35,17 @@ function valore(numero: number): string {
   return numero.toFixed(1).replace(".", ",");
 }
 
+/**
+ * Gli estremi di un intervallo si scrivono come sono.
+ *
+ * L'atteso porta il decimale perche' e' una media e il decimale e' informazione. Gli
+ * estremi no: nascono da una distribuzione a numeri interi, e «fra 11,0 e 23,0» dichiara
+ * una precisione al decimo che quei due numeri non hanno.
+ */
+function estremo(numero: number): string {
+  return Number.isInteger(numero) ? String(numero) : valore(numero);
+}
+
 function percento(quota: number): string {
   return String(Math.round(quota * 100)) + "%";
 }
@@ -145,10 +156,12 @@ function Soglia({ linea, acceso }: {
   );
 }
 
-/** Una voce: chi, quanto ci si attende, e la scala delle soglie. */
-function Voce({ chi, atteso, linee, osservato, dove }: {
+/** Una voce: chi, quanto ci si attende, dentro quale intervallo, e la scala delle soglie. */
+function Voce({ chi, atteso, intervallo, linee, osservato, dove }: {
   readonly chi: string;
   readonly atteso: number;
+  /** L'intervallo calibrato del bersaglio, gia' calcolato dal motore. */
+  readonly intervallo?: { readonly basso: number; readonly alto: number } | null;
   readonly linee: readonly Linea[] | null;
   readonly osservato?: MediaOsservata | null;
   readonly dove?: string;
@@ -171,6 +184,14 @@ function Voce({ chi, atteso, linee, osservato, dove }: {
       <span className="engine-exp">
         {valore(atteso)}
         <span className="engine-obs">atteso</span>
+        {/* Un numero solo nasconde quanto e' incerto: 14,6 con un intervallo da 11 a 18
+            dice una cosa diversa da 14,6 con un intervallo da 13 a 16. Il livello a cui
+            l'intervallo e' costruito sta scritto in fondo alla sezione, una volta sola. */}
+        {intervallo === null || intervallo === undefined ? null : (
+          <span className="engine-obs">
+            fra {estremo(intervallo.basso)} e {estremo(intervallo.alto)}
+          </span>
+        )}
       </span>
       {scala === null || scala.length === 0 ? null : (
         <>
@@ -231,6 +252,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
         <Voce
           chi={casa}
           atteso={lCasa.valoreAtteso}
+          intervallo={lCasa.intervallo}
           linee={bersaglio.linee.casa}
           osservato={osservato?.casa}
           dove="in casa"
@@ -238,6 +260,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
         <Voce
           chi={trasferta}
           atteso={lTrasferta.valoreAtteso}
+          intervallo={lTrasferta.intervallo}
           linee={bersaglio.linee.trasferta}
           osservato={osservato?.trasferta}
           dove="fuori casa"
@@ -246,6 +269,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
           <Voce
             chi="Totale gara"
             atteso={bersaglio.totale.valoreAtteso}
+            intervallo={bersaglio.totale.intervallo}
             linee={bersaglio.totale.linee}
           />
         )}
@@ -272,6 +296,13 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
   const senzaCopertura = proiezioni.bersagli
     .filter((bersaglio) => !mostrabili.includes(bersaglio))
     .map((bersaglio) => FAMIGLIE[bersaglio.target]?.nome ?? bersaglio.target);
+
+  // Il livello dell'intervallo non e' scelto qui: e' quello a cui la calibrazione del
+  // bersaglio e' stata misurata, e sta scritto nell'artefatto. Si legge dal primo che ce
+  // l'ha, perche' e' lo stesso per tutti; se nessuno ce l'ha, la frase non compare.
+  const livello = mostrabili
+    .map((b) => (b.casa.stato === "prevista" ? b.casa.intervallo?.livelloNominale ?? null : null))
+    .find((v): v is number => v !== null && Number.isFinite(v)) ?? null;
 
   return (
     <section className="dossier-panel" aria-labelledby="projection-title">
@@ -332,6 +363,17 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
           stimano: si dichiarano assenti.
         </p>
       ) : null}
+
+      {livello === null ? null : (
+        <p className="dossier-src">
+          <b>L&apos;intervallo non e&apos; una forbice a occhio.</b> «Fra 11 e 18» vuol dire
+          che, alla calibrazione misurata su questo bersaglio, il valore vero cade li&apos;{" "}
+          <b>{Math.round(livello * 100)} volte su 100</b>. Su una distribuzione a numeri
+          interi l&apos;intervallo e&apos; conservativo per costruzione, quindi quella quota
+          e&apos; un minimo, non una promessa. Un atteso senza intervallo nasconde quanto sia
+          incerto: 14,6 fra 13 e 16 e 14,6 fra 8 e 22 non dicono la stessa cosa.
+        </p>
+      )}
 
       <p className="dossier-src">
         Proiezione pre-partita di IQstatS · storia aggiornata al{" "}
