@@ -18,6 +18,7 @@ import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchLettureFortiSection } from "@/components/match-letture-forti";
 import { MatchProjectionSection } from "@/components/match-projection-section";
+import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
@@ -40,6 +41,7 @@ import { lettureForti } from "@/server/iqstats/projection/letture-forti";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
+import { profiloArbitro } from "@/server/iqstats/referees";
 
 export const metadata: Metadata = {
   title: "Dossier gara",
@@ -406,6 +408,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
     detail.refereeId !== null && detail.leagueId !== null
       ? await getMatchRefereeReading(String(detail.leagueId), String(detail.refereeId))
       : null;
+  // Il profilo del designato dalle **nostre** osservazioni, non dalle medie di carriera
+  // che la fonte pubblica: e' la regola del piano, e qui vale doppio perche' questi stessi
+  // numeri sono gia' fra gli ingressi del motore.
+  const arbitroNostro = detail.refereeId === null
+    ? null
+    : await profiloArbitro(detail.refereeId);
   const weatherLabel = weatherText(detail.weather);
   // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
   // è vecchia la previsione.
@@ -690,6 +698,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         ) : null}
+
+        {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
+            proiezione: 16 ingressi su 85 nel modello dei gialli. */}
+        {arbitroNostro === null ? null : (
+          <MatchArbitroSection
+            profilo={arbitroNostro}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        )}
 
         {/* Il contesto: le colonne che i modelli usano gia', finora invisibili in pagina. */}
         {proiezioni ? (
