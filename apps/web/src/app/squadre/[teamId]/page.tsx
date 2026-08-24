@@ -8,11 +8,13 @@ import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { TeamSplitsSection } from "@/components/team-splits-section";
 import { TeamMetroSection } from "@/components/team-metro-section";
+import { TeamStatsSection } from "@/components/team-stats-section";
 import { TeamRefereesSection } from "@/components/team-referees-section";
 import { TeamSquadSection } from "@/components/team-squad-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { countryCode } from "@/server/iqstats/country-names";
 import { metroDiLega } from "@/server/iqstats/team-metro";
+import { profiloSquadra } from "@/server/iqstats/team-stats";
 import {
   getSeasons,
   getStandingRow,
@@ -177,6 +179,18 @@ async function MetroBlock({
   const metro = await metroDiLega(teamSourceId, competitionSourceId, seasonSourceId);
   if (metro === null) return null;
   return <TeamMetroSection metro={metro} teamName={teamName} />;
+}
+
+/**
+ * Che cosa fa la squadra in una gara, sugli ultimi 365 giorni.
+ *
+ * Come `MetroBlock`, legge dalle nostre osservazioni e non dal provider: senza connessione,
+ * o sotto le cinque gare, non compare niente invece di comparire vuoto.
+ */
+async function StatsBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) {
+  const profilo = await profiloSquadra(teamSourceId);
+  if (profilo === null) return null;
+  return <TeamStatsSection profilo={profilo} />;
 }
 
 async function SquadBlock({
@@ -531,6 +545,10 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
             />
           </Suspense>
         ) : null}
+
+        <Suspense fallback={<PanelSkeleton label="Che cosa fa in una gara" />}>
+          <StatsBlock teamSourceId={Number(teamId)} />
+        </Suspense>
 
         {selected ? (
           <Suspense fallback={<PanelSkeleton label="Casa contro trasferta" />}>
