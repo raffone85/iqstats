@@ -15,6 +15,7 @@ import {
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
+import { MatchLettureFortiSection } from "@/components/match-letture-forti";
 import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
@@ -31,6 +32,7 @@ import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
+import { lettureForti } from "@/server/iqstats/projection/letture-forti";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
@@ -558,6 +560,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
             </p>
           </section>
         ) : null}
+
+        {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
+            gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
+            a mente. Ordinate per quanto reggono, non per percentuale. */}
+        {proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
+          <MatchLettureFortiSection
+            letture={lettureForti(proiezioni.bersagli)}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        )}
 
         {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
         {proiezioni?.gol ? (

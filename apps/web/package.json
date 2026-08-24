@@ -19,6 +19,7 @@
     "test:projection-osservato": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-projection-osservato.test.ts",
     "test:projection-gol": "node --experimental-strip-types --test test/iqstats-projection-gol.test.ts",
     "test:linea-scelta": "node --experimental-strip-types --test test/iqstats-linea-scelta.test.ts",
+    "test:letture-forti": "node --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-letture-forti.test.ts",
     "test:arbitri": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-arbitri.test.ts",
     "test:media": "node --experimental-strip-types --test test/iqstats-media.test.ts",
     "test:stat-engine": "node --conditions=react-server --experimental-strip-types --test test/iqstats-stat-engine.test.ts",

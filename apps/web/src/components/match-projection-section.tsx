@@ -21,7 +21,7 @@ import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/product
 // La tinta è l'unica eccezione alla regola «il colore dichiara un verso» del design system:
 // qui dichiara un'identità, che è anche **scritta** nella testata, quindi nessuna
 // informazione vive solo nel colore.
-const FAMIGLIE: Record<string, { readonly nome: string; readonly tinta: string }> = {
+export const FAMIGLIE: Record<string, { readonly nome: string; readonly tinta: string }> = {
   total_shots: { nome: "Tiri", tinta: "var(--fam-tiri)" },
   shots_on_target: { nome: "Tiri in porta", tinta: "var(--fam-tiri-porta)" },
   fouls: { nome: "Falli", tinta: "var(--fam-falli)" },
