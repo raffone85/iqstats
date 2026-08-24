@@ -146,7 +146,16 @@ function collectTeams(matches: readonly MatchListItem[]) {
   return [...teams].sort((a, b) => a[1].localeCompare(b[1], "it"));
 }
 
-export default async function HomePage() {
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function scalare(valore: string | string[] | undefined): string {
+  return typeof valore === "string" ? valore : "";
+}
+
+export default async function HomePage({ searchParams }: Props) {
+  const parametri = await searchParams;
   const today = todayKey();
   // Gare e letture dello stesso giorno: due grandezze diverse, e il loro rapporto è la
   // copertura del modello. Un numero solo mentirebbe su una delle due.
@@ -158,18 +167,21 @@ export default async function HomePage() {
     getMatchesInRange(today, fino),
   ]);
 
-  // La prossima giornata di ogni competizione, e che cosa si trovera' aprendo ogni gara.
+  // La prossima giornata di ogni competizione. In fascia i cinque principali e poi le
+  // coppe europee, nell'ordine dichiarato: quello per peso, non per orario, cosi' la
+  // fascia non cambia ordine da un'ora all'altra.
   const giornate = prossimeGiornate(finestra.matches);
-  const principali = PRINCIPALI
+  const inFascia = (id: number) => PRINCIPALI.includes(id) || EUROPEE.includes(id);
+  const fascia = [...PRINCIPALI, ...EUROPEE]
     .map((id) => giornate.find((g) => g.leagueId === id))
     .filter((g): g is NonNullable<typeof g> => g !== undefined);
-  const europee = giornate.filter((g) => EUROPEE.includes(g.leagueId));
-  const altre = giornate.filter(
-    (g) => !PRINCIPALI.includes(g.leagueId) && !EUROPEE.includes(g.leagueId),
-  );
-  const coperture = await coperturaDelleGare(
-    [...principali, ...europee, ...altre].flatMap((g) => g.gare),
-  );
+  const altre = giornate.filter((g) => !inFascia(g.leagueId));
+
+  // Si apre un campionato solo: la scelta viaggia nell'indirizzo, e senza scelta vale il
+  // primo della fascia. Le coperture si chiedono soltanto per le gare che si mostrano.
+  const legaScelta = Number(scalare(parametri.lega));
+  const scelta = fascia.find((g) => g.leagueId === legaScelta) ?? fascia[0] ?? null;
+  const coperture = await coperturaDelleGare(scelta?.gare ?? []);
 
   const todayMatches = matchesResult.matches;
   const matchIds = new Set(todayMatches.map((m) => m.eventId));
@@ -309,8 +321,8 @@ export default async function HomePage() {
         </div>
 
         <CalendarioGiornate
-          principali={principali}
-          europee={europee}
+          fascia={fascia}
+          scelta={scelta}
           altre={altre}
           coperture={coperture}
           giorni={GIORNI_AVANTI}

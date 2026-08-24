@@ -8,6 +8,14 @@ import type { GiornataDiCompetizione } from "@/server/iqstats/giornate";
 /**
  * Il menu di ingresso: scegli il campionato, vedi la prossima giornata, apri la gara.
  *
+ * **Un calendario per volta.** I campionati stanno affiancati in una fascia che scorre in
+ * orizzontale, e si apre quello scelto. La prima versione ne teneva otto aperti insieme:
+ * settantacinque gare in pagina, 305.073 byte, e su un telefono la prima gara della
+ * Bundesliga stava a diverse schermate di distanza. Ora la pagina rende un elenco solo.
+ *
+ * **Nessun JavaScript.** La scelta viaggia nell'indirizzo, come su `/arbitri` e su
+ * `/squadre`: funziona da tastiera, si puo' condividere, e la pagina resta di server.
+ *
  * **Le targhette dicono che cosa troverai, e sono calcolate per gara.** Misurato sul
  * dossier vero: Roma-Atalanta da' i sette attesi ma zero scale di soglie, perche' la Roma
  * non ha ancora giocato in casa in questa stagione; Hull-Aston Villa le da' tutte. Una
@@ -17,7 +25,8 @@ import type { GiornataDiCompetizione } from "@/server/iqstats/giornate";
  * **Si mostrano solo le targhette accese.** Una spenta e una assente si confondono, e senza
  * connessione al livello dati non ne compare nessuna: non sappiamo, e non fingiamo.
  */
-/** Quante gare si mostrano per competizione: una giornata di campionato ci sta dentro. */
+
+/** Quante gare si mostrano: una giornata di campionato ci sta dentro, una coppa no. */
 const MASSIME = 10;
 
 const ORA: Intl.DateTimeFormatOptions = {
@@ -67,11 +76,13 @@ function Gara({ gara, copertura }: {
       <Link className="partite-row giornata-row" href={`/match/${gara.eventId}`}>
         <Quando iso={gara.kickoff} />
         <span className="partite-teams">
-          <TeamCrest name={gara.homeTeam} teamId={gara.homeTeamId} />
-          {gara.homeTeam}
-          <span className="home-feature-vs"> contro </span>
-          <TeamCrest name={gara.awayTeam} teamId={gara.awayTeamId} />
-          {gara.awayTeam}
+          <span className="giornata-sfida">
+            <TeamCrest name={gara.homeTeam} teamId={gara.homeTeamId} />
+            {gara.homeTeam}
+            <span className="home-feature-vs"> contro </span>
+            <TeamCrest name={gara.awayTeam} teamId={gara.awayTeamId} />
+            {gara.awayTeam}
+          </span>
           <Targhette copertura={copertura} />
         </span>
       </Link>
@@ -79,78 +90,33 @@ function Gara({ gara, copertura }: {
   );
 }
 
-function Competizione({ giornata, coperture, aperta }: {
-  readonly giornata: GiornataDiCompetizione;
-  readonly coperture: ReadonlyMap<number, CoperturaDiGara>;
-  readonly aperta: boolean;
-}) {
-  const titolo = (
-    <>
-      <LeagueIdentity
-        leagueId={giornata.leagueId}
-        name={giornata.leagueName}
-        code={giornata.leagueCountryCode}
-        size="sm"
-      />
-      <span className="engine-obs">
-        {giornata.giornata === null
-          ? `${giornata.gare.length} ${giornata.gare.length === 1 ? "gara in arrivo" : "gare in arrivo"}`
-          : `giornata ${giornata.giornata} · ${giornata.gare.length} ${giornata.gare.length === 1 ? "gara" : "gare"}`}
-        {/* I recuperi non sono la prossima giornata, ma esistono: si dice quanti sono e
-            dove trovarli, invece di farli sparire dal menu. */}
-        {giornata.recuperi === 0 ? "" : ` · ${giornata.recuperi} in altri turni`}
-      </span>
-    </>
-  );
-
-  // Una giornata di campionato sta in dieci gare. Le coppe non hanno giornate e nella
-  // finestra ne portano anche ventiquattro: si taglia e si dice quante restano, invece di
-  // far pesare a tutti un elenco che nessuno legge fino in fondo.
-  const mostrate = giornata.gare.slice(0, MASSIME);
-  const oltre = giornata.gare.length - mostrate.length;
-
-  const elenco = (
-    <>
-      <ol className="partite-rows">
-        {mostrate.map((g) => (
-          <Gara key={g.eventId} gara={g} copertura={coperture.get(g.eventId)} />
-        ))}
-      </ol>
-      {oltre === 0 ? null : (
-        <p className="dossier-src">
-          Altre {oltre} gare di questa competizione nella finestra:{" "}
-          <Link href={`/partite?leagueId=${giornata.leagueId}`}>vedile nel calendario</Link>.
-        </p>
-      )}
-    </>
-  );
-
-  // I campionati principali restano aperti, gli altri dietro un `details` nativo: nessun
-  // JavaScript, e il contenuto resta raggiungibile da tastiera e dalla ricerca del browser.
-  return aperta ? (
-    <section className="giornata" aria-label={giornata.leagueName}>
-      <p className="giornata-head">{titolo}</p>
-      {elenco}
-    </section>
-  ) : (
-    <details className="giornata">
-      <summary className="giornata-head">{titolo}</summary>
-      {elenco}
-    </details>
-  );
+/** L'etichetta di una competizione: giornata e quante gare, o la finestra per le coppe. */
+function etichetta(g: GiornataDiCompetizione): string {
+  const quante = `${g.gare.length} ${g.gare.length === 1 ? "gara" : "gare"}`;
+  const base = g.giornata === null
+    ? `${quante} in arrivo`
+    : `giornata ${g.giornata} · ${quante}`;
+  // I recuperi non sono la prossima giornata, ma esistono: si dice quanti sono invece di
+  // farli sparire dal menu.
+  return g.recuperi === 0 ? base : `${base} · ${g.recuperi} in altri turni`;
 }
 
 type Props = {
-  readonly principali: readonly GiornataDiCompetizione[];
-  readonly europee: readonly GiornataDiCompetizione[];
+  /** I campionati e le coppe affiancati nella fascia, gia' nell'ordine voluto. */
+  readonly fascia: readonly GiornataDiCompetizione[];
+  /** Quello aperto adesso. */
+  readonly scelta: GiornataDiCompetizione | null;
   readonly altre: readonly GiornataDiCompetizione[];
   readonly coperture: ReadonlyMap<number, CoperturaDiGara>;
   /** Fin dove arriva la finestra letta, in giorni. */
   readonly giorni: number;
 };
 
-export function CalendarioGiornate({ principali, europee, altre, coperture, giorni }: Props) {
-  if (principali.length === 0 && europee.length === 0 && altre.length === 0) return null;
+export function CalendarioGiornate({ fascia, scelta, altre, coperture, giorni }: Props) {
+  if (fascia.length === 0 && altre.length === 0) return null;
+
+  const mostrate = scelta === null ? [] : scelta.gare.slice(0, MASSIME);
+  const oltre = scelta === null ? 0 : scelta.gare.length - mostrate.length;
 
   return (
     <section className="dossier-panel" aria-labelledby="giornate-title">
@@ -159,16 +125,47 @@ export function CalendarioGiornate({ principali, europee, altre, coperture, gior
         La prossima giornata, campionato per campionato
       </h2>
 
-      {principali.map((g) => (
-        <Competizione key={g.leagueId} giornata={g} coperture={coperture} aperta />
-      ))}
+      <nav className="partite-index" aria-label="Campionato">
+        {fascia.map((g) => (
+          <Link
+            className="partite-index-link"
+            key={g.leagueId}
+            href={`/?lega=${g.leagueId}`}
+            aria-current={scelta !== null && g.leagueId === scelta.leagueId ? "page" : undefined}
+          >
+            <LeagueIdentity
+              leagueId={g.leagueId}
+              name={g.leagueName}
+              code={g.leagueCountryCode}
+              size="sm"
+            />
+            <i>{g.gare.length}</i>
+          </Link>
+        ))}
+      </nav>
 
-      {europee.length === 0 ? null : (
+      {scelta === null ? (
+        <p className="squad-empty-inline">
+          Nessuna gara nei prossimi {giorni} giorni per i campionati in fascia.
+        </p>
+      ) : (
         <>
-          <p className="dossier-kick">Coppe europee</p>
-          {europee.map((g) => (
-            <Competizione key={g.leagueId} giornata={g} coperture={coperture} aperta />
-          ))}
+          <p className="giornata-head">
+            <span className="engine-obs">{etichetta(scelta)}</span>
+          </p>
+
+          <ol className="partite-rows">
+            {mostrate.map((g) => (
+              <Gara key={g.eventId} gara={g} copertura={coperture.get(g.eventId)} />
+            ))}
+          </ol>
+
+          {oltre === 0 ? null : (
+            <p className="dossier-src">
+              Altre {oltre} gare di questa competizione nella finestra:{" "}
+              <Link href={`/partite?leagueId=${scelta.leagueId}`}>vedile nel calendario</Link>.
+            </p>
+          )}
         </>
       )}
 
@@ -178,8 +175,8 @@ export function CalendarioGiornate({ principali, europee, altre, coperture, gior
             Tutti gli altri campionati <i>{altre.length}</i>
           </summary>
           {/* Qui dentro vanno i nomi, non i calendari. Con la finestra intera erano oltre
-              seicento gare e la pagina pesava 1,2 MB: un cassetto che nessuno apre non deve
-              costare a chi non lo apre. Ogni voce porta al calendario filtrato. */}
+              seicento gare e la pagina pesava 1.234.203 byte: un cassetto che non apri non
+              deve costarti niente. Ogni voce porta al calendario filtrato. */}
           <nav className="partite-index" aria-label="Altri campionati">
             {altre.map((g) => (
               <Link
@@ -204,12 +201,11 @@ export function CalendarioGiornate({ principali, europee, altre, coperture, gior
         e quello che la fonte espone in diretta, e la gara lo dice anche dentro.
       </p>
       <p className="dossier-src">
-        Gli altri campionati stanno nel cassetto come nomi e non come calendari: erano oltre
-        seicento gare, e un cassetto che non apri non deve costarti niente. Ogni voce porta al
-        calendario di quel campionato. La finestra letta &egrave; di {giorni} giorni. Di ogni campionato si mostra il turno
-        pi&ugrave; basso ancora da giocare, che &egrave; la prossima giornata; le coppe
-        numerano i turni a modo loro, quindi per loro si mostrano le gare della finestra e non
-        si scrive un numero di giornata che non sarebbe una giornata.
+        La finestra letta &egrave; di {giorni} giorni, e di ogni campionato si mostra il turno
+        con pi&ugrave; gare ancora da giocare, che &egrave; la prossima giornata: prendere il
+        turno pi&ugrave; basso avrebbe mostrato un recupero da una gara al posto della
+        giornata vera. Le coppe numerano i turni a modo loro, quindi per loro non si scrive un
+        numero di giornata.
       </p>
     </section>
   );

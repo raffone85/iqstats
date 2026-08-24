@@ -1152,7 +1152,16 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .giornata-row { grid-template-columns: 84px minmax(0, 1fr) auto; }
 .giornata-quando { display: grid; gap: 2px; line-height: 1.2; }
 .giornata-quando i { font-style: normal; font-size: 15px; color: var(--card-ink); }
+.giornata-sfida { min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .giornata-tag { display: flex; gap: 6px; flex-wrap: wrap; }
 .giornata-tag .oggi-chip { padding: 2px 9px; gap: 5px; border-radius: var(--r-inset); font-size: 11px; }
 .giornata-altre { margin-top: 26px; }
 .giornata-altre > .giornata-head { color: var(--card-ink-2); }
+
+/* Telefono: la colonna dell'ora si stringe e la sfida va a capo invece di spingere fuori. */
+@media (max-width: 640px) {
+  .giornata-row { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; padding: 10px; }
+  .giornata-quando { font-size: 11px; }
+  .giornata-quando i { font-size: 14px; }
+  .giornata-tag .oggi-chip { font-size: 10px; padding: 2px 7px; }
+}
