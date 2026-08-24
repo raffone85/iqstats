@@ -7,6 +7,7 @@ import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import { calcolaFeature } from "./projection/asof/calcolo.ts";
 import { attesiDellaGara, mercatiGol, type MercatiGol } from "./projection/gol.ts";
 import { formaDi, type FormaDiSquadra } from "./projection/forma.ts";
+import { contestoDellaGara, type FamigliaResa } from "./projection/contesto.ts";
 import { ritardiDi, type Ritardo } from "./projection/ritardi.ts";
 import { proiezioneDiGara, type ProiezioneDiGara } from "./projection/match.ts";
 import { proietta } from "./projection/production.ts";
@@ -179,6 +180,12 @@ export interface ProiezioniDellaGara {
     readonly casa: readonly Ritardo[];
     readonly trasferta: readonly Ritardo[];
   };
+  /**
+   * Da dove nascono i numeri: le famiglie di contesto che i modelli usano gia'.
+   *
+   * Stesse righe, contate su altre colonne. Vuoto quando nessuna metrica ha campione.
+   */
+  readonly contesto: readonly FamigliaResa[];
 }
 
 /**
@@ -358,6 +365,10 @@ export async function proiezioniDellaGara(
         casa: ritardiDi(materialeCasa.squadra, "home"),
         trasferta: ritardiDi(materialeTrasferta.squadra, "away"),
       },
+      contesto: contestoDellaGara(
+        materialeCasa.squadra, materialeTrasferta.squadra, materialeCasa.lega,
+        materialeCasa.quando,
+      ),
     };
   } catch {
     // Una proiezione che non si puo' calcolare non rompe il dossier, ma non sparisce piu'

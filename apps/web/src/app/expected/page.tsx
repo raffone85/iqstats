@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchProjectionSection } from "@/components/match-projection-section";
@@ -267,6 +268,12 @@ export default async function ExpectedPage({ searchParams }: Props) {
                 awayTeam={trasferta.nome}
               />
             ) : null}
+
+            <MatchContestoSection
+              contesto={proiezioni.contesto}
+              homeTeam={casa.nome}
+              awayTeam={trasferta.nome}
+            />
 
             <MatchRitardiSection
               casa={proiezioni.ritardi.casa}
