@@ -18,6 +18,7 @@ import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchLettureFortiSection } from "@/components/match-letture-forti";
 import { MatchProjectionSection } from "@/components/match-projection-section";
+import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
   getFinishedMatchStats,
@@ -675,6 +676,18 @@ export default async function MatchPage({ params }: MatchPageProps) {
           homeForm={homeForm}
           awayForm={awayForm}
         />
+
+        {/* Quanto pesano quei risultati: reti fatte e subite contro il metro della
+            competizione, dalle nostre osservazioni. Sta subito sotto la striscia perche'
+            risponde alla stessa domanda con un'altra unita' di misura. */}
+        {proiezioni?.forma ? (
+          <MatchFormaSection
+            casa={proiezioni.forma.casa}
+            trasferta={proiezioni.forma.trasferta}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : null}
 
         {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
         <MatchFinishedSection

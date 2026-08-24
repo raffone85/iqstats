@@ -6,6 +6,7 @@ import { connessione } from "./lettura.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import { calcolaFeature } from "./projection/asof/calcolo.ts";
 import { attesiDellaGara, mercatiGol, type MercatiGol } from "./projection/gol.ts";
+import { formaDi, type FormaDiSquadra } from "./projection/forma.ts";
 import { proiezioneDiGara, type ProiezioneDiGara } from "./projection/match.ts";
 import { proietta } from "./projection/production.ts";
 import { componiIngresso } from "./projection/snapshot.ts";
@@ -134,6 +135,17 @@ export interface ProiezioniDellaGara {
   readonly gol: GolDellaGara | null;
   /** Da quando e' aggiornata la storia su cui poggiano queste proiezioni. */
   readonly ultimaOsservazione: string | null;
+  /**
+   * Lo stato di forma delle due squadre, dallo stesso lato del campo.
+   *
+   * Nasce dalle stesse righe gia' lette per proiettare: zero interrogazioni nuove.
+   * `null` quando manca il metro della competizione, perche' tre medie senza il loro
+   * riferimento non dicono se siano molte o poche.
+   */
+  readonly forma: {
+    readonly casa: FormaDiSquadra | null;
+    readonly trasferta: FormaDiSquadra | null;
+  } | null;
 }
 
 /**
@@ -294,7 +306,22 @@ export async function proiezioniDellaGara(
       };
     }
 
-    return { bersagli: completi.length === 0 ? [] : bersagli, osservate, gol, ultimaOsservazione: ultima };
+    // La forma esce dalle righe gia' in memoria, contate invece che modellate.
+    const formaCasa = formaDi(materialeCasa.squadra, materialeCasa.lega, "home", gara.seasonId);
+    const formaTrasferta = formaDi(
+      materialeTrasferta.squadra, materialeCasa.lega, "away", gara.seasonId,
+    );
+    const forma = formaCasa === null && formaTrasferta === null
+      ? null
+      : { casa: formaCasa, trasferta: formaTrasferta };
+
+    return {
+      bersagli: completi.length === 0 ? [] : bersagli,
+      osservate,
+      gol,
+      ultimaOsservazione: ultima,
+      forma,
+    };
   } catch {
     // Una proiezione che non si puo' calcolare non rompe il dossier, ma non sparisce piu'
     // in silenzio: la pagina lo dichiara. Il resto non dipende da questo livello dati.
