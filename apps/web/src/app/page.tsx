@@ -428,16 +428,19 @@ export default async function HomePage() {
             </span>
           </Link>
 
-          <div className="home-tile home-tile-wide home-tile-soon">
+          <Link className="home-tile home-tile-wide" href="/expected">
             <span className="home-tile-head">
               <span className="home-tile-name">Expected</span>
-              <span className="home-tile-count">in arrivo</span>
+              <span className="home-tile-count">banco di prova</span>
             </span>
             <span className="home-tile-sub">
               Due squadre qualsiasi e l&apos;arbitro che scegli tu, anche se non si incontrano:
               un banco di prova, non il dossier di una gara in calendario
             </span>
-          </div>
+            <span className="home-tile-go" aria-hidden="true">
+              Apri
+            </span>
+          </Link>
         </div>
 
         <p className="home-note">

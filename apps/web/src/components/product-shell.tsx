@@ -11,6 +11,7 @@ type ProductSection =
   | "home"
   | "matches"
   | "predictions"
+  | "expected"
   | "teams"
   | "referees"
   | "method"

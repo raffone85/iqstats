@@ -19,7 +19,29 @@ import {
   type GaraDaPrevedere,
   type MediaOsservata,
 } from "./projection-store.ts";
-import type { MatchDetail } from "./match-context.ts";
+/**
+ * Che cosa serve al motore per proiettare una gara.
+ *
+ * **Nove campi, non un dettaglio intero.** Il motore ha sempre saputo proiettare una gara
+ * che nel livello dati non c'e' — `matchId: 0` esiste apposta — ma chiedeva un
+ * `MatchDetail`, cioe' una gara vera della fonte. Da qui in avanti chiede solo quello che
+ * usa davvero, e `MatchDetail` continua a soddisfarlo senza che nessuna pagina cambi. Cosi'
+ * anche un accostamento che non esiste in calendario puo' passare dallo stesso motore,
+ * invece di averne uno secondo che divergerebbe al primo bersaglio nuovo.
+ */
+export interface GaraDaProiettare {
+  readonly homeTeamId: number | null;
+  readonly awayTeamId: number | null;
+  readonly seasonId: number | null;
+  readonly refereeId: number | null;
+  /** L'istante rispetto al quale si guarda indietro: nessuna riga successiva entra. */
+  readonly kickoff: string;
+  readonly homeCoachId: number | null;
+  readonly awayCoachId: number | null;
+  readonly roundNumber: number | null;
+  readonly roundName: string | null;
+  readonly isLocalDerby: boolean | null;
+}
 
 /**
  * Il motore di proiezione al servizio di una pagina.
@@ -57,7 +79,7 @@ interface RigaIdentificativi {
  */
 async function identificativi(
   sql: ReturnType<typeof postgres>,
-  detail: MatchDetail,
+  detail: GaraDaProiettare,
 ): Promise<GaraDaPrevedere | null> {
   if (detail.homeTeamId === null || detail.awayTeamId === null || detail.seasonId === null) {
     return null;
@@ -253,7 +275,7 @@ export type SenzaProiezione =
   | "errore";
 
 export async function proiezioniDellaGara(
-  detail: MatchDetail,
+  detail: GaraDaProiettare,
 ): Promise<ProiezioniDellaGara | SenzaProiezione> {
   const sql = connessione();
   if (sql === null) return "senza-connessione";
