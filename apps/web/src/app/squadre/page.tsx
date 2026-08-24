@@ -31,6 +31,16 @@ function scalare(valore: string | string[] | undefined): string {
 }
 
 /** Due decimali dove il numero e' piccolo, uno dove non servono. */
+const GIORNO: Intl.DateTimeFormatOptions = {
+  day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome",
+};
+
+function giorno(iso: string): string {
+  const data = new Date(iso);
+  return Number.isNaN(data.getTime()) ? "data non disponibile"
+    : data.toLocaleDateString("it-IT", GIORNO);
+}
+
 function numeroDecimale(valore: number, percentuale: boolean): string {
   const cifre = percentuale ? 1 : valore < 10 ? 2 : 1;
   return valore.toFixed(cifre).replace(".", ",") + (percentuale ? "%" : "");
@@ -108,7 +118,7 @@ export default async function SquadrePage({ searchParams }: Props) {
           <span className="oggi-kick">Squadre</span>
           <span className="oggi-line" aria-hidden="true" />
           <span className="oggi-src">
-            {competizioni.length} competizioni · da 5 gare in su
+            {competizioni.length} competizioni · {scelta.nome} fino al {giorno(scelta.ultima)}
           </span>
         </div>
 

@@ -132,6 +132,14 @@ export interface CompetizioneConSquadre {
   readonly paese: string | null;
   /** Le squadre sopra il campione minimo nella stagione piu' recente della competizione. */
   readonly squadre: number;
+  /**
+   * L'ultima gara che entra in questa classifica.
+   *
+   * Non e' la data del livello dati: le competizioni non arrivano tutte allo stesso
+   * giorno, e la piu' ferma e' indietro di mesi rispetto alla piu' aggiornata. Una data
+   * sola per tutte sarebbe vera come massimo e falsa come copertura di questa pagina.
+   */
+  readonly ultima: string;
 }
 
 /** Il numero, o `null` se la colonna non c'era: un'assenza non diventa zero. */
@@ -245,10 +253,12 @@ export async function competizioniConSquadre(): Promise<readonly CompetizioneCon
   if (sql === null) return [];
   try {
     const righe = await sql<Array<{
-      source_id: string | null; name: string; country_name: string | null; squadre: string;
+      source_id: string | null; name: string; country_name: string | null;
+      squadre: string; ultima: string;
     }>>`
       with per_squadra as (
-        select competition_id, season_id, team_id, count(*) as gare
+        select competition_id, season_id, team_id, count(*) as gare,
+               max(kickoff_at) as ultima
         from football.team_match_observations
         group by 1, 2, 3
         having count(*) >= ${GARE_MINIME}
@@ -259,7 +269,8 @@ export async function competizioniConSquadre(): Promise<readonly CompetizioneCon
         group by competition_id, season_id
         order by competition_id, max(kickoff_at) desc
       )
-      select c.source_id::text, c.name, c.country_name, count(*)::text as squadre
+      select c.source_id::text, c.name, c.country_name, count(*)::text as squadre,
+             max(p.ultima)::text as ultima
       from per_squadra p
       join recente r on r.competition_id = p.competition_id and r.season_id = p.season_id
       join football.competitions c on c.id = p.competition_id
@@ -274,6 +285,7 @@ export async function competizioniConSquadre(): Promise<readonly CompetizioneCon
         nome: r.name,
         paese: r.country_name,
         squadre: Number(r.squadre),
+        ultima: r.ultima,
       }));
   } catch {
     return [];
