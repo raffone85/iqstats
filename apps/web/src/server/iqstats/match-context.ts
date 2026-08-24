@@ -156,23 +156,48 @@ function normalizeH2H(value: unknown): HeadToHead | null {
 
 const detailCache = new Map<number, { value: MatchDetail | null; expiresAt: number }>();
 
-export async function getMatchDetail(eventId: number): Promise<MatchDetail | null> {
-  if (!Number.isInteger(eventId) || eventId <= 0) return null;
+/**
+ * L'esito della richiesta del dossier, in tre stati e non in due.
+ *
+ * Prima erano due — il dettaglio oppure `null` — e la pagina non poteva distinguere
+ * **una gara che non esiste** da **una fonte che in questo momento non risponde**. Le due
+ * cose meritano risposte HTTP opposte: la prima e' un 404 definitivo, la seconda e' un 200
+ * con una spiegazione, perche' rispondere 404 a una gara vera la fa sparire dagli indici
+ * per un guasto passeggero. La distinzione esisteva gia' qui dentro — `fetchJson` risponde
+ * `"not_found"` — e veniva buttata via all'uscita.
+ */
+export type EsitoDelDossier =
+  | { readonly stato: "trovato"; readonly detail: MatchDetail }
+  /** La fonte ha risposto, e dice che questa gara non c'e'. */
+  | { readonly stato: "assente" }
+  /** La fonte non ha risposto, o ha risposto qualcosa che non sappiamo leggere. */
+  | { readonly stato: "non-leggibile" };
+
+export async function getMatchDetail(eventId: number): Promise<EsitoDelDossier> {
+  // Un identificativo che non e' un intero positivo non e' una gara che manca: e' un
+  // indirizzo sbagliato, e vale come assente.
+  if (!Number.isInteger(eventId) || eventId <= 0) return { stato: "assente" };
   const now = Date.now();
   const cached = detailCache.get(eventId);
-  if (cached && cached.expiresAt > now) return cached.value;
+  if (cached && cached.expiresAt > now) {
+    return cached.value === null
+      ? { stato: "assente" }
+      : { stato: "trovato", detail: cached.value };
+  }
 
   const payload = await fetchJson(`/api/v2/events/${eventId}/`);
   if (payload === "not_found") {
     detailCache.set(eventId, { value: null, expiresAt: now + CACHE_TTL_MS });
-    return null;
+    return { stato: "assente" };
   }
-  if (typeof payload !== "object" || payload === null) return null;
+  if (typeof payload !== "object" || payload === null) return { stato: "non-leggibile" };
 
   const row = payload as Record<string, unknown>;
   const homeTeam = asString(row.home_team);
   const awayTeam = asString(row.away_team);
-  if (!homeTeam || !awayTeam) return null;
+  // La fonte ha risposto, ma senza le due squadre non e' un dossier: non e' una gara
+  // assente, e' una risposta che non sappiamo leggere.
+  if (!homeTeam || !awayTeam) return { stato: "non-leggibile" };
 
   const weatherRow = (row.weather ?? null) as Record<string, unknown> | null;
   // Il meteo arriva anche come "unknown": in quel caso non è un dato, è un segnaposto.
@@ -210,7 +235,7 @@ export async function getMatchDetail(eventId: number): Promise<MatchDetail | nul
     headToHead: normalizeH2H(row.head_to_head),
   };
   detailCache.set(eventId, { value, expiresAt: now + CACHE_TTL_MS });
-  return value;
+  return { stato: "trovato", detail: value };
 }
 
 const refereeCache = new Map<number, { value: RefereeInfo | null; expiresAt: number }>();

@@ -209,16 +209,36 @@ function golDellaGara(
  * Il materiale si legge **due volte**, una per lato, e si compone sette volte: cambia
  * quale metrica diventa il bersaglio, non quali righe si guardano.
  */
+/**
+ * Perche' la proiezione non c'e', quando non c'e'.
+ *
+ * Prima erano tutti lo stesso `null`, e la pagina taceva: chi guardava non poteva
+ * distinguere una gara che il motore non copre da un guasto nostro, e il silenzio si
+ * legge come un difetto. Ogni motivo qui sotto ha una frase diversa in pagina, e nessuna
+ * di quelle frasi si inventa: sono i cinque punti in cui questa funzione si arrende.
+ */
+export type SenzaProiezione =
+  /** La connessione al livello dati non e' dichiarata: e' un'assenza nostra, non della gara. */
+  | "senza-connessione"
+  /** Nessun modello e' stato promosso a produzione. Anche questa e' un'assenza nostra. */
+  | "senza-modelli"
+  /** La gara non e' fra quelle che abbiamo raccolto: competizione o stagione fuori portata. */
+  | "gara-sconosciuta"
+  /** La gara c'e', ma non ha abbastanza storia perche' i modelli dicano qualcosa. */
+  | "senza-copertura"
+  /** La lettura e' fallita. Si dichiara invece di far sparire la sezione in silenzio. */
+  | "errore";
+
 export async function proiezioniDellaGara(
   detail: MatchDetail,
-): Promise<ProiezioniDellaGara | null> {
+): Promise<ProiezioniDellaGara | SenzaProiezione> {
   const sql = connessione();
-  if (sql === null) return null;
-  if (ARTEFATTI_DI_PRODUZIONE.size === 0) return null;
+  if (sql === null) return "senza-connessione";
+  if (ARTEFATTI_DI_PRODUZIONE.size === 0) return "senza-modelli";
 
   try {
     const gara = await identificativi(sql, detail);
-    if (gara === null) return null;
+    if (gara === null) return "gara-sconosciuta";
 
     const store = new ProjectionObservationStore(sql);
     const [materialeCasa, materialeTrasferta] = await Promise.all([
@@ -250,7 +270,7 @@ export async function proiezioniDellaGara(
     // Senza nemmeno un bersaglio completo **e** senza i gol non c'e' niente da mostrare:
     // si risponde `null` cosi' chi chiama torna alla lettura di ENG-1. Con i soli gol si
     // risponde comunque, e chi chiama vede `bersagli` vuoto.
-    if (completi.length === 0 && gol === null) return null;
+    if (completi.length === 0 && gol === null) return "senza-copertura";
 
     // Gli istanti sono ISO normalizzati dallo store, quindi l'ordine lessicografico e'
     // l'ordine temporale: nessuna conversione a data per trovare il piu' recente.
@@ -276,8 +296,8 @@ export async function proiezioniDellaGara(
 
     return { bersagli: completi.length === 0 ? [] : bersagli, osservate, gol, ultimaOsservazione: ultima };
   } catch {
-    // Una proiezione che non si puo' calcolare non rompe il dossier: la sezione sparisce.
-    // Il resto della pagina non dipende da questo livello dati.
-    return null;
+    // Una proiezione che non si puo' calcolare non rompe il dossier, ma non sparisce piu'
+    // in silenzio: la pagina lo dichiara. Il resto non dipende da questo livello dati.
+    return "errore";
   }
 }

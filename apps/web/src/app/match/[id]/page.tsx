@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
@@ -31,7 +32,7 @@ import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
-import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
+import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { lettureForti } from "@/server/iqstats/projection/letture-forti";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
@@ -244,41 +245,70 @@ function TeamName({ name, teamId }: { name: string; teamId: number | null }) {
   );
 }
 
+/**
+ * Perche' la proiezione non c'e', detto a chi guarda.
+ *
+ * Una sezione che sparisce senza una riga si legge come un guasto: e' successo, ed e' il
+ * motivo per cui questa funzione esiste. I cinque casi sono i cinque punti in cui
+ * `proiezioniDellaGara` si arrende, e ognuno dice una cosa diversa perche' lo e'.
+ */
+function percheSenzaProiezione(motivo: SenzaProiezione): string {
+  switch (motivo) {
+    case "senza-connessione":
+      return "Il livello dati dei nostri modelli non e' raggiungibile in questo momento: "
+        + "l'assenza e' nostra, non della gara.";
+    case "senza-modelli":
+      return "Nessun modello e' attualmente promosso a produzione: finche' non lo e', "
+        + "questa sezione non mostra numeri invece di mostrarne di provvisori.";
+    case "gara-sconosciuta":
+      return "Questa gara non e' fra quelle che abbiamo raccolto: il suo campionato o la "
+        + "sua stagione stanno fuori dalle 29 competizioni che osserviamo.";
+    case "senza-copertura":
+      return "Le due squadre non hanno ancora abbastanza gare osservate in questa stagione "
+        + "perche' i modelli dicano qualcosa: la proiezione compare dalla quarta giornata "
+        + "in poi, e prima di allora sarebbe una gara sola moltiplicata per un'altra.";
+    case "errore":
+      return "La proiezione non e' stata calcolata per un errore di lettura. Lo dichiariamo "
+        + "invece di far sparire la sezione senza dire niente.";
+  }
+}
+
 export default async function MatchPage({ params }: MatchPageProps) {
   const { id } = await params;
 
-  if (!/^[1-9]\d*$/.test(id)) {
-    return (
-      <ProductShell>
-        <div className="oggi-backdrop" aria-hidden="true" />
-        <div className="dossier">
-          <Link className="dossier-back" href="/partite">← Partite</Link>
-          <div className="oggi-empty">
-            <h2>Identificativo gara non valido</h2>
-            <p>Il collegamento non è corretto. Torna alla dashboard per scegliere una gara.</p>
-          </div>
-        </div>
-      </ProductShell>
-    );
-  }
+  // Un indirizzo malformato non e' una gara con un problema: e' un indirizzo che non
+  // esiste, e va detto con lo stesso 404 di una gara assente invece che con un riquadro.
+  if (!/^[1-9]\d*$/.test(id)) notFound();
 
   const eventId = Number(id);
-  const detail = await getMatchDetail(eventId);
+  const esito = await getMatchDetail(eventId);
 
-  if (!detail) {
+  // **Una gara che non esiste e una fonte muta meritano risposte opposte.** Prima erano la
+  // stessa cosa: entrambe rendevano un riquadro con stato 200, e per un motore di ricerca
+  // un indirizzo inventato era una pagina valida. Ora l'assenza e' un 404 vero; il guasto
+  // passeggero resta 200, perche' rispondere 404 a una gara vera la fa sparire dagli indici
+  // per un'indisponibilita' di un minuto.
+  if (esito.stato === "assente") notFound();
+
+  if (esito.stato === "non-leggibile") {
     return (
       <ProductShell>
         <div className="oggi-backdrop" aria-hidden="true" />
         <div className="dossier">
           <Link className="dossier-back" href="/partite">← Partite</Link>
           <div className="oggi-empty">
-            <h2>Dossier non disponibile</h2>
-            <p>La fonte non espone i dettagli di questa gara al momento. Nessun contenuto viene simulato.</p>
+            <h2>Dossier non leggibile in questo momento</h2>
+            <p>
+              La gara esiste, ma la fonte non ne espone i dettagli adesso. Nessun contenuto
+              viene simulato: riprova fra qualche minuto, oppure torna al calendario.
+            </p>
           </div>
         </div>
       </ProductShell>
     );
   }
+
+  const detail = esito.detail;
 
   // La fonte ammette dieci richieste al secondo per indirizzo: il dossier le spezza in
   // ondate da non più di sei. Prima ciò che regge la pagina, poi il contorno.
@@ -336,7 +366,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // Motore di proiezione: legge il proprio livello dati, mai la fonte. Senza connessione
   // dichiarata risponde null e in pagina resta la lettura di ENG-1: i due pannelli non
   // convivono, perche' mostrerebbero due numeri diversi per la stessa cosa.
-  const proiezioni = await proiezioniDellaGara(detail);
+  const esitoProiezione = await proiezioniDellaGara(detail);
+  // Si separano i due casi qui, una volta sola, cosi' il resto della pagina continua a
+  // leggere `proiezioni` come prima e il motivo dell'assenza resta disponibile per dirlo.
+  const proiezioni = typeof esitoProiezione === "string" ? null : esitoProiezione;
+  const senzaProiezione = typeof esitoProiezione === "string" ? esitoProiezione : null;
 
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
   const picks = buildMatchPicks(prediction, engineReading, odds, detail.homeTeam, detail.awayTeam);
@@ -579,15 +613,51 @@ export default async function MatchPage({ params }: MatchPageProps) {
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
           />
-        ) : null}
+        ) : proiezioni === null ? null : (
+          // La sezione Gol poggia sui gol attesi osservati. Dove quella colonna non e'
+          // riempita - la Nigeria Premier Football League ha 758 righe e zero
+          // `expected_goals` - la sezione non puo' esistere, e va detto invece di lasciare
+          // un buco fra le altre.
+          <section className="dossier-panel" aria-labelledby="senza-gol-title">
+            <p className="dossier-kick">Gol non disponibili</p>
+            <h2 id="senza-gol-title" className="sr-only-heading">
+              Perche&apos; i mercati dei gol non compaiono su questa gara
+            </h2>
+            <p className="dossier-src">
+              I mercati dei gol poggiano sui <b>gol attesi osservati</b> nelle gare già giocate
+              della stagione. In questa competizione quella colonna non è riempita, quindi non
+              c&apos;è niente su cui costruirli: nessun numero viene stimato al loro posto.
+            </p>
+          </section>
+        )}
 
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
         {proiezioni === null || proiezioni.bersagli.length === 0 ? (
-          <StatEngineSection
-            reading={engineReading}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
+          <>
+            {/* **Il silenzio si legge come un guasto.** Quando la proiezione non c'e', la
+                pagina scriveva soltanto la lettura di ENG-1 e nessuno poteva sapere se il
+                motore piu' preciso fosse assente per una ragione o per un difetto. */}
+            <section className="dossier-panel" aria-labelledby="senza-proiezione-title">
+              <p className="dossier-kick">Proiezione non disponibile</p>
+              <h2 id="senza-proiezione-title" className="sr-only-heading">
+                Perche&apos; la proiezione non compare su questa gara
+              </h2>
+              <p className="dossier-src">
+                {senzaProiezione === null
+                  ? "I modelli hanno risposto, ma su questa gara nessuno dei sette bersagli "
+                    + "arriva a una previsione completa per entrambe le squadre: sotto si "
+                    + "legge il motore di base, che chiede meno storia."
+                  : percheSenzaProiezione(senzaProiezione)}
+                {" "}Qui sotto resta la lettura del motore di base, che poggia su medie e non
+                sui modelli.
+              </p>
+            </section>
+            <StatEngineSection
+              reading={engineReading}
+              homeTeam={detail.homeTeam}
+              awayTeam={detail.awayTeam}
+            />
+          </>
         ) : (
           <MatchProjectionSection
             proiezioni={proiezioni}
