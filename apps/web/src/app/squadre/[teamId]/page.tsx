@@ -8,13 +8,14 @@ import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { TeamSplitsSection } from "@/components/team-splits-section";
 import { TeamMetroSection } from "@/components/team-metro-section";
+import { TeamPerLatoSection } from "@/components/team-per-lato-section";
 import { TeamStatsSection } from "@/components/team-stats-section";
 import { TeamRefereesSection } from "@/components/team-referees-section";
 import { TeamSquadSection } from "@/components/team-squad-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { countryCode } from "@/server/iqstats/country-names";
 import { metroDiLega } from "@/server/iqstats/team-metro";
-import { profiloSquadra } from "@/server/iqstats/team-stats";
+import { profiloPerLato, profiloSquadra } from "@/server/iqstats/team-stats";
 import {
   getSeasons,
   getStandingRow,
@@ -191,6 +192,19 @@ async function StatsBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) 
   const profilo = await profiloSquadra(teamSourceId);
   if (profilo === null) return null;
   return <TeamStatsSection profilo={profilo} />;
+}
+
+/**
+ * Che cosa fa e che cosa subisce, dai due lati del campo.
+ *
+ * Come `StatsBlock` legge dalle nostre osservazioni e non dal provider. Sta subito dopo i
+ * totali perche' risponde alla stessa domanda con una risoluzione piu' fine: i totali
+ * dicono la squadra, i lati dicono la squadra in casa e la squadra in trasferta.
+ */
+async function PerLatoBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) {
+  const profilo = await profiloPerLato(teamSourceId);
+  if (profilo === null) return null;
+  return <TeamPerLatoSection profilo={profilo} />;
 }
 
 async function SquadBlock({
@@ -548,6 +562,10 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
 
         <Suspense fallback={<PanelSkeleton label="Che cosa fa in una gara" />}>
           <StatsBlock teamSourceId={Number(teamId)} />
+        </Suspense>
+
+        <Suspense fallback={<PanelSkeleton label="In casa e in trasferta" />}>
+          <PerLatoBlock teamSourceId={Number(teamId)} />
         </Suspense>
 
         {selected ? (

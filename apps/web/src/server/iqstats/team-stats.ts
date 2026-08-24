@@ -176,6 +176,126 @@ interface RigaProfilo {
   readonly [colonna: string]: string;
 }
 
+export interface LatoDelBersaglio {
+  /** Quanto ne produce la squadra da quel lato. */
+  readonly prodotto: number | null;
+  /** Quanto ne concede all'avversaria da quel lato: e' la riga gemella della stessa gara. */
+  readonly subito: number | null;
+  /** Le gare che portano questo dato, non quelle giocate. */
+  readonly gare: number;
+}
+
+export interface VocePerLato {
+  readonly chiave: ChiaveBersaglio;
+  readonly nome: string;
+  readonly gruppo: "principale" | "dettaglio";
+  readonly percentuale: boolean;
+  readonly casa: LatoDelBersaglio | null;
+  readonly trasferta: LatoDelBersaglio | null;
+}
+
+export interface ProfiloPerLato {
+  readonly nome: string;
+  readonly gareCasa: number;
+  readonly gareTrasferta: number;
+  readonly dal: string;
+  readonly al: string;
+  readonly voci: readonly VocePerLato[];
+}
+
+/**
+ * Che cosa fa e che cosa subisce una squadra, **in casa e in trasferta separatamente**.
+ *
+ * `profiloSquadra` da' i totali di tutte le gare e solo il prodotto. Ma «la Roma subisce
+ * 11,8 tiri» non e' un fatto della Roma: e' la media di due popolazioni diverse, e in
+ * trasferta il numero e' un altro. E il subito e' meta' del comportamento di una squadra:
+ * senza, si sa che cosa fa e non che cosa lascia fare.
+ *
+ * Il subito e' la riga gemella della stessa gara - `g.team_id = o.opponent_id` - quindi
+ * non e' una colonna nuova ne' una richiesta nuova: e' la stessa tavola, unita a se stessa.
+ *
+ * La finestra e' quella dichiarata dall'utente per le descrittive: 365 giorni.
+ */
+export async function profiloPerLato(teamSourceId: number): Promise<ProfiloPerLato | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+
+  // Le colonne sono scritte nella tabella dei bersagli una per una: nessun nome di colonna
+  // arriva dall'indirizzo.
+  const colonne = BERSAGLI
+    .flatMap((b) => [
+      "avg(o." + b.colonna + ")::text as p_" + b.chiave,
+      "count(o." + b.colonna + ")::text as np_" + b.chiave,
+      "avg(g." + b.colonna + ")::text as s_" + b.chiave,
+      "count(g." + b.colonna + ")::text as ns_" + b.chiave,
+    ])
+    .join(", ");
+
+  try {
+    const righe = await sql<Array<Record<string, string | null>>>`
+      select o.side as lato, t.name as nome,
+             count(*)::text as gare,
+             min(o.kickoff_at)::text as dal,
+             max(o.kickoff_at)::text as al,
+             ${sql.unsafe(colonne)}
+      from football.team_match_observations o
+      join football.team_match_observations g
+        on g.match_id = o.match_id and g.team_id = o.opponent_id
+      join football.teams t on t.id = o.team_id
+      where t.source_id = ${teamSourceId}::bigint
+        and o.kickoff_at >= now() - ${FINESTRA_GIORNI}::int * interval '1 day'
+      group by o.side, t.name
+    `;
+    if (righe.length === 0) return null;
+
+    const perLato = new Map(righe.map((r) => [r.lato, r]));
+    const casa = perLato.get("home");
+    const trasferta = perLato.get("away");
+    const prima = righe[0];
+
+    const lato = (
+      riga: Record<string, string | null> | undefined,
+      chiave: string,
+    ): LatoDelBersaglio | null => {
+      if (riga === undefined) return null;
+      const prodotto = numero(riga["p_" + chiave]);
+      const subito = numero(riga["s_" + chiave]);
+      const gare = Math.min(numero(riga["np_" + chiave]) ?? 0, numero(riga["ns_" + chiave]) ?? 0);
+      // Sotto la soglia non si dichiara niente: una media di due gare racconta due serate.
+      if (gare < GARE_MINIME || (prodotto === null && subito === null)) return null;
+      return { prodotto, subito, gare };
+    };
+
+    const voci: VocePerLato[] = [];
+    for (const b of BERSAGLI) {
+      const c = lato(casa, b.chiave);
+      const t = lato(trasferta, b.chiave);
+      if (c === null && t === null) continue;
+      voci.push({
+        chiave: b.chiave,
+        nome: b.nome,
+        gruppo: b.gruppo,
+        percentuale: "percentuale" in b && b.percentuale === true,
+        casa: c,
+        trasferta: t,
+      });
+    }
+    if (voci.length === 0) return null;
+
+    const giorni = righe.map((r) => [r.dal ?? "", r.al ?? ""]);
+    return {
+      nome: prima.nome ?? "",
+      gareCasa: numero(casa?.gare ?? null) ?? 0,
+      gareTrasferta: numero(trasferta?.gare ?? null) ?? 0,
+      dal: giorni.map((g) => g[0]).filter(Boolean).sort()[0] ?? "",
+      al: giorni.map((g) => g[1]).filter(Boolean).sort().reverse()[0] ?? "",
+      voci,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Il profilo di una squadra sugli ultimi 365 giorni, o `null` se non ne ha abbastanza. */
 export async function profiloSquadra(teamSourceId: number): Promise<ProfiloSquadra | null> {
   const sql = connessione();
