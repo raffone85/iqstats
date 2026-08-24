@@ -39,6 +39,16 @@ export interface MatchesByDateResult {
   readonly reason?: string;
   /** Vero solo se il freno di sicurezza ha fermato la lettura: l'elenco è incompleto e va detto. */
   readonly truncated?: boolean;
+  /**
+   * Quando la fonte è stata letta davvero, non quando la pagina è stata disegnata.
+   *
+   * L'endpoint del calendario non espone nessun campo di aggiornamento — misurato su 50
+   * gare: `last_updated`, `updated_at`, `latest` e `as_of` sono tutti assenti — quindi
+   * l'unico istante vero è quello della nostra richiesta. Vive dentro la busta perché la
+   * risposta resta in cache per 120 secondi: `new Date()` al render direbbe un'ora che
+   * nessuno ha chiesto alla fonte.
+   */
+  readonly lettoIl?: string;
 }
 
 interface LeagueMeta {
@@ -189,7 +199,9 @@ export async function getMatchesByDate(dateIso: string, leagueId?: number): Prom
     .filter((m): m is MatchListItem => m !== null && romeDayOf(m.kickoff) === dateIso)
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 
-  const value: MatchesByDateResult = { matches, source: "provider", truncated: collected.truncated };
+  const value: MatchesByDateResult = {
+    matches, source: "provider", truncated: collected.truncated, lettoIl: new Date(now).toISOString(),
+  };
   matchesCache.set(cacheKey, { value, expiresAt: now + MATCHES_TTL_MS });
   return value;
 }

@@ -77,7 +77,10 @@ export default async function ArbitroPage({ params }: Props) {
         <div className="oggi-eyebrow">
           <span className="oggi-kick">{p.competizione}</span>
           <span className="oggi-line" aria-hidden="true" />
-          <span className="oggi-src">{p.gare} gare dirette</span>
+          <span className="oggi-src">
+            {p.gare} gare dirette
+            {p.ultima === null ? "" : ` · fino al ${giorno(p.ultima)}`}
+          </span>
         </div>
 
         <h1 id="arbitro-title" className="squad-title">{p.nome}</h1>

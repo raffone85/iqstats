@@ -41,6 +41,12 @@ export interface DashboardPredictionsResult {
   readonly source: "provider" | "unavailable";
   readonly modelVersion: string | null;
   readonly reason?: string;
+  /**
+   * Quando la fonte è stata letta davvero. Gemello di `MatchesByDateResult.lettoIl`, e per
+   * la stessa ragione: la risposta resta in cache per 120 secondi, quindi l'istante del
+   * render non è l'istante della lettura.
+   */
+  readonly lettoIl?: string;
 }
 
 interface CacheEntry {
@@ -120,10 +126,20 @@ function normalize(row: unknown): DashboardPrediction | null {
   };
 }
 
+/** Fin dove si guarda avanti: misurato, tutti i pronostici stanno entro 14 giorni. */
+const GIORNI_AVANTI = 30;
+
 /**
- * Pronostici upcoming del modello provider, ordinati per data di kickoff.
+ * Pronostici delle gare in arrivo, ordinati per data di kickoff.
  * Fail-closed: se la fonte non è configurata o non risponde, ritorna lista vuota
  * con motivo (la UI mostra "copertura assente", mai dati inventati).
+ *
+ * **La finestra ha sostituito `upcoming=true` il 24 agosto 2026.** La fonte quel parametro
+ * non lo accetta più e rispondeva `400 Unknown query parameter(s): upcoming`, che il client
+ * traduce in `source_unavailable`: `/pronostici` era vuota in produzione e diceva «riprova
+ * fra qualche minuto», cioè una cosa falsa, perché riprovare non poteva servire a niente.
+ * Misurato lo stesso giorno: con `date_from` e `date_to` la fonte risponde 200 e dà 471
+ * pronostici a sette giorni, 473 a quattordici, e nessuno oltre.
  */
 export async function getUpcomingPredictions(limit = 50): Promise<DashboardPredictionsResult> {
   const cacheKey = `upcoming:${limit}`;
@@ -139,7 +155,12 @@ export async function getUpcomingPredictions(limit = 50): Promise<DashboardPredi
   let payload: unknown;
   try {
     const client = new ProviderClient({ baseUrl: config.baseUrl, token: config.token });
-    payload = await client.getJson(`/api/v2/predictions/?upcoming=true&limit=${limit}`);
+    // `date_from` e' l'istante, non il giorno: una gara gia' iniziata non e' «in arrivo».
+    const da = new Date(now).toISOString();
+    const a = new Date(now + GIORNI_AVANTI * 24 * 60 * 60 * 1000).toISOString();
+    payload = await client.getJson(
+      `/api/v2/predictions/?date_from=${da}&date_to=${a}&limit=${limit}`,
+    );
   } catch (reason) {
     const code = reason instanceof GatewayError ? reason.code : "source_unavailable";
     return { predictions: [], source: "unavailable", modelVersion: null, reason: code };
@@ -153,7 +174,9 @@ export async function getUpcomingPredictions(limit = 50): Promise<DashboardPredi
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 
   const modelVersion = predictions.find((p) => p.modelVersion)?.modelVersion ?? null;
-  const value: DashboardPredictionsResult = { predictions, source: "provider", modelVersion };
+  const value: DashboardPredictionsResult = {
+    predictions, source: "provider", modelVersion, lettoIl: new Date(now).toISOString(),
+  };
   cache.set(cacheKey, { value, expiresAt: now + CACHE_TTL_MS });
   return value;
 }
@@ -212,7 +235,9 @@ export async function getPredictionsByDate(dateIso: string): Promise<DashboardPr
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 
   const modelVersion = predictions.find((p) => p.modelVersion)?.modelVersion ?? null;
-  const value: DashboardPredictionsResult = { predictions, source: "provider", modelVersion };
+  const value: DashboardPredictionsResult = {
+    predictions, source: "provider", modelVersion, lettoIl: new Date(now).toISOString(),
+  };
   byDateCache.set(dateIso, { value, expiresAt: now + CACHE_TTL_MS });
   return value;
 }

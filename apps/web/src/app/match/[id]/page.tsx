@@ -612,6 +612,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             gol={proiezioni.gol}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
+            ultima={proiezioni.ultimaOsservazione}
           />
         ) : proiezioni === null ? null : (
           // La sezione Gol poggia sui gol attesi osservati. Dove quella colonna non e'

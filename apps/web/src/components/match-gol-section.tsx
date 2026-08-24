@@ -73,9 +73,27 @@ type Props = {
   readonly gol: GolDellaGara;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  /**
+   * Il calcio d'inizio dell'ultima gara che entra in questi conti.
+   *
+   * E' la copertura **di queste due squadre**, non del livello dati: le competizioni non
+   * arrivano tutte allo stesso giorno, quindi una data unica sarebbe vera come massimo e
+   * falsa come copertura di questa gara.
+   */
+  readonly ultima: string | null;
 };
 
-export function MatchGolSection({ gol, homeTeam, awayTeam }: Props) {
+const GIORNO: Intl.DateTimeFormatOptions = {
+  day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome",
+};
+
+function giorno(iso: string): string {
+  const data = new Date(iso);
+  return Number.isNaN(data.getTime()) ? "data non disponibile"
+    : data.toLocaleDateString("it-IT", GIORNO);
+}
+
+export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
   const m = gol.mercati;
   const esatti = (quali: readonly number[]): Voce[] =>
     quali.map((probabilita, gol) => ({ etichetta: `${gol}`, probabilita }));
@@ -215,7 +233,9 @@ export function MatchGolSection({ gol, homeTeam, awayTeam }: Props) {
         l&apos;avversaria ne concede dal proprio, misurati contro la media della competizione
         &mdash; {gol.campioneLega} righe di lega, {gare(gol.campioneCasa, "in casa")} e{" "}
         {gol.campioneTrasferta} fuori. Il vantaggio del campo non è un coefficiente aggiunto a
-        mano: sta nelle due medie di lega, che sono diverse perché misurate sui due lati.
+        mano: sta nelle due medie di lega, che sono diverse perché misurate sui due lati.{" "}
+        La storia di queste due squadre arriva{" "}
+        {ultima === null ? "a una data non disponibile" : `al ${giorno(ultima)}`}.
       </p>
       <p className="dossier-src">
         <b>Con poche gare il numero resta vicino alla media della competizione</b>, e si

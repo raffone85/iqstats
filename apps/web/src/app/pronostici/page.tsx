@@ -49,6 +49,14 @@ const romeDay = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
+const ORA = new Intl.DateTimeFormat("it-IT", {
+  hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome",
+});
+
+const GIORNO = new Intl.DateTimeFormat("it-IT", {
+  day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome",
+});
+
 const kickoffTime = new Intl.DateTimeFormat("it-IT", {
   timeZone: "Europe/Rome",
   hour: "2-digit",
@@ -165,6 +173,17 @@ export default async function PronosticiPage({
     return a.kickoff.localeCompare(b.kickoff);
   });
 
+  // **La data vera di questa pagina e' quando il modello ha calcolato, non quando l'abbiamo
+  // letto.** La fonte espone `created_at` su ogni riga e il modello gira di notte, quindi le
+  // righe in elenco non nascono tutte lo stesso giorno: si dichiara la finestra, non un
+  // istante solo, perche' un istante solo direbbe che sono tutte fresche uguale.
+  const calcolati = sorted
+    .map((p) => p.createdAt)
+    .filter((quando): quando is string => quando !== null)
+    .sort();
+  const calcolatoDa = calcolati[0] ?? null;
+  const calcolatoA = calcolati[calcolati.length - 1] ?? null;
+
   const filtersActive =
     timeWindow !== "oggi" ||
     market !== "favorito" ||
@@ -179,7 +198,16 @@ export default async function PronosticiPage({
         <h1 id="signals-title">Le gare in arrivo, lette dal modello.</h1>
         <p>
           Ogni riga mostra che cosa assegna il modello e su quale mercato. I numeri sono suoi, la
-          scelta resta tua: qui non trovi consigli di giocata.
+          scelta resta tua: qui non trovi consigli di giocata.{" "}
+          {/* La fonte non dichiara quando ha aggiornato le sue letture: l'unico istante vero e'
+              quello della nostra richiesta, e sta nella busta perche' la risposta resta in
+              cache per 120 secondi. */}
+          {calcolatoDa === null || calcolatoA === null
+            ? ""
+            : calcolatoDa.slice(0, 10) === calcolatoA.slice(0, 10)
+              ? `Letture calcolate dal modello il ${GIORNO.format(new Date(calcolatoA))}.`
+              : `Letture calcolate dal modello fra il ${GIORNO.format(new Date(calcolatoDa))} e il ${GIORNO.format(new Date(calcolatoA))}.`}
+          {result.lettoIl ? ` Lette dalla fonte alle ${ORA.format(new Date(result.lettoIl))}.` : ""}
         </p>
       </section>
 

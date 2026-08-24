@@ -132,7 +132,14 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           <span className="oggi-line" aria-hidden="true" />
           <span className="oggi-src">
             {result.source === "provider"
-              ? [String(allMatches.length).concat(" gare"), String(leagueOptions.length).concat(" competizioni")].join(" · ")
+              ? [
+                String(allMatches.length).concat(" gare"),
+                String(leagueOptions.length).concat(" competizioni"),
+                // L'endpoint del calendario non espone nessuna data di aggiornamento: l'unico
+                // istante vero e' quello in cui l'abbiamo letto, e la risposta resta in cache
+                // per 120 secondi, quindi non coincide con il momento del render.
+                result.lettoIl ? "letto alle ".concat(timeFormatter.format(new Date(result.lettoIl))) : null,
+              ].filter((voce): voce is string => voce !== null).join(" · ")
               : "Elenco non disponibile"}
           </span>
         </div>

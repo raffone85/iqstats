@@ -36,6 +36,16 @@ function numeroDecimale(valore: number, cifre: number): string {
   return valore.toFixed(cifre).replace(".", ",");
 }
 
+const GIORNO: Intl.DateTimeFormatOptions = {
+  day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome",
+};
+
+function giorno(iso: string): string {
+  const data = new Date(iso);
+  return Number.isNaN(data.getTime()) ? "data non disponibile"
+    : data.toLocaleDateString("it-IT", GIORNO);
+}
+
 export default async function ArbitriPage({ searchParams }: Props) {
   const parametri = await searchParams;
   const competizioni = await competizioniConArbitri();
@@ -78,7 +88,7 @@ export default async function ArbitriPage({ searchParams }: Props) {
           <span className="oggi-kick">Arbitri</span>
           <span className="oggi-line" aria-hidden="true" />
           <span className="oggi-src">
-            {competizioni.length} competizioni · da {5} gare in su
+            {competizioni.length} competizioni · {scelta.nome} fino al {giorno(scelta.ultima)}
           </span>
         </div>
 

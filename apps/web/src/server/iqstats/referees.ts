@@ -73,6 +73,8 @@ export interface ProfiloArbitro {
   readonly metro: MediaDiGara;
   readonly posizioneFalli: PosizioneFraColleghi | null;
   readonly posizioneGialli: PosizioneFraColleghi | null;
+  /** Il calcio d'inizio dell'ultima gara che entra in queste medie, `null` senza storico. */
+  readonly ultima: string | null;
   readonly storico: readonly RigaStorico[];
 }
 
@@ -92,6 +94,14 @@ export interface CompetizioneConArbitri {
   readonly paese: string | null;
   readonly arbitri: number;
   readonly gare: number;
+  /**
+   * Il calcio d'inizio dell'ultima gara che entra in questi conti.
+   *
+   * Non e' la data del livello dati: le 29 competizioni non arrivano tutte allo stesso
+   * giorno, e la piu' ferma e' indietro di tre mesi rispetto alla piu' aggiornata. Una data
+   * sola per tutte sarebbe vera come massimo e falsa come copertura.
+   */
+  readonly ultima: string;
 }
 
 /**
@@ -102,6 +112,7 @@ export interface CompetizioneConArbitri {
  */
 const PER_GARA = `
   select o.referee_id, o.competition_id, o.match_id,
+         min(o.kickoff_at) as quando,
          sum(o.fouls) as falli,
          sum(o.yellow_cards) as gialli,
          sum(coalesce(o.red_cards_direct, 0) + coalesce(o.second_yellow_red, 0)) as rossi,
@@ -241,6 +252,7 @@ export async function profiloArbitro(sourceId: number): Promise<ProfiloArbitro |
       },
       posizioneFalli: posizione(riga.sotto_falli),
       posizioneGialli: posizione(riga.sotto_gialli),
+      ultima: storico[0]?.kickoff_at ?? null,
       storico: storico.map((s) => ({
         matchSourceId: s.match_source_id === null ? null : Number(s.match_source_id),
         quando: s.kickoff_at,
@@ -264,14 +276,16 @@ export async function competizioniConArbitri(): Promise<readonly CompetizioneCon
   try {
     const righe = await sql<Array<{
       source_id: string | null; name: string; country_name: string | null;
-      arbitri: string; gare: string;
+      arbitri: string; gare: string; ultima: string;
     }>>`
       with per_gara as (${sql.unsafe(PER_GARA)}),
       per_arbitro as (
-        select referee_id, competition_id, count(*) as gare from per_gara group by 1, 2
+        select referee_id, competition_id, count(*) as gare, max(quando) as ultima
+        from per_gara group by 1, 2
       )
       select c.source_id::text, c.name, c.country_name,
-             count(*)::text as arbitri, sum(a.gare)::text as gare
+             count(*)::text as arbitri, sum(a.gare)::text as gare,
+             max(a.ultima)::text as ultima
       from per_arbitro a
       join football.competitions c on c.id = a.competition_id
       where a.gare >= ${GARE_MINIME}
@@ -287,6 +301,7 @@ export async function competizioniConArbitri(): Promise<readonly CompetizioneCon
         paese: r.country_name,
         arbitri: Number(r.arbitri),
         gare: Number(r.gare),
+        ultima: r.ultima,
       }));
   } catch {
     return [];

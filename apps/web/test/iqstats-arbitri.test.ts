@@ -102,3 +102,56 @@ test("lo storico non supera le gare dichiarate", opzioni, async () => {
 test("un arbitro che non esiste non diventa un profilo vuoto", opzioni, async () => {
   assert.equal(await profiloArbitro(999_999_999), null);
 });
+
+test("la data di una competizione copre i suoi arbitri e non quelli delle altre", opzioni, async () => {
+  const competizioni = await competizioniConArbitri();
+
+  // **Il difetto da prendere e' il massimo globale.** Una data sola per tutte sarebbe vera
+  // come massimo e falsa come copertura: la competizione piu' ferma e' indietro di mesi
+  // rispetto alla piu' aggiornata. Se `ultima` diventasse globale, tutte le date sarebbero
+  // identiche - non per come sono i dati, ma per come sarebbe scritta la query.
+  const distinte = new Set(competizioni.map((c) => c.ultima));
+  assert.ok(
+    distinte.size > 1,
+    `tutte e ${competizioni.length} le competizioni dichiarano la stessa data: e' un massimo globale, non una copertura`,
+  );
+
+  for (const c of competizioni) {
+    assert.ok(!Number.isNaN(new Date(c.ultima).getTime()), `${c.nome}: data illeggibile "${c.ultima}"`);
+  }
+
+  // La competizione con meno arbitri: poche interrogazioni, e l'invariante vale su tutte.
+  const piuPiccola = competizioni[competizioni.length - 1];
+  const classifica = await classificaArbitri(piuPiccola.sourceId, "gialli");
+  const profili = await Promise.all(classifica.map((r) => profiloArbitro(r.sourceId)));
+
+  let massimoDeiSuoi: string | null = null;
+  for (const p of profili) {
+    if (p === null || p.ultima === null) continue;
+    assert.ok(
+      new Date(p.ultima).getTime() <= new Date(piuPiccola.ultima).getTime(),
+      `${p.nome} ha diretto il ${p.ultima}, dopo il ${piuPiccola.ultima} dichiarato da ${piuPiccola.nome}`,
+    );
+    if (massimoDeiSuoi === null || p.ultima > massimoDeiSuoi) massimoDeiSuoi = p.ultima;
+  }
+
+  assert.ok(massimoDeiSuoi !== null, `${piuPiccola.nome}: nessun arbitro con una data`);
+  assert.equal(
+    new Date(massimoDeiSuoi).getTime(),
+    new Date(piuPiccola.ultima).getTime(),
+    `${piuPiccola.nome} dichiara ${piuPiccola.ultima} ma i suoi arbitri arrivano a ${massimoDeiSuoi}`,
+  );
+});
+
+test("la data del profilo e' l'ultima gara del suo storico", opzioni, async () => {
+  const competizioni = await competizioniConArbitri();
+  const classifica = await classificaArbitri(competizioni[0].sourceId, "falli");
+  const p = await profiloArbitro(classifica[0].sourceId);
+  assert.ok(p !== null);
+
+  // Lo storico e' `order by kickoff_at desc limit 20`: la prima riga e' il massimo vero
+  // anche se il taglio ne lascia fuori altre, perche' il taglio prende dalla coda.
+  assert.ok(p.ultima !== null, "un arbitro con gare deve dichiarare una data");
+  const massimo = p.storico.reduce((piu, g) => (g.quando > piu ? g.quando : piu), p.storico[0].quando);
+  assert.equal(p.ultima, massimo, `dichiara ${p.ultima} ma lo storico arriva a ${massimo}`);
+});

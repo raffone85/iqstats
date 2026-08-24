@@ -611,6 +611,14 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
               riusate, così la stessa pagina non ripaga il costo a ogni visita.
             </li>
             <li>
+              <b>Quanto può essere vecchio ciò che leggi.</b> La fonte non dichiara quando ha
+              aggiornato profilo e rosa, quindi qui non si scrive un&apos;ora: si scrive per
+              quanto una risposta viene riusata. Profilo squadra, rosa e allenatore restano
+              validi <b>fino a 24 ore</b>; la classifica <b>fino a 10 minuti</b>; le prossime
+              gare <b>fino a 5 minuti</b>. Un istante di lettura, qui, direbbe una precisione
+              che non abbiamo.
+            </li>
+            <li>
               Le percentuali non sono medie di percentuali: sommano numeratori e denominatori di
               tutte le gare del campione.
             </li>
