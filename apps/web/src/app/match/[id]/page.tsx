@@ -19,6 +19,7 @@ import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchLettureFortiSection } from "@/components/match-letture-forti";
 import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
+import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
   getFinishedMatchStats,
@@ -684,6 +685,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
           <MatchFormaSection
             casa={proiezioni.forma.casa}
             trasferta={proiezioni.forma.trasferta}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : null}
+
+        {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
+            contate in un altro modo. */}
+        {proiezioni ? (
+          <MatchRitardiSection
+            casa={proiezioni.ritardi.casa}
+            trasferta={proiezioni.ritardi.trasferta}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
           />

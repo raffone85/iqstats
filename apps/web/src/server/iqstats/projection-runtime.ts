@@ -7,6 +7,7 @@ import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import { calcolaFeature } from "./projection/asof/calcolo.ts";
 import { attesiDellaGara, mercatiGol, type MercatiGol } from "./projection/gol.ts";
 import { formaDi, type FormaDiSquadra } from "./projection/forma.ts";
+import { ritardiDi, type Ritardo } from "./projection/ritardi.ts";
 import { proiezioneDiGara, type ProiezioneDiGara } from "./projection/match.ts";
 import { proietta } from "./projection/production.ts";
 import { componiIngresso } from "./projection/snapshot.ts";
@@ -146,6 +147,16 @@ export interface ProiezioniDellaGara {
     readonly casa: FormaDiSquadra | null;
     readonly trasferta: FormaDiSquadra | null;
   } | null;
+  /**
+   * Da quante gare ciascuna squadra non fa una cosa, con la quota storica accanto.
+   *
+   * Stesse righe della forma, contate in un altro modo. Vuoto quando nessuno dei quattro
+   * eventi ha un campione sufficiente.
+   */
+  readonly ritardi: {
+    readonly casa: readonly Ritardo[];
+    readonly trasferta: readonly Ritardo[];
+  };
 }
 
 /**
@@ -321,6 +332,10 @@ export async function proiezioniDellaGara(
       gol,
       ultimaOsservazione: ultima,
       forma,
+      ritardi: {
+        casa: ritardiDi(materialeCasa.squadra, "home"),
+        trasferta: ritardiDi(materialeTrasferta.squadra, "away"),
+      },
     };
   } catch {
     // Una proiezione che non si puo' calcolare non rompe il dossier, ma non sparisce piu'
