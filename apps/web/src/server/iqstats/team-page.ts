@@ -276,35 +276,6 @@ export async function getTeamRefereePanel(
   };
 }
 
-export interface MatchRefereeReading {
-  readonly profile: RefereeProfile;
-  readonly reading: RefereeReading;
-  readonly benchmark: RefereeLeagueBenchmark | null;
-}
-
-/**
- * Metro dell'arbitro designato, letto contro la media della sua competizione. Il
- * catalogo di lega copre già nome e aggregati: il profilo singolo è solo il ripiego.
- */
-export async function getMatchRefereeReading(
-  leagueId: string,
-  refereeId: string,
-): Promise<MatchRefereeReading | null> {
-  const directory = (await safely(() => getTeamGateway().getRefereeDirectory(leagueId)))?.data ?? null;
-  const fromDirectory = directory?.referees.find((referee) => referee.refereeId === refereeId) ?? null;
-  const profile =
-    fromDirectory ??
-    (await safely(() => getTeamGateway().getRefereeProfile(refereeId)))?.data ??
-    null;
-  if (profile === null) return null;
-
-  return {
-    profile,
-    reading: readReferee(profile, directory?.benchmark ?? null),
-    benchmark: directory?.benchmark ?? null,
-  };
-}
-
 export async function getTeamSquad(
   teamId: string,
   selection: TeamSelection,

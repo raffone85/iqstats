@@ -21,7 +21,7 @@ function gara(campi: Partial<DashboardPrediction> & { eventId: number }): Dashbo
     homeTeam: "Casa", awayTeam: "Ospite",
     probHome: null, probDraw: null, probAway: null, predicted: null,
     xgHome: null, xgAway: null, probOver25: null, probBtts: null,
-    mostLikelyScore: null, favorite: null, favoriteProb: null, confidence: null,
+    mostLikelyScore: null, favorite: null, favoriteProb: null,
     modelVersion: null, createdAt: null,
     ...campi,
   };

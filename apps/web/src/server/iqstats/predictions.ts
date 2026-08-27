@@ -30,8 +30,14 @@ export interface DashboardPrediction {
   readonly probBtts: number | null;
   readonly mostLikelyScore: string | null;
   readonly favorite: Outcome | null;
+  /**
+   * La fonte pubblica anche `model.confidence`. **Non si normalizza, ed e' misurato:** su
+   * 200 righe confrontate e' esattamente questo stesso numero, zero righe diverse, scarto
+   * massimo 0,05 punti. Un secondo nome per la stessa cifra non e' una seconda misura, e in
+   * pagina si leggeva come un'affidabilita' che non c'e'. La nota per esteso sta in
+   * `sbilanci.ts`; l'affidabilita' vera la calcola il nostro motore, dossier per dossier.
+   */
   readonly favoriteProb: number | null;
-  readonly confidence: number | null; // 0–1
   readonly modelVersion: string | null;
   readonly createdAt: string | null;
 }
@@ -120,7 +126,6 @@ function normalize(row: unknown): DashboardPrediction | null {
     mostLikelyScore: asString(score.most_likely),
     favorite,
     favoriteProb: asNumber(recs.favorite_prob),
-    confidence: asNumber(model.confidence),
     modelVersion: asString(model.version),
     createdAt: asString(r.created_at),
   };
@@ -256,7 +261,6 @@ export interface MatchPrediction {
   readonly mostLikelyScore: string | null;
   readonly favorite: Outcome | null;
   readonly favoriteProb: number | null;
-  readonly confidence: number | null;
   readonly modelVersion: string | null;
 }
 
@@ -308,7 +312,6 @@ export async function getMatchPrediction(eventId: number): Promise<MatchPredicti
     mostLikelyScore: asString(score.most_likely),
     favorite: favoriteRaw === "H" || favoriteRaw === "A" || favoriteRaw === "D" ? favoriteRaw : null,
     favoriteProb: asNumber(recs.favorite_prob),
-    confidence: asNumber(model.confidence),
     modelVersion: asString(model.version),
   };
 

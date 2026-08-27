@@ -6,6 +6,12 @@ import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { ProductShell } from "@/components/product-shell";
+import {
+  allenatoreDellaSquadra,
+  idAllenatore,
+  provenienzaInChiaro,
+  type AllenatoreDellaSquadra,
+} from "@/server/iqstats/allenatore";
 import { contestoExpected } from "@/server/iqstats/expected";
 import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
 import { classificaArbitri } from "@/server/iqstats/referees";
@@ -26,6 +32,19 @@ type Props = {
 
 function scalare(valore: string | string[] | undefined): string {
   return typeof valore === "string" ? valore : "";
+}
+
+/**
+ * L'allenatore in chiaro con la sua provenienza. **Un identificativo non e' un'evidenza**:
+ * se il nome c'e' si legge il nome, e accanto perche' e' quello e non un altro.
+ */
+function rigaAllenatore(squadra: string, allenatore: AllenatoreDellaSquadra | null): string {
+  if (allenatore === null) return `${squadra}: allenatore non cercato`;
+  if (allenatore.esito !== "trovato") {
+    return `${squadra}: ${provenienzaInChiaro(allenatore)}`;
+  }
+  const nome = allenatore.profilo?.name ?? `identificativo ${allenatore.id}`;
+  return `${squadra}: ${nome}, ${provenienzaInChiaro(allenatore)}`;
 }
 
 const GIORNO: Intl.DateTimeFormatOptions = {
@@ -67,6 +86,18 @@ export default async function ExpectedPage({ searchParams }: Props) {
   const arbitri = await classificaArbitri(scelta.sourceId, "gialli");
   const arbitro = arbitri.find((a) => a.sourceId === arbitroId) ?? null;
 
+  // **Gli allenatori qui non arrivano da un evento: questa gara non esiste.** Si chiedono
+  // alla fonte e, se tace, al nostro livello dati. Senza, le sei feature `allenatore_*`
+  // restano vuote e gialli, fuorigioco, parate e corner ripiegano su tutta la pagina.
+  const allenatori = casa === null || trasferta === null || stesseSquadre
+    ? null
+    : await Promise.all([
+      allenatoreDellaSquadra(casa.sourceId, null),
+      allenatoreDellaSquadra(trasferta.sourceId, null),
+    ]);
+  const allenatoreCasa = allenatori?.[0] ?? null;
+  const allenatoreTrasferta = allenatori?.[1] ?? null;
+
   // La proiezione parte solo con due squadre diverse scelte davvero: nessun accostamento di
   // riserva, perche' una pagina che decide da sola chi accostare risponderebbe a una domanda
   // che nessuno ha fatto.
@@ -80,8 +111,8 @@ export default async function ExpectedPage({ searchParams }: Props) {
       // L'istante rispetto al quale si guarda indietro e' adesso: e' un accostamento di
       // prova, non una gara con una data.
       kickoff: new Date().toISOString(),
-      homeCoachId: null,
-      awayCoachId: null,
+      homeCoachId: idAllenatore(allenatoreCasa),
+      awayCoachId: idAllenatore(allenatoreTrasferta),
       roundNumber: null,
       roundName: null,
       isLocalDerby: null,
@@ -234,6 +265,10 @@ export default async function ExpectedPage({ searchParams }: Props) {
                 {proiezioni.ultimaOsservazione === null
                   ? ""
                   : ` · storia fino al ${new Date(proiezioni.ultimaOsservazione).toLocaleDateString("it-IT", GIORNO)}`}
+              </p>
+              <p className="dossier-src">
+                Allenatori &middot; {rigaAllenatore(casa.nome, allenatoreCasa)} &middot;{" "}
+                {rigaAllenatore(trasferta.nome, allenatoreTrasferta)}
               </p>
               <p className="dossier-src">
                 <b>Questa gara non esiste.</b> I numeri sotto dicono che cosa il motore si

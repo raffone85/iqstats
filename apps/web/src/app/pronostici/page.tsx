@@ -19,7 +19,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 type Market = "favorito" | "over25" | "gol-gol";
 type TimeWindow = "oggi" | "domani" | "settimana" | "tutte";
-type Order = "orario" | "probabilita" | "confidenza";
+type Order = "orario" | "probabilita";
 
 const MARKETS: readonly { value: Market; label: string }[] = [
   { value: "favorito", label: "Esito favorito" },
@@ -37,7 +37,6 @@ const WINDOWS: readonly { value: TimeWindow; label: string }[] = [
 const ORDERS: readonly { value: Order; label: string }[] = [
   { value: "orario", label: "Orario di inizio" },
   { value: "probabilita", label: "Probabilità del mercato" },
-  { value: "confidenza", label: "Confidenza del modello" },
 ];
 
 const THRESHOLDS = [0, 50, 55, 60, 65, 70, 75] as const;
@@ -85,11 +84,6 @@ function shiftedDayKey(days: number): string {
 /** Percentuale del modello: già 0–100. Un valore assente resta assente. */
 function pct(value: number | null): string {
   return value === null ? "—" : Math.round(value) + "%";
-}
-
-/** La confidenza arriva 0–1 e va portata sulla stessa scala delle probabilità. */
-function confidencePct(value: number | null): string {
-  return value === null ? "—" : Math.round(value * 100) + "%";
 }
 
 function decimal(value: number | null): string {
@@ -169,7 +163,6 @@ export default async function PronosticiPage({
     if (order === "probabilita") {
       return (marketProb(b, market) ?? -1) - (marketProb(a, market) ?? -1);
     }
-    if (order === "confidenza") return (b.confidence ?? -1) - (a.confidence ?? -1);
     return a.kickoff.localeCompare(b.kickoff);
   });
 
@@ -381,10 +374,6 @@ export default async function PronosticiPage({
                         <em>Più probabile</em>
                         <strong>{p.mostLikelyScore ?? "—"}</strong>
                       </span>
-                      <span className="signals-figure">
-                        <em>Confidenza</em>
-                        <strong>{confidencePct(p.confidence)}</strong>
-                      </span>
                     </span>
                   </Link>
                 </li>
@@ -400,8 +389,11 @@ export default async function PronosticiPage({
         <p>
           I valori arrivano dal modello e vengono mostrati come sono, senza riempire i
           campi mancanti. Un trattino significa che quel mercato non è coperto per quella gara, non
-          che vale zero. La confidenza è la fiducia dichiarata dal modello su sé stesso, non la
-          probabilità che l&apos;esito accada.
+          che vale zero. La fonte pubblica anche un campo «confidenza», e qui non compare:
+          misurato su 200 letture è esattamente la probabilità del favorito — zero righe
+          diverse, scarto massimo 0,05 punti — cioè lo stesso numero con un altro nome.
+          L&apos;affidabilità vera esiste solo dentro il dossier di una gara, dove la calcola il
+          nostro motore sui suoi sette bersagli.
         </p>
         <p>
           L&apos;elenco copre le prime cento gare in arrivo pubblicate dal modello: se il calendario

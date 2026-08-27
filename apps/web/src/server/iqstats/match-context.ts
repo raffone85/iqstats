@@ -89,7 +89,11 @@ export interface RefereeInfo {
   readonly avgYellowPerMatch: number | null;
   readonly avgRedPerMatch: number | null;
   readonly avgFoulsPerMatch: number | null;
+  // La carriera e' l'unica cosa che la fonte sa e le nostre osservazioni no: e' globale,
+  // non della competizione, e arriva nello stesso payload del nome. Vedi il dossier.
   readonly careerGames: number | null;
+  readonly careerYellowCards: number | null;
+  readonly careerRedCards: number | null;
 }
 
 export interface VenueInfo {
@@ -261,6 +265,8 @@ export async function getReferee(refereeId: number): Promise<RefereeInfo | null>
     avgRedPerMatch: asNumber(r.avg_red_per_match),
     avgFoulsPerMatch: asNumber(r.avg_fouls_per_match),
     careerGames: asNumber(r.career_games),
+    careerYellowCards: asNumber(r.career_yellow_cards),
+    careerRedCards: asNumber(r.career_red_cards),
   };
   refereeCache.set(refereeId, { value, expiresAt: now + CACHE_TTL_MS });
   return value;
@@ -300,6 +306,44 @@ export async function getManager(managerId: number): Promise<ManagerInfo | null>
     updatedAt: asString(r.stats_updated_at),
   };
   managerCache.set(managerId, { value, expiresAt: now + CACHE_TTL_MS });
+  return value;
+}
+
+const coachCache = new Map<number, { value: number | null; expiresAt: number }>();
+
+/**
+ * L'allenatore che la fonte dichiara sulla **prossima gara in calendario** della squadra.
+ *
+ * `teams/{id}/` non espone l'allenatore e `managers/{id}/` puo' dichiarare un
+ * `current_team_id` diverso: l'unico posto attendibile sono i `*_coach_id` delle gare non
+ * ancora giocate. Restituisce l'identificativo, non il profilo: il nome lo chiede chi lo
+ * deve mostrare, con `getManager`.
+ */
+export async function getTeamNextCoachId(teamSourceId: number): Promise<number | null> {
+  if (!Number.isInteger(teamSourceId) || teamSourceId <= 0) return null;
+  const now = Date.now();
+  const cached = coachCache.get(teamSourceId);
+  if (cached && cached.expiresAt > now) return cached.value;
+
+  const payload = await fetchJson(
+    `/api/v2/teams/${teamSourceId}/fixtures/?status=notstarted&limit=5`,
+  );
+  let value: number | null = null;
+  if (typeof payload === "object" && payload !== null) {
+    const risultati = (payload as Record<string, unknown>).results;
+    for (const candidata of Array.isArray(risultati) ? risultati : []) {
+      if (typeof candidata !== "object" || candidata === null) continue;
+      const gara = candidata as Record<string, unknown>;
+      const inCasa = asNumber(gara.home_team_id) === teamSourceId;
+      const fuori = asNumber(gara.away_team_id) === teamSourceId;
+      if (!inCasa && !fuori) continue;
+      const id = asNumber(inCasa ? gara.home_coach_id : gara.away_coach_id);
+      if (id === null || id <= 0) continue;
+      value = id;
+      break;
+    }
+  }
+  coachCache.set(teamSourceId, { value, expiresAt: now + CACHE_TTL_MS });
   return value;
 }
 

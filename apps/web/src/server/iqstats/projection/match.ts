@@ -124,8 +124,46 @@ export function lineeDiLato(
   );
 }
 
-function previstaDalModello(esito: EsitoDiProduzione): esito is ProiezioneDiProduzione {
+/**
+ * I bersagli il cui modello porta gli ingressi dell'arbitro: contati sugli artefatti di
+ * produzione, sedici su 83 per i falli, sedici su 85 per i gialli, sedici su 88 per i
+ * tiri in porta. Gli altri quattro ne portano uno solo, l'interazione con il lato.
+ *
+ * Sta qui, accanto alla regola del ripiego, perche' le due cose si leggono insieme: un
+ * bersaglio di questa lista che ripiega e' un bersaglio in cui l'arbitro non e' entrato.
+ * Il test la confronta con gli artefatti veri, cosi' un bersaglio rinominato non la svuota
+ * in silenzio.
+ */
+export const BERSAGLI_CON_ARBITRO: readonly string[] = [
+  'fouls', 'yellow_cards', 'shots_on_target',
+];
+
+/**
+ * Il numero viene dal modello del bersaglio, non da un ripiego.
+ *
+ * Esportata perche' e' anche la risposta a «gli ingressi dell'arbitro sono entrati in
+ * questo numero?»: sotto un ripiego il modello non gira, quindi non li guarda. La regola
+ * vive qui sola: scritta due volte, divergerebbe in silenzio.
+ */
+export function previstaDalModello(esito: EsitoDiProduzione): esito is ProiezioneDiProduzione {
   return esito.stato === 'prevista' && !esito.ripiegoUsato;
+}
+
+/**
+ * In quali bersagli il profilo dell'arbitro e' entrato davvero nel numero mostrato.
+ *
+ * Servono **entrambi** i lati dal modello: il totale di gara somma i due, e un lato che
+ * ripiega e' un totale in cui l'arbitro e' entrato a meta'. Restituisce i nomi tecnici;
+ * tradurli in italiano tocca a chi impagina.
+ */
+export function bersagliConArbitroEntrato(
+  bersagli: readonly ProiezioneDiGara[],
+): readonly string[] {
+  return bersagli
+    .filter((b) => BERSAGLI_CON_ARBITRO.includes(b.target)
+      && previstaDalModello(b.casa)
+      && previstaDalModello(b.trasferta))
+    .map((b) => b.target);
 }
 
 /**

@@ -7,7 +7,12 @@ import { ProductShell } from "@/components/product-shell";
 import { StatEngineSection } from "@/components/stat-engine-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import {
-  getManager,
+  allenatoreDellaSquadra,
+  idAllenatore,
+  provenienzaInChiaro,
+  type AllenatoreDellaSquadra,
+} from "@/server/iqstats/allenatore";
+import {
   getMatchDetail,
   getReferee,
   getVenue,
@@ -17,7 +22,7 @@ import {
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchLettureFortiSection } from "@/components/match-letture-forti";
-import { MatchProjectionSection } from "@/components/match-projection-section";
+import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
@@ -28,7 +33,6 @@ import {
   getMatchIncidents,
 } from "@/server/iqstats/match-finished";
 import {
-  getMatchRefereeReading,
   getMatchStandingRows,
   getTeamForm,
 } from "@/server/iqstats/team-page";
@@ -38,6 +42,7 @@ import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { lettureForti } from "@/server/iqstats/projection/letture-forti";
+import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
@@ -203,12 +208,25 @@ function Eleven({ side, teamName, confirmed }: { side: TeamLineup | null; teamNa
   );
 }
 
-function Bench({ manager, teamName, coachId }: { manager: ManagerInfo | null; teamName: string; coachId: number | null }) {
+function Bench({ allenatore, teamName }: { allenatore: AllenatoreDellaSquadra; teamName: string }) {
+  if (allenatore.esito !== "trovato") {
+    return (
+      <div className="bench-card">
+        <p className="bench-team">{teamName}</p>
+        <p className="bench-empty">Panchina non dichiarata: {provenienzaInChiaro(allenatore)}.</p>
+      </div>
+    );
+  }
+  const manager = allenatore.profilo;
+  const coachId = allenatore.id;
   if (!manager) {
     return (
       <div className="bench-card">
         <p className="bench-team">{teamName}</p>
-        <p className="bench-empty">Panchina non dichiarata dalla fonte.</p>
+        <p className="bench-empty">
+          Allenatore {coachId} noto, profilo non esposto dalla fonte &middot;{" "}
+          {provenienzaInChiaro(allenatore)}.
+        </p>
       </div>
     );
   }
@@ -229,6 +247,7 @@ function Bench({ manager, teamName, coachId }: { manager: ManagerInfo | null; te
         </span>
       </div>
       {reading ? <p className="bench-reading">{reading}</p> : null}
+      <p className="bench-sample">Allenatore {provenienzaInChiaro(allenatore)}</p>
       {manager.matches !== null ? (
         <p className="bench-sample">
           Su {manager.matches} gare alla guida: {manager.wins ?? 0} vinte, {manager.draws ?? 0} pari,{" "}
@@ -324,11 +343,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ]);
   // L'indice delle competizioni sta nella seconda ondata e ha una cache lunga: a pagina
   // fredda porta il conto a nove, a pagina calda resta a otto.
+  // **Gli allenatori non si fermano piu' a quello che l'evento dichiara.** Misurato il 27
+  // agosto 2026: su 522 gare in calendario nei sette giorni successivi, la fonte non dice
+  // l'allenatore di casa in 21 e quello ospite in 22. Dove tace si guarda la prossima gara
+  // della squadra e poi la nostra ultima gara osservata, e la pagina scrive da dove viene.
   const [referee, venue, homeCoach, awayCoach, leagueIndex] = await Promise.all([
     detail.refereeId ? getReferee(detail.refereeId) : Promise.resolve(null),
     detail.venueId ? getVenue(detail.venueId) : Promise.resolve(null),
-    detail.homeCoachId ? getManager(detail.homeCoachId) : Promise.resolve(null),
-    detail.awayCoachId ? getManager(detail.awayCoachId) : Promise.resolve(null),
+    allenatoreDellaSquadra(detail.homeTeamId, detail.homeCoachId),
+    allenatoreDellaSquadra(detail.awayTeamId, detail.awayCoachId),
     getLeaguesIndex(),
   ]);
   const league = detail.leagueId === null ? undefined : leagueIndex.get(detail.leagueId);
@@ -371,7 +394,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // Motore di proiezione: legge il proprio livello dati, mai la fonte. Senza connessione
   // dichiarata risponde null e in pagina resta la lettura di ENG-1: i due pannelli non
   // convivono, perche' mostrerebbero due numeri diversi per la stessa cosa.
-  const esitoProiezione = await proiezioniDellaGara(detail);
+  // Al motore vanno gli allenatori risolti, non solo quelli che l'evento dichiarava: e' la
+  // stessa regola che usa `/expected`, e senza di essa le sei feature `allenatore_*` di
+  // gialli, fuorigioco, parate e corner restavano vuote su ogni gara senza allenatore.
+  const esitoProiezione = await proiezioniDellaGara({
+    ...detail,
+    homeCoachId: idAllenatore(homeCoach),
+    awayCoachId: idAllenatore(awayCoach),
+  });
   // Si separano i due casi qui, una volta sola, cosi' il resto della pagina continua a
   // leggere `proiezioni` come prima e il motivo dell'assenza resta disponibile per dirlo.
   const proiezioni = typeof esitoProiezione === "string" ? null : esitoProiezione;
@@ -402,12 +432,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ].filter((line): line is string => line !== null);
 
   const finished = detail.homeScore != null && detail.awayScore != null;
-  // Il metro dell'arbitro si legge contro la media della sua competizione, non
-  // contro soglie decise a tavolino.
-  const refereeReading =
-    detail.refereeId !== null && detail.leagueId !== null
-      ? await getMatchRefereeReading(String(detail.leagueId), String(detail.refereeId))
-      : null;
+  // **In quali attesi l'arbitro è entrato davvero.** Sotto un ripiego il modello non gira,
+  // quindi i suoi ingressi d'arbitro non li guarda nessuno: la sezione non può dire «è già
+  // dentro il numero» se non è vero. La regola del ripiego resta quella del motore.
+  const arbitroEntratoIn = bersagliConArbitroEntrato(proiezioni?.bersagli ?? [])
+    .map((target) => FAMIGLIE[target]?.nome ?? target);
   // Il profilo del designato dalle **nostre** osservazioni, non dalle medie di carriera
   // che la fonte pubblica: e' la regola del piano, e qui vale doppio perche' questi stessi
   // numeri sono gia' fra gli ingressi del motore.
@@ -525,8 +554,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                 ) : null}
               </div>
               <p className="dossier-src">
-                Lettura del modello
-                {prediction.confidence != null ? ` · confidenza ${Math.round(prediction.confidence * 100)}%` : ""} · letture, non certezze
+                Lettura del modello · letture, non certezze
               </p>
             </>
           ) : (
@@ -706,6 +734,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             profilo={arbitroNostro}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
+            entratoNei={arbitroEntratoIn}
           />
         )}
 
@@ -763,13 +792,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
         ) : null}
 
         {/* Le due panchine */}
-        {homeCoach || awayCoach ? (
+        {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (
           <section className="dossier-panel" aria-labelledby="bench-title">
             <p className="dossier-kick">Le due panchine</p>
             <h2 id="bench-title" className="sr-only-heading">Gli allenatori</h2>
             <div className="bench-grid">
-              <Bench manager={homeCoach} teamName={detail.homeTeam} coachId={detail.homeCoachId} />
-              <Bench manager={awayCoach} teamName={detail.awayTeam} coachId={detail.awayCoachId} />
+              <Bench allenatore={homeCoach} teamName={detail.homeTeam} />
+              <Bench allenatore={awayCoach} teamName={detail.awayTeam} />
             </div>
             <p className="dossier-src">
               Medie della gestione di ciascun allenatore, non della sola stagione in corso: il
@@ -787,33 +816,27 @@ export default async function MatchPage({ params }: MatchPageProps) {
               <dt>Arbitro</dt>
               <dd>{referee ? referee.name : "Non designato / non disponibile"}</dd>
             </div>
-            {/* Un solo perimetro: se c'è il profilo di competizione si usa quello,
-                così i numeri qui sopra e il metro qui sotto parlano della stessa cosa. */}
-            {refereeReading ?? referee ? (
-              <>
-                <div className="dossier-fact">
-                  <dt>Gialli / gara</dt>
-                  <dd>
-                    {(refereeReading?.profile.avgYellowPerMatch ?? referee?.avgYellowPerMatch)?.toFixed(2) ?? "n/d"}
-                  </dd>
-                </div>
-                <div className="dossier-fact">
-                  <dt>Falli / gara</dt>
-                  <dd>
-                    {(refereeReading?.profile.avgFoulsPerMatch ?? referee?.avgFoulsPerMatch)?.toFixed(1) ?? "n/d"}
-                  </dd>
-                </div>
-                <div className="dossier-fact">
-                  <dt>Rossi / gara</dt>
-                  <dd>
-                    {(refereeReading?.profile.avgRedPerMatch ?? referee?.avgRedPerMatch)?.toFixed(2) ?? "n/d"}
-                  </dd>
-                </div>
-                <div className="dossier-fact">
-                  <dt>Gare nel perimetro</dt>
-                  <dd>{refereeReading?.profile.matches ?? referee?.matches ?? "n/d"}</dd>
-                </div>
-              </>
+            {/* **Qui NON ci sono le medie dell'arbitro**, e non è una dimenticanza.
+                Misurato il 27 agosto: gli aggregati della fonte filtrati per competizione
+                sono gli stessi delle nostre osservazioni dove abbiamo il campione — in
+                Premier, su cinque gare, stesso numero di gare in quattro casi su cinque e
+                scarto massimo 0,24 gialli — e sono una gara sola dove non ce l'abbiamo:
+                nelle coppe la mediana è 1-2 gare per arbitro. Ridondanti dove reggono,
+                rumore dove sarebbero l'unica cosa. Restano nella sezione dedicata, che
+                dichiara campione e metro. La carriera invece la sa solo la fonte. */}
+            {referee?.careerGames != null ? (
+              <div className="dossier-fact">
+                <dt>Carriera dell&apos;arbitro</dt>
+                <dd>
+                  {referee.careerGames.toLocaleString("it-IT")} gare
+                  {referee.careerYellowCards != null
+                    ? ` · ${referee.careerYellowCards.toLocaleString("it-IT")} gialli`
+                    : ""}
+                  {referee.careerRedCards != null
+                    ? ` · ${referee.careerRedCards.toLocaleString("it-IT")} rossi`
+                    : ""}
+                </dd>
+              </div>
             ) : null}
             <div className="dossier-fact">
               <dt>Stadio</dt>
@@ -848,46 +871,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
               </div>
             ) : null}
           </div>
-          {refereeReading ? (
-            <>
-              <div className="referee-axes">
-                <span className={`referee-axis is-${refereeReading.reading.fouls.level ?? "unknown"}`}>
-                  {refereeReading.reading.fouls.level === "lenient"
-                    ? "lascia correre"
-                    : refereeReading.reading.fouls.level === "strict"
-                      ? "fischia stretto"
-                      : refereeReading.reading.fouls.level === "inline"
-                        ? "in linea con la lega"
-                        : "metro non calcolabile"}
-                  <em>
-                    {refereeReading.reading.fouls.value?.toFixed(1) ?? "n/d"} falli contro{" "}
-                    {refereeReading.reading.fouls.leagueAverage?.toFixed(1) ?? "n/d"} di lega
-                  </em>
-                </span>
-                <span className={`referee-axis is-${refereeReading.reading.cards.level ?? "unknown"}`}>
-                  {refereeReading.reading.cards.level === "lenient"
-                    ? "parco di cartellini"
-                    : refereeReading.reading.cards.level === "strict"
-                      ? "facile al cartellino"
-                      : refereeReading.reading.cards.level === "inline"
-                        ? "in linea con la lega"
-                        : "metro non calcolabile"}
-                  <em>
-                    {refereeReading.reading.cards.value?.toFixed(2) ?? "n/d"} gialli contro{" "}
-                    {refereeReading.reading.cards.leagueAverage?.toFixed(2) ?? "n/d"} di lega
-                  </em>
-                </span>
-              </div>
-              <p className="dossier-src">
-                Metro misurato sulla media dei {refereeReading.benchmark?.referees ?? 0} arbitri
-                della competizione; l&apos;etichetta è una scelta nostra, non un dato della
-                fonte. Carriera: {refereeReading.profile.careerGames ?? "n/d"} gare,{" "}
-                {refereeReading.profile.careerYellowCards ?? "n/d"} gialli,{" "}
-                {refereeReading.profile.careerRedCards ?? "n/d"} rossi. L&apos;aggregato recente
-                della fonte copre {refereeReading.profile.matches ?? "n/d"} gare e non è dichiarato
-                come stagione.
-              </p>
-            </>
+          {referee?.careerGames != null ? (
+            <p className="dossier-src">
+              La carriera è il totale dichiarato dalla fonte su tutte le competizioni che
+              segue: dice da quanto quest&apos;arbitro dirige, <b>non</b> come fischia questa
+              gara, e <b>non entra nella proiezione</b>. Il metro della competizione, il
+              campione e lo sbilancio fra i due lati stanno più sopra, nella sezione
+              dedicata, calcolati sulle nostre osservazioni.
+            </p>
           ) : null}
         </section>
 

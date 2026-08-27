@@ -5,11 +5,16 @@ import type { PosizioneFraColleghi, ProfiloArbitro } from "@/server/iqstats/refe
 /**
  * L'arbitro designato, e come pesa su questa gara.
  *
- * **Non e' un fattore da aggiungere al numero: e' gia' dentro il numero.** Misurato sugli
- * artefatti di produzione: il modello dei cartellini gialli ha ottantacinque ingressi e
- * sedici sono dell'arbitro, quello dei falli ottantatre di cui sedici, e perfino quello dei
- * tiri ne porta uno. Chi legge deve saperlo, altrimenti somma a mente una severita' che il
- * motore ha gia' contato.
+ * **Quando il modello gira, non e' un fattore da aggiungere: e' gia' dentro il numero.**
+ * Misurato sugli artefatti di produzione: il modello dei cartellini gialli ha ottantacinque
+ * ingressi e sedici sono dell'arbitro, quello dei falli ottantatre di cui sedici, e perfino
+ * quello dei tiri ne porta uno. Chi legge deve saperlo, altrimenti somma a mente una
+ * severita' che il motore ha gia' contato.
+ *
+ * **Ma sotto un ripiego il modello non gira, e allora l'arbitro nel numero non c'e'.** Per
+ * questo la frase e' condizionata a `entratoNei`, che la pagina calcola dall'esito vero del
+ * motore: dire «e' gia' dentro il numero» dove non lo e' sarebbe la peggiore delle
+ * invenzioni, perche' e' un'affermazione di metodo.
  *
  * **I numeri sono i nostri.** La fonte pubblica le sue medie di carriera e il piano dice di
  * non usarle: qui ogni valore esce dalle nostre osservazioni, con il campione accanto e il
@@ -77,9 +82,15 @@ type Props = {
   readonly profilo: ProfiloArbitro;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  /**
+   * I bersagli in cui gli ingressi dell'arbitro sono entrati davvero, gia' tradotti in
+   * italiano. Vuoto quando nessuno di quelli che li portano e' stato previsto dal suo
+   * modello: allora la sezione **non** puo' dire che l'arbitro e' dentro il numero.
+   */
+  readonly entratoNei: readonly string[];
 };
 
-export function MatchArbitroSection({ profilo, homeTeam, awayTeam }: Props) {
+export function MatchArbitroSection({ profilo, homeTeam, awayTeam, entratoNei }: Props) {
   const sbilancioFalli = profilo.falliControCasa - profilo.falliControTrasferta;
   const sbilancioGialli = profilo.gialliControCasa - profilo.gialliControTrasferta;
 
@@ -90,13 +101,25 @@ export function MatchArbitroSection({ profilo, homeTeam, awayTeam }: Props) {
         {profilo.nome}, e quanto pesa su questa gara
       </h2>
 
-      <p className="dossier-src">
-        <b>Non &egrave; un fattore da aggiungere: &egrave; gi&agrave; dentro il numero.</b> Il
-        modello dei cartellini gialli ha <b>85 ingressi e 16 sono dell&apos;arbitro</b>, quello
-        dei falli 83 di cui 16, e perfino quello dei tiri ne porta uno. Gli attesi che leggi
-        pi&ugrave; sopra hanno gi&agrave; contato che a dirigere &egrave; lui: quello che segue
-        serve a capire <i>come</i> l&apos;ha contato, non a sommarlo di nuovo a mente.
-      </p>
+      {entratoNei.length > 0 ? (
+        <p className="dossier-src">
+          <b>Non &egrave; un fattore da aggiungere: &egrave; gi&agrave; dentro il numero.</b> Il
+          modello dei cartellini gialli ha <b>85 ingressi e 16 sono dell&apos;arbitro</b>, quello
+          dei falli 83 di cui 16, e perfino quello dei tiri ne porta uno. In questa gara &egrave;
+          entrato in <b>{entratoNei.join(", ")}</b>: quegli attesi hanno gi&agrave; contato che a
+          dirigere &egrave; lui, e quello che segue serve a capire <i>come</i> l&apos;ha contato,
+          non a sommarlo di nuovo a mente.
+        </p>
+      ) : (
+        <p className="dossier-src">
+          <b>In questa gara l&apos;arbitro non &egrave; dentro gli attesi.</b> I bersagli che
+          portano i suoi ingressi &mdash; falli, cartellini gialli e tiri in porta &mdash; qui
+          non sono stati previsti dal loro modello: il valore viene da un ripiego, e un ripiego
+          l&apos;arbitro non lo guarda. Quello che segue resta <b>che cosa &egrave; successo
+          nelle gare che ha diretto</b>, ma non spiega i numeri che leggi pi&ugrave; sopra e
+          <b> non va sommato a mente</b> a quelli.
+        </p>
+      )}
 
       <ul className="engine-rows">
         <li className="engine-row">
