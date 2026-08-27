@@ -598,7 +598,14 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-row { padding: 11px 13px; border-radius: var(--r-control); background: var(--card-panel-2); border: 1px solid var(--card-stroke); }
 .engine-metric { margin: 0 0 8px; font-family: var(--font-display); font-size: 15px; color: var(--card-ink); }
 .engine-splits { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
-.engine-split { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px; }
+/* Una colonna sola sotto i 768 px, e non due. Con `minmax(0, 1fr) auto` la seconda
+   colonna si dimensiona sul contenuto: dove la nota e' una frase — «fatte · +45% rispetto
+   alla competizione» — prende tutto, e `overflow-wrap: anywhere` sulla prima le lascia
+   spezzare l'etichetta una lettera per riga invece di opporsi. Misurato a 375 px il 27
+   agosto 2026 su /expected: 59 etichette, 24 sotto i 90 px, 43 piu' alte di 40 px, e le
+   sei di «Forma, in numeri» a larghezza 0 con altezza fino a 371 px. Da 768 px in su
+   restano tre colonne, che li' lo spazio c'e'. */
+.engine-split { display: grid; grid-template-columns: minmax(0, 1fr); align-items: baseline; gap: 6px 10px; }
 .engine-split + .engine-split { padding-top: 8px; border-top: 1px solid var(--card-stroke); }
 .engine-who { min-width: 0; font-size: 13px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 .engine-exp { font-family: var(--font-mono, monospace); font-size: 14px; font-weight: 600; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; }
