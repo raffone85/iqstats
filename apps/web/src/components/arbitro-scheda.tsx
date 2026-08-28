@@ -1,5 +1,7 @@
-import type { GaraDiretta, MedieDelPeriodo, RigaStagioneCompetizione }
-  from "@/server/iqstats/referees";
+import {
+  giudizioSulMetro, metroPer,
+  type GaraDiretta, type MedieDelPeriodo, type MetroDiLega, type RigaStagioneCompetizione,
+} from "@/server/iqstats/referees";
 
 import { ArbitroGare } from "./arbitro-gare";
 
@@ -102,7 +104,36 @@ type Props = {
   } | null;
   /** Da quando partono le nostre osservazioni su questo arbitro, in chiaro. */
   readonly daQuando: string | null;
+  /** I metri delle competizioni toccate: senza, nessuna riga puo' portare un giudizio. */
+  readonly metri: ReadonlyMap<string, MetroDiLega>;
 };
+
+/**
+ * Severo, in linea o permissivo, con accanto il numero che lo dice e su quante gare.
+ *
+ * **Nessun colore.** Verde e mattone in questo prodotto significano «sopra» o «sotto» un
+ * riferimento, e qui sopra il metro vorrebbe dire severo: chi guarda in fretta leggerebbe il
+ * verde come «bravo». La parola e' piu' onesta di una tinta, e il numero le sta accanto.
+ */
+function Metro({ riga, metro }: {
+  readonly riga: RigaStagioneCompetizione;
+  readonly metro: MetroDiLega | null;
+}) {
+  const giudizio = giudizioSulMetro(
+    riga.gialli, metro?.gialli ?? null, metro?.dispersioneGialli ?? null,
+  );
+  if (giudizio === null || metro === null || riga.gialli === null) return null;
+  return (
+    <span className="ref-metro">
+      <b className={`ref-metro-voce is-${giudizio.replace(" ", "-")}`}>{giudizio}</b>
+      <span className="ref-campione">
+        {decimale(riga.gialli, 2)} gialli contro {decimale(metro.gialli, 2)} di media
+        {metro.dellaStagione ? " in questa lega e stagione" : " nella lega"}
+        {riga.partite < 5 ? `, ma su ${gare(riga.partite)}: puo' cambiare` : ""}
+      </span>
+    </span>
+  );
+}
 
 const ULTIME = 5;
 
@@ -110,7 +141,7 @@ const ULTIME = 5;
 const SCARTO_MUTO = 0.05;
 
 export function ArbitroScheda({
-  nome, carriera, righe, gareDirette, medieLunghe, quiEOra, daQuando,
+  nome, carriera, righe, gareDirette, medieLunghe, quiEOra, daQuando, metri,
 }: Props) {
   const ultime = gareDirette.slice(0, ULTIME);
   const valoriUltime = {
@@ -119,7 +150,10 @@ export function ArbitroScheda({
     rossi: ultime.map((g) => g.rossi).filter((v): v is number => v !== null),
   };
 
-  const stessaLega = quiEOra === null ? [] : gareDirette.filter(
+  // Nel dossier l'elenco finale si restringe alla competizione di quella gara, perche' li'
+  // la domanda e' «come fischia in questo torneo». Nella scheda dell'arbitro no: li' la
+  // domanda e' «che cosa ha fatto», e le gare sono tutte, con la competizione su ogni riga.
+  const daElencare = quiEOra === null ? gareDirette : gareDirette.filter(
     (g) => g.seasonId === quiEOra.seasonId && g.competizione === quiEOra.competizione,
   );
 
@@ -188,7 +222,10 @@ export function ArbitroScheda({
                       {r.stagione}
                       {r.stagioneCorrente ? <span className="ref-ora">in corso</span> : null}
                     </th>
-                    <td className="ref-comp" data-label="Competizione">{r.competizione}</td>
+                    <td className="ref-comp" data-label="Competizione">
+                      {r.competizione}
+                      <Metro riga={r} metro={metroPer(metri, r.competitionSourceId, r.seasonId)} />
+                    </td>
                     <td data-label="Partite" className="ref-num ref-partite">{r.partite}</td>
                     <td data-label="Falli a partita" className="ref-num">
                       <Cella valore={r.falli} cifre={2}
@@ -232,6 +269,19 @@ export function ArbitroScheda({
             che ha diviso a meta&apos;, non che ha fischiato poco. Una riga da una gara sola
             resta una gara sola: si mostra perche&apos; aver diretto li&apos; e&apos; un
             fatto, e si legge sapendolo.
+          </p>
+          <p className="dossier-src">
+            <b>Severo, in linea o permissivo si dice rispetto alla sua lega</b>, mai in
+            assoluto: fra i direttori con almeno cinque gare, chi sta nel terzo piu&apos; alto
+            della propria competizione va da <b>2,85 a 7,80</b> gialli a partita e chi sta nel
+            terzo piu&apos; basso da <b>1,20 a 4,50</b>, quindi lo stesso numero cambia
+            significato a seconda di dove fischia. La soglia non e&apos; decisa da noi:
+            e&apos; <b>mezza dispersione</b> fra gli arbitri di quella competizione, che nei
+            dati vale <b>0,71 gialli</b>, il 18% del metro; dove gli arbitri si somigliano di
+            piu&apos;, si stringe da sola. <b>Non e&apos; un voto</b>, ed e&apos; instabile
+            quando le gare sono poche: i gialli dello stesso direttore ballano da gara a gara
+            di <b>1,94</b>, quindi con poche partite l&apos;etichetta puo&apos; ribaltarsi, e
+            per questo il campione le sta sempre accanto.
           </p>
         </>
       )}
@@ -319,12 +369,8 @@ export function ArbitroScheda({
       )}
 
       {/* Blocco 4. Le gare della stessa lega e stagione della scheda che si sta leggendo. */}
-      {quiEOra === null || stessaLega.length === 0 ? null : (
-        <ArbitroGare
-          gare={stessaLega}
-          competizione={quiEOra.competizione}
-          stagione={quiEOra.stagione}
-        />
+      {daElencare.length === 0 ? null : (
+        <ArbitroGare gare={daElencare} dentro={quiEOra} />
       )}
     </>
   );

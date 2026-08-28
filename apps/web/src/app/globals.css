@@ -1264,6 +1264,23 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
      ha una specificita' piu' alta di due sole classi e vincerebbe. */
   .ref-table td.ref-comp[data-label]::before { content: none; }
   .ref-table td.ref-comp[data-label] { display: block; text-align: left; }
-  .ref-table .ref-campione { display: inline-block; margin: 2px 0 0; }
+  /* Il campione segue il numero che qualifica, quindi resta allineato con lui. */
+  .ref-table td[data-label] .ref-campione { display: block; margin: 1px 0 0; text-align: right; }
+  .ref-table .ref-comp .ref-campione, .ref-table .ref-metro .ref-campione { text-align: left; }
   .ref-pagine { justify-content: space-between; }
 }
+
+/* Il metro: severo, in linea o permissivo rispetto alla propria lega. Nessuna tinta: in
+   questo prodotto verde e mattone dicono «sopra» e «sotto» un riferimento, e qui sopra il
+   metro significa severo. Chi guarda in fretta leggerebbe il verde come «bravo», che non
+   e' quello che il numero dice. La parola porta il suo peso da sola, con la cifra accanto. */
+.ref-metro { display: block; margin-top: 4px; }
+.ref-metro-voce { display: inline-block; padding: 2px 8px; border: 1px solid var(--card-stroke); border-radius: 999px; background: var(--card-panel); font: 700 10px/1.5 var(--font-inter, sans-serif); letter-spacing: .1em; text-transform: uppercase; color: var(--card-ink-2); white-space: nowrap; }
+.ref-metro-voce.is-severo { border-color: var(--card-brand-soft); color: var(--card-brand-strong); }
+.ref-metro-voce.is-permissivo { border-color: var(--card-stroke); color: var(--card-ink-3); }
+.ref-metro .ref-campione { margin-top: 3px; }
+/* Nella hero il pillolo vive su fondo scuro: prende i token gia' invertiti del blocco. */
+.oggi-hero-ref .ref-metro-voce { background: rgba(251,247,243,.14); border-color: rgba(251,247,243,.34); color: var(--card-ink); }
+.oggi-hero-ref-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.oggi-hero-ref-link:hover { text-decoration-thickness: 2px; }
+.oggi-hero-ref-link:focus-visible { outline: 2px solid var(--card-ink); outline-offset: 3px; border-radius: 4px; }

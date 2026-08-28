@@ -676,11 +676,11 @@ export async function gareDirette(sourceId: number): Promise<readonly GaraDirett
  * nostro storico quando no, e **il banner dice sempre quale delle due sta leggendo** - la
  * stessa disciplina gia' adottata per la provenienza dell'allenatore.
  */
-export type ProvenienzaMedie = "stagione" | "storico";
+export type ProvenienzaMedie = "stagione" | "competizione" | "tutte";
 
 export interface MedieBanner extends MedieDelPeriodo {
   readonly provenienza: ProvenienzaMedie;
-  /** Quante gare ha in questa stagione, anche quando si ripiega sullo storico. */
+  /** Quante gare ha in questa stagione, anche quando si ripiega. */
   readonly partiteInStagione: number;
   /** L'etichetta della stagione corrente, quando ce n'e' una. */
   readonly stagione: string | null;
@@ -689,16 +689,196 @@ export interface MedieBanner extends MedieDelPeriodo {
 /** Sotto questo campione la stagione corrente non regge una media, e si ripiega. */
 export const GARE_MINIME_BANNER = 5;
 
-/** Le medie del banner, con la loro provenienza. `null` quando non abbiamo nessuna gara. */
-export function medieDaMostrare(gare: readonly GaraDiretta[]): MedieBanner | null {
+/**
+ * Le medie del banner, con la loro provenienza. `null` quando non abbiamo nessuna gara.
+ *
+ * **Il ripiego resta dentro la stessa competizione** finche' puo'. Il motivo e' un errore
+ * vero, trovato misurando: mostrare la media di tutte le sue gare accanto al metro di questa
+ * lega puo' produrre un «severo» sopra un numero piu' basso della media dei colleghi, che
+ * chi legge non puo' che prendere per un difetto. Numero e giudizio devono uscire dalle
+ * stesse gare, quindi si scende un gradino per volta: la stagione qui, poi tutta la
+ * competizione qui, e solo alla fine tutte le competizioni - dove pero' il metro di questa
+ * lega non si applica piu' e il giudizio non si da'.
+ */
+export function medieDaMostrare(
+  gare: readonly GaraDiretta[],
+  competitionSourceId: number | null,
+): MedieBanner | null {
   if (gare.length === 0) return null;
-  const inStagione = gare.filter((g) => g.stagioneCorrente);
-  const stagione = inStagione[0]?.stagione ?? null;
-  const regge = inStagione.length >= GARE_MINIME_BANNER;
+  const inLega = competitionSourceId === null
+    ? [] : gare.filter((g) => g.competitionSourceId === competitionSourceId);
+  const inStagione = inLega.filter((g) => g.stagioneCorrente);
+  const stagione = inStagione[0]?.stagione ?? gare.find((g) => g.stagioneCorrente)?.stagione
+    ?? null;
+  const scelte = inStagione.length >= GARE_MINIME_BANNER ? inStagione
+    : inLega.length > 0 ? inLega : gare;
   return {
-    ...medieDelPeriodo(regge ? inStagione : gare),
-    provenienza: regge ? "stagione" : "storico",
+    ...medieDelPeriodo(scelte),
+    provenienza: inStagione.length >= GARE_MINIME_BANNER ? "stagione"
+      : inLega.length > 0 ? "competizione" : "tutte",
     partiteInStagione: inStagione.length,
     stagione,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Il metro della lega, e il giudizio che ne esce.
+//
+// **Il metro e' la media della competizione**, deciso dall'utente il 28 agosto 2026:
+// severo o clemente non ha senso in assoluto, ha senso rispetto a dove arbitra. Fra i 515
+// arbitri con almeno cinque gare, chi sta nel quintile alto della **sua** lega va da 2,85 a
+// 7,80 gialli a partita e chi sta nel quintile basso da 1,20 a 4,50: gli intervalli si
+// sovrappongono, quindi lo stesso 4,50 e' permissivo in un torneo e severo in un altro.
+//
+// **Quanto sopra la media significa «severo» non lo decidiamo noi.** Fra arbitri della
+// stessa lega le medie hanno una dispersione di 0,71 gialli - il 18% del metro - e 1,93
+// falli, l'8%. La soglia e' mezza dispersione: chi la supera e' circa il terzo piu' alto
+// della sua competizione. Se domani gli arbitri si somigliassero di piu', la soglia si
+// stringerebbe da sola, perche' e' calcolata sulla distribuzione vera e non scritta a mano.
+//
+// **L'etichetta compare da una gara**, per decisione dell'utente, e si aggiusta man mano che
+// le gare arrivano. Il costo e' misurato e va detto in pagina, non nascosto: i gialli di uno
+// stesso arbitro variano da gara a gara con una deviazione di 1,94, quindi con una gara sola
+// l'etichetta e' quasi solo quella partita, e puo' ribaltarsi. Per questo il campione sta
+// sempre accanto all'etichetta.
+// ---------------------------------------------------------------------------
+
+export type Giudizio = "severo" | "in linea" | "permissivo";
+
+export interface MetroDiLega {
+  /** La media della competizione, per gara. */
+  readonly gialli: number;
+  readonly falli: number | null;
+  /** Quanto si discostano fra loro gli arbitri di questa competizione. */
+  readonly dispersioneGialli: number | null;
+  readonly dispersioneFalli: number | null;
+  readonly gare: number;
+  readonly arbitri: number;
+  /** `true` se il metro e' della stagione, `false` se ha ripiegato su tutta la competizione. */
+  readonly dellaStagione: boolean;
+}
+
+/** Sotto queste gare il metro di una stagione non regge e si guarda tutta la competizione. */
+const GARE_MINIME_METRO = 20;
+
+/** Quante dispersioni sopra o sotto il metro separano un giudizio dal successivo. */
+const SOGLIA_IN_DISPERSIONI = 0.5;
+
+/**
+ * Severo, in linea o permissivo rispetto al metro della sua competizione.
+ *
+ * `null` quando non c'e' un metro con cui confrontarsi, o quando gli arbitri della lega sono
+ * troppo pochi per sapere quanto si somigliano: senza dispersione la soglia sarebbe un
+ * numero deciso a tavolino, ed e' esattamente quello che non facciamo.
+ */
+export function giudizioSulMetro(
+  media: number | null,
+  metro: number | null,
+  dispersione: number | null,
+): Giudizio | null {
+  if (media === null || metro === null || dispersione === null || dispersione <= 0) return null;
+  const soglia = dispersione * SOGLIA_IN_DISPERSIONI;
+  if (media >= metro + soglia) return "severo";
+  if (media <= metro - soglia) return "permissivo";
+  return "in linea";
+}
+
+interface RigaMetroDb {
+  readonly competition_source_id: string | null;
+  readonly season_id: string | null;
+  readonly gialli: string | null;
+  readonly falli: string | null;
+  readonly sd_gialli: string | null;
+  readonly sd_falli: string | null;
+  readonly gare: string;
+  readonly arbitri: string;
+}
+
+/**
+ * I metri delle competizioni toccate da una scheda, in una lettura sola.
+ *
+ * La chiave della mappa e' `competizione|stagione`; c'e' anche `competizione|` con il metro
+ * di tutta la competizione, che serve alle stagioni troppo corte. Delle 55 coppie
+ * competizione-stagione osservate, 47 arrivano a venti gare e la mediana e' 230.
+ */
+export async function metriDiLega(
+  competizioni: readonly number[],
+): Promise<ReadonlyMap<string, MetroDiLega>> {
+  const sql = connessione();
+  if (sql === null || competizioni.length === 0) return new Map();
+  try {
+    const righe = await sql<RigaMetroDb[]>`
+      with per_gara as (
+        select o.match_id, o.competition_id, o.season_id, o.referee_id,
+               case when count(*) filter (where o.fouls is not null) = 2
+                    then sum(o.fouls) end as falli,
+               case when count(*) filter (where o.yellow_cards is not null) = 2
+                    then sum(o.yellow_cards) end as gialli
+        from football.team_match_observations o
+        join football.competitions c on c.id = o.competition_id
+        where c.source_id = any(${competizioni}::bigint[])
+        group by 1, 2, 3, 4
+        having count(*) = 2
+      ),
+      -- La dispersione e' fra gli arbitri, non fra le gare: dice quanto si somigliano i
+      -- direttori di quella lega, ed e' cio' su cui si taglia il giudizio. Gli arbitri con
+      -- meno di cinque gare non entrano nel metro, perche' la loro media e' ancora rumore.
+      per_arbitro as (
+        select competition_id, season_id, referee_id, count(*) as gare,
+               avg(gialli) as gialli, avg(falli) as falli
+        from per_gara where referee_id is not null group by 1, 2, 3
+      ),
+      dispersione as (
+        select competition_id, season_id,
+               stddev_samp(gialli) as sd_gialli, stddev_samp(falli) as sd_falli,
+               count(*) as arbitri
+        from per_arbitro where gare >= ${GARE_MINIME} group by grouping sets ((competition_id, season_id), (competition_id))
+      ),
+      metro as (
+        select competition_id, season_id, avg(gialli) as gialli, avg(falli) as falli,
+               count(*) as gare
+        from per_gara group by grouping sets ((competition_id, season_id), (competition_id))
+      )
+      select c.source_id::text as competition_source_id, m.season_id::text,
+             m.gialli::text, m.falli::text,
+             d.sd_gialli::text, d.sd_falli::text,
+             m.gare::text, coalesce(d.arbitri, 0)::text as arbitri
+      from metro m
+      join football.competitions c on c.id = m.competition_id
+      left join dispersione d on d.competition_id = m.competition_id
+        and d.season_id is not distinct from m.season_id
+    `;
+    const mappa = new Map<string, MetroDiLega>();
+    for (const r of righe) {
+      if (r.competition_source_id === null || r.gialli === null) continue;
+      mappa.set(`${r.competition_source_id}|${r.season_id ?? ""}`, {
+        gialli: Number(r.gialli),
+        falli: r.falli === null ? null : Number(r.falli),
+        dispersioneGialli: r.sd_gialli === null ? null : Number(r.sd_gialli),
+        dispersioneFalli: r.sd_falli === null ? null : Number(r.sd_falli),
+        gare: Number(r.gare),
+        arbitri: Number(r.arbitri),
+        dellaStagione: r.season_id !== null,
+      });
+    }
+    return mappa;
+  } catch {
+    return new Map();
+  }
+}
+
+/**
+ * Il metro giusto per una riga: quello della sua stagione se ha abbastanza gare, altrimenti
+ * quello di tutta la competizione. `null` quando non ne abbiamo nessuno dei due.
+ */
+export function metroPer(
+  metri: ReadonlyMap<string, MetroDiLega>,
+  competitionSourceId: number | null,
+  seasonId: number,
+): MetroDiLega | null {
+  if (competitionSourceId === null) return null;
+  const stagione = metri.get(`${competitionSourceId}|${seasonId}`);
+  if (stagione !== undefined && stagione.gare >= GARE_MINIME_METRO
+    && stagione.dispersioneGialli !== null) return stagione;
+  return metri.get(`${competitionSourceId}|`) ?? stagione ?? null;
 }

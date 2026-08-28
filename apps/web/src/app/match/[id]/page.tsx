@@ -48,7 +48,8 @@ import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
-  gareDirette, medieDaMostrare, medieDelPeriodo, perStagioneCompetizione, profiloArbitro,
+  gareDirette, giudizioSulMetro, medieDaMostrare, medieDelPeriodo, metriDiLega, metroPer,
+  perStagioneCompetizione, profiloArbitro,
 } from "@/server/iqstats/referees";
 
 export const metadata: Metadata = {
@@ -450,14 +451,32 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // l'arbitro ha diretto qui: il confronto che serve al lettore del dossier e' con le altre
   // gare dello stesso torneo, non con tutta la sua storia.
   const arbitroQui = arbitroGare.find((g) => g.competitionSourceId === detail.leagueId) ?? null;
+  const arbitroLega = arbitroQui?.competizione ?? null;
   // **Le due medie del banner, e da dove vengono.** La stagione in corso quando ha almeno
   // cinque gare, altrimenti tutto il nostro storico: in stagione corrente la mediana e' una
   // gara sola, e una media su una partita nel punto piu' visibile della pagina sarebbe la
   // cosa peggiore che possiamo scrivere. Quale delle due si stia leggendo si dice sempre.
-  const arbitroBanner = medieDaMostrare(arbitroGare);
+  const arbitroBanner = medieDaMostrare(arbitroGare, detail.leagueId ?? null);
   // Da quando partono le nostre osservazioni su di lui: senza questo, «tutte le 22 gare che
   // gli abbiamo osservato» non dice su che arco di tempo si sta guardando.
   const arbitroDa = arbitroGare.at(-1)?.quando.slice(0, 4) ?? null;
+  const arbitroRighe = perStagioneCompetizione(arbitroGare);
+  const arbitroMetri = await metriDiLega(
+    [...new Set(arbitroRighe.map((r) => r.competitionSourceId))]
+      .filter((id): id is number => id !== null),
+  );
+  // **Il giudizio guarda questa lega, e le stesse gare del numero che gli sta sotto.**
+  // Severo o permissivo non esiste in assoluto: esiste rispetto ai colleghi che fischiano lo
+  // stesso torneo. E quando il banner ripiega, ripiega dentro la competizione, altrimenti
+  // l'etichetta finirebbe sopra una media fatta anche di altre leghe - errore vero, visto in
+  // pagina: «SEVERO» sopra 3,71 gialli contro 4,32 dei colleghi.
+  const arbitroMetro = arbitroQui === null ? null
+    : metroPer(arbitroMetri, arbitroQui.competitionSourceId, arbitroQui.seasonId);
+  const arbitroGiudizio = arbitroBanner === null || arbitroBanner.provenienza === "tutte"
+    ? null
+    : giudizioSulMetro(
+      arbitroBanner.gialli, arbitroMetro?.gialli ?? null, arbitroMetro?.dispersioneGialli ?? null,
+    );
   const weatherLabel = weatherText(detail.weather);
   // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
   // è vecchia la previsione.
@@ -532,7 +551,18 @@ export default async function MatchPage({ params }: MatchPageProps) {
               <p className="oggi-hero-ref">
                 <span className="oggi-hero-ref-who">
                   <span className="oggi-hero-ref-tag">Arbitro</span>
-                  {referee.name}
+                  {/* Il nome apre la sua scheda: da li' si vedono tutte le gare che ha
+                      diretto, una per una, con falli e cartellini di ciascuna. */}
+                  {detail.refereeId === null ? referee.name : (
+                    <Link className="oggi-hero-ref-link" href={`/arbitri/${detail.refereeId}`}>
+                      {referee.name}
+                    </Link>
+                  )}
+                  {arbitroGiudizio === null ? null : (
+                    <b className={`ref-metro-voce is-${arbitroGiudizio.replace(" ", "-")}`}>
+                      {arbitroGiudizio}
+                    </b>
+                  )}
                 </span>
                 {arbitroBanner === null || arbitroBanner.partite === 0 ? (
                   <span className="oggi-hero-ref-src">
@@ -550,17 +580,29 @@ export default async function MatchPage({ params }: MatchPageProps) {
                         : `${arbitroBanner.gialli.toFixed(2).replace(".", ",")} gialli`}
                       <i> a partita</i>
                     </span>
+                    {/* Una riga sola, e dice tre cose: contro chi si misura il numero, su
+                        quante gare, e - quando la stagione non basta - da dove arriva. Due
+                        righe separate ripetevano il campione. */}
                     <span className="oggi-hero-ref-src">
+                      {arbitroMetro === null || arbitroLega === null
+                        || arbitroBanner.provenienza === "tutte"
+                        ? ""
+                        : `contro ${arbitroMetro.gialli.toFixed(2).replace(".", ",")} dei `
+                          + `colleghi in ${arbitroLega} · `}
                       {arbitroBanner.provenienza === "stagione"
-                        ? `media sulle ${arbitroBanner.partite} gare che ha diretto in questa `
-                          + `stagione`
-                        : (arbitroBanner.partiteInStagione === 0
-                          ? "in questa stagione non ha ancora diretto: "
-                          : `in questa stagione ha diretto solo ${arbitroBanner.partiteInStagione} `
-                            + `${arbitroBanner.partiteInStagione === 1 ? "gara" : "gare"}, `
-                            + "troppo poche per una media, quindi ")
-                          + `il numero viene da tutte le ${arbitroBanner.partite} gare che gli `
-                          + `abbiamo osservato${arbitroDa === null ? "" : ` dal ${arbitroDa}`}`}
+                        ? `${arbitroBanner.partite} gare in questa stagione`
+                        : arbitroBanner.provenienza === "competizione"
+                          ? (arbitroBanner.partiteInStagione === 0
+                            ? "in questa stagione non ha ancora diretto qui, quindi "
+                            : `solo ${arbitroBanner.partiteInStagione} `
+                              + `${arbitroBanner.partiteInStagione === 1 ? "gara" : "gare"} in `
+                              + "questa stagione, quindi ")
+                            + `media su tutte le ${arbitroBanner.partite} che ha diretto in `
+                            + `${arbitroLega ?? "questa competizione"}`
+                            + `${arbitroDa === null ? "" : ` dal ${arbitroDa}`}`
+                          : `in questa competizione non lo abbiamo ancora visto: media sulle `
+                            + `${arbitroBanner.partite} gare che gli abbiamo osservato altrove, `
+                            + "e senza un metro di questa lega non diciamo che arbitro è"}
                     </span>
                   </>
                 )}
@@ -800,7 +842,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                   gialli: referee.careerYellowCards,
                   rossi: referee.careerRedCards,
                 }}
-                righe={perStagioneCompetizione(arbitroGare)}
+                righe={arbitroRighe}
                 gareDirette={arbitroGare}
                 medieLunghe={medieDelPeriodo(arbitroGare)}
                 quiEOra={arbitroQui === null ? null : {
@@ -809,6 +851,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                   seasonId: arbitroQui.seasonId,
                 }}
                 daQuando={arbitroGare.at(-1)?.quando ?? null}
+                metri={arbitroMetri}
               />
             )}
           />

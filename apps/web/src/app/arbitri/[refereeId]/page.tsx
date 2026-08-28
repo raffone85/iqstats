@@ -8,6 +8,7 @@ import { getReferee } from "@/server/iqstats/match-context";
 import {
   gareDirette,
   medieDelPeriodo,
+  metriDiLega,
   perStagioneCompetizione,
   profiloArbitro,
   type PosizioneFraColleghi,
@@ -82,7 +83,11 @@ export default async function ArbitroPage({ params }: Props) {
     getReferee(identificativo),
   ]);
   const righe = perStagioneCompetizione(gare);
-  const principale = gare.find((g) => g.competizione === p.competizione) ?? null;
+  // I metri delle competizioni che tocca: senza, nessuna riga puo' dire severo o permissivo.
+  const metri = await metriDiLega(
+    [...new Set(righe.map((r) => r.competitionSourceId))]
+      .filter((id): id is number => id !== null),
+  );
 
   const sbilancio = p.falliControCasa - p.falliControTrasferta;
   const sbilancioGialli = p.gialliControCasa - p.gialliControTrasferta;
@@ -214,12 +219,9 @@ export default async function ArbitroPage({ params }: Props) {
           righe={righe}
           gareDirette={gare}
           medieLunghe={medieDelPeriodo(gare)}
-          quiEOra={principale === null ? null : {
-            competizione: principale.competizione,
-            stagione: principale.stagione,
-            seasonId: principale.seasonId,
-          }}
+          quiEOra={null}
           daQuando={gare.at(-1)?.quando ?? null}
+          metri={metri}
         />
 
         <p className="dossier-src">

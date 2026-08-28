@@ -51,11 +51,17 @@ function confronta(a: number | null, b: number | null, crescente: boolean): numb
 
 type Props = {
   readonly gare: readonly GaraDiretta[];
-  readonly competizione: string;
-  readonly stagione: string;
+  /**
+   * La competizione e la stagione a cui l'elenco e' ristretto, oppure `null` per l'elenco
+   * intero: nel dossier interessa questo torneo, nella scheda dell'arbitro tutto.
+   */
+  readonly dentro: {
+    readonly competizione: string;
+    readonly stagione: string;
+  } | null;
 };
 
-export function ArbitroGare({ gare, competizione, stagione }: Props) {
+export function ArbitroGare({ gare, dentro }: Props) {
   const [colonna, setColonna] = useState<Colonna>("quando");
   const [crescente, setCrescente] = useState(false);
   const [pagina, setPagina] = useState(0);
@@ -85,17 +91,24 @@ export function ArbitroGare({ gare, competizione, stagione }: Props) {
   return (
     <>
       <h3 className="ref-sub">
-        Le gare in {competizione}, stagione {stagione}
+        {dentro === null
+          ? "Tutte le gare che ha diretto"
+          : `Le gare in ${dentro.competizione}, stagione ${dentro.stagione}`}
         <span className="ref-campione">
-          la stessa competizione della scheda · {ordinate.length}{" "}
-          {ordinate.length === 1 ? "gara" : "gare"}
+          {dentro === null
+            ? "ogni competizione, dalla piu' recente"
+            : "la stessa competizione di questa gara"}{" "}
+          · {ordinate.length} {ordinate.length === 1 ? "gara" : "gare"}
         </span>
       </h3>
 
       <div className="ref-table-wrap">
         <table className="ref-table ref-table-gare">
           <caption className="sr-only-heading">
-            Le gare dirette in {competizione} nella stagione {stagione}, con falli e cartellini
+            {dentro === null
+              ? "Tutte le gare dirette, con falli e cartellini"
+              : `Le gare dirette in ${dentro.competizione} nella stagione ${dentro.stagione},`
+                + " con falli e cartellini"}
           </caption>
           <thead>
             <tr>
@@ -140,7 +153,12 @@ export function ArbitroGare({ gare, competizione, stagione }: Props) {
                     ? <span className="ref-campione">non consolidato</span>
                     : `${g.golCasa}-${g.golTrasferta}`}
                 </td>
-                <td data-label="Partita" className="ref-comp">{g.casa} - {g.trasferta}</td>
+                <td data-label="Partita" className="ref-comp">
+                  {g.casa} - {g.trasferta}
+                  {dentro === null ? (
+                    <span className="ref-campione">{g.competizione} {g.stagione}</span>
+                  ) : null}
+                </td>
               </tr>
             ))}
           </tbody>
