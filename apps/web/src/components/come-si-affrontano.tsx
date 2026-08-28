@@ -1,4 +1,6 @@
-import type { Cappello, Confronto, Direzione, Lettura, NumeroDiLato } from "@/server/iqstats/affronto";
+import type {
+  Cappello, Confronto, Direzione, Lettura, NumeroDiLato, Tratto,
+} from "@/server/iqstats/affronto";
 
 /**
  * Il capitolo «Come si affrontano»: quattro letture dell'incontro, una per riquadro.
@@ -25,6 +27,41 @@ function Numero({ n, ruolo }: { readonly n: NumeroDiLato; readonly ruolo: string
         {n.verso === 0 ? " · in linea col suo metro" : n.verso === 1 ? " · sopra il suo metro" : " · sotto il suo metro"}
       </span>
     </span>
+  );
+}
+
+/**
+ * Una prova in una riga e un asse.
+ *
+ * **Il centro dell'asse e' la media delle squadre di quel lato**, e i due punti sono le due
+ * squadre. Quando cadono dalla stessa parte del centro il tratto si vede prima di leggerlo,
+ * ed e' tutto quello che serve capire in cinque secondi. Il verde e il mattone dicono da che
+ * parte, cioe' un verso, come vuole il sistema: non sono decorazione.
+ *
+ * **La riga non e' fatta di colore.** Sopra e sotto l'asse ci sono i nomi con i numeri
+ * esatti, e il centro porta scritta la media: chi non distingue i colori legge tutto uguale.
+ * L'asse e' `aria-hidden` perche' non aggiunge niente, rende visibile.
+ */
+function Prova({ t }: { readonly t: Tratto }) {
+  const verso = t.verso === 1 ? " is-sopra" : " is-sotto";
+  return (
+    <div className="affronto-prova">
+      <p className="affronto-prova-testa">
+        <span className="affronto-parola">{t.nome}</span>
+        <span className="affronto-prova-fonte">{t.campione} gare</span>
+      </p>
+      <p className="affronto-cifre">
+        {t.punti.map((p) => (
+          <span key={p.chi}>{p.chi} <b>{p.valore}</b></span>
+        ))}
+      </p>
+      <div className={`affronto-asse${verso}`} aria-hidden="true">
+        <i className="affronto-asse-centro" />
+        <i className="affronto-asse-punto" style={{ left: `${t.punti[0].x}%` }} />
+        <i className="affronto-asse-punto is-secondo" style={{ left: `${t.punti[1].x}%` }} />
+      </div>
+      <p className="affronto-asse-piede">media di lega {t.metro}</p>
+    </div>
   );
 }
 
@@ -104,10 +141,13 @@ export function ComeSiAffrontano({ letture, cappello }: {
       {/* La lettura prima delle prove. Non contiene un numero che non stia anche sotto. */}
       {cappello ? (
         <div className="affronto-cappello">
-          <p className="affronto-titolo">{cappello.titolo}</p>
-          {cappello.commento.map((frase) => (
-            <p className="affronto-commento" key={frase}>{frase}</p>
-          ))}
+          <p className="affronto-titolo">
+            {cappello.titolo}
+            {cappello.fase === null ? null : <span> {cappello.fase}</span>}
+          </p>
+          {cappello.tratti.map((t) => <Prova key={t.chiave} t={t} />)}
+          {cappello.mute === null ? null : <p className="affronto-mute">{cappello.mute}</p>}
+          <p className="affronto-nota">{cappello.nota}</p>
         </div>
       ) : null}
       <div className="affronto-griglia">

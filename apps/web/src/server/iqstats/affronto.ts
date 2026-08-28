@@ -85,6 +85,15 @@ export interface NumeroDiLato {
   readonly oltreIlRumore: boolean;
   /** `+1` sopra il metro, `-1` sotto, `0` quando non si distingue. */
   readonly verso: -1 | 0 | 1;
+  /**
+   * Dove sta il punto sull'asse, da 0 a 100, con la media di lega a 50.
+   *
+   * La scala e' la dispersione fra le squadre: mezza dispersione di scarto sposta il punto
+   * di un quarto d'asse. E' l'unico modo per cui due metriche diverse - i passaggi e la
+   * quota dall'area - si leggono con lo stesso occhio. Senza dispersione si ripiega sulla
+   * posizione in classifica, che c'e' sempre.
+   */
+  readonly x: number;
 }
 
 /** Un confronto: chi attacca da un lato contro chi difende dall'altro. */
@@ -146,11 +155,35 @@ export interface Lettura {
  * medie. Quando nessuno lo supera, l'apertura lo dice: non sapere e' una lettura, fingere
  * di sapere no.
  */
+/** Un punto sull'asse: chi e', quanto fa, e dove cade rispetto alla media di lega. */
+export interface Punto {
+  readonly chi: string;
+  readonly valore: string;
+  readonly x: number;
+}
+
+/** Un tratto della partita: la parola, e le due misure che la reggono su un asse solo. */
+export interface Tratto {
+  readonly chiave: string;
+  readonly parola: string;
+  readonly nome: string;
+  readonly metro: string;
+  readonly campione: number;
+  readonly verso: -1 | 1;
+  readonly punti: readonly [Punto, Punto];
+}
+
 export interface Cappello {
   /** Che partita ne esce, in una riga sola: e' quello che si legge in cinque secondi. */
   readonly titolo: string;
-  /** Il commento prepartita: due o tre frasi, con dentro i numeri che le reggono. */
-  readonly commento: readonly string[];
+  /** In quale attacco succede, o `null` se i tratti guardano fasi diverse. */
+  readonly fase: string | null;
+  /** Le prove, al massimo due: una riga e un asse ciascuna, nessun paragrafo. */
+  readonly tratti: readonly Tratto[];
+  /** Le letture che non separano le due squadre, o `null` se non ce ne sono. */
+  readonly mute: string | null;
+  /** La riserva, in una riga: vale se continuano cosi', e parla di gioco, non di esito. */
+  readonly nota: string;
   /** La riga sola da mandare in cima al dossier, o `null` se non c'e' niente da dire. */
   readonly rigaBreve: string | null;
 }
@@ -177,12 +210,24 @@ export function scrivi(valore: number, unita: Unita): string {
 function numeroDiLato(c: ConMetro, unita: Unita): NumeroDiLato {
   const scostamento = c.media - c.mediaDiLega;
   const oltreIlRumore = c.errore !== null && Math.abs(scostamento) > c.errore;
+  // **La scala e' due dispersioni e mezza per lato, ed e' misurata, non scelta a occhio.**
+  // Nella Serie A brasiliana i passaggi in casa hanno media 415,6 e dispersione 65,1, e le
+  // venti squadre stanno fra -1,68 e +2,21: con mezza dispersione per quarto d'asse la
+  // squadra piu' bassa finiva schiacciata sul bordo insieme all'altra, e i due punti si
+  // coprivano. Con due e mezza nessuna squadra reale tocca il fondo scala.
+  const z = c.dispersione !== null && c.dispersione > 0 ? scostamento / c.dispersione : null;
+  const grezzo = z === null
+    ? 4 + c.posizione * 92
+    : 50 + Math.min(2.5, Math.max(-2.5, z)) * 18.4;
   return {
     testo: scrivi(c.media, unita),
     metro: scrivi(c.mediaDiLega, unita),
     posizione: c.posizione,
     oltreIlRumore,
     verso: !oltreIlRumore ? 0 : scostamento > 0 ? 1 : -1,
+    // Il punto resta dentro l'asse: fuori scala non si vedrebbe, e la riga dice comunque
+    // il numero esatto accanto.
+    x: Math.min(96, Math.max(4, grezzo)),
   };
 }
 
@@ -265,7 +310,6 @@ function forteDi(candidati: readonly Candidato[]): Forte | null {
  * `[sotto, sopra]`.
  */
 const VOCABOLARIO: Readonly<Record<string, {
-  readonly su: string;
   readonly sotto: string;
   readonly sopra: string;
   /**
@@ -282,22 +326,22 @@ const VOCABOLARIO: Readonly<Record<string, {
    */
   readonly fase: "attacco" | "difesa" | null;
 }>> = {
-  passaggi: { su: "Sui passaggi", sotto: "poco palleggio", sopra: "molto palleggio", fase: "attacco" },
-  precisione: { su: "Sulla precisione dei passaggi", sotto: "molti palloni persi", sopra: "palloni puliti", fase: "attacco" },
-  palle_lunghe: { su: "Sulle palle lunghe", sotto: "si costruisce da dietro", sopra: "si gioca lungo", fase: "attacco" },
-  ultimo_terzo: { su: "Sugli ingressi in ultimo terzo", sotto: "si fatica ad arrivare davanti", sopra: "campo guadagnato spesso", fase: "attacco" },
-  tocchi_area: { su: "Sui tocchi in area", sotto: "poca presenza in area", sopra: "molto traffico in area", fase: "attacco" },
-  cross: { su: "Sui cross", sotto: "pochi cross", sopra: "tanti cross", fase: "attacco" },
-  quota_area: { su: "Sui tiri dall'area", sotto: "si tira da fuori", sopra: "si tira da dentro l'area", fase: "attacco" },
-  distanza_tiro: { su: "Sulla distanza del tiro", sotto: "conclusioni ravvicinate", sopra: "conclusioni da lontano", fase: "attacco" },
-  qualita_tiro: { su: "Sulla qualità del tiro", sotto: "occasioni di poco peso", sopra: "occasioni pesanti", fase: "attacco" },
-  quota_murati: { su: "Sui tiri murati", sotto: "pochi tiri respinti", sopra: "tanti tiri respinti", fase: "attacco" },
-  tackle: { su: "Sui tackle", sotto: "pochi contrasti", sopra: "contrasti duri", fase: "difesa" },
-  intercetti: { su: "Sugli intercetti", sotto: "linee di passaggio libere", sopra: "linee di passaggio chiuse", fase: "difesa" },
-  recuperi: { su: "Sui recuperi", sotto: "palloni che restano dove sono", sopra: "palloni che cambiano padrone", fase: "difesa" },
+  passaggi: { sotto: "poco palleggio", sopra: "molto palleggio", fase: "attacco" },
+  precisione: { sotto: "molti palloni persi", sopra: "palloni puliti", fase: "attacco" },
+  palle_lunghe: { sotto: "si costruisce da dietro", sopra: "si gioca lungo", fase: "attacco" },
+  ultimo_terzo: { sotto: "si fatica ad arrivare davanti", sopra: "campo guadagnato spesso", fase: "attacco" },
+  tocchi_area: { sotto: "poca presenza in area", sopra: "molto traffico in area", fase: "attacco" },
+  cross: { sotto: "pochi cross", sopra: "tanti cross", fase: "attacco" },
+  quota_area: { sotto: "si tira da fuori", sopra: "si tira da dentro l'area", fase: "attacco" },
+  distanza_tiro: { sotto: "conclusioni ravvicinate", sopra: "conclusioni da lontano", fase: "attacco" },
+  qualita_tiro: { sotto: "occasioni di poco peso", sopra: "occasioni pesanti", fase: "attacco" },
+  quota_murati: { sotto: "pochi tiri respinti", sopra: "tanti tiri respinti", fase: "attacco" },
+  tackle: { sotto: "pochi contrasti", sopra: "contrasti duri", fase: "difesa" },
+  intercetti: { sotto: "linee di passaggio libere", sopra: "linee di passaggio chiuse", fase: "difesa" },
+  recuperi: { sotto: "palloni che restano dove sono", sopra: "palloni che cambiano padrone", fase: "difesa" },
   // Un duello lo giocano in due e nessuna delle due lo fa «in attacco»: senza una fase
   // vera non se ne dichiara una falsa, e la frase la lascia fuori.
-  duelli: { su: "Sui duelli", sotto: "gioco continuo", sopra: "partita spezzettata", fase: null },
+  duelli: { sotto: "gioco continuo", sopra: "partita spezzettata", fase: null },
 };
 
 function parolaDi(f: Forte): string | null {
@@ -306,16 +350,6 @@ function parolaDi(f: Forte): string | null {
   return f.verso === 1 ? v.sopra : v.sotto;
 }
 
-/**
- * Come si nomina la metrica dentro una frase.
- *
- * La preposizione sta in tabella e non si costruisce: «Sui intercetti» e «Sui precisione»
- * sono due errori veri, visti negli esempi generati e non nel codice. Senza la voce in
- * tabella si ripiega sul nome nudo, che e' brutto ma non sgrammaticato.
- */
-function suDi(f: Forte): string {
-  return VOCABOLARIO[f.chiave]?.su ?? f.nome;
-}
 
 /** In quale attacco succede quello che la riga descrive, o `null` se la metrica non lo dice. */
 function faseDi(f: Forte): string | null {
@@ -325,93 +359,75 @@ function faseDi(f: Forte): string | null {
 }
 
 /**
- * Il commento prepartita: un titolo che si legge in cinque secondi e due o tre frasi.
+ * Il colpo d'occhio del capitolo: un titolo, due prove, una riserva.
  *
- * **Il titolo dice che partita ne esce**, con al massimo due tratti presi dal vocabolario,
- * e nomina chi attacca solo quando tutte le prove guardano nella stessa direzione: dirlo
- * quando le prove stanno da tutt'e due le parti sarebbe scegliere invece di misurare.
+ * **Prima era prosa, e la prosa non si legge.** Quattro paragrafi con i numeri dentro le
+ * frasi obbligano a leggere per capire; qui il titolo dice che partita e', e ogni prova sta
+ * su un asse dove il centro e' la media di lega e i due punti sono le due squadre. Se
+ * cadono dalla stessa parte del centro, il tratto si vede prima di leggerlo.
  *
- * **Il commento non prevede il risultato e non ne parla.** Questo capitolo misura come si
- * gioca, non chi vince: qui si dice cosa dovrebbe assomigliare la partita se le due
- * squadre continuano a fare quello che hanno fatto finora, e quel «se» resta scritto.
- * Nessun numero nuovo: ogni cifra della prosa sta anche nella riga del riquadro.
+ * **Il titolo dice che partita ne esce**, con al massimo due tratti presi dal vocabolario, e
+ * la fase si dichiara solo quando i due tratti guardano lo stesso attacco.
+ *
+ * **Non e' una previsione del risultato.** Questo capitolo misura come si gioca: la riserva
+ * lo scrive, e resta in pagina.
  */
 export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
   if (letture.length === 0) return null;
   const forti = letture
     .filter((l): l is Lettura & { forte: Forte } => l.forte !== null)
     .sort((x, y) => y.forte.forza - x.forte.forza);
-  const mute = letture.filter((l) => l.forte === null).map((l) => l.nome);
+  const nomiMuti = letture.filter((l) => l.forte === null).map((l) => l.nome);
   const elenco = (nomi: readonly string[]) => nomi.length === 1
     ? nomi[0]
     : `${nomi.slice(0, -1).join(", ")} e ${nomi[nomi.length - 1]}`;
 
   if (forti.length === 0) {
     return {
-      titolo: "Numeri troppo vicini per separare le due squadre.",
-      commento: [
-        "Nessuno dei confronti di questo capitolo supera l'errore delle proprie medie: su "
-        + "questa gara i nostri numeri non dicono da che parte pende, e una differenza "
-        + "dentro il rumore non è una differenza. Le medie restano, riquadro per riquadro, "
-        + "con il loro metro e il loro campione.",
-      ],
+      titolo: "Numeri troppo vicini per separare le due squadre",
+      fase: null,
+      tratti: [],
+      mute: null,
+      nota: "Nessun confronto supera l'errore delle proprie medie: dentro il rumore non c'è "
+        + "una differenza da leggere. Le medie restano, riquadro per riquadro.",
       rigaBreve: null,
     };
   }
 
-  const primo = forti[0]!.forte;
-  const secondo = forti[1]?.forte ?? null;
-  // La direzione del titolo e' la **fase**, non chi produce il numero: e sta nel titolo solo
-  // se tutte le prove guardano la stessa, quella compresa che non ne dichiara nessuna.
-  const fasi = forti.map((l) => faseDi(l.forte));
-  const dove = fasi.every((f) => f !== null && f === fasi[0]) && fasi[0] !== null
-    ? ` quando attacca ${fasi[0]}`
-    : "";
-  const tratti = [parolaDi(primo), secondo === null ? null : parolaDi(secondo)]
-    .filter((t): t is string => t !== null);
-  // Maiuscola iniziale: e' un titolo, non la coda di una frase. E i tratti si legano con
-  // «e», non con la virgola: due etichette separate da virgola sembrano un elenco troncato.
-  const grezzo = tratti.length === 0
-    ? `Le due squadre si separano su ${elenco(forti.map((l) => l.nome))}`
-    : `${tratti.join(" e ")}${dove}`;
-  const titolo = `${grezzo.charAt(0).toUpperCase()}${grezzo.slice(1)}.`;
+  const scelti = forti.slice(0, 2).map((l) => l.forte);
+  const fasi = scelti.map(faseDi);
+  const tratti: Tratto[] = scelti.map((f) => ({
+    chiave: f.chiave,
+    parola: f.nome,
+    nome: f.nome,
+    metro: f.produce.metro,
+    campione: f.campione,
+    verso: f.verso,
+    punti: [
+      { chi: f.chiAttacca, valore: f.produce.testo, x: f.produce.x },
+      { chi: `avversari di ${f.chiDifende}`, valore: f.concede.testo, x: f.concede.x },
+    ],
+  }));
 
-  // **Niente articolo davanti ai numeri.** «contro i 8,2» e' sbagliato e «contro gli 8,2»
-  // dipende da come si legge la cifra: l'articolo si toglie, e la frase resta giusta
-  // qualunque numero arrivi.
-  // **«Gli avversari di Y», non «Y concede».** E' quello che il numero e' davvero - il
-  // valore registrato da chi gioca contro Y dal suo lato - ed e' vero per ogni metrica,
-  // anche per quelle che Y non «concede» in nessun senso, come gli intercetti.
-  const frase = (f: Forte, primaVolta: boolean) => {
-    const verso = f.verso === 1 ? "sopra" : "sotto";
-    const fase = faseDi(f);
-    const quando = fase === null ? "" : `, quando attacca ${fase},`;
-    const apre = primaVolta
-      ? `${suDi(f)}${quando} i due numeri vanno tutt'e due ${verso} il metro del loro lato: `
-      : `Stessa direzione. ${suDi(f)}${quando} `;
-    return apre
-      + `${f.chiAttacca} ne fa ${f.produce.testo} contro ${f.produce.metro} delle squadre `
-      + `del suo lato, e gli avversari di ${f.chiDifende} ne fanno ${f.concede.testo} `
-      + `contro ${f.concede.metro} del suo. Su ${f.campione} gare.`;
-  };
-
-  const commento = [
-    "È quello che dicono i numeri se le due squadre continuano a fare quello che hanno "
-    + "fatto finora, e riguarda come si gioca: del risultato non dice niente.",
-    frase(primo, true),
-    ...(secondo === null ? [] : [frase(secondo, false)]),
-    ...(mute.length > 0
-      ? [`Su ${elenco(mute)} i numeri non separano le due squadre: lì la differenza sta `
-        + "dentro l'errore delle medie, e non c'è niente da leggere."]
-      : []),
-  ];
+  const parole = scelti.map((f) => parolaDi(f) ?? f.nome.toLowerCase());
+  const grezzo = parole.join(" e ");
+  const titolo = `${grezzo.charAt(0).toUpperCase()}${grezzo.slice(1)}`;
+  const fase = fasi.every((f) => f !== null && f === fasi[0]) && fasi[0] !== null
+    ? `quando attacca ${fasi[0]}`
+    : null;
 
   return {
     titolo,
-    commento,
-    rigaBreve: `Come si affrontano: ${grezzo}`
-      + ` — ${primo.nome.toLowerCase()} ${primo.produce.testo} contro ${primo.produce.metro} `
-      + `e ${primo.concede.testo} contro ${primo.concede.metro}, su ${primo.campione} gare.`,
+    fase,
+    tratti,
+    mute: nomiMuti.length === 0 ? null
+      : `${elenco(nomiMuti)}: nessuna differenza che regga il rumore.`,
+    nota: "Vale se le due squadre continuano così, e dice come si gioca: del risultato non "
+      + "parla.",
+    rigaBreve: `Come si affrontano: ${grezzo}${fase === null ? "" : ` ${fase}`}`
+      + ` (${tratti[0]?.nome.toLowerCase()} ${tratti[0]?.punti[0].valore} e `
+      + `${tratti[0]?.punti[1].valore} contro ${tratti[0]?.metro} di lega, su `
+      + `${tratti[0]?.campione} gare).`,
   };
 }
 

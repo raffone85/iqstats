@@ -1332,17 +1332,36 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    Il colore vive solo su `.affronto-pos`, e solo quando lo scostamento supera l'errore
    della media: dove non si distingue, resta inchiostro. */
 .affronto-griglia { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-/* La lettura prima delle prove: e' l'unica cosa che si legge in cinque secondi. Superficie
-   tenue, non piena: il blocco ad alto contrasto della pagina resta la hero. */
-.affronto-cappello { margin: 0 0 14px; padding: 13px; border-radius: var(--r-control); background: var(--card-brand-pale); border: 1px solid var(--card-stroke); }
-/* Il titolo e' l'unica cosa che si legge in cinque secondi: piu' grande del corpo e in
-   display, il commento sotto in prosa normale. Nessun colore: il titolo dice che partita
-   e', non un verso. */
-.affronto-titolo { margin: 0 0 8px; font-family: var(--font-display); font-size: 18px; line-height: 1.3; color: var(--card-ink); }
-.affronto-commento { margin: 7px 0 0; font-size: 13px; line-height: 1.5; color: var(--card-ink-2); }
-/* La prima frase e' la riserva - «vale se continuano a fare quello che hanno fatto» - e
-   non e' la notizia: resta leggibile ma non compete col titolo. */
-.affronto-commento:first-of-type { margin-top: 4px; font-size: 12px; color: var(--card-ink-3); }
+/* Il colpo d'occhio del capitolo. Titolo grande, due prove con il loro asse, una riserva
+   piccola in fondo. Nessun paragrafo: la prosa qui non si leggeva. */
+.affronto-cappello { margin: 0 0 14px; padding: 14px; border-radius: var(--r-control); background: var(--card-brand-pale); border: 1px solid var(--card-stroke); }
+.affronto-titolo { margin: 0; font-family: var(--font-display); font-size: 21px; line-height: 1.2; color: var(--card-ink); }
+.affronto-titolo span { display: block; margin-top: 2px; font-family: var(--font-inter, sans-serif); font-size: 13px; font-weight: 400; color: var(--card-ink-3); }
+/* Una prova: nome della metrica, i due numeri, l'asse. La parola del tratto sta nel titolo
+   e non si ripete qui: leggerla due volte in tre righe era rumore. */
+.affronto-prova { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--card-stroke); }
+.affronto-prova-testa { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 8px; margin: 0; }
+.affronto-parola { font-family: var(--font-display); font-size: 14px; color: var(--card-ink); }
+.affronto-prova-fonte { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
+.affronto-cifre { display: flex; flex-wrap: wrap; gap: 1px 14px; margin: 3px 0 0; font-size: 12px; color: var(--card-ink-2); overflow-wrap: anywhere; }
+.affronto-cifre b { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); font-variant-numeric: tabular-nums; }
+/* L'asse: un filetto, il centro sulla media di lega, due punti. Nessun fondo pieno da
+   riempire: non e' una barra di punteggio, e' una posizione rispetto a un riferimento.
+   I due punti stanno uno sopra e uno sotto il filetto, cosi' non si coprono mai quando le
+   due squadre hanno numeri vicini. La scala e' tarata sulla dispersione vera. */
+.affronto-asse { position: relative; height: 22px; margin: 5px 0 0; }
+.affronto-asse::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--card-stroke); }
+.affronto-asse-centro { position: absolute; left: 50%; top: 1px; bottom: 1px; width: 1px; background: var(--card-ink-3); }
+.affronto-asse-punto { position: absolute; top: calc(50% - 10px); width: 9px; height: 9px; margin-left: -5px; border-radius: 50%; border: 1.5px solid var(--card-ink); background: var(--card-ink); }
+.affronto-asse-punto.is-secondo { top: calc(50% + 1px); background: var(--card-panel); }
+.affronto-asse.is-sopra .affronto-asse-punto { border-color: var(--card-up); background: var(--card-up); }
+.affronto-asse.is-sopra .affronto-asse-punto.is-secondo { background: var(--card-panel); }
+.affronto-asse.is-sotto .affronto-asse-punto { border-color: var(--card-down); background: var(--card-down); }
+.affronto-asse.is-sotto .affronto-asse-punto.is-secondo { background: var(--card-panel); }
+/* L'etichetta sta sotto il centro, perche' e' il centro che nomina. */
+.affronto-asse-piede { position: relative; left: 50%; transform: translateX(-50%); display: inline-block; margin: 1px 0 0; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.affronto-mute { margin: 12px 0 0; font-size: 12px; color: var(--card-ink-3); }
+.affronto-nota { margin: 6px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }
 /* I riquadri sono chiusi: il verdetto sta nel riassunto, la prova a un tocco. Il riassunto
    e' il controllo, quindi rispetta il minimo tattile di 44 px. */
 .affronto-card { min-width: 0; padding: 0; border-radius: var(--r-control); background: var(--card-panel); border: 1px solid var(--card-stroke); }

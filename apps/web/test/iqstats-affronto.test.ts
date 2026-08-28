@@ -186,100 +186,110 @@ function separaInCasa(chiave: string, alto: number, metro: number): [VoceDiLato,
 }
 
 test("senza confronti che reggono, il cappello lo dice invece di tacere", () => {
-  const letture = comeSiAffrontano(
+  const c = cappelloDi(comeSiAffrontano(
     lato("home", [voce("precisione", con(80, 80), con(80, 80))]),
     lato("away", [voce("precisione", con(80, 80), con(80, 80))]),
     "Casa", "Fuori",
-  );
-  const c = cappelloDi(letture);
+  ));
   assert.ok(c !== null);
   assert.match(c.titolo, /troppo vicini/);
-  assert.equal(c.commento.length, 1);
-  assert.match(c.commento[0] ?? "", /non è una differenza/);
+  assert.deepEqual(c.tratti, []);
+  assert.match(c.nota, /dentro il rumore/);
   assert.equal(c.rigaBreve, null, "in cima al dossier non si manda una riga vuota");
 });
 
 test("il titolo traduce il verso in parole, e le parole vengono dalla tabella", () => {
-  // Sotto il metro su tutt'e due i lati vuol dire pochi passaggi in quella fase, non un
-  // giudizio sulle squadre: il vocabolario e' dichiarato nel modulo, non scritto a mano.
   const [giu, giuF] = separaInCasa("passaggi", 300, 420);
   const sotto = cappelloDi(comeSiAffrontano(
     lato("home", [giu]), lato("away", [giuF]), "Casa", "Fuori",
   ));
-  assert.match(sotto?.titolo ?? "", /^Poco palleggio quando attacca Casa\.$/);
+  assert.equal(sotto?.titolo, "Poco palleggio");
+  assert.equal(sotto?.fase, "quando attacca Casa");
 
   const [su, suF] = separaInCasa("passaggi", 540, 420);
   const sopra = cappelloDi(comeSiAffrontano(
     lato("home", [su]), lato("away", [suF]), "Casa", "Fuori",
   ));
-  assert.match(sopra?.titolo ?? "", /^Molto palleggio quando attacca Casa\.$/);
+  assert.equal(sopra?.titolo, "Molto palleggio");
 });
 
-test("il commento porta i numeri che lo reggono e dichiara le letture mute", () => {
+test("ogni prova porta i suoi due numeri, il metro e il campione", () => {
   const [pc, pf] = separaInCasa("precisione", 84, 80);
-  const letture = comeSiAffrontano(
+  const c = cappelloDi(comeSiAffrontano(
     lato("home", [pc, voce("quota_area", con(0.6, 0.6), con(0.6, 0.6))]),
     lato("away", [pf, voce("quota_area", con(0.6, 0.6), con(0.6, 0.6))]),
     "Casa", "Fuori",
-  );
-  const c = cappelloDi(letture);
+  ));
   assert.ok(c !== null);
-  const testo = c.commento.join(" ");
-  assert.match(testo, /84,0%/, "il numero di chi attacca");
-  assert.match(testo, /83,0%/, "il numero di chi difende");
-  assert.match(testo, /80,0%/, "e i due metri");
-  assert.match(testo, /Su 10 gare\./, "e il campione");
-  assert.match(testo, /Su Tiro i numeri non separano le due squadre/);
-  // Il «se» resta scritto: non e' una previsione del risultato.
-  assert.match(c.commento[0] ?? "", /del risultato non dice niente/);
+  const t = c.tratti[0];
+  assert.ok(t !== undefined);
+  assert.equal(t.punti[0].chi, "Casa");
+  assert.equal(t.punti[0].valore, "84,0%");
+  assert.equal(t.punti[1].chi, "avversari di Fuori");
+  assert.equal(t.punti[1].valore, "83,0%");
+  assert.equal(t.metro, "80,0%");
+  assert.equal(t.campione, 10);
+  assert.equal(c.mute, "Tiro: nessuna differenza che regga il rumore.");
+  // La riserva resta in pagina: non e' una previsione del risultato.
+  assert.match(c.nota, /del risultato non parla/);
+});
+
+test("i due punti cadono dalla stessa parte del centro, ed e' il colpo d'occhio", () => {
+  // **E' l'invariante di tutto il disegno.** Il tratto si vede prima di leggerlo solo se i
+  // due punti stanno dalla stessa parte della media di lega: se uno passa dall'altra, la
+  // riga direbbe con la grafica il contrario di quello che dice col titolo.
+  for (const [alto, metro] of [[90, 80], [300, 420]] as const) {
+    const [a, b] = separaInCasa("passaggi", alto, metro);
+    const c = cappelloDi(comeSiAffrontano(lato("home", [a]), lato("away", [b]), "Casa", "Fuori"));
+    const t = c?.tratti[0];
+    assert.ok(t !== undefined);
+    const scarti = t.punti.map((p) => p.x - 50);
+    assert.ok(
+      Math.sign(scarti[0] ?? 0) === Math.sign(scarti[1] ?? 0) && scarti[0] !== 0,
+      `i punti cadono da parti opposte del centro: ${t.punti[0].x} e ${t.punti[1].x}`,
+    );
+    assert.equal(Math.sign(scarti[0] ?? 0), t.verso, "e dalla parte che il verso dichiara");
+    for (const punto of t.punti) {
+      assert.ok(punto.x >= 4 && punto.x <= 96, `punto fuori dall'asse: ${punto.x}`);
+    }
+  }
 });
 
 test("da che parte pende si dice solo se le prove guardano la stessa fase", () => {
-  // Precisione e ingressi in ultimo terzo si fanno tutt'e due con la palla, e qui vengono
-  // dallo stesso lato: la fase e' una sola e si puo' dire.
   const [pc, pf] = separaInCasa("precisione", 84, 80);
   const [uc, uf] = separaInCasa("ultimo_terzo", 60, 50);
   const unaFase = cappelloDi(comeSiAffrontano(
     lato("home", [pc, uc]), lato("away", [pf, uf]), "Casa", "Fuori",
   ));
-  assert.match(unaFase?.titolo ?? "", /quando attacca Casa\./);
+  assert.equal(unaFase?.fase, "quando attacca Casa");
 
-  // Qui la seconda prova e' un tackle, che si fa senza palla: descrive l'attacco di Fuori,
-  // non di Casa. Due fasi diverse, quindi il titolo non dichiara nessuna direzione.
+  // Il tackle si fa senza palla: descrive l'attacco di Fuori, non di Casa. Due fasi
+  // diverse, quindi non se ne dichiara nessuna.
   const [tc, tf] = separaInCasa("tackle", 20, 15);
   const dueFasi = cappelloDi(comeSiAffrontano(
     lato("home", [pc, tc]), lato("away", [pf, tf]), "Casa", "Fuori",
   ));
-  assert.ok(dueFasi !== null);
-  assert.doesNotMatch(dueFasi.titolo, /quando attacca/);
+  assert.equal(dueFasi?.fase, null);
 });
 
 test("la fase la decide la metrica, non chi produce il numero", () => {
-  // Gli intercetti li fa chi la palla non ce l'ha: la riga li mette in mano a Casa, ma
-  // l'attacco che descrive e' quello di Fuori. Dire «quando attacca Casa» sarebbe falso.
   const [ic, if_] = separaInCasa("intercetti", 12, 8);
   const c = cappelloDi(comeSiAffrontano(
     lato("home", [ic]), lato("away", [if_]), "Casa", "Fuori",
   ));
-  assert.ok(c !== null);
-  assert.match(c.titolo, /quando attacca Fuori\./);
-  assert.match(c.commento[1] ?? "", /quando attacca Fuori,/);
-  assert.match(c.commento[1] ?? "", /Casa ne fa 12,0/);
-  assert.match(c.commento[1] ?? "", /gli avversari di Fuori ne fanno 11,0/);
+  assert.equal(c?.fase, "quando attacca Fuori");
+  assert.equal(c?.tratti[0]?.punti[0].chi, "Casa");
+  assert.equal(c?.tratti[0]?.punti[1].chi, "avversari di Fuori");
 
   // Un duello lo giocano in due: senza una fase vera non se ne dichiara una falsa.
   const [dc, df] = separaInCasa("duelli", 60, 49);
   const senzaFase = cappelloDi(comeSiAffrontano(
     lato("home", [dc]), lato("away", [df]), "Casa", "Fuori",
   ));
-  assert.ok(senzaFase !== null);
-  assert.doesNotMatch(senzaFase.titolo, /quando attacca/);
-  assert.doesNotMatch(senzaFase.commento[1] ?? "", /quando attacca/);
+  assert.equal(senzaFase?.fase, null);
 });
 
-test("il commento si ferma a due prove, la piu' netta per prima", () => {
-  // Tre letture che reggono: le prime due entrano nel commento, la terza resta nel suo
-  // riquadro. Tre paragrafi di prove non si leggono in cinque secondi.
+test("le prove sono al massimo due, la piu' netta per prima", () => {
   const [pc, pf] = separaInCasa("precisione", 90, 80);
   const [tc, tf] = separaInCasa("tackle", 18, 15);
   const [uc, uf] = separaInCasa("ultimo_terzo", 55, 50);
@@ -287,34 +297,30 @@ test("il commento si ferma a due prove, la piu' netta per prima", () => {
     lato("home", [pc, tc, uc]), lato("away", [pf, tf, uf]), "Casa", "Fuori",
   ));
   assert.ok(c !== null);
-  // Una frase di apertura piu' due prove: nessuna lettura muta, quindi tre paragrafi.
-  assert.equal(c.commento.length, 3);
-  assert.match(c.commento[1] ?? "", /^Sulla precisione dei passaggi,/, "apre lo scostamento piu' grande");
-  assert.match(c.commento[2] ?? "", /^Stessa direzione\. Sugli ingressi in ultimo terzo,/);
-  assert.match(c.rigaBreve ?? "", /^Come si affrontano: /);
+  assert.equal(c.tratti.length, 2, "tre prove non si leggono in cinque secondi");
+  assert.equal(c.tratti[0]?.chiave, "precisione", "apre lo scostamento piu' grande");
+  assert.match(c.rigaBreve ?? "", /^Come si affrontano: palloni puliti/);
 });
 
 test("il testo che va in pagina e' scritto con gli accenti, non con gli apostrofi", () => {
   // Difetto vero, visto in pagina e non nel codice: «la lettura piu' netta e' passaggi».
   // Nei commenti l'apostrofo va bene, in cio' che legge l'utente no.
   const [pc, pf] = separaInCasa("precisione", 90, 80);
-  // Con una lettura muta accanto si genera anche la frase che la dichiara: senza, quella
-  // frase non passava mai sotto il controllo, e infatti ci e' finito dentro un «c'e'».
   const muta = voce("quota_area", con(0.6, 0.6), con(0.6, 0.6));
-  const letture = comeSiAffrontano(
+  const c = cappelloDi(comeSiAffrontano(
     lato("home", [pc, muta]), lato("away", [pf, muta]), "Casa", "Fuori",
-  );
-  const c = cappelloDi(letture);
-  const muto = cappelloDi(comeSiAffrontano(
+  ));
+  const zitto = cappelloDi(comeSiAffrontano(
     lato("home", [voce("precisione", con(80, 80), con(80, 80))]),
     lato("away", [voce("precisione", con(80, 80), con(80, 80))]),
     "Casa", "Fuori",
   ));
   const testi = [
-    c?.titolo, c?.rigaBreve, ...(c?.commento ?? []), muto?.titolo, ...(muto?.commento ?? []),
-    ...letture.flatMap((l) => [l.sintesi, ...l.direzioni.map((d) => d.chiAttacca)]),
+    c?.titolo, c?.fase, c?.mute, c?.nota, c?.rigaBreve,
+    ...(c?.tratti ?? []).flatMap((t) => [t.parola, t.nome, ...t.punti.map((p) => p.chi)]),
+    zitto?.titolo, zitto?.nota,
   ].filter((t): t is string => typeof t === "string");
-  assert.ok(testi.length > 0, "niente da controllare: la prova non direbbe nulla");
+  assert.ok(testi.length > 8, "niente da controllare: la prova non direbbe nulla");
   for (const t of testi) {
     assert.doesNotMatch(
       t, /\b(e|piu|perche|cosi|qualita|gia|puo|ne|li|pero|sara|citta|meta)'/,
