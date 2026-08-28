@@ -3,7 +3,7 @@ import {
   type GaraDiretta, type MedieDelPeriodo, type MetroDiLega, type RigaStagioneCompetizione,
 } from "@/server/iqstats/referees";
 
-import { ArbitroGare } from "./arbitro-gare";
+import { ArbitroGare, PerLato } from "./arbitro-gare";
 
 /**
  * La scheda dell'arbitro: quattro blocchi, un'unica disciplina.
@@ -294,7 +294,7 @@ export function ArbitroScheda({
           <div className="ref-table-wrap">
             <table className="ref-table ref-table-gare">
               <caption className="sr-only-heading">
-                Le ultime {ultime.length} gare dirette da {nome}, con il confronto sulla media
+                Le ultime {ultime.length} gare dirette da {nome}, con falli e cartellini divisi fra le due squadre e il confronto sulla media
               </caption>
               <thead>
                 <tr>
@@ -319,8 +319,17 @@ export function ArbitroScheda({
                       {g.casa} - {g.trasferta}
                       <span className="ref-campione">{g.competizione} {g.stagione}</span>
                     </td>
-                    <td data-label="Falli" className="ref-num">{cifra(g.falli, 0)}</td>
-                    <td data-label="Gialli" className="ref-num">{cifra(g.gialli, 0)}</td>
+                    {/* Il totale non dice chi lo ha subito: trenta falli possono essere
+                        quindici e quindici o ventidue e otto, e sono due partite diverse.
+                        L'ordine e' quello della colonna «Partita», casa prima. */}
+                    <td data-label="Falli" className="ref-num">
+                      {cifra(g.falli, 0)}
+                      <PerLato casa={g.falliCasa} fuori={g.falliTrasferta} />
+                    </td>
+                    <td data-label="Gialli" className="ref-num">
+                      {cifra(g.gialli, 0)}
+                      <PerLato casa={g.gialliCasa} fuori={g.gialliTrasferta} />
+                    </td>
                     <td data-label="Rossi" className="ref-num">{cifra(g.rossi, 0)}</td>
                   </tr>
                 ))}

@@ -56,12 +56,62 @@ function mediaColonna(gare: readonly GaraDiretta[], quale: "falli" | "gialli" | 
   };
 }
 
+/**
+ * Le due medie per lato in coda alla colonna, sulle stesse gare della media del totale.
+ *
+ * **Non e' la meta' del totale.** Un arbitro puo' fischiare tredici falli a partita e darne
+ * otto contro chi gioca in casa: il totale lo nasconde, questi due numeri no. Si contano
+ * solo le gare che portano **entrambi** i lati, per la stessa ragione per cui il totale di
+ * gara si prende solo con le due righe: meta' dato darebbe una media dimezzata senza dirlo.
+ */
+function MediaPerLato({
+  gare,
+  quale,
+}: Readonly<{ gare: readonly GaraDiretta[]; quale: "falli" | "gialli" }>) {
+  const chiaveCasa = quale === "falli" ? "falliCasa" : "gialliCasa";
+  const chiaveFuori = quale === "falli" ? "falliTrasferta" : "gialliTrasferta";
+  const complete = gare.filter(
+    (g) => g[chiaveCasa] !== null && g[chiaveFuori] !== null,
+  );
+  if (complete.length === 0) return null;
+  const media = (chiave: "falliCasa" | "gialliCasa" | "falliTrasferta" | "gialliTrasferta") =>
+    (complete.reduce((t, g) => t + (g[chiave] ?? 0), 0) / complete.length)
+      .toFixed(1).replace(".", ",");
+  return (
+    <span className="ref-campione">
+      casa {media(chiaveCasa)} · fuori {media(chiaveFuori)}
+    </span>
+  );
+}
+
 /** Un'assenza sta in fondo comunque si ordini: non e' uno zero, e non ne prende il posto. */
 function confronta(a: number | null, b: number | null, crescente: boolean): number {
   if (a === null && b === null) return 0;
   if (a === null) return 1;
   if (b === null) return -1;
   return crescente ? a - b : b - a;
+}
+
+/**
+ * Come si e' diviso quel totale fra le due squadre.
+ *
+ * **Il totale da solo non dice chi lo ha subito.** Diciassette falli possono essere nove e
+ * otto o quattordici e tre, e sono due partite diverse: la seconda dice qualcosa su come
+ * l'arbitro ha diretto, la prima no. L'ordine e' lo stesso della colonna «Partita», casa
+ * prima, cosi' i due numeri si leggono insieme senza doverli riferire a mente.
+ *
+ * Sta dentro la cella e non in colonne sue: la tabella ne ha gia' sei, e a schermo stretto
+ * diventa una scheda per gara. Quattro colonne in piu' avrebbero rotto entrambe le forme.
+ *
+ * Senza uno dei due lati non si scrive niente: meta' ripartizione non e' una ripartizione,
+ * e un lato mancante non diventa uno zero.
+ */
+export function PerLato({
+  casa,
+  fuori,
+}: Readonly<{ casa: number | null; fuori: number | null }>) {
+  if (casa === null || fuori === null) return null;
+  return <span className="ref-campione">casa {casa} · fuori {fuori}</span>;
 }
 
 type Props = {
@@ -121,9 +171,9 @@ export function ArbitroGare({ gare, dentro }: Props) {
         <table className="ref-table ref-table-gare">
           <caption className="sr-only-heading">
             {dentro === null
-              ? "Tutte le gare dirette, con falli e cartellini"
+              ? "Tutte le gare dirette, con falli e cartellini divisi fra le due squadre"
               : `Le gare dirette in ${dentro.competizione} nella stagione ${dentro.stagione},`
-                + " con falli e cartellini"}
+                + " con falli e cartellini divisi fra le due squadre"}
           </caption>
           <thead>
             <tr>
@@ -156,9 +206,11 @@ export function ArbitroGare({ gare, dentro }: Props) {
                 <th scope="row" className="ref-data">{giorno(g.quando)}</th>
                 <td data-label="Falli" className="ref-num">
                   {g.falli === null ? "—" : g.falli}
+                  <PerLato casa={g.falliCasa} fuori={g.falliTrasferta} />
                 </td>
                 <td data-label="Gialli" className="ref-num">
                   {g.gialli === null ? "—" : g.gialli}
+                  <PerLato casa={g.gialliCasa} fuori={g.gialliTrasferta} />
                 </td>
                 <td data-label="Rossi" className="ref-num">
                   {g.rossi === null ? "—" : g.rossi}
@@ -193,6 +245,9 @@ export function ArbitroGare({ gare, dentro }: Props) {
                     {m.campione > 0 && m.campione < ordinate.length ? (
                       <span className="ref-campione">su {m.campione}</span>
                     ) : null}
+                    {quale === "rossi" ? null : (
+                      <MediaPerLato gare={ordinate} quale={quale} />
+                    )}
                   </td>
                 );
               })}
