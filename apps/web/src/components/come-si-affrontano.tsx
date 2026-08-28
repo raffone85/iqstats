@@ -104,8 +104,10 @@ export function ComeSiAffrontano({ letture, cappello }: {
       {/* La lettura prima delle prove. Non contiene un numero che non stia anche sotto. */}
       {cappello ? (
         <div className="affronto-cappello">
-          <p className="affronto-apertura">{cappello.apertura}</p>
-          {cappello.prove.map((p) => <p className="affronto-prova" key={p}>{p}</p>)}
+          <p className="affronto-titolo">{cappello.titolo}</p>
+          {cappello.commento.map((frase) => (
+            <p className="affronto-commento" key={frase}>{frase}</p>
+          ))}
         </div>
       ) : null}
       <div className="affronto-griglia">
