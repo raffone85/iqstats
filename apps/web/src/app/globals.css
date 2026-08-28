@@ -1395,3 +1395,22 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 @media (min-width: 768px) {
   .affronto-griglia { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+
+/* ==== Il quadro della gara ==============================================================
+   Un pannello solo al posto di tre. La riga in alto dice che gara e'; le tessere portano
+   l'atteso col suo metro e la lettura del modello. La fascia colorata e' la tinta della
+   famiglia, dentro la deroga del dossier: stretta, tutte dello stesso rango. */
+.contesto-titolo { margin: 0; font-family: var(--font-display); font-size: 20px; line-height: 1.25; color: var(--card-ink); }
+.contesto-favorito { margin: 5px 0 0; font-size: 13px; color: var(--card-ink-2); }
+.contesto-tessere { list-style: none; margin: 13px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 9px; }
+.contesto-tessera { min-width: 0; overflow: hidden; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel); }
+.contesto-fam { display: block; padding: 5px 9px; background: var(--famiglia, var(--card-brand)); color: var(--card-on-brand); font-family: var(--font-inter, sans-serif); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
+.contesto-atteso { display: block; padding: 7px 9px 0; font-family: var(--font-mono, monospace); font-size: 21px; font-weight: 600; color: var(--card-ink); font-variant-numeric: tabular-nums; line-height: 1; }
+.contesto-metro { display: block; padding: 3px 9px 0; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.contesto-metro.is-sopra { color: var(--card-up); }
+.contesto-metro.is-sotto { color: var(--card-down); }
+.contesto-lettura { display: block; padding: 5px 9px 8px; font-size: 11.5px; color: var(--card-ink-2); overflow-wrap: anywhere; }
+.contesto-lettura b { font-family: var(--font-mono, monospace); color: var(--card-ink); font-variant-numeric: tabular-nums; }
+/* La riserva e' prosa, non provenienza: in monospazio trenta parole pesano il doppio. */
+.contesto-riserva { margin: 11px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }

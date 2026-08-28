@@ -30,6 +30,8 @@ import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
+import { ContestoGara } from "@/components/contesto-gara";
+import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { medieDiLato } from "@/server/iqstats/lati";
 
@@ -61,7 +63,6 @@ import {
 } from "@/server/iqstats/team-page";
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
-import { buildMatchPicks, type PickArea } from "@/server/iqstats/match-picks";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { lettureForti } from "@/server/iqstats/projection/letture-forti";
@@ -125,13 +126,6 @@ function Crest({ name, teamId, className }: { name: string; teamId: number | nul
   );
 }
 
-/** Come si chiama, in pagina, ciascuna delle quattro letture. */
-const PICK_AREA: Record<PickArea, string> = {
-  esito: "Chi vince",
-  gol: "I gol",
-  gioco: "Il gioco",
-  disciplina: "La disciplina",
-};
 
 /** Il tempo previsto arriva in inglese: si traduce solo ciò che sappiamo tradurre. */
 const WEATHER_LABEL: Record<string, string> = {
@@ -434,7 +428,6 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const senzaProiezione = typeof esitoProiezione === "string" ? esitoProiezione : null;
 
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
-  const picks = buildMatchPicks(prediction, engineReading, odds, detail.homeTeam, detail.awayTeam);
 
   // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
   // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
@@ -457,13 +450,10 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const weakestLineup = lineups && !lineups.confirmed
     ? Math.min(lineups.home?.confidence ?? 1, lineups.away?.confidence ?? 1)
     : null;
-  const brief = [
-    cappello?.rigaBreve ?? null,
-    overallReading
-      ? [overallReading.headline, overallReading.goals].filter(Boolean).join(", ").concat(".")
-      : null,
-    marketReading?.sentence ?? null,
-    marketReading?.movement ?? null,
+  // **Le due avvertenze che «In breve» portava, e che non si perdono.** Non sono sintesi
+  // ma limiti del dato, e finiscono nella riserva del quadro: la sintesi la fa il quadro,
+  // il limite va detto lo stesso.
+  const avvertenze = [
     weakestLineup !== null && weakestLineup < 0.55
       ? "Le formazioni sono previste e su una delle due squadre la previsione è incerta."
       : null,
@@ -541,6 +531,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
           null,
         ))
     : null;
+
+  // Le letture piu' solide si calcolano una volta: le usano il quadro in cima e la sezione
+  // che le elenca. Due calcoli darebbero due ordini che possono divergere.
+  const forti = proiezioni ? lettureForti(proiezioni.bersagli) : null;
+  const contesto = contestoDiGara({
+    bersagli: proiezioni?.bersagli ?? [],
+    forti,
+    casa: latoCasa,
+    fuori: latoFuori,
+    stile: cappello,
+    favorito: verdictFav === null ? null : { nome: verdictFav.name, probabilita: verdictFav.prob },
+    gol: overallReading?.goals ?? null,
+    avvertenze,
+  });
 
   // Il contenuto del riquadro arbitro nel banner, montato una volta sola: lo stesso corpo
   // vive dentro un collegamento quando la scheda esiste, e dentro un paragrafo quando no.
@@ -673,94 +677,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
           descrizione="Chi e' favorito, e quali letture reggono davvero."
         />
 
-        {/* In breve: la gara detta in tre frasi, prima dei numeri */}
-        {brief.length > 0 ? (
-          <section className="dossier-panel dossier-brief" aria-labelledby="brief-title">
-            <p className="dossier-kick">In breve</p>
-            <h2 id="brief-title" className="sr-only-heading">Sintesi della gara</h2>
-            <p className="brief-text">{brief.join(" ")}</p>
-          </section>
-        ) : null}
-
-        {/* Verdetto prima */}
-        <section className="dossier-panel" aria-labelledby="verdict-title">
-          <p className="dossier-kick">Verdetto</p>
-          <h2 id="verdict-title" className="sr-only-heading">Verdetto del modello</h2>
-          {prediction ? (
-            <>
-              <p className="dossier-verdict-lead">
-                {verdictFav
-                  ? <><b>{verdictFav.name}</b> {verdictFav.key === "D" ? "esito più probabile" : "favorita"} al {Math.round(verdictFav.prob)}%</>
-                  : "Nessun favorito netto dal modello"}
-                {prediction.mostLikelyScore ? <> · risultato più probabile <b>{prediction.mostLikelyScore}</b></> : null}
-              </p>
-              <div className="dossier-1x2">
-                {([
-                  { key: "H", label: detail.homeTeam, prob: prediction.probHome },
-                  { key: "D", label: "Pareggio", prob: prediction.probDraw },
-                  { key: "A", label: detail.awayTeam, prob: prediction.probAway },
-                ] as const).map((row) => (
-                  <div key={row.key} className={`dossier-1x2-row${prediction.predicted === row.key ? " is-pick" : ""}`}>
-                    <span className="dossier-1x2-label">{row.label}</span>
-                    <span className="dossier-bar" aria-hidden="true"><i style={{ width: `${Math.min(100, Math.round(row.prob ?? 0))}%` }} /></span>
-                    <span className="dossier-1x2-val">{row.prob != null ? `${Math.round(row.prob)}%` : "n/d"}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="dossier-chips">
-                <span className="oggi-chip">Over 2.5 · {prediction.probOver25 != null ? `${Math.round(prediction.probOver25)}%` : "n/d"}</span>
-                <span className="oggi-chip">Gol/Gol · {prediction.probBtts != null ? `${Math.round(prediction.probBtts)}%` : "n/d"}</span>
-                {prediction.xgHome != null && prediction.xgAway != null ? (
-                  <span className="oggi-chip">xG {prediction.xgHome.toFixed(1)} – {prediction.xgAway.toFixed(1)}</span>
-                ) : null}
-              </div>
-              <p className="dossier-src">
-                Lettura del modello · letture, non certezze
-              </p>
-            </>
-          ) : (
-            <p className="dossier-empty">Verdetto del modello non disponibile per questa gara.</p>
-          )}
-        </section>
-
-        {/* La lettura IQstatS in quattro voci: due sugli esiti, due sulle statistiche */}
-        {picks.length > 0 ? (
-          <section className="dossier-panel" aria-labelledby="picks-title">
-            <p className="dossier-kick">La lettura IQstatS</p>
-            <h2 id="picks-title" className="sr-only-heading">Le letture della gara</h2>
-            <ul className="picks-list">
-              {picks.map((pick) => (
-                <li className="pick-card" key={pick.area}>
-                  <span className="pick-area">{PICK_AREA[pick.area]}</span>
-                  <span className="pick-label">{pick.label}</span>
-                  <span className="pick-prob">{Math.round(pick.probability)}%</span>
-                  <span className="pick-bar" aria-hidden="true">
-                    <i style={{ width: `${Math.min(100, Math.round(pick.probability))}%` }} />
-                  </span>
-                  <span className="pick-note">
-                    {pick.note}
-                    {pick.marketProbability !== null ? (
-                      <> · il mercato lo dà al {Math.round(pick.marketProbability)}%</>
-                    ) : pick.marketQuoted ? null : (
-                      <> · su questo esito non esiste un mercato con cui confrontarsi</>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {picks.length < 4 ? (
-              <p className="dossier-src">
-                {engineReading.available
-                  ? "Le letture mancanti non compaiono: su questa gara non c'è abbastanza per dirle, e una lettura in bilico non è una lettura."
-                  : "Le letture su gioco e disciplina non compaiono: questa competizione non ha una base calibrata da IQstatS. Nessun valore viene inventato."}
-              </p>
-            ) : null}
-            <p className="dossier-src">
-              Letture della stessa gara, non consigli: ognuna dichiara la probabilità che le
-              assegniamo e, dove il mercato quota lo stesso esito, quanto gli assegna il mercato.
-            </p>
-          </section>
-        ) : null}
+        {/* Il quadro della gara: una riga, tre numeri, una riserva. Sostituisce «In breve»,
+            «Verdetto» e «La lettura IQstatS», che dicevano cose sovrapposte in 2.009 px
+            prima del primo capitolo. Le famiglie e il loro ordine sono quelli che
+            `lettureForti` sceglie gia', e il metro di ogni atteso e' la somma delle due
+            medie di lega dei due lati. */}
+        <ContestoGara contesto={contesto} />
 
         {/* Modello e mercato affiancati: nessun operatore nominato, nessun collegamento fuori */}
         {marketReading ? (
@@ -798,9 +720,9 @@ export default async function MatchPage({ params }: MatchPageProps) {
         {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
             gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
             a mente. Ordinate per quanto reggono, non per percentuale. */}
-        {proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
+        {forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
           <MatchLettureFortiSection
-            letture={lettureForti(proiezioni.bersagli)}
+            letture={forti}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
           />

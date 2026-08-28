@@ -176,6 +176,8 @@ export interface Tratto {
 export interface Cappello {
   /** Che partita ne esce, in una riga sola: e' quello che si legge in cinque secondi. */
   readonly titolo: string;
+  /** Le parole del titolo una per una: al quadro della gara serve solo la prima. */
+  readonly parole: readonly string[];
   /** In quale attacco succede, o `null` se i tratti guardano fasi diverse. */
   readonly fase: string | null;
   /** Le prove, al massimo due: una riga e un asse ciascuna, nessun paragrafo. */
@@ -385,6 +387,7 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
   if (forti.length === 0) {
     return {
       titolo: "Numeri troppo vicini per separare le due squadre",
+      parole: [],
       fase: null,
       tratti: [],
       mute: null,
@@ -418,6 +421,7 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
 
   return {
     titolo,
+    parole,
     fase,
     tratti,
     mute: nomiMuti.length === 0 ? null
