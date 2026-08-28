@@ -53,8 +53,13 @@ const NOME_IN_FRASE: Readonly<Record<string, string>> = {
 export interface Tessera {
   readonly bersaglio: string;
   readonly nome: string;
-  /** Di chi e' il numero, o `null` quando e' il totale della gara. */
-  readonly chi: string | null;
+  /**
+   * Di chi e' il numero e da che lato: «Corinthians in trasferta», «nella gara».
+   *
+   * Il lato non e' un dettaglio: il metro accanto e' quello delle squadre **da quel lato**,
+   * e in casa e fuori i livelli sono diversi. Senza dirlo, il paragone sembra con tutte.
+   */
+  readonly soggetto: string;
   /** Quanti se ne attendono nella gara. */
   readonly atteso: string;
   /** La somma delle due medie di lega dei due lati, o `null` se manca a un lato. */
@@ -161,7 +166,9 @@ export function contestoDiGara(args: {
     tessere.push({
       bersaglio: l.bersaglio,
       nome: NOME_IN_FRASE[l.bersaglio] ?? l.bersaglio,
-      chi: l.lato === "casa" ? nomeCasa : l.lato === "trasferta" ? nomeFuori : null,
+      soggetto: l.lato === "casa" ? `${nomeCasa} in casa`
+        : l.lato === "trasferta" ? `${nomeFuori} in trasferta`
+          : "nella gara",
       atteso: numero(atteso),
       metro: metro === null ? null : numero(metro.media),
       verso,

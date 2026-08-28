@@ -89,7 +89,7 @@ test("le famiglie e il loro ordine vengono da lettureForti, una per famiglia", (
   // La percentuale della linea non sta nel quadro: la porta il pannello sotto, e qui
   // sarebbe la stessa riga scritta due volte. Il quadro aggiunge la quantita' col metro.
   assert.equal(c.tessere[0]?.atteso, "9,5");
-  assert.equal(c.tessere[0]?.chi, null, "una linea sul totale non e' di nessuna delle due");
+  assert.equal(c.tessere[0]?.soggetto, "nella gara", "una linea sul totale non e' di nessuna delle due");
 });
 
 test("il metro di un atteso e' la somma delle due medie di lega dei due lati", () => {
@@ -171,7 +171,7 @@ test("l'atteso e il suo metro vengono dallo stesso lato della linea", () => {
   });
   assert.equal(perSquadra?.tessere[0]?.atteso, "12,8", "l'atteso della squadra, non della gara");
   assert.equal(perSquadra?.tessere[0]?.metro, "13,9", "e il metro del suo lato, non la somma");
-  assert.equal(perSquadra?.tessere[0]?.chi, "Casa", "e si dice di chi e'");
+  assert.equal(perSquadra?.tessere[0]?.soggetto, "Casa in casa", "e si dice di chi e', e da che lato");
 
   const perGara = contestoDiGara({
     ...NIENTE,
@@ -182,5 +182,5 @@ test("l'atteso e il suo metro vengono dallo stesso lato della linea", () => {
   });
   assert.equal(perGara?.tessere[0]?.atteso, "25,1");
   assert.equal(perGara?.tessere[0]?.metro, "25,1", "la somma dei due lati");
-  assert.equal(perGara?.tessere[0]?.chi, null);
+  assert.equal(perGara?.tessere[0]?.soggetto, "nella gara");
 });

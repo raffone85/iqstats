@@ -26,7 +26,15 @@ export function ContestoGara({ contesto }: { readonly contesto: Contesto | null 
         <p className="contesto-favorito">{contesto.favorito}</p>
       )}
       {contesto.tessere.length === 0 ? null : (
-        <ul className="contesto-righe">
+        <>
+          {/* Il riferimento si dichiara una volta, non tre: erano la stessa riga di
+              spiegazione ripetuta sotto ogni numero. */}
+          <p className="contesto-legenda">
+            Attesi in questa gara, contro la media già osservata <b>dallo stesso lato del
+            campo</b>. Cambiano da gara a gara: entrano le famiglie in cui il modello si
+            scosta di più da quanto è normale qui.
+          </p>
+          <ul className="contesto-righe">
           {contesto.tessere.map((t) => (
             <li
               className="contesto-riga"
@@ -35,15 +43,24 @@ export function ContestoGara({ contesto }: { readonly contesto: Contesto | null 
             >
               <span className="contesto-fam">
                 {FAMIGLIE[t.bersaglio]?.nome ?? t.nome}
-                {t.chi === null ? null : <em> · {t.chi}</em>}
+                <em> · {t.soggetto}</em>
               </span>
               <span className="contesto-atteso">{t.atteso}</span>
+              {/* **I due numeri non sono la stessa cosa e si dice.** Il primo e' una
+                  previsione di questa gara, il secondo una media gia' osservata sulle
+                  squadre di questo campionato, da questo lato del campo. Scriverli
+                  entrambi come «attesi» faceva sembrare previsione anche il secondo. */}
               <span className={`contesto-metro${t.verso === 1 ? " is-sopra" : t.verso === -1 ? " is-sotto" : ""}`}>
-                {t.metro === null ? "attesi" : `attesi · lega ${t.metro}`}
+                {/* «media» e basta si legge come la media della squadra, ed e' l'opposto:
+                    e' quella delle squadre del campionato. Il nome per intero, sempre. */}
+                {t.metro === null
+                  ? "senza un metro con cui confrontarlo"
+                  : `media del campionato ${t.metro}`}
               </span>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       <p className="contesto-riserva">{contesto.riserva}</p>
     </section>
