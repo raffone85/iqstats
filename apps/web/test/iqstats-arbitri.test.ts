@@ -10,9 +10,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { connessione } from "../src/server/iqstats/lettura.ts";
 import {
   classificaArbitri,
   competizioniConArbitri,
+  metriDiLega,
   profiloArbitro,
 } from "../src/server/iqstats/referees.ts";
 
@@ -154,4 +156,71 @@ test("la data del profilo e' l'ultima gara del suo storico", opzioni, async () =
   assert.ok(p.ultima !== null, "un arbitro con gare deve dichiarare una data");
   const massimo = p.storico.reduce((piu, g) => (g.quando > piu ? g.quando : piu), p.storico[0].quando);
   assert.equal(p.ultima, massimo, `dichiara ${p.ultima} ma lo storico arriva a ${massimo}`);
+});
+
+test("il metro di lega, quota per lato compresa, ricontato a mano", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+  const competizioni = await competizioniConArbitri();
+  assert.ok(competizioni.length > 0);
+
+  // La competizione con piu' arbitri: e' quella dove media e dispersione poggiano su piu'
+  // direttori, quindi dove un errore nella finestra si vedrebbe meglio.
+  const scelta = [...competizioni].sort((a, b) => b.arbitri - a.arbitri)[0];
+  assert.ok(scelta !== undefined);
+
+  const metri = await metriDiLega([scelta.sourceId]);
+  const metro = metri.get(`${scelta.sourceId}|`);
+  assert.ok(metro !== undefined, `nessun metro per ${scelta.nome}`);
+
+  // Si ricostruiscono a mano i totali di ogni arbitro della competizione e si rifanno la
+  // media delle quote e la sua dispersione. Se la quota fosse calcolata come media di
+  // quote di singole gare, una partita da un cartellino solo peserebbe quanto una da otto,
+  // e il numero uscirebbe plausibile lo stesso.
+  const arbitri = await sql<{ gare: string; gialli: string | null; casa: string | null }[]>`
+    with per_gara as (
+      select o.match_id, o.referee_id,
+             case when count(*) filter (where o.yellow_cards is not null) = 2
+                  then sum(o.yellow_cards) end as gialli,
+             case when count(*) filter (where o.yellow_cards is not null) = 2
+                  then sum(o.yellow_cards) filter (where o.side = 'home') end as casa
+      from football.team_match_observations o
+      join football.competitions c on c.id = o.competition_id
+      where c.source_id = ${scelta.sourceId}::bigint
+      group by 1, 2
+      having count(*) = 2
+    )
+    select count(*)::text as gare, sum(gialli)::text as gialli, sum(casa)::text as casa
+    from per_gara where referee_id is not null group by referee_id
+  `;
+
+  const nelMetro = arbitri.filter((a) => Number(a.gare) >= 5);
+  assert.equal(
+    nelMetro.length, metro.arbitri,
+    `il metro dichiara ${metro.arbitri} arbitri, ricontati ${nelMetro.length}`,
+  );
+
+  const quote = nelMetro
+    .filter((a) => a.gialli !== null && Number(a.gialli) > 0 && a.casa !== null)
+    .map((a) => Number(a.casa) / Number(a.gialli));
+  assert.ok(quote.length >= 2, "meno di due arbitri con cartellini: niente da confrontare");
+
+  const media = quote.reduce((t, q) => t + q, 0) / quote.length;
+  assert.ok(metro.quotaGialliCasa !== null, "la quota di lega non c'e'");
+  assert.ok(
+    Math.abs(metro.quotaGialliCasa - media) < 1e-9,
+    `quota di lega ${metro.quotaGialliCasa}, ricontata ${media}`,
+  );
+  // Una quota e' una parte di un totale: fuori da zero e uno non e' una quota.
+  assert.ok(
+    metro.quotaGialliCasa > 0 && metro.quotaGialliCasa < 1,
+    `quota di lega ${metro.quotaGialliCasa} fuori scala`,
+  );
+
+  const varianza = quote.reduce((t, q) => t + (q - media) ** 2, 0) / (quote.length - 1);
+  assert.ok(metro.dispersioneQuotaGialliCasa !== null, "la dispersione della quota non c'e'");
+  assert.ok(
+    Math.abs(metro.dispersioneQuotaGialliCasa - Math.sqrt(varianza)) < 1e-9,
+    `dispersione ${metro.dispersioneQuotaGialliCasa}, ricontata ${Math.sqrt(varianza)}`,
+  );
 });

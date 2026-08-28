@@ -752,6 +752,20 @@ export interface MetroDiLega {
   /** Quanto si discostano fra loro gli arbitri di questa competizione. */
   readonly dispersioneGialli: number | null;
   readonly dispersioneFalli: number | null;
+  /**
+   * Quanta parte dei cartellini va alla squadra di casa, in media fra i colleghi.
+   *
+   * La scheda dell'arbitro mostra gia' la sua quota, ma senza questo numero «il 58% dei
+   * gialli va ai padroni di casa» non dice niente: puo' essere tanto o pochissimo secondo
+   * la lega. E' la stessa mancanza che aveva il giudizio prima del 28 agosto.
+   *
+   * E' la media **delle quote dei singoli arbitri**, non la quota complessiva del torneo:
+   * cosi' ogni direttore pesa uno, come nella dispersione che le sta accanto.
+   */
+  readonly quotaGialliCasa: number | null;
+  readonly dispersioneQuotaGialliCasa: number | null;
+  readonly quotaFalliCasa: number | null;
+  readonly dispersioneQuotaFalliCasa: number | null;
   readonly gare: number;
   readonly arbitri: number;
   /** `true` se il metro e' della stagione, `false` se ha ripiegato su tutta la competizione. */
@@ -790,6 +804,10 @@ interface RigaMetroDb {
   readonly falli: string | null;
   readonly sd_gialli: string | null;
   readonly sd_falli: string | null;
+  readonly q_gialli_casa: string | null;
+  readonly sd_q_gialli_casa: string | null;
+  readonly q_falli_casa: string | null;
+  readonly sd_q_falli_casa: string | null;
   readonly gare: string;
   readonly arbitri: string;
 }
@@ -813,7 +831,15 @@ export async function metriDiLega(
                case when count(*) filter (where o.fouls is not null) = 2
                     then sum(o.fouls) end as falli,
                case when count(*) filter (where o.yellow_cards is not null) = 2
-                    then sum(o.yellow_cards) end as gialli
+                    then sum(o.yellow_cards) end as gialli,
+               -- I due lati servono alla quota: quanta parte di quel totale e' andata a
+               -- chi giocava in casa. Il vincolo dei due lati e' lo stesso del totale,
+               -- perche' una quota su meta' gara non e' una quota.
+               case when count(*) filter (where o.yellow_cards is not null) = 2
+                    then sum(o.yellow_cards) filter (where o.side = 'home') end
+                    as gialli_casa,
+               case when count(*) filter (where o.fouls is not null) = 2
+                    then sum(o.fouls) filter (where o.side = 'home') end as falli_casa
         from football.team_match_observations o
         join football.competitions c on c.id = o.competition_id
         where c.source_id = any(${competizioni}::bigint[])
@@ -825,14 +851,33 @@ export async function metriDiLega(
       -- meno di cinque gare non entrano nel metro, perche' la loro media e' ancora rumore.
       per_arbitro as (
         select competition_id, season_id, referee_id, count(*) as gare,
-               avg(gialli) as gialli, avg(falli) as falli
-        from per_gara where referee_id is not null group by 1, 2, 3
+               avg(gialli) as gialli, avg(falli) as falli,
+               -- La quota si fa sui totali dell'arbitro, non come media di quote di
+               -- singole gare: una partita da un cartellino solo peserebbe quanto una da
+               -- otto. Nulla quando non ne ha estratti: niente da ripartire, non zero.
+               case when sum(gialli) > 0 then sum(gialli_casa) / sum(gialli) end
+                    as quota_gialli_casa,
+               case when sum(falli) > 0 then sum(falli_casa) / sum(falli) end
+                    as quota_falli_casa
+        -- **Un arbitro pesa uno, anche nel metro di tutta la competizione.** Prima questa
+        -- riga raggruppava per stagione e la dispersione sommava i due insiemi: chi aveva
+        -- diretto in due stagioni entrava due volte, con due medie diverse. Misurato su una
+        -- competizione reale: **42 voci per 34 arbitri**. Ora l'insieme «tutta la
+        -- competizione» ha una riga per arbitro, con la stagione vuota, e la
+        -- distribuzione sotto la raccoglie senza doppioni.
+        from per_gara where referee_id is not null
+        group by grouping sets ((competition_id, season_id, referee_id),
+                                (competition_id, referee_id))
       ),
       dispersione as (
         select competition_id, season_id,
                stddev_samp(gialli) as sd_gialli, stddev_samp(falli) as sd_falli,
+               avg(quota_gialli_casa) as q_gialli_casa,
+               stddev_samp(quota_gialli_casa) as sd_q_gialli_casa,
+               avg(quota_falli_casa) as q_falli_casa,
+               stddev_samp(quota_falli_casa) as sd_q_falli_casa,
                count(*) as arbitri
-        from per_arbitro where gare >= ${GARE_MINIME} group by grouping sets ((competition_id, season_id), (competition_id))
+        from per_arbitro where gare >= ${GARE_MINIME} group by 1, 2
       ),
       metro as (
         select competition_id, season_id, avg(gialli) as gialli, avg(falli) as falli,
@@ -842,6 +887,8 @@ export async function metriDiLega(
       select c.source_id::text as competition_source_id, m.season_id::text,
              m.gialli::text, m.falli::text,
              d.sd_gialli::text, d.sd_falli::text,
+             d.q_gialli_casa::text, d.sd_q_gialli_casa::text,
+             d.q_falli_casa::text, d.sd_q_falli_casa::text,
              m.gare::text, coalesce(d.arbitri, 0)::text as arbitri
       from metro m
       join football.competitions c on c.id = m.competition_id
@@ -856,6 +903,12 @@ export async function metriDiLega(
         falli: r.falli === null ? null : Number(r.falli),
         dispersioneGialli: r.sd_gialli === null ? null : Number(r.sd_gialli),
         dispersioneFalli: r.sd_falli === null ? null : Number(r.sd_falli),
+        quotaGialliCasa: r.q_gialli_casa === null ? null : Number(r.q_gialli_casa),
+        dispersioneQuotaGialliCasa:
+          r.sd_q_gialli_casa === null ? null : Number(r.sd_q_gialli_casa),
+        quotaFalliCasa: r.q_falli_casa === null ? null : Number(r.q_falli_casa),
+        dispersioneQuotaFalliCasa:
+          r.sd_q_falli_casa === null ? null : Number(r.sd_q_falli_casa),
         gare: Number(r.gare),
         arbitri: Number(r.arbitri),
         dellaStagione: r.season_id !== null,
