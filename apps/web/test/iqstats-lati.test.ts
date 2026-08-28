@@ -62,8 +62,8 @@ test("prodotto e concesso poggiano sulle stesse gare", opzioni, async () => {
   );
 
   for (const voce of lato.voci) {
-    assert.ok(voce.prodotto >= 0, `${voce.nome}: prodotto negativo`);
-    assert.ok(voce.concesso >= 0, `${voce.nome}: concesso negativo`);
+    assert.ok(voce.prodotto.media >= 0, `${voce.nome}: prodotto negativo`);
+    assert.ok(voce.concesso.media >= 0, `${voce.nome}: concesso negativo`);
     assert.ok(voce.campione >= 5, `${voce.nome}: campione ${voce.campione} sotto la soglia`);
     // **Il campione non puo' superare le gare giocate da questo lato.** Se l'innesto
     // moltiplicasse le righe — per esempio unendo una gara a se stessa — questo numero
@@ -111,12 +111,12 @@ test("il concesso e' davvero quello dell'avversario, ricontato", opzioni, async 
   const mediaMiei = gare.reduce((t, g) => t + Number(g.miei), 0) / gare.length;
   const mediaLoro = gare.reduce((t, g) => t + Number(g.loro), 0) / gare.length;
   assert.ok(
-    Math.abs(falli.prodotto - mediaMiei) < 1e-6,
-    `prodotto ${falli.prodotto}, ricontato ${mediaMiei}`,
+    Math.abs(falli.prodotto.media - mediaMiei) < 1e-6,
+    `prodotto ${falli.prodotto.media}, ricontato ${mediaMiei}`,
   );
   assert.ok(
-    Math.abs(falli.concesso - mediaLoro) < 1e-6,
-    `concesso ${falli.concesso}, ricontato ${mediaLoro}`,
+    Math.abs(falli.concesso.media - mediaLoro) < 1e-6,
+    `concesso ${falli.concesso.media}, ricontato ${mediaLoro}`,
   );
 });
 
@@ -172,7 +172,7 @@ test("sotto il campione minimo non si dichiara niente", opzioni, async () => {
   }
 });
 
-test("i due lati di una gara si riempiono insieme, o la guardia serve davvero", opzioni, async () => {
+test("le due guardie che oggi non mordono restano sorvegliate", opzioni, async () => {
   const sql = connessione();
   assert.ok(sql !== null);
 
@@ -204,6 +204,40 @@ test("i due lati di una gara si riempiono insieme, o la guardia serve davvero", 
     righe[0]?.meta, "0",
     "esistono gare con il dato da un lato solo: la guardia sui due lati ora morde, "
       + "e il guasto che la toglie deve far fallire la prova sul concesso",
+  );
+
+  // **La seconda guardia cieca: il campione minimo nella lettura.** Il modulo scarta una
+  // voce sotto le cinque gare, ma oggi quel controllo non tocca mai nulla, perche' nessuna
+  // squadra sta nel mezzo: o la metrica non ce l'ha affatto, o ce l'ha su almeno cinque
+  // gare, e nel primo caso a escluderla e' gia' l'assenza del metro. Misurato: **zero**
+  // squadre con un campione fra uno e quattro in un torneo che un metro ce l'ha.
+  const mezzo = await sql<{ n: string }[]>`
+    with q as (
+      select o.competition_id, o.season_id, o.team_id,
+             count(*) filter (
+               where o.fouls is not null and a.fouls is not null
+             ) as campione
+      from football.team_match_observations o
+      join football.team_match_observations a
+        on a.match_id = o.match_id and a.side <> o.side
+      where o.side = 'home'
+      group by 1, 2, 3
+      having count(distinct o.match_id) >= 5
+    ),
+    tornei as (
+      select competition_id, season_id
+      from q group by 1, 2
+      having count(*) filter (where campione >= 5) >= 2
+    )
+    select count(*)::text as n
+    from q join tornei using (competition_id, season_id)
+    where q.campione between 1 and 4
+  `;
+  assert.equal(
+    mezzo[0]?.n, "0",
+    "esistono squadre con un campione fra uno e quattro in un torneo con metro: la soglia "
+      + "della lettura ora morde davvero, e il guasto che la toglie deve far fallire "
+      + "la prova sul campione minimo",
   );
 });
 
@@ -241,9 +275,174 @@ test("il lato chiesto e' quello letto, e i due lati sono gare diverse", opzioni,
     const falliFuori = fuori.voci.find((v) => v.chiave === "falli");
     if (falliCasa !== undefined && falliFuori !== undefined) {
       assert.ok(
-        casa.gare !== fuori.gare || falliCasa.prodotto !== falliFuori.prodotto,
+        casa.gare !== fuori.gare || falliCasa.prodotto.media !== falliFuori.prodotto.media,
         "casa e trasferta danno gare e falli identici: il filtro sul lato non morde",
       );
     }
   }
+});
+
+test("il metro e' quello del lato, ricontato sulla distribuzione", opzioni, async () => {
+  const caso = await unCaso();
+  const lato = await medieDiLato(caso.squadra, caso.competizione, caso.stagione, "home");
+  assert.ok(lato !== null);
+  const sql = connessione();
+  assert.ok(sql !== null);
+
+  const falli = lato.voci.find((v) => v.chiave === "falli");
+  if (falli === undefined) return;
+
+  // Si ricostruisce a mano la distribuzione delle **sole gare in casa** e si ricontano
+  // media di lega e posizione. Se la finestra fosse sbagliata - senza il lato, senza la
+  // stagione, o divisa per tutte le squadre invece che per quelle che il dato ce l'hanno -
+  // il numero uscirebbe plausibile e nessuno se ne accorgerebbe guardando la pagina.
+  const distribuzione = await sql<
+    { squadra: string; falli: string | null; campione: string }[]
+  >`
+    select o.team_id::text as squadra,
+           avg(o.fouls) filter (
+             where o.fouls is not null and a.fouls is not null
+           )::text as falli,
+           count(*) filter (
+             where o.fouls is not null and a.fouls is not null
+           )::text as campione
+    from football.team_match_observations o
+    join football.team_match_observations a
+      on a.match_id = o.match_id and a.side <> o.side
+    join football.competitions c on c.id = o.competition_id
+    join football.seasons s on s.id = o.season_id
+    where c.source_id = ${caso.competizione}::bigint
+      and s.source_id = ${caso.stagione}::bigint
+      and o.side = 'home'
+    group by 1
+    having count(distinct o.match_id) >= 5
+  `;
+
+  assert.equal(
+    distribuzione.length, lato.squadre,
+    "le squadre del metro non sono quelle che compongono la distribuzione del lato",
+  );
+
+  // **Nel metro entrano solo le squadre confrontabili.** Una senza falli osservati ha media
+  // nulla, e contarla fra quelle sotto sarebbe far diventare zero un'assenza. Una con due
+  // gare ha una media, ma non e' un termine di paragone: falserebbe la posizione di tutte
+  // le altre, ed e' la ragione per cui il modulo la tiene fuori.
+  const conIlDato = distribuzione.filter(
+    (r) => r.falli !== null && Number(r.campione) >= 5,
+  );
+  const mediaDiLega = conIlDato.reduce((t, r) => t + Number(r.falli), 0) / conIlDato.length;
+  assert.ok(
+    Math.abs(falli.prodotto.mediaDiLega - mediaDiLega) < 1e-6,
+    `media di lega ${falli.prodotto.mediaDiLega}, ricontata ${mediaDiLega}`,
+  );
+
+  const sotto = conIlDato.filter((r) => Number(r.falli) < falli.prodotto.media).length;
+  const dichiarate = Math.round(falli.prodotto.posizione * (conIlDato.length - 1));
+  assert.equal(
+    dichiarate, sotto,
+    `il metro dice di superarne ${dichiarate}, la distribuzione ne conta ${sotto}`,
+  );
+
+  for (const voce of lato.voci) {
+    assert.ok(
+      voce.prodotto.posizione >= 0 && voce.prodotto.posizione <= 1,
+      `${voce.nome}: posizione ${voce.prodotto.posizione} fuori scala`,
+    );
+    assert.ok(
+      voce.concesso.posizione >= 0 && voce.concesso.posizione <= 1,
+      `${voce.nome}: posizione del concesso fuori scala`,
+    );
+  }
+});
+
+test("la posizione si divide per le squadre che il dato ce l'hanno", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null);
+
+  // **Perche' serve un torneo apposta.** Dove tutte le squadre portano la metrica, dividere
+  // per tutte o per quelle col dato da lo stesso numero, e il guasto resta invisibile. In
+  // J1 League venti squadre arrivano a cinque gare in casa e **dieci** portano i falli:
+  // li' il denominatore sbagliato dimezza la posizione, e una squadra in testa risulta a
+  // meta' classifica. Il caso si cerca nei dati, non si scrive a mano.
+  const tornei = await sql<
+    { competizione: string; stagione: string; squadre: string; con: string }[]
+  >`
+    with q as (
+      select o.competition_id, o.season_id, o.team_id,
+             count(*) filter (
+               where o.fouls is not null and a.fouls is not null
+             ) as campione
+      from football.team_match_observations o
+      join football.team_match_observations a
+        on a.match_id = o.match_id and a.side <> o.side
+      where o.side = 'home'
+      group by 1, 2, 3
+      having count(distinct o.match_id) >= 5
+    )
+    select c.source_id::text as competizione, s.source_id::text as stagione,
+           count(*)::text as squadre,
+           count(*) filter (where q.campione >= 5)::text as con
+    from q
+    join football.competitions c on c.id = q.competition_id
+    join football.seasons s on s.id = q.season_id
+    group by 1, 2
+    having count(*) filter (where q.campione >= 5) >= 2
+       and count(*) > count(*) filter (where q.campione >= 5)
+    order by count(*) - count(*) filter (where q.campione >= 5) desc
+    limit 1
+  `;
+  const torneo = tornei[0];
+  if (torneo === undefined) {
+    assert.fail(
+      "nessun torneo dove il dato manca a qualche squadra: il denominatore non e' piu' "
+        + "esercitato, e il guasto che lo sbaglia non farebbe arrossire nulla",
+    );
+  }
+
+  // La squadra con la media falli piu' alta **fra quelle confrontabili**, cioe' con il
+  // campione sopra la soglia. L'ordinamento e' sul valore, non sul testo: la prima stesura
+  // ordinava la colonna gia' convertita, e «9.5» risultava maggiore di «12.3».
+  const squadre = await sql<{ squadra: string; nome: string; falli: string }[]>`
+    select t.source_id::text as squadra, t.name as nome,
+           (avg(o.fouls) filter (
+             where o.fouls is not null and a.fouls is not null
+           ))::text as falli
+    from football.team_match_observations o
+    join football.team_match_observations a
+      on a.match_id = o.match_id and a.side <> o.side
+    join football.teams t on t.id = o.team_id
+    join football.competitions c on c.id = o.competition_id
+    join football.seasons s on s.id = o.season_id
+    where c.source_id = ${torneo.competizione}::bigint
+      and s.source_id = ${torneo.stagione}::bigint
+      and o.side = 'home'
+    group by 1, 2
+    having count(distinct o.match_id) >= 5
+       and count(*) filter (
+             where o.fouls is not null and a.fouls is not null
+           ) >= 5
+    order by avg(o.fouls) filter (
+      where o.fouls is not null and a.fouls is not null
+    ) desc
+    limit 1
+  `;
+  const scelta = squadre[0];
+  assert.ok(scelta !== undefined, "nessuna squadra con i falli nel torneo scelto");
+
+  const lato = await medieDiLato(
+    Number(scelta.squadra), Number(torneo.competizione), Number(torneo.stagione), "home",
+  );
+  assert.ok(lato !== null, `nessun lato per ${scelta.nome}`);
+  const falli = lato.voci.find((v) => v.chiave === "falli");
+  assert.ok(falli !== undefined, `${scelta.nome} non ha i falli fra le voci`);
+
+  // La squadra scelta e' quella con la media piu' alta fra chi il dato ce l'ha: la sua
+  // posizione dev'essere **1**, cioe' le supera tutte. Dividendo per tutte le squadre del
+  // torneo uscirebbe una frazione, ed e' esattamente il difetto.
+  assert.equal(
+    falli.prodotto.posizione, 1,
+    `${scelta.nome} ha la media falli piu' alta fra le ${torneo.con} squadre che il dato ce `
+      + `l'hanno, ma la posizione dichiarata e' ${falli.prodotto.posizione}: il denominatore `
+      + `conta tutte le ${torneo.squadre} squadre invece delle ${torneo.con} confrontabili`,
+  );
 });

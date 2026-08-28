@@ -65,13 +65,38 @@ const METRICHE = [
 
 export type ChiaveDiLato = (typeof METRICHE)[number]["chiave"];
 
+/**
+ * Un numero della squadra con il metro con cui va letto.
+ *
+ * **Il metro e' quello dello stesso lato.** Confrontare i falli in casa con la media di
+ * tutte le gare direbbe piu' del vero: in casa e in trasferta i livelli sono diversi, e
+ * mescolarli e' il modo piu' facile per far sembrare severa una squadra normale. E' l'errore
+ * gia' trovato in pagina sull'arbitro il 28 agosto, dove il numero e il giudizio uscivano da
+ * gare diverse.
+ */
+export interface ConMetro {
+  /** La media a partita della squadra. */
+  readonly media: number;
+  /** La media delle squadre del campionato, in questa stagione e da questo lato. */
+  readonly mediaDiLega: number;
+  /**
+   * Quanto si discostano fra loro le squadre. `null` sotto le due squadre.
+   *
+   * Serve a sapere se una differenza e' una differenza: e' la stessa disciplina del
+   * giudizio dell'arbitro, dove la soglia e' mezza dispersione e mai un numero scelto.
+   */
+  readonly dispersione: number | null;
+  /** Quante squadre ne supera, da 0 a 1. */
+  readonly posizione: number;
+}
+
 export interface VoceDiLato {
   readonly chiave: string;
   readonly nome: string;
-  /** La media a partita di quello che la squadra fa, da questo lato. */
-  readonly prodotto: number;
-  /** La media a partita di quello che l'avversario le fa, nelle stesse gare. */
-  readonly concesso: number;
+  /** Quello che la squadra fa, da questo lato, con il suo metro. */
+  readonly prodotto: ConMetro;
+  /** Quello che l'avversario le fa nelle stesse gare, con il suo metro. */
+  readonly concesso: ConMetro;
   /**
    * Le gare in cui **entrambi** i lati portano questa metrica.
    *
@@ -85,6 +110,8 @@ export interface MedieDiLato {
   readonly lato: Lato;
   /** Le gare giocate da questo lato, che sono il tetto di ogni campione. */
   readonly gare: number;
+  /** Quante squadre compongono il metro, campione minimo compreso. */
+  readonly squadre: number;
   readonly voci: readonly VoceDiLato[];
   /** Le metriche che questo torneo non osserva, o non abbastanza: si dicono, non spariscono. */
   readonly assenti: readonly string[];
@@ -131,16 +158,58 @@ export async function medieDiLato(
         "count(*) filter (" + entrambi + ") as n_" + m.chiave,
       ];
     })
-    .join(",\n             ");
+    .join(",\n               ");
+
+  // Il metro: media e dispersione delle squadre del campionato **da questo lato**, e il
+  // posto che ciascuna occupa. La finestra e' sempre competizione piu' stagione, come in
+  // `team-metro.ts`: mescolare anni o tornei farebbe sembrare straordinaria una squadra
+  // normale.
+  const finestra = "over (partition by competition_id, season_id)";
+  const metro = METRICHE
+    .flatMap((m) => {
+      const k = m.chiave;
+      // **Nel metro entrano solo le squadre il cui numero regge.** Sotto il campione minimo
+      // una squadra non e' un termine di paragone: con due gare puo' finire in cima e
+      // falsare la posizione di tutte le altre. E' la stessa regola di `team-metro.ts`,
+      // applicata qui alla singola metrica invece che alle gare, perche' le colonne non si
+      // riempiono insieme: la prima stesura contava anche chi aveva **una** gara sola.
+      const regge = " filter (where n_" + k + " >= " + String(GARE_MINIME) + ") ";
+      // Fuori dal metro il valore non esiste, e senza valore `rank()` mette in coda: e'
+      // quello che serve, perche' cosi' quelle squadre non rubano posizioni a nessuno.
+      const dentro = "(case when n_" + k + " >= " + String(GARE_MINIME) + " then ";
+      return [
+        "avg(p_" + k + ")" + regge + finestra + " as lega_p_" + k,
+        "avg(c_" + k + ")" + regge + finestra + " as lega_c_" + k,
+        "stddev_samp(p_" + k + ")" + regge + finestra + " as sd_p_" + k,
+        "stddev_samp(c_" + k + ")" + regge + finestra + " as sd_c_" + k,
+        "rank() over (partition by competition_id, season_id order by "
+          + dentro + "p_" + k + " end)) as rk_p_" + k,
+        "rank() over (partition by competition_id, season_id order by "
+          + dentro + "c_" + k + " end)) as rk_c_" + k,
+        // **Il denominatore conta solo le squadre confrontabili.** `percent_rank()` divide
+        // invece per tutte, e chi resta fuori dal metro, finendo in coda, ruba posizioni.
+        // Misurato: nella Stoiximan Super League sedici squadre arrivano a cinque gare in
+        // casa e quattordici portano i falli con un campione che regge, e dividere per
+        // sedici darebbe alla prima **0,87** invece di **1**. Prodotto e concesso hanno lo
+        // stesso campione per costruzione, quindi un conteggio solo basta per entrambi.
+        "count(*)" + regge + finestra + " as nq_" + k,
+      ];
+    })
+    .join(",\n               ");
+
   const scelte = METRICHE
-    .flatMap((m) => ["p_" + m.chiave + "::text", "c_" + m.chiave + "::text",
-      "n_" + m.chiave + "::text"])
+    .flatMap((m) => {
+      const k = m.chiave;
+      return ["p_", "c_", "n_", "lega_p_", "lega_c_", "sd_p_", "sd_c_", "rk_p_", "rk_c_", "nq_"]
+        .map((prefisso) => prefisso + k + "::text");
+    })
     .join(", ");
 
   try {
     const righe = await sql<RigaDiLato[]>`
       with per_lato as (
-        select count(*) as gare,
+        select o.competition_id, o.season_id, o.team_id,
+               count(distinct o.match_id) as gare,
                ${sql.unsafe(aggregati)}
         from football.team_match_observations o
         -- La riga dell'altro lato della stessa gara: e' da li' che viene il concesso.
@@ -148,41 +217,77 @@ export async function medieDiLato(
         -- su se stessa ne' moltiplicarsi se un giorno una gara portasse righe in piu'.
         join football.team_match_observations a
           on a.match_id = o.match_id and a.side <> o.side
-        join football.teams t on t.id = o.team_id
         join football.competitions c on c.id = o.competition_id
         join football.seasons s on s.id = o.season_id
-        where t.source_id = ${teamSourceId}::bigint
-          and c.source_id = ${competitionSourceId}::bigint
+        where c.source_id = ${competitionSourceId}::bigint
           and s.source_id = ${seasonSourceId}::bigint
           and o.side = ${lato}
+        group by 1, 2, 3
+        having count(distinct o.match_id) >= ${GARE_MINIME}
+      ),
+      con_metro as (
+        select *, count(*) ${sql.unsafe(finestra)} as squadre,
+               ${sql.unsafe(metro)}
+        from per_lato
       )
-      select gare::text, ${sql.unsafe(scelte)} from per_lato
+      select m.gare::text, m.squadre::text, ${sql.unsafe(scelte)}
+      from con_metro m
+      join football.teams t on t.id = m.team_id
+      where t.source_id = ${teamSourceId}::bigint
+      limit 1
     `;
 
     const riga = righe[0];
     if (riga === undefined) return null;
     const gare = numero(riga.gare);
-    if (gare === null || gare === 0) return null;
+    const squadre = numero(riga.squadre);
+    if (gare === null || gare === 0 || squadre === null) return null;
+    // Con una squadra sola non c'e' un metro: la posizione direbbe «prima» a chi e' l'unica.
+    if (squadre < 2) return null;
 
     const voci: VoceDiLato[] = [];
     const assenti: string[] = [];
     for (const m of METRICHE) {
-      const prodotto = numero(riga["p_" + m.chiave]);
-      const concesso = numero(riga["c_" + m.chiave]);
-      const campione = numero(riga["n_" + m.chiave]);
-      // Sotto la soglia, o senza uno dei due lati, la voce non si mostra e non si azzera:
-      // si dichiara. Una media su due gare non e' una tendenza, e un concesso mancante
-      // renderebbe il prodotto un numero senza confronto.
+      const k = m.chiave;
+      const prodotto = numero(riga["p_" + k]);
+      const concesso = numero(riga["c_" + k]);
+      const campione = numero(riga["n_" + k]);
+      const legaProdotto = numero(riga["lega_p_" + k]);
+      const legaConcesso = numero(riga["lega_c_" + k]);
+      const rangoProdotto = numero(riga["rk_p_" + k]);
+      const rangoConcesso = numero(riga["rk_c_" + k]);
+      const quante = numero(riga["nq_" + k]);
+      // Sotto la soglia, senza uno dei due lati, o senza almeno due squadre con cui
+      // confrontarsi, la voce non si mostra e non si azzera: si dichiara. Una media su due
+      // gare non e' una tendenza, e un numero senza metro non e' una lettura.
       if (prodotto === null || concesso === null || campione === null
-        || campione < GARE_MINIME) {
+        || legaProdotto === null || legaConcesso === null
+        || rangoProdotto === null || rangoConcesso === null
+        || quante === null || quante < 2 || campione < GARE_MINIME) {
         assenti.push(m.nome);
         continue;
       }
-      voci.push({ chiave: m.chiave, nome: m.nome, prodotto, concesso, campione });
+      voci.push({
+        chiave: k,
+        nome: m.nome,
+        campione,
+        prodotto: {
+          media: prodotto,
+          mediaDiLega: legaProdotto,
+          dispersione: numero(riga["sd_p_" + k]),
+          posizione: (rangoProdotto - 1) / (quante - 1),
+        },
+        concesso: {
+          media: concesso,
+          mediaDiLega: legaConcesso,
+          dispersione: numero(riga["sd_c_" + k]),
+          posizione: (rangoConcesso - 1) / (quante - 1),
+        },
+      });
     }
     if (voci.length === 0) return null;
 
-    return { lato, gare, voci, assenti };
+    return { lato, gare, squadre, voci, assenti };
   } catch {
     // Un lato che non si puo' leggere non diventa un lato inventato.
     return null;
