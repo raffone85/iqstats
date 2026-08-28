@@ -1257,15 +1257,20 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
   .ref-table tfoot tr { background: var(--card-panel); }
   .ref-table tbody th[scope="row"], .ref-table tfoot th { padding: 0 0 2px; }
   .ref-table .ref-comp { padding: 0 0 8px; font-size: 15px; border-bottom: 1px solid var(--card-stroke); margin-bottom: 6px; }
-  .ref-table td[data-label] { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 12px; padding: 5px 0; text-align: right; }
-  .ref-table td[data-label]::before { content: attr(data-label); text-align: left; font-family: var(--font-inter, sans-serif); font-size: 12.5px; font-variant-numeric: normal; color: var(--card-ink-3); overflow-wrap: anywhere; }
+  /* Riga a bandiera invece che a griglia: in griglia il numero e il suo campione sono due
+     elementi diversi e finiscono su due righe, che si leggono come due voci. */
+  .ref-table td[data-label] { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 8px; padding: 5px 0; text-align: right; }
+  .ref-table td[data-label]::before { content: attr(data-label); margin-right: auto; text-align: left; font-family: var(--font-inter, sans-serif); font-size: 12.5px; font-variant-numeric: normal; color: var(--card-ink-3); overflow-wrap: anywhere; }
   /* La competizione fa da titolo della scheda: la sua etichetta sarebbe una ripetizione.
      Il selettore porta anche l'attributo perche' quello generale, `td[data-label]::before`,
      ha una specificita' piu' alta di due sole classi e vincerebbe. */
   .ref-table td.ref-comp[data-label]::before { content: none; }
   .ref-table td.ref-comp[data-label] { display: block; text-align: left; }
-  /* Il campione segue il numero che qualifica, quindi resta allineato con lui. */
-  .ref-table td[data-label] .ref-campione { display: block; margin: 1px 0 0; text-align: right; }
+  /* Il campione segue il numero che qualifica: nella scheda gli sta accanto, non sotto,
+     perche' una riga tutta sua sembrerebbe un'altra voce. */
+  .ref-table td[data-label] .ref-campione { display: inline; margin: 0 0 0 6px; }
+  /* Le celle che in tabella tengono l'allineamento non hanno niente da dire in una scheda. */
+  .ref-table tfoot td:not([data-label]) { display: none; }
   .ref-table .ref-comp .ref-campione, .ref-table .ref-metro .ref-campione { text-align: left; }
   .ref-pagine { justify-content: space-between; }
 }
@@ -1281,6 +1286,10 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .ref-metro .ref-campione { margin-top: 3px; }
 /* Nella hero il pillolo vive su fondo scuro: prende i token gia' invertiti del blocco. */
 .oggi-hero-ref .ref-metro-voce { background: rgba(251,247,243,.14); border-color: rgba(251,247,243,.34); color: var(--card-ink); }
-.oggi-hero-ref-link { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
-.oggi-hero-ref-link:hover { text-decoration-thickness: 2px; }
-.oggi-hero-ref-link:focus-visible { outline: 2px solid var(--card-ink); outline-offset: 3px; border-radius: 4px; }
+.oggi-hero-ref-link { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+/* Il riquadro intero e' il bersaglio: sul telefono il minimo tattile e' 44 px e un link
+   inline ne misura 19. Il fondo si schiarisce appena al tocco, senza spostare niente. */
+a.oggi-hero-ref { text-decoration: none; transition: background-color 160ms ease; }
+a.oggi-hero-ref:hover { background: rgba(43,8,14,.88); }
+a.oggi-hero-ref:hover .oggi-hero-ref-link { text-decoration-thickness: 2px; }
+a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offset: 3px; }

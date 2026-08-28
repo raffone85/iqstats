@@ -505,59 +505,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
         ))
     : null;
 
-  return (
-    <ProductShell>
-      <div className="oggi-backdrop" aria-hidden="true" />
-      <div className="dossier">
-        <Link className="dossier-back" href="/partite">← Partite</Link>
-
-        {/* Testata con sfondo stadio */}
-        <article className="oggi-hero">
-          <div className="oggi-hero-stadium" aria-hidden="true" />
-          {detail.venueId ? (
-            <div className="oggi-hero-venue" style={{ backgroundImage: `url(/api/media/venue/${detail.venueId})` }} aria-hidden="true" />
-          ) : null}
-          <div className="oggi-hero-scrim" aria-hidden="true" />
-          <div className="oggi-hero-glow" aria-hidden="true" />
-          <div className="oggi-hero-body">
-            <p className="oggi-hero-comp">
-              <LeagueIdentity
-                leagueId={detail.leagueId}
-                name={league?.name ?? detail.roundName ?? "Gara"}
-                code={league?.countryCode ?? null}
-                size="sm"
-              />
-              <span className="oggi-hero-when">
-                {detail.roundName && league?.name ? detail.roundName.concat(" · ") : ""}
-                {formatKickoff(detail.kickoff)} · {statusLabel(detail.status)}
-              </span>
-            </p>
-            <div className="oggi-hero-teams">
-              <span className="oggi-team">
-                <Crest name={detail.homeTeam} teamId={detail.homeTeamId} className="oggi-crest" />
-                <TeamName name={detail.homeTeam} teamId={detail.homeTeamId} />
-              </span>
-              <span className="oggi-vs">{finished ? `${detail.homeScore}–${detail.awayScore}` : "contro"}</span>
-              <span className="oggi-team oggi-team-away">
-                <TeamName name={detail.awayTeam} teamId={detail.awayTeamId} />
-                <Crest name={detail.awayTeam} teamId={detail.awayTeamId} className="oggi-crest" />
-              </span>
-            </div>
-            {/* L'arbitro nel banner, con le due medie che contano e il loro campione. La
-                fonte non ha la foto dei direttori - risposta 404 su tutti gli arbitri
-                provati, mentre per gli allenatori la stessa richiesta risponde 200 - quindi
-                qui non c'e' nessun ritratto e nessun segnaposto al suo posto. */}
-            {referee === null ? null : (
-              <p className="oggi-hero-ref">
+  // Il contenuto del riquadro arbitro nel banner, montato una volta sola: lo stesso corpo
+  // vive dentro un collegamento quando la scheda esiste, e dentro un paragrafo quando no.
+  const banner = referee === null ? null : (
+    <>
                 <span className="oggi-hero-ref-who">
                   <span className="oggi-hero-ref-tag">Arbitro</span>
-                  {/* Il nome apre la sua scheda: da li' si vedono tutte le gare che ha
-                      diretto, una per una, con falli e cartellini di ciascuna. */}
-                  {detail.refereeId === null ? referee.name : (
-                    <Link className="oggi-hero-ref-link" href={`/arbitri/${detail.refereeId}`}>
-                      {referee.name}
-                    </Link>
-                  )}
+                  <span className="oggi-hero-ref-link">{referee.name}</span>
                   {arbitroGiudizio === null ? null : (
                     <b className={`ref-metro-voce is-${arbitroGiudizio.replace(" ", "-")}`}>
                       {arbitroGiudizio}
@@ -606,10 +560,64 @@ export default async function MatchPage({ params }: MatchPageProps) {
                     </span>
                   </>
                 )}
-              </p>
+    </>
+  );
+
+  return (
+    <ProductShell>
+      <div className="oggi-backdrop" aria-hidden="true" />
+      <div className="dossier">
+        <Link className="dossier-back" href="/partite">← Partite</Link>
+
+        {/* Testata con sfondo stadio */}
+        <article className="oggi-hero">
+          <div className="oggi-hero-stadium" aria-hidden="true" />
+          {detail.venueId ? (
+            <div className="oggi-hero-venue" style={{ backgroundImage: `url(/api/media/venue/${detail.venueId})` }} aria-hidden="true" />
+          ) : null}
+          <div className="oggi-hero-scrim" aria-hidden="true" />
+          <div className="oggi-hero-glow" aria-hidden="true" />
+          <div className="oggi-hero-body">
+            <p className="oggi-hero-comp">
+              <LeagueIdentity
+                leagueId={detail.leagueId}
+                name={league?.name ?? detail.roundName ?? "Gara"}
+                code={league?.countryCode ?? null}
+                size="sm"
+              />
+              <span className="oggi-hero-when">
+                {detail.roundName && league?.name ? detail.roundName.concat(" · ") : ""}
+                {formatKickoff(detail.kickoff)} · {statusLabel(detail.status)}
+              </span>
+            </p>
+            <div className="oggi-hero-teams">
+              <span className="oggi-team">
+                <Crest name={detail.homeTeam} teamId={detail.homeTeamId} className="oggi-crest" />
+                <TeamName name={detail.homeTeam} teamId={detail.homeTeamId} />
+              </span>
+              <span className="oggi-vs">{finished ? `${detail.homeScore}–${detail.awayScore}` : "contro"}</span>
+              <span className="oggi-team oggi-team-away">
+                <TeamName name={detail.awayTeam} teamId={detail.awayTeamId} />
+                <Crest name={detail.awayTeam} teamId={detail.awayTeamId} className="oggi-crest" />
+              </span>
+            </div>
+            {/* L'arbitro nel banner, con le due medie che contano e il loro campione. La
+                fonte non ha la foto dei direttori - risposta 404 su tutti gli arbitri
+                provati, mentre per gli allenatori la stessa richiesta risponde 200 - quindi
+                qui non c'e' nessun ritratto e nessun segnaposto al suo posto. */}
+            {/* Tutto il riquadro apre la scheda dell'arbitro, non il solo nome: un link
+                inline e' alto quanto il testo, cioe' 19 px, e sul telefono il minimo tattile
+                del design system e' 44. Il nome resta sottolineato per dire che si apre. */}
+            {referee === null ? null : detail.refereeId === null ? (
+              <p className="oggi-hero-ref">{banner}</p>
+            ) : (
+              <Link className="oggi-hero-ref" href={`/arbitri/${detail.refereeId}`}>
+                {banner}
+              </Link>
             )}
           </div>
         </article>
+
 
         {/* In breve: la gara detta in tre frasi, prima dei numeri */}
         {brief.length > 0 ? (

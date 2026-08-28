@@ -346,7 +346,9 @@ export function ArbitroScheda({
                       <td key={v.nome} data-label={`${v.nome}, media delle ultime`}
                         className={`ref-num${verso}`}>
                         {cifra(v.ora, 2)}
-                        {scarto === null ? null : (
+                        {/* Uno scarto sotto la soglia muta non si scrive: «+0,00» occupa una
+                            riga per dire che non e' successo niente. */}
+                        {scarto === null || Math.abs(scarto) < SCARTO_MUTO ? null : (
                           <span className="ref-scarto">
                             {scarto >= 0 ? "+" : "−"}{decimale(Math.abs(scarto), 2)}
                           </span>

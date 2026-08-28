@@ -41,6 +41,21 @@ function giorno(iso: string): string {
     : data.toLocaleDateString("it-IT", GIORNO);
 }
 
+/**
+ * La media di una colonna sulle gare elencate, con il campione che ha davvero.
+ *
+ * Serve al riscontro: chi legge «5,72 gialli a partita» piu' sopra deve poter contare le
+ * righe e ritrovarcelo. Le gare senza il dato non entrano nel conto e non diventano zeri,
+ * quindi il campione della media puo' essere piu' corto dell'elenco, e allora si dichiara.
+ */
+function mediaColonna(gare: readonly GaraDiretta[], quale: "falli" | "gialli" | "rossi") {
+  const buoni = gare.map((g) => g[quale]).filter((v): v is number => v !== null);
+  return {
+    media: buoni.length === 0 ? null : buoni.reduce((a, b) => a + b, 0) / buoni.length,
+    campione: buoni.length,
+  };
+}
+
 /** Un'assenza sta in fondo comunque si ordini: non e' uno zero, e non ne prende il posto. */
 function confronta(a: number | null, b: number | null, crescente: boolean): number {
   if (a === null && b === null) return 0;
@@ -162,6 +177,29 @@ export function ArbitroGare({ gare, dentro }: Props) {
               </tr>
             ))}
           </tbody>
+          {/* La media di tutte le gare elencate, non della sola pagina che si sta guardando:
+              altrimenti cambierebbe girando pagina, e non sarebbe una media di niente. */}
+          <tfoot>
+            <tr>
+              <th scope="row" className="ref-piede">
+                Media su {ordinate.length} {ordinate.length === 1 ? "gara" : "gare"}
+                {dentro === null ? ", tutte le competizioni" : `, ${dentro.competizione}`}
+              </th>
+              {(["falli", "gialli", "rossi"] as const).map((quale) => {
+                const m = mediaColonna(ordinate, quale);
+                return (
+                  <td key={quale} data-label={`Media ${quale}`} className="ref-num">
+                    {m.media === null ? "—" : m.media.toFixed(2).replace(".", ",")}
+                    {m.campione > 0 && m.campione < ordinate.length ? (
+                      <span className="ref-campione">su {m.campione}</span>
+                    ) : null}
+                  </td>
+                );
+              })}
+              <td aria-hidden="true" />
+              <td aria-hidden="true" />
+            </tr>
+          </tfoot>
         </table>
       </div>
 
