@@ -348,3 +348,357 @@ export async function classificaArbitri(
     return [];
   }
 }
+
+// ---------------------------------------------------------------------------
+// La scheda dell'arbitro: stagione per stagione, competizione per competizione.
+//
+// **Sempre media a partita, mai un totale.** Un arbitro che ha 2.000 falli in carriera non
+// dice niente finche' non si sa in quante gare: la scheda divide sempre, e mette il campione
+// accanto al numero invece che in una nota.
+//
+// **Anche una gara sola fa una riga.** Deciso dall'utente il 28 agosto 2026: nascondere le
+// competizioni con poche gare toglie proprio l'informazione che serve, cioe' che li' ha
+// diretto. La media si mostra con il suo campione, e si aggiusta da se' quando le gare
+// arrivano. Il campione e' scritto grande quanto la media, non in fondo.
+//
+// **Un'assenza non diventa mai uno zero.** Dove i falli non ci sono - succede: 26 coppie
+// arbitro-competizione non ne hanno nessuno, altre 73 li hanno a meta' - la riga risponde
+// `null` e la pagina scrive un trattino. Zero significa «nessun fallo fischiato», ed e' una
+// cosa diversa da «non lo sappiamo».
+//
+// **Le gare si leggono una volta sola.** Nessun arbitro ne ha piu' di 48: si prendono tutte
+// con una query indicizzata su `(referee_id, kickoff_at)` e si raggruppano qui, cosi'
+// l'aggregazione e' una funzione pura che si prova senza livello dati.
+// ---------------------------------------------------------------------------
+
+/** Una gara diretta, con quanto serve per elencarla e per raggrupparla. */
+export interface GaraDiretta {
+  readonly matchSourceId: number | null;
+  readonly quando: string;
+  readonly competizione: string;
+  readonly competitionSourceId: number | null;
+  readonly seasonId: number;
+  /** L'etichetta corta della stagione: `2026`, `26/27`. */
+  readonly stagione: string;
+  readonly stagioneCorrente: boolean;
+  readonly casa: string;
+  readonly trasferta: string;
+  readonly golCasa: number | null;
+  readonly golTrasferta: number | null;
+  readonly golCasaPrimoTempo: number | null;
+  readonly golTrasfertaPrimoTempo: number | null;
+  /** `null` quando la gara non porta il dato da entrambi i lati: mai zero al suo posto. */
+  readonly falli: number | null;
+  readonly gialli: number | null;
+  readonly rossi: number | null;
+  /** I due lati separati: servono alle quote casa/trasferta, che sono una ripartizione. */
+  readonly falliCasa: number | null;
+  readonly falliTrasferta: number | null;
+  readonly gialliCasa: number | null;
+  readonly gialliTrasferta: number | null;
+}
+
+/** Una riga della tabella stagione per competizione. Ogni valore e' gia' diviso per gara. */
+export interface RigaStagioneCompetizione {
+  readonly seasonId: number;
+  readonly stagione: string;
+  readonly stagioneCorrente: boolean;
+  readonly competizione: string;
+  readonly competitionSourceId: number | null;
+  readonly partite: number;
+  readonly falli: number | null;
+  /** Su quante di quelle partite il dato dei falli c'e' davvero. */
+  readonly partiteConFalli: number;
+  readonly gialli: number | null;
+  readonly partiteConGialli: number;
+  /** Quanti falli fischia per ogni ammonizione che estrae: alto = lascia correre. */
+  readonly falliPerAmmonizione: number | null;
+  readonly rossi: number | null;
+  readonly partiteConRossi: number;
+  /** Quota dei gialli andata alla squadra di casa, da 0 a 1. `null` se non ne ha estratti. */
+  readonly quotaGialliCasa: number | null;
+  readonly quotaFalliCasa: number | null;
+  readonly ultima: string;
+}
+
+/** Le medie di un insieme di gare, con il campione di ciascuna metrica. */
+export interface MedieDelPeriodo {
+  readonly partite: number;
+  readonly falli: number | null;
+  readonly partiteConFalli: number;
+  readonly gialli: number | null;
+  readonly partiteConGialli: number;
+  readonly rossi: number | null;
+  readonly partiteConRossi: number;
+}
+
+function media(valori: readonly (number | null)[]): { media: number | null; campione: number } {
+  const buoni = valori.filter((v): v is number => v !== null);
+  if (buoni.length === 0) return { media: null, campione: 0 };
+  return { media: buoni.reduce((a, b) => a + b, 0) / buoni.length, campione: buoni.length };
+}
+
+/** Le medie a partita di un gruppo di gare. Ogni metrica porta il campione che ha davvero. */
+export function medieDelPeriodo(gare: readonly GaraDiretta[]): MedieDelPeriodo {
+  const falli = media(gare.map((g) => g.falli));
+  const gialli = media(gare.map((g) => g.gialli));
+  const rossi = media(gare.map((g) => g.rossi));
+  return {
+    partite: gare.length,
+    falli: falli.media, partiteConFalli: falli.campione,
+    gialli: gialli.media, partiteConGialli: gialli.campione,
+    rossi: rossi.media, partiteConRossi: rossi.campione,
+  };
+}
+
+/** La quota del lato casa su un totale che e' la somma dei due lati. */
+function quotaCasa(
+  gare: readonly GaraDiretta[],
+  casa: (g: GaraDiretta) => number | null,
+  ospite: (g: GaraDiretta) => number | null,
+): number | null {
+  let sommaCasa = 0;
+  let sommaOspite = 0;
+  let viste = 0;
+  for (const g of gare) {
+    const c = casa(g);
+    const o = ospite(g);
+    if (c === null || o === null) continue;
+    sommaCasa += c;
+    sommaOspite += o;
+    viste += 1;
+  }
+  const totale = sommaCasa + sommaOspite;
+  // Nessuna gara con il dato, o nessun cartellino estratto: non c'e' niente da ripartire.
+  if (viste === 0 || totale <= 0) return null;
+  return sommaCasa / totale;
+}
+
+/**
+ * Le gare raggruppate per stagione e competizione, dalla piu' recente.
+ *
+ * Funzione pura: le prove non chiedono il livello dati. L'ordine e' quello della scheda -
+ * prima la stagione piu' recente, e dentro la stagione prima la competizione con piu' gare,
+ * perche' e' quella in cui il numero regge di piu'.
+ */
+export function perStagioneCompetizione(
+  gare: readonly GaraDiretta[],
+): readonly RigaStagioneCompetizione[] {
+  const gruppi = new Map<string, GaraDiretta[]>();
+  for (const g of gare) {
+    const chiave = `${g.seasonId}|${g.competizione}`;
+    const dentro = gruppi.get(chiave);
+    if (dentro === undefined) gruppi.set(chiave, [g]);
+    else dentro.push(g);
+  }
+
+  const righe = [...gruppi.values()].map((gruppo): RigaStagioneCompetizione => {
+    const primo = gruppo[0]!;
+    const m = medieDelPeriodo(gruppo);
+    return {
+      seasonId: primo.seasonId,
+      stagione: primo.stagione,
+      stagioneCorrente: primo.stagioneCorrente,
+      competizione: primo.competizione,
+      competitionSourceId: primo.competitionSourceId,
+      partite: gruppo.length,
+      falli: m.falli, partiteConFalli: m.partiteConFalli,
+      gialli: m.gialli, partiteConGialli: m.partiteConGialli,
+      rossi: m.rossi, partiteConRossi: m.partiteConRossi,
+      // Falli per ammonizione: dove non ammonisce mai la divisione non esiste, e la riga lo
+      // dice con un trattino invece di stampare un infinito o uno zero.
+      falliPerAmmonizione: m.falli === null || m.gialli === null || m.gialli <= 0
+        ? null : m.falli / m.gialli,
+      quotaGialliCasa: quotaCasa(gruppo, (g) => g.gialliCasa, (g) => g.gialliTrasferta),
+      quotaFalliCasa: quotaCasa(gruppo, (g) => g.falliCasa, (g) => g.falliTrasferta),
+      ultima: gruppo.reduce((piu, g) => (g.quando > piu ? g.quando : piu), primo.quando),
+    };
+  });
+
+  return righe.sort((a, b) =>
+    b.ultima.localeCompare(a.ultima) || b.partite - a.partite
+      || a.competizione.localeCompare(b.competizione));
+}
+
+/**
+ * L'etichetta corta della stagione: `2026` per le stagioni solari, `25/26` per quelle a
+ * cavallo d'anno.
+ *
+ * **Si ricava dalle date, non dal nome**, e non e' un vezzo: nel livello dati **7.892 gare
+ * arbitrate su 9.384** stanno in stagioni che si chiamano «Stagione 29 (segnaposto locale)».
+ * `starts_on` e `ends_on` invece ci sono sempre, quindi l'etichetta regge anche dove il nome
+ * non dice niente. Il nome resta l'ultimo ripiego, per il caso in cui manchino pure le date.
+ */
+export function etichettaStagione(
+  tipo: string | null,
+  inizio: string | null,
+  fine: string | null,
+  nome: string,
+): string {
+  const annoInizio = inizio?.slice(0, 4);
+  const annoFine = fine?.slice(0, 4);
+  if (tipo === "cross_year" && annoInizio !== undefined && annoFine !== undefined) {
+    return `${annoInizio.slice(2)}/${annoFine.slice(2)}`;
+  }
+  const solare = annoFine ?? annoInizio;
+  if (solare !== undefined) return solare;
+  const ultimo = nome.trim().split(/\s+/).at(-1) ?? nome;
+  return /^\d{4}$/.test(ultimo) || /^\d{2}\/\d{2}$/.test(ultimo) ? ultimo : nome;
+}
+
+interface RigaGaraDb {
+  readonly match_source_id: string | null;
+  readonly quando: string;
+  readonly competizione: string;
+  readonly competition_source_id: string | null;
+  readonly season_id: string;
+  readonly stagione: string;
+  readonly stagione_tipo: string | null;
+  readonly stagione_inizio: string | null;
+  readonly stagione_fine: string | null;
+  readonly stagione_corrente: boolean;
+  readonly casa: string;
+  readonly trasferta: string;
+  readonly gol_casa: string | null;
+  readonly gol_trasferta: string | null;
+  readonly gol_casa_pt: string | null;
+  readonly gol_trasferta_pt: string | null;
+  readonly falli: string | null;
+  readonly gialli: string | null;
+  readonly rossi: string | null;
+  readonly falli_casa: string | null;
+  readonly falli_trasferta: string | null;
+  readonly gialli_casa: string | null;
+  readonly gialli_trasferta: string | null;
+}
+
+function forse(valore: string | null): number | null {
+  return valore === null ? null : Number(valore);
+}
+
+/**
+ * Tutte le gare che un arbitro ha diretto e di cui abbiamo entrambe le squadre.
+ *
+ * Il filtro sull'arbitro sta **prima** del raggruppamento e passa dall'indice parziale
+ * `(referee_id, kickoff_at)`: si toccano le righe di un arbitro, non le ventunmila della
+ * tavola. Il tetto e' quarantotto gare, quindi il raggruppamento per stagione e competizione
+ * si fa fuori di qui.
+ *
+ * Una metrica vale solo se la portano **entrambi** i lati: con una riga sola il totale della
+ * gara sarebbe dimezzato senza che si veda. In quel caso la metrica e' `null` - non zero - e
+ * la gara resta nell'elenco, perche' averla diretta e' un fatto anche se i falli non li
+ * sappiamo.
+ */
+export async function gareDirette(sourceId: number): Promise<readonly GaraDiretta[]> {
+  const sql = connessione();
+  if (sql === null) return [];
+  try {
+    const righe = await sql<RigaGaraDb[]>`
+      with per_gara as (
+        select o.match_id,
+               case when count(*) filter (where o.fouls is not null) = 2
+                    then sum(o.fouls) end as falli,
+               case when count(*) filter (where o.yellow_cards is not null) = 2
+                    then sum(o.yellow_cards) end as gialli,
+               case when count(*) filter (where o.red_cards_direct is not null
+                                             or o.second_yellow_red is not null) = 2
+                    then sum(coalesce(o.red_cards_direct, 0)
+                             + coalesce(o.second_yellow_red, 0)) end as rossi,
+               sum(o.fouls) filter (where o.side = 'home') as falli_casa,
+               sum(o.fouls) filter (where o.side = 'away') as falli_trasferta,
+               sum(o.yellow_cards) filter (where o.side = 'home') as gialli_casa,
+               sum(o.yellow_cards) filter (where o.side = 'away') as gialli_trasferta
+        from football.team_match_observations o
+        where o.referee_id = (
+          select id from football.referees where source_id = ${sourceId}::bigint
+        )
+        group by 1
+        having count(*) = 2
+      )
+      select g.source_id::text as match_source_id, g.kickoff_at::text as quando,
+             c.name as competizione, c.source_id::text as competition_source_id,
+             s.id::text as season_id, s.name as stagione,
+             s.season_kind as stagione_tipo,
+             s.starts_on::text as stagione_inizio, s.ends_on::text as stagione_fine,
+             s.is_current as stagione_corrente,
+             casa.name as casa, ospite.name as trasferta,
+             g.home_score::text as gol_casa, g.away_score::text as gol_trasferta,
+             g.home_score_halftime::text as gol_casa_pt,
+             g.away_score_halftime::text as gol_trasferta_pt,
+             p.falli::text, p.gialli::text, p.rossi::text,
+             p.falli_casa::text, p.falli_trasferta::text,
+             p.gialli_casa::text, p.gialli_trasferta::text
+      from per_gara p
+      join football.matches g on g.id = p.match_id
+      join football.competitions c on c.id = g.competition_id
+      join football.seasons s on s.id = g.season_id
+      join football.teams casa on casa.id = g.home_team_id
+      join football.teams ospite on ospite.id = g.away_team_id
+      order by g.kickoff_at desc
+    `;
+    return righe.map((r) => ({
+      matchSourceId: r.match_source_id === null ? null : Number(r.match_source_id),
+      quando: r.quando,
+      competizione: r.competizione,
+      competitionSourceId: r.competition_source_id === null
+        ? null : Number(r.competition_source_id),
+      seasonId: Number(r.season_id),
+      stagione: etichettaStagione(
+        r.stagione_tipo, r.stagione_inizio, r.stagione_fine, r.stagione),
+      stagioneCorrente: r.stagione_corrente,
+      casa: r.casa,
+      trasferta: r.trasferta,
+      golCasa: forse(r.gol_casa),
+      golTrasferta: forse(r.gol_trasferta),
+      golCasaPrimoTempo: forse(r.gol_casa_pt),
+      golTrasfertaPrimoTempo: forse(r.gol_trasferta_pt),
+      falli: forse(r.falli),
+      gialli: forse(r.gialli),
+      rossi: forse(r.rossi),
+      falliCasa: forse(r.falli_casa),
+      falliTrasferta: forse(r.falli_trasferta),
+      gialliCasa: forse(r.gialli_casa),
+      gialliTrasferta: forse(r.gialli_trasferta),
+    }));
+  } catch {
+    // Una scheda che non si puo' leggere non diventa una scheda inventata.
+    return [];
+  }
+}
+
+/**
+ * Da dove vengono le due medie che il banner della gara mostra.
+ *
+ * Deciso dall'utente il 28 agosto 2026, con i numeri davanti: in stagione corrente ci sono
+ * 1.490 gare arbitrate e 425 direttori, ma la **mediana e' una gara sola** e appena cento
+ * arrivano a cinque. Mostrare «la stagione» a tutti significherebbe pubblicare una media
+ * calcolata su una partita nella maggioranza dei casi. Quindi: la stagione quando regge, il
+ * nostro storico quando no, e **il banner dice sempre quale delle due sta leggendo** - la
+ * stessa disciplina gia' adottata per la provenienza dell'allenatore.
+ */
+export type ProvenienzaMedie = "stagione" | "storico";
+
+export interface MedieBanner extends MedieDelPeriodo {
+  readonly provenienza: ProvenienzaMedie;
+  /** Quante gare ha in questa stagione, anche quando si ripiega sullo storico. */
+  readonly partiteInStagione: number;
+  /** L'etichetta della stagione corrente, quando ce n'e' una. */
+  readonly stagione: string | null;
+}
+
+/** Sotto questo campione la stagione corrente non regge una media, e si ripiega. */
+export const GARE_MINIME_BANNER = 5;
+
+/** Le medie del banner, con la loro provenienza. `null` quando non abbiamo nessuna gara. */
+export function medieDaMostrare(gare: readonly GaraDiretta[]): MedieBanner | null {
+  if (gare.length === 0) return null;
+  const inStagione = gare.filter((g) => g.stagioneCorrente);
+  const stagione = inStagione[0]?.stagione ?? null;
+  const regge = inStagione.length >= GARE_MINIME_BANNER;
+  return {
+    ...medieDelPeriodo(regge ? inStagione : gare),
+    provenienza: regge ? "stagione" : "storico",
+    partiteInStagione: inStagione.length,
+    stagione,
+  };
+}

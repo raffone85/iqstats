@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import Link from "next/link";
 
 import type { PosizioneFraColleghi, ProfiloArbitro } from "@/server/iqstats/referees";
@@ -88,9 +90,18 @@ type Props = {
    * modello: allora la sezione **non** puo' dire che l'arbitro e' dentro il numero.
    */
   readonly entratoNei: readonly string[];
+  /**
+   * La scheda per stagione e competizione, con le ultime gare e l'elenco della competizione
+   * di questa gara. Sta **dentro** questa sezione e non in un pannello a parte: e' lo
+   * stesso arbitro, e due riquadri di fila sullo stesso soggetto si leggono come due
+   * argomenti diversi.
+   */
+  readonly scheda?: ReactNode;
 };
 
-export function MatchArbitroSection({ profilo, homeTeam, awayTeam, entratoNei }: Props) {
+export function MatchArbitroSection({
+  profilo, homeTeam, awayTeam, entratoNei, scheda,
+}: Props) {
   const sbilancioFalli = profilo.falliControCasa - profilo.falliControTrasferta;
   const sbilancioGialli = profilo.gialliControCasa - profilo.gialliControTrasferta;
 
@@ -184,6 +195,8 @@ export function MatchArbitroSection({ profilo, homeTeam, awayTeam, entratoNei }:
           </ul>
         </li>
       </ul>
+
+      {scheda ?? null}
 
       <p className="dossier-src">
         Tutto su <b>{profilo.gare} gare</b> dirette in {profilo.competizione}, di cui abbiamo

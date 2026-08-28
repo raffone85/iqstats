@@ -377,10 +377,14 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi { display: block; color: var(--card-ink); }
 .sr-only-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
-.oggi-eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+/* L'eyebrow va a capo invece di spingere la pagina fuori: misurato il 28 agosto 2026
+   sulla scheda arbitro, dove «48 gare dirette · fino al 16 ago 2026» portava lo
+   scrollWidth a 434 px dentro un viewport da 375. Le altre pagine hanno testi corti e
+   restano su una riga. */
+.oggi-eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin: 0 0 18px; }
 .oggi-kick { font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--card-brand); white-space: nowrap; }
 .oggi-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--card-stroke), transparent); }
-.oggi-src { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); white-space: nowrap; }
+.oggi-src { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 
 /* Hero gara del giorno */
 /* La hero è l'unico blocco a forte contrasto del sistema: bordeaux pieno sotto la
@@ -421,6 +425,15 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi-hero-comp .league-id-name { font-style: normal; font-weight: 600; }
 .oggi-hero-comp .league-id-code { color: var(--card-brand-strong); }
 .oggi-hero-when { font-size: 13px; color: var(--card-ink-2); }
+/* L'arbitro nel banner: nome, e le due medie che il lettore cerca prima di aprire il
+   dossier. La provenienza sta sotto, sempre, perche' «5,72 gialli» detto senza dire su
+   quante gare e' la stessa cosa che non dirlo. Nessuna foto: la fonte non ce l'ha. */
+.oggi-hero-ref { color: var(--card-ink-2); margin: 14px 0 0; padding: 11px 13px; border-radius: var(--r-inset); background: rgba(43,8,14,.78); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.oggi-hero-ref-who { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; font-family: var(--font-display); font-size: 15px; color: var(--card-ink); overflow-wrap: anywhere; }
+.oggi-hero-ref-tag { flex-shrink: 0; font: 700 10px/1 var(--font-inter, sans-serif); letter-spacing: .14em; text-transform: uppercase; color: var(--card-ink-2); }
+.oggi-hero-ref-num { font-family: var(--font-mono, monospace); font-size: 13.5px; color: var(--card-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.oggi-hero-ref-num i { font-style: normal; color: var(--card-ink-2); }
+.oggi-hero-ref-src { flex-basis: 100%; font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-ink-2); }
 .oggi-hero-teams { margin: auto 0 0; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .oggi-team { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .oggi-team-away { flex-direction: row; }
@@ -1171,4 +1184,86 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
   .giornata-quando { font-size: 11px; }
   .giornata-quando i { font-size: 14px; }
   .giornata-tag .oggi-chip { font-size: 10px; padding: 2px 7px; }
+}
+
+/* ============================================================
+   LA SCHEDA DELL'ARBITRO — stagione per stagione, competizione per competizione
+   ============================================================
+   Undici colonne non stanno su un telefono, e trascinarle di lato significa leggerne meta'.
+   Deciso con l'utente il 28 agosto 2026: sotto i 768 px ogni riga diventa una scheda con le
+   etichette accanto ai numeri, da 768 px in su torna la tabella intera. Il DOM e' uno solo -
+   una `<table>` vera, con le sue intestazioni - quindi chi usa uno screen reader trova le
+   colonne anche dove non si vedono, e non c'e' un secondo markup da tenere allineato.
+
+   Le cifre sono mono tabellari perche' vanno confrontate in colonna; verde e mattone
+   compaiono solo nel piede del confronto, dove dicono un verso: sopra o sotto la sua media.
+   ============================================================ */
+.ref-carriera { margin: 0 0 14px; font-size: 13.5px; line-height: 1.55; color: var(--card-ink-2); }
+.ref-carriera b { color: var(--card-ink); }
+.ref-carriera-num { font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums; color: var(--card-ink); }
+
+.ref-sub { margin: 22px 0 10px; font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
+.ref-sub .ref-campione { display: block; margin-top: 3px; }
+
+/* Lo scorrimento e' dentro il riquadro, mai sulla pagina: a schermo largo una
+   competizione dal nome lungo puo' allargare la tabella oltre il suo contenitore, e
+   allora scorre lei invece di spingere fuori il corpo della pagina. */
+.ref-table-wrap { border: 1px solid var(--card-stroke); border-radius: var(--r-control); overflow-x: auto; background: var(--card-panel); }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ref-table caption { text-align: left; }
+.ref-table thead th { padding: 9px 10px; text-align: right; vertical-align: bottom; background: var(--card-panel-2); border-bottom: 1px solid var(--card-stroke); font: 700 10.5px/1.25 var(--font-inter, sans-serif); letter-spacing: .08em; text-transform: uppercase; color: var(--card-ink-3); }
+.ref-table thead th:first-child, .ref-table thead th:nth-child(2) { text-align: left; }
+.ref-table tbody tr + tr, .ref-table tfoot tr { border-top: 1px solid var(--card-stroke); }
+.ref-table tbody th, .ref-table tbody td, .ref-table tfoot th, .ref-table tfoot td { padding: 9px 10px; vertical-align: top; }
+.ref-table tfoot { background: var(--card-panel-2); }
+.ref-stagione { text-align: left; font-family: var(--font-mono, monospace); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ref-data { text-align: left; font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 600; color: var(--card-brand-strong); white-space: nowrap; }
+.ref-ora { display: block; margin-top: 2px; font: 600 10px/1 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }
+.ref-comp { min-width: 0; font-family: var(--font-display); font-size: 13.5px; color: var(--card-ink); overflow-wrap: anywhere; }
+.ref-num { text-align: right; font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ref-partite { color: var(--card-ink-2); }
+.ref-quota { color: var(--card-ink-2); }
+.ref-piede { text-align: left; font-size: 12px; font-weight: 600; color: var(--card-ink-2); line-height: 1.4; }
+/* Il campione non e' una nota a pie' di pagina: sta sotto il numero che qualifica. */
+.ref-campione { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 10.5px; font-weight: 400; color: var(--card-ink-3); white-space: normal; }
+.ref-scarto { display: block; margin-top: 2px; font-size: 11px; font-variant-numeric: tabular-nums; }
+.ref-num.is-sopra .ref-scarto { color: var(--card-up); }
+.ref-num.is-sotto .ref-scarto { color: var(--card-down); }
+
+/* Ordinare e' un controllo, quindi si tocca: l'area utile copre tutta l'intestazione. */
+.ref-ordina { display: inline-flex; align-items: center; gap: 5px; width: 100%; justify-content: flex-end; min-height: 26px; margin: -6px -4px; padding: 6px 4px; border: 0; background: none; cursor: pointer; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; }
+.ref-table thead th:first-child .ref-ordina { justify-content: flex-start; }
+.ref-ordina:hover { color: var(--card-brand); }
+.ref-ordina:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; border-radius: var(--r-inset); }
+.ref-freccia { font-size: 11px; }
+
+.ref-pagine { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 10px; }
+.ref-pagine-stato { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
+.ref-pagina-btn { display: inline-flex; align-items: center; justify-content: center; min-width: var(--h-control); min-height: var(--h-control); border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); color: var(--card-ink); font-size: 16px; cursor: pointer; }
+.ref-pagina-btn:hover:not(:disabled) { border-color: var(--card-brand); color: var(--card-brand); }
+.ref-pagina-btn:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.ref-pagina-btn:disabled { color: var(--card-ink-3); cursor: not-allowed; opacity: .55; }
+
+/* Le undici colonne intere misurano 806 px: sotto i 1000 px la tabella non ci sta, e
+   invece di trascinarla di lato ogni riga diventa una scheda. Misurato a 375, 768 e 1024. */
+@media (max-width: 999px) {
+  /* Le intestazioni restano nel DOM per chi legge con uno screen reader: sono spostate
+     fuori campo, non tolte, altrimenti le colonne perderebbero il loro nome. */
+  .ref-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  .ref-table-wrap { border: 0; border-radius: 0; background: none; overflow: visible; }
+  .ref-table, .ref-table tbody, .ref-table tfoot, .ref-table tr, .ref-table th, .ref-table td { display: block; }
+  .ref-table tr { padding: 12px 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); }
+  .ref-table tbody tr + tr, .ref-table tfoot tr { margin-top: 10px; border-top: 1px solid var(--card-stroke); }
+  .ref-table tfoot tr { background: var(--card-panel); }
+  .ref-table tbody th[scope="row"], .ref-table tfoot th { padding: 0 0 2px; }
+  .ref-table .ref-comp { padding: 0 0 8px; font-size: 15px; border-bottom: 1px solid var(--card-stroke); margin-bottom: 6px; }
+  .ref-table td[data-label] { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 12px; padding: 5px 0; text-align: right; }
+  .ref-table td[data-label]::before { content: attr(data-label); text-align: left; font-family: var(--font-inter, sans-serif); font-size: 12.5px; font-variant-numeric: normal; color: var(--card-ink-3); overflow-wrap: anywhere; }
+  /* La competizione fa da titolo della scheda: la sua etichetta sarebbe una ripetizione.
+     Il selettore porta anche l'attributo perche' quello generale, `td[data-label]::before`,
+     ha una specificita' piu' alta di due sole classi e vincerebbe. */
+  .ref-table td.ref-comp[data-label]::before { content: none; }
+  .ref-table td.ref-comp[data-label] { display: block; text-align: left; }
+  .ref-table .ref-campione { display: inline-block; margin: 2px 0 0; }
+  .ref-pagine { justify-content: space-between; }
 }

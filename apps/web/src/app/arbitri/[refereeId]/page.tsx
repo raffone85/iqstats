@@ -2,8 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { ProductShell } from "@/components/product-shell";
-import { profiloArbitro, type PosizioneFraColleghi } from "@/server/iqstats/referees";
+import { getReferee } from "@/server/iqstats/match-context";
+import {
+  gareDirette,
+  medieDelPeriodo,
+  perStagioneCompetizione,
+  profiloArbitro,
+  type PosizioneFraColleghi,
+} from "@/server/iqstats/referees";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +73,16 @@ export default async function ArbitroPage({ params }: Props) {
 
   const p = await profiloArbitro(identificativo);
   if (p === null) notFound();
+
+  // Le gare si leggono una volta sola e servono a tre blocchi: la tabella per stagione e
+  // competizione, le ultime cinque e l'elenco della competizione principale. La carriera
+  // arriva dalla fonte, che e' l'unica a saperla, e resta dichiarata come sua.
+  const [gare, carriera] = await Promise.all([
+    gareDirette(identificativo),
+    getReferee(identificativo),
+  ]);
+  const righe = perStagioneCompetizione(gare);
+  const principale = gare.find((g) => g.competizione === p.competizione) ?? null;
 
   const sbilancio = p.falliControCasa - p.falliControTrasferta;
   const sbilancioGialli = p.gialliControCasa - p.gialliControTrasferta;
@@ -177,38 +195,32 @@ export default async function ArbitroPage({ params }: Props) {
           </li>
         </ul>
 
-        {p.storico.length === 0 ? null : (
-          <>
-            <div className="oggi-eyebrow">
-              <span className="oggi-kick">Le gare</span>
-              <span className="oggi-line" aria-hidden="true" />
-              <span className="oggi-src">
-                {p.storico.length === p.gare
-                  ? `tutte e ${p.gare}`
-                  : `le ultime ${p.storico.length} di ${p.gare}`}
-              </span>
-            </div>
-            <ol className="partite-rows">
-              {p.storico.map((g) => (
-                <li key={`${g.quando}-${g.casa}`}>
-                  <div className="partite-row">
-                    <span className="partite-time">{giorno(g.quando)}</span>
-                    <span className="partite-teams">
-                      {g.casa} contro {g.trasferta}
-                    </span>
-                    <span className="partite-read">
-                      <b>{g.falli}</b>
-                      <i>
-                        falli · {g.gialli} {g.gialli === 1 ? "giallo" : "gialli"}
-                        {g.rossi > 0 ? ` · ${g.rossi} ${g.rossi === 1 ? "rosso" : "rossi"}` : ""}
-                      </i>
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </>
-        )}
+        {/* La scheda vera e propria: stagione per stagione, competizione per competizione,
+            sempre a partita. Sostituisce l'elenco delle ultime venti gare, che diceva molto
+            meno con lo stesso spazio. */}
+        <div className="oggi-eyebrow">
+          <span className="oggi-kick">Come fischia</span>
+          <span className="oggi-line" aria-hidden="true" />
+          <span className="oggi-src">stagione per stagione</span>
+        </div>
+
+        <ArbitroScheda
+          nome={p.nome}
+          carriera={carriera === null ? null : {
+            gare: carriera.careerGames,
+            gialli: carriera.careerYellowCards,
+            rossi: carriera.careerRedCards,
+          }}
+          righe={righe}
+          gareDirette={gare}
+          medieLunghe={medieDelPeriodo(gare)}
+          quiEOra={principale === null ? null : {
+            competizione: principale.competizione,
+            stagione: principale.stagione,
+            seasonId: principale.seasonId,
+          }}
+          daQuando={gare.at(-1)?.quando ?? null}
+        />
 
         <p className="dossier-src">
           Il metro è la media dei direttori della stessa competizione con almeno cinque gare,
