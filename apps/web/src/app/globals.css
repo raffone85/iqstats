@@ -1375,16 +1375,15 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    famiglia, dentro la deroga del dossier: stretta, tutte dello stesso rango. */
 .contesto-titolo { margin: 0; font-family: var(--font-display); font-size: 20px; line-height: 1.25; color: var(--card-ink); }
 .contesto-favorito { margin: 5px 0 0; font-size: 13px; color: var(--card-ink-2); }
-.contesto-tessere { list-style: none; margin: 13px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 9px; }
-.contesto-tessera { min-width: 0; overflow: hidden; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel); }
-.contesto-fam { display: block; padding: 5px 9px; background: var(--famiglia, var(--card-brand)); color: var(--card-on-brand); font-family: var(--font-inter, sans-serif); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
-.contesto-atteso { display: block; padding: 7px 9px 0; font-family: var(--font-mono, monospace); font-size: 21px; font-weight: 600; color: var(--card-ink); font-variant-numeric: tabular-nums; line-height: 1; }
-.contesto-metro { display: block; padding: 3px 9px 0; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+/* Tre righe, non tre card: la card ripeteva la percentuale che sta gia' nel pannello
+   sotto. Qui resta l'unica cosa che il quadro aggiunge - quanti se ne attendono e quanto
+   e' il normale di questo torneo - e il colore vive solo sullo scarto dal normale. */
+.contesto-righe { list-style: none; margin: 13px 0 0; padding: 0; display: grid; gap: 0; }
+.contesto-riga { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--card-stroke); }
+.contesto-fam { min-width: 0; font-family: var(--font-inter, sans-serif); font-size: 13px; font-weight: 600; color: var(--famiglia, var(--card-ink)); overflow-wrap: anywhere; }
+.contesto-fam em { font-style: normal; font-weight: 400; color: var(--card-ink-3); }
+.contesto-atteso { grid-column: 2; font-family: var(--font-mono, monospace); font-size: 17px; font-weight: 600; color: var(--card-ink); font-variant-numeric: tabular-nums; }
+.contesto-metro { grid-column: 1 / -1; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
 .contesto-metro.is-sopra { color: var(--card-up); }
 .contesto-metro.is-sotto { color: var(--card-down); }
-.contesto-lettura { display: block; padding: 5px 9px 8px; font-size: 11.5px; color: var(--card-ink-2); overflow-wrap: anywhere; }
-.contesto-lettura b { font-family: var(--font-mono, monospace); color: var(--card-ink); font-variant-numeric: tabular-nums; }
-/* La base accanto alla percentuale: senza, «70%» non si sa se e' tanto o poco. */
-.contesto-base { display: block; margin-top: 1px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
-/* La riserva e' prosa, non provenienza: in monospazio trenta parole pesano il doppio. */
 .contesto-riserva { margin: 11px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }

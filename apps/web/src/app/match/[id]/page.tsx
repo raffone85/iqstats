@@ -554,6 +554,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
     stile: cappello,
     favorito: verdictFav === null ? null : { nome: verdictFav.name, probabilita: verdictFav.prob },
     gol: overallReading?.goals ?? null,
+    nomeCasa: detail.homeTeam,
+    nomeFuori: detail.awayTeam,
     avvertenze,
   });
 

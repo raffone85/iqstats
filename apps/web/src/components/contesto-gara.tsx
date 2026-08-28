@@ -26,28 +26,21 @@ export function ContestoGara({ contesto }: { readonly contesto: Contesto | null 
         <p className="contesto-favorito">{contesto.favorito}</p>
       )}
       {contesto.tessere.length === 0 ? null : (
-        <ul className="contesto-tessere">
+        <ul className="contesto-righe">
           {contesto.tessere.map((t) => (
             <li
-              className="contesto-tessera"
+              className="contesto-riga"
               key={t.bersaglio}
               style={{ "--famiglia": FAMIGLIE[t.bersaglio]?.tinta } as React.CSSProperties}
             >
-              <span className="contesto-fam">{FAMIGLIE[t.bersaglio]?.nome ?? t.nome}</span>
+              <span className="contesto-fam">
+                {FAMIGLIE[t.bersaglio]?.nome ?? t.nome}
+                {t.chi === null ? null : <em> · {t.chi}</em>}
+              </span>
               <span className="contesto-atteso">{t.atteso}</span>
               <span className={`contesto-metro${t.verso === 1 ? " is-sopra" : t.verso === -1 ? " is-sotto" : ""}`}>
                 {t.metro === null ? "attesi" : `attesi · lega ${t.metro}`}
               </span>
-              {t.lettura === null ? null : (
-                <span className="contesto-lettura">
-                  {t.lettura} <b>{t.probabilita}%</b>
-                  {t.base === null ? null : (
-                    // Lo spazio iniziale non e' visibile - il blocco lo collassa - ma
-                    // resta nel testo letto ad alta voce, che altrimenti dice «68%in lega».
-                    <span className="contesto-base">{` in lega ${t.base}%`}</span>
-                  )}
-                </span>
-              )}
             </li>
           ))}
         </ul>

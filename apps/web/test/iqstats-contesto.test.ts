@@ -55,7 +55,10 @@ function lato(l: "home" | "away", voci: VoceDiLato[]): MedieDiLato {
   return { lato: l, gare: 12, squadre: 18, voci, assenti: [] };
 }
 
-const NIENTE = { stile: null as Cappello | null, favorito: null, gol: null, avvertenze: [] };
+const NIENTE = {
+  stile: null as Cappello | null, favorito: null, gol: null, avvertenze: [],
+  nomeCasa: "Casa", nomeFuori: "Fuori",
+};
 
 test("le famiglie e il loro ordine vengono da lettureForti, una per famiglia", () => {
   const c = contestoDiGara({
@@ -83,8 +86,10 @@ test("le famiglie e il loro ordine vengono da lettureForti, una per famiglia", (
     ["corner_kicks", "yellow_cards", "total_shots"],
     "tre famiglie, nell'ordine di lettureForti, e i falli restano fuori",
   );
-  assert.equal(c.tessere[0]?.lettura, "over 7,5", "la linea piu' forte, non l'ultima vista");
-  assert.equal(c.tessere[0]?.probabilita, 71);
+  // La percentuale della linea non sta nel quadro: la porta il pannello sotto, e qui
+  // sarebbe la stessa riga scritta due volte. Il quadro aggiunge la quantita' col metro.
+  assert.equal(c.tessere[0]?.atteso, "9,5");
+  assert.equal(c.tessere[0]?.chi, null, "una linea sul totale non e' di nessuna delle due");
 });
 
 test("il metro di un atteso e' la somma delle due medie di lega dei due lati", () => {
@@ -145,4 +150,37 @@ test("chi e' avanti e il verso sui gol stanno su una riga sola", () => {
 
 test("senza proiezione e senza stile non si inventa un quadro", () => {
   assert.equal(contestoDiGara({ ...NIENTE, bersagli: [], forti: null, casa: null, fuori: null }), null);
+});
+
+test("l'atteso e il suo metro vengono dallo stesso lato della linea", () => {
+  // Difetto visto in cattura: la tessera dei tiri mostrava 25,1 - il totale della gara - e
+  // sotto «under 13,5», che e' la soglia del solo Remo. Due numeri di scala diversa.
+  const b = {
+    target: "total_shots",
+    casa: { stato: "prevista", valoreAtteso: 12.8 },
+    trasferta: { stato: "prevista", valoreAtteso: 12.3 },
+    totale: { valoreAtteso: 25.1, intervallo: null, linee: null, affidabilita: null, perche: "" },
+  } as unknown as ProiezioneDiGara;
+
+  const perSquadra = contestoDiGara({
+    ...NIENTE,
+    bersagli: [b],
+    forti: forti([{ ...lettura("total_shots", 0.3, 13.5), lato: "casa" }]),
+    casa: lato("home", [voce("tiri", 13.9, 2.0)]),
+    fuori: lato("away", [voce("tiri", 11.2, 2.0)]),
+  });
+  assert.equal(perSquadra?.tessere[0]?.atteso, "12,8", "l'atteso della squadra, non della gara");
+  assert.equal(perSquadra?.tessere[0]?.metro, "13,9", "e il metro del suo lato, non la somma");
+  assert.equal(perSquadra?.tessere[0]?.chi, "Casa", "e si dice di chi e'");
+
+  const perGara = contestoDiGara({
+    ...NIENTE,
+    bersagli: [b],
+    forti: forti([lettura("total_shots", 0.3, 25.5)]),
+    casa: lato("home", [voce("tiri", 13.9, 2.0)]),
+    fuori: lato("away", [voce("tiri", 11.2, 2.0)]),
+  });
+  assert.equal(perGara?.tessere[0]?.atteso, "25,1");
+  assert.equal(perGara?.tessere[0]?.metro, "25,1", "la somma dei due lati");
+  assert.equal(perGara?.tessere[0]?.chi, null);
 });
