@@ -28,6 +28,22 @@ import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
+import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
+
+/**
+ * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
+ *
+ * Sono quattro e non sei: «Come si affrontano» e «Analisi finale» entrano quando avranno il
+ * loro contenuto, perche' una sezione compare solo con il suo contratto dati. Questi quattro
+ * ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza - quindi
+ * l'indice non promette mai un capitolo che non si trova.
+ */
+const CAPITOLI = [
+  { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
+  { id: "cap-gol", nome: "Gol" },
+  { id: "cap-gioco", nome: "Gioco" },
+  { id: "cap-contesto", nome: "Contesto" },
+] as const;
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
   getFinishedMatchStats,
@@ -619,6 +635,23 @@ export default async function MatchPage({ params }: MatchPageProps) {
         </article>
 
 
+        {/* **I capitoli, e perche' ci sono.** Misurato a 375 px su una gara reale, questa
+            pagina e' alta 31.462 px: circa trentanove schermate, ventuno blocchi in fila e
+            nessun titolo che separi un argomento dall'altro. La barra resta in alto e dice
+            sempre dove si e' arrivati; le intestazioni spezzano lo scorrimento.
+
+            **Nessun contenuto e' stato spostato.** I blocchi sono gli stessi, nello stesso
+            ordine: qui si aggiungono solo i titoli e l'indice che li segue. I due capitoli
+            mancanti - «Come si affrontano» e «Analisi finale» - compariranno quando avranno
+            il loro contratto dati, non prima. */}
+        <DossierCapitoli capitoli={CAPITOLI} />
+
+        <DossierCapitolo
+          id="cap-colpo-occhio"
+          nome="Il colpo d'occhio"
+          descrizione="Chi e' favorito, e quali letture reggono davvero."
+        />
+
         {/* In breve: la gara detta in tre frasi, prima dei numeri */}
         {brief.length > 0 ? (
           <section className="dossier-panel dossier-brief" aria-labelledby="brief-title">
@@ -752,6 +785,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         )}
 
+        <DossierCapitolo
+          id="cap-gol"
+          nome="I gol"
+          descrizione="Quanti se ne attendono, chi li segna e se segnano entrambe."
+        />
+
         {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
         {proiezioni?.gol ? (
           <MatchGolSection
@@ -777,6 +816,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
             </p>
           </section>
         )}
+
+        <DossierCapitolo
+          id="cap-gioco"
+          nome="Il gioco"
+          descrizione="Tiri, falli, corner, cartellini: una card per famiglia, con la sua linea."
+        />
 
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
         {proiezioni === null || proiezioni.bersagli.length === 0 ? (
@@ -812,6 +857,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         )}
+
+        <DossierCapitolo
+          id="cap-contesto"
+          nome="Il contesto"
+          descrizione="Classifica, forma, arbitro, formazioni e precedenti."
+        />
 
         {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
         <MatchStandingsSection

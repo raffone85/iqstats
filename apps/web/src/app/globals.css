@@ -495,6 +495,36 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .dossier-back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 6px; color: var(--card-ink-2); font-family: var(--font-display); font-size: 14px; font-weight: 600; transition: color 180ms ease; }
 .dossier-back:hover { color: var(--card-brand-strong); }
 .dossier-panel { margin-top: 18px; border-radius: var(--r-panel); padding: var(--pad-panel); background: var(--card-panel-2); border: 1px solid var(--card-stroke); }
+/* I capitoli del dossier. Nascono da una misura: a 375 px la pagina e' alta 31.462 px,
+   ventuno blocchi in fila senza un titolo che separi un argomento dall'altro. La barra sta
+   in alto e dice sempre dove sei; le intestazioni spezzano lo scorrimento in sei tratti. */
+/* **Niente margine negativo per allargare la barra oltre il contenitore.** La prima
+   stesura la estendeva di `--pad-panel` per lato, ma `.dossier` ha padding zero: a 375 px
+   la barra usciva da -6 a 381 e portava `scrollWidth` a 381 su un viewport da 375. Sta
+   dentro il suo contenitore, e il fondo della pagina copre gia' i lati. */
+.dossier-capitoli { position: sticky; top: 0; z-index: 20;
+  background: var(--card-ground); border-bottom: 1px solid var(--card-stroke);
+  overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.dossier-capitoli::-webkit-scrollbar { display: none; }
+.dossier-capitoli ul { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+/* Il minimo tattile del design system e' 44 px, e vale anche per una voce d'indice. */
+.dossier-capitoli a { display: flex; align-items: center; min-height: 44px; padding: 0 12px;
+  white-space: nowrap; text-decoration: none; border-bottom: 2px solid transparent;
+  font: 600 13px/1 var(--font-inter, sans-serif); color: var(--card-ink-3); }
+.dossier-capitoli a:hover { color: var(--card-ink-2); }
+/* Il capitolo corrente porta il bordeaux del prodotto, che qui non dichiara un verso ma
+   un'identita': quale dei sei si sta leggendo. Il testo cambia peso oltre al colore, cosi'
+   l'informazione non vive solo nel colore. */
+.dossier-capitoli a.is-corrente { color: var(--card-brand-strong); border-bottom-color: var(--card-brand); font-weight: 700; }
+.dossier-capitoli a:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -4px; border-radius: var(--r-inset); }
+
+.dossier-capitolo { margin: 34px 0 0; padding-top: 4px; }
+/* L'ancora deve fermarsi sotto la barra, non dietro: senza questo il titolo del capitolo
+   finisce coperto da chi lo indica. */
+.dossier-capitolo h2 { scroll-margin-top: 56px; margin: 0; font-family: var(--font-display);
+  font-size: clamp(21px, 3.4vw, 27px); line-height: 1.2; color: var(--card-ink); }
+.dossier-capitolo p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-3); }
+
 .dossier-kick { margin: 0 0 12px; font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .15em; text-transform: uppercase; color: var(--card-brand); }
 .dossier-verdict-lead { margin: 0 0 16px; font-family: var(--font-display); font-size: clamp(17px, 2.4vw, 22px); color: var(--card-ink); line-height: 1.4; }
 .dossier-verdict-lead b { color: var(--card-brand-strong); }
