@@ -29,6 +29,9 @@ import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
+import { ComeSiAffrontano } from "@/components/come-si-affrontano";
+import { comeSiAffrontano } from "@/server/iqstats/affronto";
+import { medieDiLato } from "@/server/iqstats/lati";
 
 /**
  * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
@@ -38,12 +41,15 @@ import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli"
  * ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza - quindi
  * l'indice non promette mai un capitolo che non si trova.
  */
-const CAPITOLI = [
-  { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
-  { id: "cap-gol", nome: "Gol" },
-  { id: "cap-gioco", nome: "Gioco" },
-  { id: "cap-contesto", nome: "Contesto" },
-] as const;
+function capitoliDi(conAffronto: boolean): readonly { id: string; nome: string }[] {
+  return [
+    { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
+    ...(conAffronto ? [{ id: "cap-affronto", nome: "Come si affrontano" }] : []),
+    { id: "cap-gol", nome: "Gol" },
+    { id: "cap-gioco", nome: "Gioco" },
+    { id: "cap-contesto", nome: "Contesto" },
+  ];
+}
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
   getFinishedMatchStats,
@@ -493,6 +499,19 @@ export default async function MatchPage({ params }: MatchPageProps) {
     : giudizioSulMetro(
       arbitroBanner.gialli, arbitroMetro?.gialli ?? null, arbitroMetro?.dispersioneGialli ?? null,
     );
+  // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
+  // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
+  // squadre direbbe un'altra cosa, e mediarli direbbe il falso: i livelli dei due lati sono
+  // diversi. Senza uno dei tre identificativi non c'e' torneo da cui prendere il metro.
+  const [latoCasa, latoFuori] = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
+    ? [null, null]
+    : await Promise.all([
+      medieDiLato(detail.homeTeamId, detail.leagueId, detail.seasonId, "home"),
+      medieDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
+    ]);
+  const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
+
   const weatherLabel = weatherText(detail.weather);
   // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
   // è vecchia la previsione.
@@ -644,7 +663,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             ordine: qui si aggiungono solo i titoli e l'indice che li segue. I due capitoli
             mancanti - «Come si affrontano» e «Analisi finale» - compariranno quando avranno
             il loro contratto dati, non prima. */}
-        <DossierCapitoli capitoli={CAPITOLI} />
+        <DossierCapitoli capitoli={capitoliDi(letture.length > 0)} />
 
         <DossierCapitolo
           id="cap-colpo-occhio"
@@ -784,6 +803,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         )}
+
+        {letture.length > 0 ? (
+          <>
+            <DossierCapitolo
+              id="cap-affronto"
+              nome="Come si affrontano"
+              descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
+            />
+            <ComeSiAffrontano letture={letture} />
+          </>
+        ) : null}
 
         <DossierCapitolo
           id="cap-gol"
