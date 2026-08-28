@@ -71,7 +71,7 @@ const METRICHE = [
   // in media 1,23, e supera il punto in **535 celle su 1.148**.
   { chiave: "quota_area", colonna: "shot_map_share_in_box", peso: "shot_map_total", nome: "Tiri dall'area" },
   { chiave: "distanza_tiro", colonna: "shot_map_avg_distance", peso: "shot_map_total", nome: "Distanza del tiro" },
-  { chiave: "qualita_tiro", colonna: "shot_map_xg_per_shot", peso: "shot_map_total", nome: "Qualita del tiro" },
+  { chiave: "qualita_tiro", colonna: "shot_map_xg_per_shot", peso: "shot_map_total", nome: "Qualità del tiro" },
   { chiave: "quota_murati", colonna: "shot_map_share_blocked", peso: "shot_map_total", nome: "Tiri murati" },
 ] as const;
 

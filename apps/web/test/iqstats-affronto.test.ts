@@ -7,7 +7,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { comeSiAffrontano, scrivi } from "../src/server/iqstats/affronto.ts";
+import { cappelloDi, comeSiAffrontano, scrivi } from "../src/server/iqstats/affronto.ts";
 import type { ConMetro, MedieDiLato, VoceDiLato } from "../src/server/iqstats/lati.ts";
 
 /** Un numero col suo metro: `errore` piccolo perche' lo scostamento si veda. */
@@ -174,4 +174,104 @@ test("una metrica che i due lati muovono insieme non fa la frase", () => {
     "Casa", "Fuori",
   ).find((l) => l.id === "combattimento");
   assert.ok(conTackle?.sintesi !== null, "sui tackle la frase deve comparire");
+});
+
+
+/** Una lettura che separa le squadre in **una** direzione sola: l'altra resta in linea. */
+function separaInCasa(chiave: string, alto: number, metro: number): [VoceDiLato, VoceDiLato] {
+  return [
+    voce(chiave, con(alto, metro), con(metro, metro)),
+    voce(chiave, con(metro, metro), con(alto - 1, metro)),
+  ];
+}
+
+test("senza confronti che reggono, il cappello lo dice invece di tacere", () => {
+  const letture = comeSiAffrontano(
+    lato("home", [voce("precisione", con(80, 80), con(80, 80))]),
+    lato("away", [voce("precisione", con(80, 80), con(80, 80))]),
+    "Casa", "Fuori",
+  );
+  const c = cappelloDi(letture);
+  assert.ok(c !== null);
+  assert.match(c.apertura, /non separano le due squadre/);
+  assert.deepEqual(c.prove, []);
+  assert.equal(c.rigaBreve, null, "in cima al dossier non si manda una riga vuota");
+});
+
+test("l'apertura nomina le letture che separano e quelle che no", () => {
+  const [pc, pf] = separaInCasa("precisione", 84, 80);
+  const letture = comeSiAffrontano(
+    lato("home", [pc, voce("quota_area", con(0.6, 0.6), con(0.6, 0.6))]),
+    lato("away", [pf, voce("quota_area", con(0.6, 0.6), con(0.6, 0.6))]),
+    "Casa", "Fuori",
+  );
+  const c = cappelloDi(letture);
+  assert.ok(c !== null);
+  assert.match(c.apertura, /si separano su Palla/);
+  assert.match(c.apertura, /su Tiro i numeri non le distinguono/);
+  assert.equal(c.prove.length, 1, "una lettura sola che regge, una prova sola");
+  assert.match(c.prove[0] ?? "", /84,0%/, "la prova porta i suoi numeri");
+});
+
+test("da che parte pende si dice solo se le prove stanno tutte da una parte", () => {
+  const [pc, pf] = separaInCasa("precisione", 84, 80);
+  const [tc, tf] = separaInCasa("tackle", 20, 15);
+  const soloCasa = cappelloDi(comeSiAffrontano(
+    lato("home", [pc, tc]), lato("away", [pf, tf]), "Casa", "Fuori",
+  ));
+  assert.ok(soloCasa !== null);
+  assert.match(soloCasa.apertura, /Succede tutto quando attacca Casa\./);
+
+  // Qui la seconda lettura separa nella direzione opposta: la gara non pende, e dirlo
+  // sarebbe scegliere invece di misurare.
+  const dueParti = cappelloDi(comeSiAffrontano(
+    lato("home", [pc, voce("tackle", con(15, 15), con(20, 15))]),
+    lato("away", [pf, voce("tackle", con(20, 15), con(15, 15))]),
+    "Casa", "Fuori",
+  ));
+  assert.ok(dueParti !== null);
+  assert.doesNotMatch(dueParti.apertura, /Succede tutto/);
+});
+
+test("le prove sono al massimo due, la piu' netta per prima", () => {
+  // Tre letture che reggono, con scostamenti diversi: la piu' forte apre, la terza resta
+  // nel suo riquadro. Tre paragrafi in cima non si leggono in cinque secondi.
+  const [pc, pf] = separaInCasa("precisione", 90, 80);
+  const [tc, tf] = separaInCasa("tackle", 18, 15);
+  const [uc, uf] = separaInCasa("ultimo_terzo", 55, 50);
+  const c = cappelloDi(comeSiAffrontano(
+    lato("home", [pc, tc, uc]), lato("away", [pf, tf, uf]), "Casa", "Fuori",
+  ));
+  assert.ok(c !== null);
+  assert.equal(c.prove.length, 2);
+  // Il nome e' quello della metrica; qui e' la chiave perche' le prove usano fixture, in
+  // pagina e' «Precisione dei passaggi» come lo dichiara `lati.ts`.
+  assert.match(c.prove[0] ?? "", /^precisione —/, "apre lo scostamento piu' grande");
+  assert.match(c.prove[1] ?? "", /^ultimo_terzo —/, "e la seconda e' la seconda");
+  assert.match(c.rigaBreve ?? "", /più netta è precisione/);
+});
+
+
+test("il testo che va in pagina e' scritto con gli accenti, non con gli apostrofi", () => {
+  // Difetto vero, visto in pagina e non nel codice: «la lettura piu' netta e' passaggi».
+  // Nei commenti l'apostrofo va bene, in cio' che legge l'utente no.
+  const [pc, pf] = separaInCasa("precisione", 90, 80);
+  const letture = comeSiAffrontano(lato("home", [pc]), lato("away", [pf]), "Casa", "Fuori");
+  const c = cappelloDi(letture);
+  const muto = cappelloDi(comeSiAffrontano(
+    lato("home", [voce("precisione", con(80, 80), con(80, 80))]),
+    lato("away", [voce("precisione", con(80, 80), con(80, 80))]),
+    "Casa", "Fuori",
+  ));
+  const testi = [
+    c?.apertura, c?.rigaBreve, ...(c?.prove ?? []), muto?.apertura,
+    ...letture.flatMap((l) => [l.sintesi, ...l.direzioni.map((d) => d.chiAttacca)]),
+  ].filter((t): t is string => typeof t === "string");
+  assert.ok(testi.length > 0, "niente da controllare: la prova non direbbe nulla");
+  for (const t of testi) {
+    assert.doesNotMatch(
+      t, /\b(e|piu|perche|cosi|qualita|gia|puo|ne)'/,
+      `«${t}» porta un apostrofo dove serve un accento`,
+    );
+  }
 });

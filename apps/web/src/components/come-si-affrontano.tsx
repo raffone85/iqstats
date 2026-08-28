@@ -1,4 +1,4 @@
-import type { Confronto, Direzione, Lettura, NumeroDiLato } from "@/server/iqstats/affronto";
+import type { Cappello, Confronto, Direzione, Lettura, NumeroDiLato } from "@/server/iqstats/affronto";
 
 /**
  * Il capitolo «Come si affrontano»: quattro letture dell'incontro, una per riquadro.
@@ -54,10 +54,30 @@ function Verso({ d }: { readonly d: Direzione }) {
   );
 }
 
+/**
+ * Un riquadro si apre solo se lo si chiede.
+ *
+ * Misurato a 375 px: con tutti e quattro aperti il capitolo era alto **5.239 px**, sei
+ * schermate e mezzo di soli numeri, ed e' il modo piu' sicuro perche' non li guardi
+ * nessuno. `details` e' nativo: niente JavaScript, tastiera e lettore di schermo gia'
+ * dentro. Il verdetto della lettura sta **nel riassunto**, quindi chi non apre non perde
+ * la lettura: perde solo la prova, che resta a un tocco.
+ */
 function Riquadro({ l }: { readonly l: Lettura }) {
   return (
-    <article className="affronto-card">
-      <h3 className="affronto-nome">{l.nome}</h3>
+    <details className="affronto-card">
+      <summary className="affronto-sommario">
+        <span className="affronto-nome">{l.nome}</span>
+        {/* Il trattino non e' decorazione: senza, il nome e il verdetto si incollano nel
+            testo letto ad alta voce - «Territorioi numeri non le distinguono» - perche' lo
+            stacco fra i due lo dava solo il gap del layout. */}
+        <span className="affronto-verdetto">
+          {" — "}
+          {l.forte === null
+            ? "i numeri non le distinguono"
+            : `${l.forte.nome.toLowerCase()}: tutt'e due ${l.forte.verso === 1 ? "sopra" : "sotto"} il metro`}
+        </span>
+      </summary>
       <p className="affronto-frase">{l.frase}</p>
       {l.direzioni.map((d) => <Verso key={d.id} d={d} />)}
       {l.sintesi ? <p className="affronto-sintesi">{l.sintesi}</p> : null}
@@ -66,11 +86,14 @@ function Riquadro({ l }: { readonly l: Lettura }) {
           Non osservate abbastanza in questo torneo: {l.assenti.join(", ")}.
         </p>
       ) : null}
-    </article>
+    </details>
   );
 }
 
-export function ComeSiAffrontano({ letture }: { readonly letture: readonly Lettura[] }) {
+export function ComeSiAffrontano({ letture, cappello }: {
+  readonly letture: readonly Lettura[];
+  readonly cappello: Cappello | null;
+}) {
   if (letture.length === 0) return null;
   return (
     <section className="dossier-panel" aria-labelledby="affronto-title">
@@ -78,12 +101,19 @@ export function ComeSiAffrontano({ letture }: { readonly letture: readonly Lettu
       <h2 id="affronto-title" className="sr-only-heading">
         Quello che una squadra produce dal suo lato contro quello che l&apos;altra concede dal suo
       </h2>
+      {/* La lettura prima delle prove. Non contiene un numero che non stia anche sotto. */}
+      {cappello ? (
+        <div className="affronto-cappello">
+          <p className="affronto-apertura">{cappello.apertura}</p>
+          {cappello.prove.map((p) => <p className="affronto-prova" key={p}>{p}</p>)}
+        </div>
+      ) : null}
       <div className="affronto-griglia">
         {letture.map((l) => <Riquadro key={l.id} l={l} />)}
       </div>
       <p className="dossier-src">
         Dalle nostre osservazioni di questo campionato e di questa stagione, separate per
-        casa e trasferta. Ogni numero e&apos; confrontato con la media delle squadre dello
+        casa e trasferta. Ogni numero è confrontato con la media delle squadre dello
         <b> stesso lato</b>: mescolare i due lati farebbe sembrare straordinaria una squadra
         normale. La riga in corsivo compare solo quando <b>entrambi</b> gli scostamenti
         superano l&apos;errore della loro media e vanno nello stesso verso; dove non compare,

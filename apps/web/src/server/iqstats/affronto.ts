@@ -110,6 +110,18 @@ export interface Direzione {
   readonly confronti: readonly Confronto[];
 }
 
+/** Il confronto che regge di piu' dentro una lettura: e' quello che si racconta. */
+export interface Forte {
+  readonly testo: string;
+  readonly nome: string;
+  readonly chiAttacca: string;
+  readonly chiDifende: string;
+  readonly verso: -1 | 1;
+  readonly campione: number;
+  /** Quante volte i due scostamenti superano il proprio errore, sommate. */
+  readonly forza: number;
+}
+
 export interface Lettura {
   readonly id: string;
   readonly nome: string;
@@ -117,8 +129,27 @@ export interface Lettura {
   readonly direzioni: readonly Direzione[];
   /** Le metriche che questo torneo non osserva abbastanza: si dicono, non spariscono. */
   readonly assenti: readonly string[];
-  /** La riga che dice che partita ne esce, o `null` se nessun confronto supera il rumore. */
+  /** Il confronto che regge di piu', o `null` se nessuno supera il rumore. */
+  readonly forte: Forte | null;
+  /** La riga che dice che partita ne esce, o `null`: e' il testo di `forte`. */
   readonly sintesi: string | null;
+}
+
+/**
+ * Le tre righe che si leggono in cinque secondi.
+ *
+ * **Non contengono un solo numero nuovo** e non introducono una soglia: sono i confronti
+ * che il capitolo ha gia' trovato, messi in ordine di quanto superano l'errore delle loro
+ * medie. Quando nessuno lo supera, l'apertura lo dice: non sapere e' una lettura, fingere
+ * di sapere no.
+ */
+export interface Cappello {
+  /** Dove si decide questa gara, o che non si decide da nessuna parte. */
+  readonly apertura: string;
+  /** Al massimo due prove, la piu' netta per prima. */
+  readonly prove: readonly string[];
+  /** La riga sola da mandare in cima al dossier, o `null` se non c'e' niente da dire. */
+  readonly rigaBreve: string | null;
 }
 
 /** Il numero scritto secondo la sua scala, con la virgola italiana. */
@@ -178,7 +209,7 @@ interface Candidato {
 }
 
 /**
- * La riga in prosa della lettura, o `null`.
+ * Il confronto che regge di piu' dentro la lettura, o `null`.
  *
  * Si racconta **un solo** confronto: quello in cui i due numeri si scostano di piu' dal loro
  * metro, e solo se **entrambi** superano il proprio errore e vanno **nello stesso verso**.
@@ -186,10 +217,11 @@ interface Candidato {
  * della media del suo e' un incontro che dice qualcosa; se uno dei due e' in linea non c'e'
  * niente da dire, e dirlo lo stesso sarebbe inventare una lettura.
  *
- * La frase non introduce **nessun numero nuovo**: ripete i quattro che stanno gia' nella
- * riga sopra, piu' il campione.
+ * La frase non introduce **nessun numero nuovo**: ripete i quattro che stanno nella riga,
+ * piu' il campione. La metrica si nomina: senza, «355,6 contro 404,1» non dice di che cosa,
+ * ed e' un difetto visto leggendo le frasi vere su 150 gare e non dedotto dal codice.
  */
-function sintesiDi(candidati: readonly Candidato[]): string | null {
+function forteDi(candidati: readonly Candidato[]): Forte | null {
   const scelto = candidati.reduce<Candidato | null>(
     (migliore, c) => (migliore === null || c.forza > migliore.forza ? c : migliore),
     null,
@@ -197,13 +229,69 @@ function sintesiDi(candidati: readonly Candidato[]): string | null {
   if (scelto === null) return null;
   const { direzione: d, confronto: c } = scelto;
   const verso = c.produce.verso === 1 ? "sopra" : "sotto";
-  // La metrica si nomina. Senza, «ne produce 355,6» non dice di che cosa, ed e' un difetto
-  // visto leggendo le frasi vere su 150 gare invece che dedotto dal codice. I verbi restano
-  // fuori: «produce precisione» non si dice, e i ruoli sono gia' quelli delle due colonne.
-  return `${c.nome} — ${d.chiAttacca} in attacco: ${c.produce.testo} contro i `
-    + `${c.produce.metro} del suo lato. ${d.chiDifende} in difesa: ${c.concede.testo} `
-    + `contro i ${c.concede.metro} del suo. Tutt'e due ${verso} il proprio metro, `
-    + `su ${c.campione} gare e oltre l'errore delle loro medie.`;
+  return {
+    nome: c.nome,
+    chiAttacca: d.chiAttacca,
+    chiDifende: d.chiDifende,
+    verso: c.produce.verso === 1 ? 1 : -1,
+    campione: c.campione,
+    forza: scelto.forza,
+    testo: `${c.nome} — ${d.chiAttacca} ${c.produce.testo} contro i ${c.produce.metro} `
+      + `del suo lato, ${d.chiDifende} ne concede ${c.concede.testo} contro i `
+      + `${c.concede.metro} del suo: tutt'e due ${verso} il proprio metro, su `
+      + `${c.campione} gare.`,
+  };
+}
+
+/**
+ * Le tre righe in cima al capitolo.
+ *
+ * **L'apertura dice dove si decide la gara**, cioe' quali letture separano le due squadre e
+ * quali no. E' l'unica cosa che si legge in cinque secondi, e non e' un'etichetta inventata:
+ * e' l'elenco delle letture in cui i numeri hanno superato l'errore delle loro medie.
+ *
+ * Quando tutte le prove stanno da una parte sola si aggiunge da che parte: e' il fatto piu'
+ * utile del capitolo, ed e' gia' nei dati.
+ */
+export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
+  if (letture.length === 0) return null;
+  const forti = letture
+    .filter((l): l is Lettura & { forte: Forte } => l.forte !== null)
+    .sort((x, y) => y.forte.forza - x.forte.forza);
+
+  if (forti.length === 0) {
+    return {
+      apertura: "Su questa gara i numeri non separano le due squadre: nessun confronto "
+        + "supera l'errore delle sue medie, e una differenza dentro il rumore non è una "
+        + "differenza.",
+      prove: [],
+      rigaBreve: null,
+    };
+  }
+
+  const mute = letture.filter((l) => l.forte === null).map((l) => l.nome);
+  const elenco = (nomi: readonly string[]) => nomi.length === 1
+    ? nomi[0]
+    : `${nomi.slice(0, -1).join(", ")} e ${nomi[nomi.length - 1]}`;
+  // Da che parte pende, quando pende: vale solo se **tutte** le prove guardano nella stessa
+  // direzione. Con prove da tutt'e due le parti non pende, e dirlo sarebbe scegliere.
+  const attaccanti = new Set(forti.map((l) => l.forte.chiAttacca));
+  const dovePende = attaccanti.size === 1
+    ? ` Succede tutto quando attacca ${forti[0]?.forte.chiAttacca}.`
+    : "";
+  const apertura = `Queste due squadre si separano su ${elenco(forti.map((l) => l.nome))}`
+    + (mute.length > 0 ? `; su ${elenco(mute)} i numeri non le distinguono.` : ".")
+    + dovePende;
+
+  const primo = forti[0]?.forte;
+  return {
+    apertura,
+    prove: forti.slice(0, 2).map((l) => l.forte.testo),
+    rigaBreve: primo === undefined ? null
+      : `Come si affrontano: la lettura più netta è ${primo.nome.toLowerCase()}, con `
+        + `${primo.chiAttacca} e ${primo.chiDifende} tutt'e due ${primo.verso === 1 ? "sopra" : "sotto"} `
+        + `il metro del loro lato su ${primo.campione} gare.`,
+  };
 }
 
 /** Un confronto vale quanto il suo lato piu' povero. */
@@ -281,13 +369,15 @@ export function comeSiAffrontano(
         candidati.push({ direzione: d, confronto: c, forza: quanteVolte(p) + quanteVolte(q) });
       }
     }
+    const forte = forteDi(candidati);
     letture.push({
       id: l.id,
       nome: l.nome,
       frase: l.frase,
       direzioni,
       assenti,
-      sintesi: sintesiDi(candidati),
+      forte,
+      sintesi: forte?.testo ?? null,
     });
   }
   return letture;

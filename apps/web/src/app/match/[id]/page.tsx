@@ -30,7 +30,7 @@ import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
-import { comeSiAffrontano } from "@/server/iqstats/affronto";
+import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { medieDiLato } from "@/server/iqstats/lati";
 
 /**
@@ -436,6 +436,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
   const picks = buildMatchPicks(prediction, engineReading, odds, detail.homeTeam, detail.awayTeam);
 
+  // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
+  // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
+  // squadre direbbe un'altra cosa, e mediarli direbbe il falso: i livelli dei due lati sono
+  // diversi. Senza uno dei tre identificativi non c'e' torneo da cui prendere il metro.
+  const [latoCasa, latoFuori] = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
+    ? [null, null]
+    : await Promise.all([
+      medieDiLato(detail.homeTeamId, detail.leagueId, detail.seasonId, "home"),
+      medieDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
+    ]);
+  const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
+  const cappello = cappelloDi(letture);
+
   // La sintesi nasce solo da ciò che è già stato letto: nessun dato nuovo, nessuna frase
   // scritta a mano. Se non c'è niente da dire, il blocco non compare.
   const h2h = detail.headToHead;
@@ -444,6 +458,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
     ? Math.min(lineups.home?.confidence ?? 1, lineups.away?.confidence ?? 1)
     : null;
   const brief = [
+    cappello?.rigaBreve ?? null,
     overallReading
       ? [overallReading.headline, overallReading.goals].filter(Boolean).join(", ").concat(".")
       : null,
@@ -499,19 +514,6 @@ export default async function MatchPage({ params }: MatchPageProps) {
     : giudizioSulMetro(
       arbitroBanner.gialli, arbitroMetro?.gialli ?? null, arbitroMetro?.dispersioneGialli ?? null,
     );
-  // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
-  // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
-  // squadre direbbe un'altra cosa, e mediarli direbbe il falso: i livelli dei due lati sono
-  // diversi. Senza uno dei tre identificativi non c'e' torneo da cui prendere il metro.
-  const [latoCasa, latoFuori] = detail.homeTeamId === null || detail.awayTeamId === null
-    || detail.leagueId === null || detail.seasonId === null
-    ? [null, null]
-    : await Promise.all([
-      medieDiLato(detail.homeTeamId, detail.leagueId, detail.seasonId, "home"),
-      medieDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
-    ]);
-  const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
-
   const weatherLabel = weatherText(detail.weather);
   // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
   // è vecchia la previsione.
@@ -811,7 +813,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
               nome="Come si affrontano"
               descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
             />
-            <ComeSiAffrontano letture={letture} />
+            <ComeSiAffrontano letture={letture} cappello={cappello} />
           </>
         ) : null}
 

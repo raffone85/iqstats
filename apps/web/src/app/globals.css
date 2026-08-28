@@ -1332,8 +1332,20 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    Il colore vive solo su `.affronto-pos`, e solo quando lo scostamento supera l'errore
    della media: dove non si distingue, resta inchiostro. */
 .affronto-griglia { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.affronto-card { min-width: 0; padding: 13px; border-radius: var(--r-control); background: var(--card-panel); border: 1px solid var(--card-stroke); }
-.affronto-nome { margin: 0; font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
+/* La lettura prima delle prove: e' l'unica cosa che si legge in cinque secondi. Superficie
+   tenue, non piena: il blocco ad alto contrasto della pagina resta la hero. */
+.affronto-cappello { margin: 0 0 14px; padding: 13px; border-radius: var(--r-control); background: var(--card-brand-pale); border: 1px solid var(--card-stroke); }
+.affronto-apertura { margin: 0; font-family: var(--font-display); font-size: 15.5px; line-height: 1.4; color: var(--card-ink); }
+.affronto-prova { margin: 9px 0 0; padding-left: 10px; border-left: 2px solid var(--card-stroke); font-size: 12.5px; line-height: 1.45; color: var(--card-ink-2); }
+/* I riquadri sono chiusi: il verdetto sta nel riassunto, la prova a un tocco. Il riassunto
+   e' il controllo, quindi rispetta il minimo tattile di 44 px. */
+.affronto-card { min-width: 0; padding: 0; border-radius: var(--r-control); background: var(--card-panel); border: 1px solid var(--card-stroke); }
+.affronto-sommario { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 9px; min-height: 44px; padding: 10px 13px; cursor: pointer; }
+.affronto-sommario:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; }
+.affronto-card > :not(summary) { padding-left: 13px; padding-right: 13px; }
+.affronto-card > :last-child { padding-bottom: 13px; }
+.affronto-nome { font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
+.affronto-verdetto { font-size: 12px; color: var(--card-ink-3); overflow-wrap: anywhere; }
 .affronto-frase { margin: 3px 0 0; font-size: 12.5px; color: var(--card-ink-3); }
 .affronto-dir { margin-top: 12px; }
 .affronto-chi { margin: 0 0 7px; font-size: 12px; color: var(--card-ink-2); overflow-wrap: anywhere; }
