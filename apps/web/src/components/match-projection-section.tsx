@@ -157,60 +157,80 @@ function Soglia({ linea, acceso }: {
 }
 
 /** Una voce: chi, quanto ci si attende, dentro quale intervallo, e la scala delle soglie. */
-function Voce({ chi, atteso, intervallo, linee, osservato, dove }: {
+function Voce({ chi, atteso, intervallo, osservato, dove }: {
   readonly chi: string;
   readonly atteso: number;
   /** L'intervallo calibrato del bersaglio, gia' calcolato dal motore. */
   readonly intervallo?: { readonly basso: number; readonly alto: number } | null;
-  readonly linee: readonly Linea[] | null;
   readonly osservato?: MediaOsservata | null;
   readonly dove?: string;
 }) {
-  // Le soglie sotto zero non si mostrano: un conteggio non scende sotto zero, e
-  // «Over -0,5 al 100%» entrerebbe fra le tre centrali che la regola confronta.
-  const scala = linee === null ? null : soglieReali(linee);
-  const scelta = scala === null ? { prima: -1, seconda: null } : daAccendere(scala);
   return (
     <li className="engine-split">
-      <span className="engine-who">
-        {chi}
-        {osservato === null || osservato === undefined ? null : (
-          <span className="engine-obs">
-            osservato {dove} {valore(osservato.media)} su {osservato.campione}{" "}
-            {osservato.campione === 1 ? "gara" : "gare"}
-          </span>
-        )}
-      </span>
+      <span className="engine-who">{chi}</span>
       <span className="engine-exp">
         {valore(atteso)}
         <span className="engine-obs">atteso</span>
-        {/* Un numero solo nasconde quanto e' incerto: 14,6 con un intervallo da 11 a 18
-            dice una cosa diversa da 14,6 con un intervallo da 13 a 16. Il livello a cui
-            l'intervallo e' costruito sta scritto in fondo alla sezione, una volta sola. */}
+      </span>
+      {/* **Osservato e intervallo su una riga sola, sotto il nome.** Impilati uno per riga
+          facevano sei righe per squadra e la card arrivava a 620 px: gli stessi numeri, in
+          tre righe, ne bastano meno della meta'. Un numero solo nasconde quanto e' incerto:
+          14,6 fra 13 e 16 e 14,6 fra 8 e 22 non dicono la stessa cosa, e il livello a cui
+          l'intervallo e' costruito sta scritto una volta sola in fondo alla sezione. */}
+      <span className="engine-dettaglio">
+        {osservato === null || osservato === undefined ? null : (
+          <>
+            osservato {dove} {valore(osservato.media)} su {osservato.campione}{" "}
+            {osservato.campione === 1 ? "gara" : "gare"}
+          </>
+        )}
         {intervallo === null || intervallo === undefined ? null : (
-          <span className="engine-obs">
+          <>
+            {osservato === null || osservato === undefined ? null : " · "}
             fra {estremo(intervallo.basso)} e {estremo(intervallo.alto)}
-          </span>
+          </>
         )}
       </span>
-      {scala === null || scala.length === 0 ? null : (
-        <>
-          <ol className="engine-ladder">
-            {scala.map((linea, indice) => (
-              <Soglia
-                key={linea.soglia}
-                linea={linea}
-                acceso={
-                  indice === scelta.prima ? "piena"
-                    : indice === scelta.seconda ? "tenue" : null
-                }
-              />
-            ))}
-          </ol>
-          <p className="engine-why">{spiegazione(scala, scelta)}</p>
-        </>
-      )}
     </li>
+  );
+}
+
+/** Le scale delle soglie di una famiglia, tutte dietro un comando solo. */
+function Scale({ gruppi }: {
+  readonly gruppi: readonly { readonly chi: string; readonly linee: readonly Linea[] | null }[];
+}) {
+  // Le soglie sotto zero non si mostrano: un conteggio non scende sotto zero, e
+  // «Over -0,5 al 100%» entrerebbe fra le tre centrali che la regola confronta.
+  const scale = gruppi
+    .map((g) => ({ chi: g.chi, scala: g.linee === null ? null : soglieReali(g.linee) }))
+    .filter((g): g is { chi: string; scala: readonly Linea[] } =>
+      g.scala !== null && g.scala.length > 0);
+  if (scale.length === 0) return null;
+  return (
+    <details className="engine-scala">
+      <summary>le cinque soglie, Over e Under</summary>
+      {scale.map(({ chi, scala }) => {
+        const scelta = daAccendere(scala);
+        return (
+          <div className="engine-scala-gruppo" key={chi}>
+            <p className="engine-scala-chi">{chi}</p>
+            <ol className="engine-ladder">
+              {scala.map((linea, indice) => (
+                <Soglia
+                  key={linea.soglia}
+                  linea={linea}
+                  acceso={
+                    indice === scelta.prima ? "piena"
+                      : indice === scelta.seconda ? "tenue" : null
+                  }
+                />
+              ))}
+            </ol>
+            <p className="engine-why">{spiegazione(scala, scelta)}</p>
+          </div>
+        );
+      })}
+    </details>
   );
 }
 
@@ -253,7 +273,6 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
           chi={casa}
           atteso={lCasa.valoreAtteso}
           intervallo={lCasa.intervallo}
-          linee={bersaglio.linee.casa}
           osservato={osservato?.casa}
           dove="in casa"
         />
@@ -261,7 +280,6 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
           chi={trasferta}
           atteso={lTrasferta.valoreAtteso}
           intervallo={lTrasferta.intervallo}
-          linee={bersaglio.linee.trasferta}
           osservato={osservato?.trasferta}
           dove="fuori casa"
         />
@@ -270,10 +288,20 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
             chi="Totale gara"
             atteso={bersaglio.totale.valoreAtteso}
             intervallo={bersaglio.totale.intervallo}
-            linee={bersaglio.totale.linee}
           />
         )}
       </ul>
+      {/* **Una scala sola per famiglia, non tre.** Cinque soglie per due lati sono quindici
+          numeri, e ripetere il comando di apertura per casa, trasferta e totale costava tre
+          controlli da 44 px per card. La lettura piu' decisa di ogni scala sta gia' in
+          «Dove il modello dice qualcosa»: qui c'e' la scala intera, per chi la vuole. */}
+      <Scale
+        gruppi={[
+          { chi: casa, linee: bersaglio.linee.casa },
+          { chi: trasferta, linee: bersaglio.linee.trasferta },
+          { chi: "Totale gara", linee: bersaglio.totale?.linee ?? null },
+        ]}
+      />
       <Affidabilita bersaglio={bersaglio} />
     </li>
   );
@@ -323,6 +351,12 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
         ))}
       </ul>
 
+      {/* **Le sei note di metodo si aprono.** Sono trecentocinquanta parole che spiegano
+          come funziona la sezione, uguali su ogni gara: chi le ha lette una volta non le
+          rilegge, e chi non le ha mai lette le trova qui. Restano fuori solo le due che
+          parlano di **questa** gara: i bersagli senza copertura e la freschezza. */}
+      <details className="dossier-spiega">
+        <summary>Come si legge questa sezione</summary>
       <p className="dossier-src">
         Ogni bersaglio è letto tre volte: quanto ne produce ciascuna squadra e quanto ne esce
         dalla gara. Il numero grande a sinistra è il valore atteso; accanto, fino a cinque
@@ -356,6 +390,8 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
         modello. <b>Non è la probabilità dell&apos;evento</b>: sono due numeri diversi e non si
         sommano.
       </p>
+
+      </details>
 
       {senzaCopertura.length > 0 ? (
         <p className="dossier-src">

@@ -1389,3 +1389,23 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .contesto-metro.is-sopra { color: var(--card-up); }
 .contesto-metro.is-sotto { color: var(--card-down); }
 .contesto-riserva { margin: 11px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }
+
+/* La scala delle soglie e le note di metodo si aprono invece di imporsi. `details` e'
+   nativo: niente JavaScript, tastiera e lettore di schermo gia' dentro. Il riassunto e' il
+   controllo, quindi rispetta il minimo tattile. */
+.engine-scala { margin: 8px 13px 0; }
+.engine-scala-gruppo + .engine-scala-gruppo { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--card-stroke); }
+.engine-scala-chi { margin: 6px 0 5px; font-size: 12px; color: var(--card-ink-2); }
+/* «atteso» accanto al numero e non sotto: da solo si prendeva una riga intera. */
+.engine-row.is-famiglia .engine-exp { display: flex; align-items: baseline; gap: 5px; }
+.engine-row.is-famiglia .engine-exp .engine-obs { display: inline; margin-top: 0; }
+.engine-scala > summary, .dossier-spiega > summary { display: flex; align-items: center; min-height: var(--h-control); cursor: pointer; font-family: var(--font-inter, sans-serif); font-size: 12px; color: var(--card-brand); }
+.engine-scala > summary:focus-visible, .dossier-spiega > summary:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; border-radius: var(--r-inset); }
+.dossier-spiega { margin-top: 14px; padding-top: 4px; border-top: 1px solid var(--card-stroke); }
+.dossier-spiega > summary { font-size: 13px; font-weight: 600; }
+
+/* Dentro le card di famiglia il nome e il numero stanno affiancati anche a 375 px: qui i
+   nomi sono nomi di squadra, corti, e non c'e' il problema delle etichette lunghe di
+   /expected che tiene `.engine-split` su una colonna sola. */
+.engine-row.is-famiglia .engine-split { grid-template-columns: minmax(0, 1fr) auto; }
+.engine-dettaglio { grid-column: 1 / -1; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
