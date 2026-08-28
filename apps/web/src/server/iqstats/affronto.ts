@@ -141,7 +141,9 @@ export interface Lettura {
   readonly direzioni: readonly Direzione[];
   /** Le metriche che questo torneo non osserva abbastanza: si dicono, non spariscono. */
   readonly assenti: readonly string[];
-  /** Il confronto che regge di piu', o `null` se nessuno supera il rumore. */
+  /** Tutti i confronti che reggono, dal piu' forte in giu'. Vuoto se nessuno supera il rumore. */
+  readonly candidati: readonly Forte[];
+  /** Il confronto che regge di piu', o `null`: e' il primo dei candidati. */
   readonly forte: Forte | null;
   /** La riga che dice che partita ne esce, o `null`: e' il testo di `forte`. */
   readonly sintesi: string | null;
@@ -167,7 +169,20 @@ export interface Tratto {
   readonly chiave: string;
   readonly parola: string;
   readonly nome: string;
+  /** In quale delle quattro letture sta: Palla, Territorio, Combattimento, Tiro. */
+  readonly lettura: string;
+  /** In quale attacco succede, o `null` se la metrica non lo dice. */
+  readonly fase: string | null;
   readonly metro: string;
+  /**
+   * Il metro del secondo punto, quando non coincide col primo dopo l'arrotondamento.
+   *
+   * I due punti si misurano ciascuno sul metro del **proprio** lato, e i due sono la stessa
+   * cosa vista da due parti - quello che le squadre di casa producono e' quello che le
+   * squadre in trasferta concedono - quindi quasi sempre coincidono. Quando non lo fanno,
+   * un solo numero al centro dell'asse direbbe che i due punti hanno lo stesso riferimento.
+   */
+  readonly metroSecondo: string | null;
   readonly campione: number;
   readonly verso: -1 | 1;
   readonly punti: readonly [Punto, Punto];
@@ -180,9 +195,9 @@ export interface Cappello {
   readonly parole: readonly string[];
   /** In quale attacco succede, o `null` se i tratti guardano fasi diverse. */
   readonly fase: string | null;
-  /** Le prove, al massimo due: una riga e un asse ciascuna, nessun paragrafo. */
+  /** Le prove, al massimo quattro: una riga e un asse ciascuna, tutte della stessa forma. */
   readonly tratti: readonly Tratto[];
-  /** Le letture che non separano le due squadre, o `null` se non ce ne sono. */
+  /** Le letture che non separano le due squadre e i confronti tagliati, o `null`. */
   readonly mute: string | null;
   /** La riserva, in una riga: vale se continuano cosi', e parla di gioco, non di esito. */
   readonly nota: string;
@@ -250,6 +265,15 @@ function quanteVolte(c: ConMetro): number {
  */
 const SOLIDALI: ReadonlySet<string> = new Set(["recuperi"]);
 
+/**
+ * Quanti confronti stanno in un colpo d'occhio.
+ *
+ * Misurato su 80 gare reali: la mediana ne ha 2 che reggono, il 75° percentile 4, il 90°
+ * sette, il massimo dieci. Quattro copre la mediana con margine e lascia fuori solo i piu'
+ * deboli, che vengono dichiarati invece di sparire.
+ */
+const QUANTI = 4;
+
 /** Un confronto candidato alla riga in prosa, con quanto pesa la sua evidenza. */
 interface Candidato {
   readonly direzione: Direzione;
@@ -271,12 +295,13 @@ interface Candidato {
  * piu' il campione. La metrica si nomina: senza, «355,6 contro 404,1» non dice di che cosa,
  * ed e' un difetto visto leggendo le frasi vere su 150 gare e non dedotto dal codice.
  */
-function forteDi(candidati: readonly Candidato[]): Forte | null {
-  const scelto = candidati.reduce<Candidato | null>(
-    (migliore, c) => (migliore === null || c.forza > migliore.forza ? c : migliore),
-    null,
-  );
-  if (scelto === null) return null;
+function fortiDi(candidati: readonly Candidato[]): Forte[] {
+  return [...candidati]
+    .sort((x, y) => y.forza - x.forza)
+    .map((scelto) => unForte(scelto));
+}
+
+function unForte(scelto: Candidato): Forte {
   const { direzione: d, confronto: c } = scelto;
   const verso = c.produce.verso === 1 ? "sopra" : "sotto";
   return {
@@ -376,15 +401,20 @@ function faseDi(f: Forte): string | null {
  */
 export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
   if (letture.length === 0) return null;
-  const forti = letture
-    .filter((l): l is Lettura & { forte: Forte } => l.forte !== null)
-    .sort((x, y) => y.forte.forza - x.forte.forza);
-  const nomiMuti = letture.filter((l) => l.forte === null).map((l) => l.nome);
   const elenco = (nomi: readonly string[]) => nomi.length === 1
     ? nomi[0]
     : `${nomi.slice(0, -1).join(", ")} e ${nomi[nomi.length - 1]}`;
+  const nomiMuti = letture.filter((l) => l.candidati.length === 0).map((l) => l.nome);
 
-  if (forti.length === 0) {
+  // **Tutti i confronti che reggono, in una fila sola.** Prima ce n'erano due in cima e
+  // ventotto sotto, in due forme diverse: chi leggeva doveva imparare due strutture per la
+  // stessa cosa. Qui la forma e' una, e i confronti che non superano l'errore non si
+  // mostrano affatto: per nostra stessa regola non si distinguono dal caso.
+  const tutti = letture
+    .flatMap((l) => l.candidati.map((f) => ({ f, lettura: l.nome })))
+    .sort((x, y) => y.f.forza - x.f.forza);
+
+  if (tutti.length === 0) {
     return {
       titolo: "Numeri troppo vicini per separare le due squadre",
       parole: [],
@@ -392,18 +422,20 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
       tratti: [],
       mute: null,
       nota: "Nessun confronto supera l'errore delle proprie medie: dentro il rumore non c'è "
-        + "una differenza da leggere. Le medie restano, riquadro per riquadro.",
+        + "una differenza da leggere.",
       rigaBreve: null,
     };
   }
 
-  const scelti = forti.slice(0, 2).map((l) => l.forte);
-  const fasi = scelti.map(faseDi);
-  const tratti: Tratto[] = scelti.map((f) => ({
-    chiave: f.chiave,
-    parola: f.nome,
+  const scelti = tutti.slice(0, QUANTI);
+  const tratti: Tratto[] = scelti.map(({ f, lettura }) => ({
+    chiave: `${f.chiave}-${f.chiAttacca}`,
+    parola: parolaDi(f) ?? f.nome.toLowerCase(),
     nome: f.nome,
+    lettura,
+    fase: faseDi(f),
     metro: f.produce.metro,
+    metroSecondo: f.concede.metro === f.produce.metro ? null : f.concede.metro,
     campione: f.campione,
     verso: f.verso,
     punti: [
@@ -412,20 +444,30 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
     ],
   }));
 
-  const parole = scelti.map((f) => parolaDi(f) ?? f.nome.toLowerCase());
+  // Il titolo si ferma a due parole: quattro etichette in fila non sono piu' un titolo.
+  const parole = scelti.slice(0, 2).map(({ f }) => parolaDi(f) ?? f.nome.toLowerCase());
   const grezzo = parole.join(" e ");
   const titolo = `${grezzo.charAt(0).toUpperCase()}${grezzo.slice(1)}`;
-  const fase = fasi.every((f) => f !== null && f === fasi[0]) && fasi[0] !== null
-    ? `quando attacca ${fasi[0]}`
+  const fasiInTitolo = scelti.slice(0, 2).map(({ f }) => faseDi(f));
+  const fase = fasiInTitolo.every((f) => f !== null && f === fasiInTitolo[0]) && fasiInTitolo[0] !== null
+    ? `quando attacca ${fasiInTitolo[0]}`
     : null;
+
+  const tagliati = tutti.length - scelti.length;
+  const coda = [
+    nomiMuti.length === 0 ? null : `${elenco(nomiMuti)}: nessuna differenza che regga il rumore`,
+    tagliati === 0 ? null
+      : tagliati === 1
+        ? "un confronto più debole non è in elenco"
+        : `${tagliati} confronti più deboli non sono in elenco`,
+  ].filter((p): p is string => p !== null);
 
   return {
     titolo,
     parole,
     fase,
     tratti,
-    mute: nomiMuti.length === 0 ? null
-      : `${elenco(nomiMuti)}: nessuna differenza che regga il rumore.`,
+    mute: coda.length === 0 ? null : `${coda.join(". ")}.`,
     nota: "Vale se le due squadre continuano così, e dice come si gioca: del risultato non "
       + "parla.",
     rigaBreve: `Come si affrontano: ${grezzo}${fase === null ? "" : ` ${fase}`}`
@@ -510,15 +552,16 @@ export function comeSiAffrontano(
         candidati.push({ direzione: d, confronto: c, forza: quanteVolte(p) + quanteVolte(q) });
       }
     }
-    const forte = forteDi(candidati);
+    const ordinati = fortiDi(candidati);
     letture.push({
       id: l.id,
       nome: l.nome,
       frase: l.frase,
       direzioni,
       assenti,
-      forte,
-      sintesi: forte?.testo ?? null,
+      candidati: ordinati,
+      forte: ordinati[0] ?? null,
+      sintesi: ordinati[0]?.testo ?? null,
     });
   }
   return letture;

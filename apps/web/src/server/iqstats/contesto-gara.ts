@@ -53,6 +53,8 @@ export interface Tessera {
   /** La linea piu' forte su questa famiglia, gia' scritta. */
   readonly lettura: string | null;
   readonly probabilita: number | null;
+  /** Quante volte quella linea succede in questa lega: senza, la percentuale non si legge. */
+  readonly base: number | null;
 }
 
 export interface Contesto {
@@ -135,6 +137,7 @@ export function contestoDiGara(args: {
       verso,
       lettura: `${l.verso.toLowerCase()} ${numero(l.soglia, 1)}`,
       probabilita: Math.round(l.probabilita * 100),
+      base: l.base === null ? null : Math.round(l.base),
     });
   }
 

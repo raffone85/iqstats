@@ -41,6 +41,11 @@ export function ContestoGara({ contesto }: { readonly contesto: Contesto | null 
               {t.lettura === null ? null : (
                 <span className="contesto-lettura">
                   {t.lettura} <b>{t.probabilita}%</b>
+                  {t.base === null ? null : (
+                    // Lo spazio iniziale non e' visibile - il blocco lo collassa - ma
+                    // resta nel testo letto ad alta voce, che altrimenti dice «68%in lega».
+                    <span className="contesto-base">{` in lega ${t.base}%`}</span>
+                  )}
                 </span>
               )}
             </li>

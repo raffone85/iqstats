@@ -6,11 +6,21 @@
  * dove il modello dice qualcosa e dove alza le spalle. Questa e' l'unica cosa che manca,
  * e non richiede un numero nuovo: richiede di ordinare quelli che ci sono.
  *
- * **Il criterio non e' la percentuale.** Una lettura al 77% su un bersaglio che fuori
- * campione ci prende poco vale meno di una al 69% su un bersaglio che ci prende spesso.
- * La forza di una lettura e' quindi **quanto il verso e' deciso, per quanto quel bersaglio
- * si e' dimostrato affidabile**: `|probabilita - 0,5| x affidabilita`. Ordinare per
- * percentuale metterebbe in cima le letture piu' rumorose, che e' l'opposto del punto.
+ * **Il criterio non e' la percentuale, ed e' cambiato il 28 agosto 2026.** Una lettura al
+ * 77% su un bersaglio che fuori campione ci prende poco vale meno di una al 69% su un
+ * bersaglio che ci prende spesso: fin qui la forza era `|probabilita - 0,5| x affidabilita`.
+ *
+ * **Quel `0,5` era il difetto.** La distanza dal cinquanta premia le linee lontane
+ * dall'atteso, cioe' le ovvie, e non sa niente di quanto quell'evento sia normale in quella
+ * lega. Misurato su 235 gare di una competizione reale: «Under 5,5 fuorigioco» stava in
+ * cima al 70%, ma in quel campionato succede l'**87%** delle volte, e «Over 7,5 corner» al
+ * 70% contro un **77%**. Due delle quattro letture in cima dicevano che l'evento e' **meno**
+ * probabile del solito, e la pagina le mostrava come conferme.
+ *
+ * Ora il riferimento e' **quante volte quella linea succede davvero in quel campionato**:
+ * `|probabilita - base| x affidabilita`. Il vecchio criterio non e' stato buttato, e' il
+ * caso particolare in cui la base non si conosce e vale cinquanta: senza misura, l'unico
+ * riferimento onesto e' la moneta.
  *
  * **Entrano solo le linee gia' accese.** La regola dell'accensione (`daAccendere`) ha
  * gia' scartato le due soglie estreme, che dicono l'ovvio, e quelle a ridosso del valore
@@ -46,11 +56,17 @@ export interface LetturaForte {
   readonly probabilita: number;
   /** Quanto il verso e' deciso: la distanza da cinquanta, da 0 a 0,5. */
   readonly decisione: number;
+  /** Quante volte quel verso succede in quella lega, da 0 a 100, o `null` se non si sa. */
+  readonly base: number | null;
+  /** Su quante gare poggia la base. */
+  readonly gareDiBase: number | null;
   /** Il punteggio di affidabilita' del bersaglio, da 0 a 100. */
   readonly affidabilita: number;
   /** Su quante gare di prova poggia quell'affidabilita'. */
   readonly righeDiProva: number;
-  /** `decisione` per `affidabilita / 100`. E' il numero su cui si ordina. */
+  /** Quanto la nostra probabilita' si scosta dalla base, da 0 a 1. */
+  readonly sorpresa: number;
+  /** `sorpresa` per `affidabilita / 100`. E' il numero su cui si ordina. */
   readonly forza: number;
 }
 
@@ -78,16 +94,16 @@ function accesaDi(linee: readonly Linea[] | null): Linea | null {
 }
 
 /**
- * Le letture piu' forti della gara, dalla piu' solida in giu'.
+ * Tutte le linee accese della gara, senza ordine e senza taglio.
  *
- * A parita' di forza vince l'affidabilita' piu' alta: fra due letture che dicono la stessa
- * cosa con la stessa decisione, si preferisce quella del bersaglio che sbaglia meno.
+ * Serve al chiamante per sapere **quali basi chiedere** al livello dati prima di ordinare:
+ * la soglia di una linea nasce dall'atteso di questa gara, quindi non si puo' precalcolare.
  */
-export function lettureForti(
-  bersagli: readonly ProiezioneDiGara[],
-  quante: number = QUANTE,
-): LettureDellaGara {
-  const letture: LetturaForte[] = [];
+export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
+  readonly candidate: readonly LetturaForte[];
+  readonly senzaMisura: readonly string[];
+} {
+  const candidate: LetturaForte[] = [];
   const senzaMisura: string[] = [];
 
   for (const bersaglio of bersagli) {
@@ -97,35 +113,66 @@ export function lettureForti(
       senzaMisura.push(bersaglio.target);
       continue;
     }
-    const peso = livello.punteggio / 100;
-
     const scale: ReadonlyArray<{ lato: LatoDellaGara; linee: readonly Linea[] | null }> = [
       { lato: "casa", linee: bersaglio.linee.casa },
       { lato: "trasferta", linee: bersaglio.linee.trasferta },
       { lato: "totale", linee: bersaglio.totale?.linee ?? null },
     ];
-
     for (const { lato, linee } of scale) {
       const accesa = accesaDi(linee);
       if (accesa === null) continue;
       const v = versoDi(accesa);
       if (v === null) continue;
-      const quantoDeciso = decisione(accesa);
-      const forza = quantoDeciso * peso;
-      if (forza < FORZA_MINIMA) continue;
-      letture.push({
+      candidate.push({
         bersaglio: bersaglio.target,
         lato,
         soglia: accesa.soglia,
         verso: v.verso,
         probabilita: v.probabilita,
-        decisione: quantoDeciso,
+        decisione: decisione(accesa),
+        base: null,
+        gareDiBase: null,
         affidabilita: livello.punteggio,
         righeDiProva: livello.righeDiProva,
-        forza,
+        sorpresa: 0,
+        forza: 0,
       });
     }
   }
+  return { candidate, senzaMisura };
+}
+
+/**
+ * Le letture piu' forti della gara, dalla piu' solida in giu'.
+ *
+ * La forza e' **quanto la nostra probabilita' si scosta da quante volte quella linea
+ * succede in quel campionato**, per quanto quel bersaglio regge fuori campione. Dove la
+ * base non si conosce il riferimento resta cinquanta, che e' il vecchio criterio: senza
+ * misura l'unico paragone onesto e' la moneta.
+ *
+ * A parita' di forza vince l'affidabilita' piu' alta: fra due letture che dicono la stessa
+ * cosa con la stessa sorpresa, si preferisce quella del bersaglio che sbaglia meno.
+ */
+export function ordinaLetture(
+  candidate: readonly LetturaForte[],
+  senzaMisura: readonly string[],
+  basi: ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null,
+  quante: number = QUANTE,
+): LettureDellaGara {
+  const letture = candidate
+    .map((l) => {
+      const b = basi?.get(chiaveDiLinea(l)) ?? null;
+      const riferimento = b === null ? 0.5 : b.quota / 100;
+      const sorpresa = Math.abs(l.probabilita - riferimento);
+      return {
+        ...l,
+        base: b === null ? null : b.quota,
+        gareDiBase: b === null ? null : b.gare,
+        sorpresa,
+        forza: sorpresa * (l.affidabilita / 100),
+      };
+    })
+    .filter((l) => l.forza >= FORZA_MINIMA);
 
   letture.sort((a, b) => (b.forza - a.forza) || (b.affidabilita - a.affidabilita));
 
@@ -142,4 +189,24 @@ export function lettureForti(
   });
 
   return { letture: distinte.slice(0, quante), senzaMisura };
+}
+
+/** La chiave con cui una linea ritrova la sua base. Deve combaciare con `base-di-lega`. */
+export function chiaveDiLinea(l: {
+  readonly bersaglio: string;
+  readonly lato: LatoDellaGara;
+  readonly soglia: number;
+  readonly verso: "Over" | "Under";
+}): string {
+  return `${l.bersaglio}|${l.lato}|${l.soglia}|${l.verso}`;
+}
+
+/** Comodita' per chi non ha basi da passare: il criterio resta quello, col riferimento a 50. */
+export function lettureForti(
+  bersagli: readonly ProiezioneDiGara[],
+  basi: ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null = null,
+  quante: number = QUANTE,
+): LettureDellaGara {
+  const { candidate, senzaMisura } = candidateDiGara(bersagli);
+  return ordinaLetture(candidate, senzaMisura, basi, quante);
 }

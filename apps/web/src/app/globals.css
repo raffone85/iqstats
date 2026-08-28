@@ -1331,7 +1331,6 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    contrasto della pagina e' gia' della hero, e queste non sono le sette famiglie.
    Il colore vive solo su `.affronto-pos`, e solo quando lo scostamento supera l'errore
    della media: dove non si distingue, resta inchiostro. */
-.affronto-griglia { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 /* Il colpo d'occhio del capitolo. Titolo grande, due prove con il loro asse, una riserva
    piccola in fondo. Nessun paragrafo: la prosa qui non si leggeva. */
 .affronto-cappello { margin: 0 0 14px; padding: 14px; border-radius: var(--r-control); background: var(--card-brand-pale); border: 1px solid var(--card-stroke); }
@@ -1364,37 +1363,10 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .affronto-nota { margin: 6px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }
 /* I riquadri sono chiusi: il verdetto sta nel riassunto, la prova a un tocco. Il riassunto
    e' il controllo, quindi rispetta il minimo tattile di 44 px. */
-.affronto-card { min-width: 0; padding: 0; border-radius: var(--r-control); background: var(--card-panel); border: 1px solid var(--card-stroke); }
-.affronto-sommario { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 9px; min-height: 44px; padding: 10px 13px; cursor: pointer; }
-.affronto-sommario:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; }
-.affronto-card > :not(summary) { padding-left: 13px; padding-right: 13px; }
-.affronto-card > :last-child { padding-bottom: 13px; }
 .affronto-nome { font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
-.affronto-verdetto { font-size: 12px; color: var(--card-ink-3); overflow-wrap: anywhere; }
-.affronto-frase { margin: 3px 0 0; font-size: 12.5px; color: var(--card-ink-3); }
-.affronto-dir { margin-top: 12px; }
-.affronto-chi { margin: 0 0 7px; font-size: 12px; color: var(--card-ink-2); overflow-wrap: anywhere; }
-.affronto-chi b { color: var(--card-ink); }
-.affronto-righe { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.affronto-riga { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
-.affronto-riga + .affronto-riga { padding-top: 8px; border-top: 1px solid var(--card-stroke); }
-.affronto-metrica { font-size: 13px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 /* Due celle affiancate anche a 375 px: sono le due meta' del confronto, e separarle su due
    righe costringerebbe a tenerne una a mente. `minmax(0, 1fr)` le lascia rimpicciolire
    invece di sfondare il riquadro. */
-.affronto-coppia { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
-.affronto-cella { min-width: 0; }
-.affronto-num { display: block; font-family: var(--font-mono, monospace); font-size: 15px; font-weight: 600; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.affronto-obs { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.affronto-pos { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.affronto-pos.is-sopra { color: var(--card-up); }
-.affronto-pos.is-sotto { color: var(--card-down); }
-.affronto-camp { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
-.affronto-sintesi { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--card-stroke); font-size: 13px; font-style: italic; color: var(--card-ink); }
-.affronto-assenti { margin: 8px 0 0; font-size: 11.5px; color: var(--card-ink-3); }
-@media (min-width: 768px) {
-  .affronto-griglia { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 
 
 /* ==== Il quadro della gara ==============================================================
@@ -1412,5 +1384,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .contesto-metro.is-sotto { color: var(--card-down); }
 .contesto-lettura { display: block; padding: 5px 9px 8px; font-size: 11.5px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 .contesto-lettura b { font-family: var(--font-mono, monospace); color: var(--card-ink); font-variant-numeric: tabular-nums; }
+/* La base accanto alla percentuale: senza, «70%» non si sa se e' tanto o poco. */
+.contesto-base { display: block; margin-top: 1px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
 /* La riserva e' prosa, non provenienza: in monospazio trenta parole pesano il doppio. */
 .contesto-riserva { margin: 11px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }

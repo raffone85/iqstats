@@ -32,6 +32,7 @@
     "test:team-metro": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-team-metro.test.ts",
     "test:affronto": "node --experimental-strip-types --test test/iqstats-affronto.test.ts",
     "test:contesto-gara": "node --experimental-strip-types --test test/iqstats-contesto.test.ts",
+    "test:base-di-lega": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-base-di-lega.test.ts",
     "test:lati": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-lati.test.ts",
     "test:team-stats": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-team-stats.test.ts",
     "test:arbitro-scheda": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-arbitro-scheda.test.ts",

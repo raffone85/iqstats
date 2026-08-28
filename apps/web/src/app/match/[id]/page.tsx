@@ -65,7 +65,8 @@ import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
-import { lettureForti } from "@/server/iqstats/projection/letture-forti";
+import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
+import { baseDiLega } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
@@ -532,9 +533,19 @@ export default async function MatchPage({ params }: MatchPageProps) {
         ))
     : null;
 
-  // Le letture piu' solide si calcolano una volta: le usano il quadro in cima e la sezione
-  // che le elenca. Due calcoli darebbero due ordini che possono divergere.
-  const forti = proiezioni ? lettureForti(proiezioni.bersagli) : null;
+  // **Le letture si ordinano su quanto sorprendono, non su quanto sono decise.** La soglia
+  // di una linea nasce dall'atteso di questa gara, quindi le basi non si possono
+  // precalcolare: prima si raccolgono le linee accese, poi si chiede al livello dati quante
+  // volte ciascuna succede in questo campionato, poi si ordina. Si calcola una volta sola:
+  // le usano il quadro in cima e la sezione che le elenca, e due calcoli darebbero due
+  // ordini che possono divergere.
+  const { candidate, senzaMisura } = candidateDiGara(proiezioni?.bersagli ?? []);
+  const basi = candidate.length === 0 || detail.leagueId === null || detail.seasonId === null
+    ? null
+    : await baseDiLega(detail.leagueId, detail.seasonId, candidate.map((c) => ({
+      target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso,
+    })));
+  const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi) : null;
   const contesto = contestoDiGara({
     bersagli: proiezioni?.bersagli ?? [],
     forti,
@@ -735,7 +746,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
               nome="Come si affrontano"
               descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
             />
-            <ComeSiAffrontano letture={letture} cappello={cappello} />
+            <ComeSiAffrontano cappello={cappello} />
           </>
         ) : null}
 

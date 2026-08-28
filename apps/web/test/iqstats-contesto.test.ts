@@ -29,8 +29,11 @@ function lettura(bersaglio: string, forza: number, soglia = 7.5, prob = 0.71): L
     verso: "Over",
     probabilita: prob,
     decisione: Math.abs(prob - 0.5),
+    base: null,
+    gareDiBase: null,
     affidabilita: 60,
     righeDiProva: 2000,
+    sorpresa: Math.abs(prob - 0.5),
     forza,
   };
 }

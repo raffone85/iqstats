@@ -289,17 +289,30 @@ test("la fase la decide la metrica, non chi produce il numero", () => {
   assert.equal(senzaFase?.fase, null);
 });
 
-test("le prove sono al massimo due, la piu' netta per prima", () => {
-  const [pc, pf] = separaInCasa("precisione", 90, 80);
-  const [tc, tf] = separaInCasa("tackle", 18, 15);
-  const [uc, uf] = separaInCasa("ultimo_terzo", 55, 50);
+test("i confronti in elenco sono al massimo quattro, e i tagliati si dichiarano", () => {
+  // Misurato su 80 gare: la mediana ne ha due che reggono, il 75° percentile quattro, il
+  // 90° sette. Quattro copre la mediana con margine; oltre torna a essere un elenco.
+  const coppie = [
+    separaInCasa("precisione", 90, 80),
+    separaInCasa("passaggi", 520, 420),
+    separaInCasa("palle_lunghe", 70, 52),
+    separaInCasa("tackle", 20, 15),
+    separaInCasa("intercetti", 12, 8),
+  ];
   const c = cappelloDi(comeSiAffrontano(
-    lato("home", [pc, tc, uc]), lato("away", [pf, tf, uf]), "Casa", "Fuori",
+    lato("home", coppie.map((p) => p[0])),
+    lato("away", coppie.map((p) => p[1])),
+    "Casa", "Fuori",
   ));
   assert.ok(c !== null);
-  assert.equal(c.tratti.length, 2, "tre prove non si leggono in cinque secondi");
-  assert.equal(c.tratti[0]?.chiave, "precisione", "apre lo scostamento piu' grande");
-  assert.match(c.rigaBreve ?? "", /^Come si affrontano: palloni puliti/);
+  assert.equal(c.tratti.length, 4, "quattro e non cinque");
+  assert.match(c.mute ?? "", /non è in elenco/, "e il quinto si dichiara invece di sparire");
+  // Il titolo resta di due parole anche con quattro righe sotto: quattro etichette in fila
+  // non sono piu' un titolo.
+  assert.equal(c.parole.length, 2);
+  // Ogni riga porta la lettura da cui esce, cosi' la forma unica non perde il capitolo.
+  assert.ok(c.tratti.every((t) => t.lettura.length > 0));
+  assert.match(c.rigaBreve ?? "", /^Come si affrontano: /);
 });
 
 test("il testo che va in pagina e' scritto con gli accenti, non con gli apostrofi", () => {

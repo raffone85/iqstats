@@ -62,8 +62,11 @@ export function MatchLettureFortiSection({ letture, homeTeam, awayTeam }: Props)
               <span className="dossier-1x2-label">
                 {lettura.verso} {valore(lettura.soglia)} · {famiglia?.nome ?? lettura.bersaglio}
                 <em className="engine-obs">
-                  {chi(lettura)} · affidabilità {lettura.affidabilita}/100, misurata su{" "}
-                  {lettura.righeDiProva} gare di prova
+                  {chi(lettura)}
+                  {lettura.base === null
+                    ? " · non sappiamo quanto sia normale in questa lega"
+                    : ` · in questa lega succede il ${Math.round(lettura.base)}% delle volte`}
+                  {" · affidabilità "}{lettura.affidabilita}/100
                 </em>
               </span>
               <span className="dossier-bar" aria-hidden="true">
@@ -76,33 +79,17 @@ export function MatchLettureFortiSection({ letture, homeTeam, awayTeam }: Props)
       </div>
 
       <p className="dossier-src">
-        Queste sono le letture che <b>reggono di più</b> in questa gara, non quelle con la
-        percentuale più alta. L&apos;ordine nasce da due numeri moltiplicati fra loro: quanto il
-        verso è deciso, cioè quanto la probabilità si allontana da cinquanta, e quanto quel
-        bersaglio ci ha preso <b>fuori campione</b> sulle gare di prova. Una lettura al 78% su
-        un bersaglio che sbaglia spesso vale meno di una al 68% su un bersaglio che sbaglia
-        poco: la barra mostra questa forza, la percentuale a destra resta quella vera.
-      </p>
-
-      <p className="dossier-src">
-        Entrano solo le soglie che la pagina accende più in basso, cioè le più decise fra
-        quelle vicine al valore atteso: le soglie lontane dicono l&apos;ovvio e quelle a ridosso
-        del previsto sono una moneta.
+        In cima non c&apos;è la percentuale più alta: c&apos;è quella che si scosta di più da{" "}
+        <b>quante volte quella linea succede in questa lega</b>, pesata per quanto quel
+        bersaglio ci prende fuori campione. La barra mostra questa forza.
         {letture.senzaMisura.length > 0 ? (
           <>
-            {" "}
-            Restano fuori {letture.senzaMisura.length === 1 ? "un bersaglio" : `${letture.senzaMisura.length} bersagli`}
-            {" "}
-            ({letture.senzaMisura.map((t) => FAMIGLIE[t]?.nome ?? t).join(", ")}): per{" "}
-            {letture.senzaMisura.length === 1 ? "quello" : "quelli"} non abbiamo una misura di
-            quanto la lettura regga, e senza quella non si può metterla in cima a una
-            classifica che parla proprio di questo.
+            {" "}Restano fuori {letture.senzaMisura.map((t) => FAMIGLIE[t]?.nome ?? t).join(", ")}:
+            non sappiamo quanto reggono.
           </>
         ) : null}
-        {" "}I mercati dei gol non entrano in questo elenco: nascono da due Poisson e da una
-        griglia, non da un modello con un campione di riscontro, quindi non sanno ancora dire
-        quante volte hanno preso.
       </p>
+
     </section>
   );
 }
