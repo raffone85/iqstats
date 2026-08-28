@@ -57,8 +57,8 @@ test("prodotto e concesso poggiano sulle stesse gare", opzioni, async () => {
   assert.equal(lato.lato, "home");
   assert.ok(lato.voci.length > 0, "nessuna metrica misurata");
   assert.equal(
-    lato.voci.length + lato.assenti.length, 19,
-    "le diciannove metriche devono essere tutte o misurate o dichiarate assenti",
+    lato.voci.length + lato.assenti.length, 23,
+    "le ventitre metriche devono essere tutte o misurate o dichiarate assenti",
   );
 
   for (const voce of lato.voci) {
@@ -444,5 +444,109 @@ test("la posizione si divide per le squadre che il dato ce l'hanno", opzioni, as
     `${scelta.nome} ha la media falli piu' alta fra le ${torneo.con} squadre che il dato ce `
       + `l'hanno, ma la posizione dichiarata e' ${falli.prodotto.posizione}: il denominatore `
       + `conta tutte le ${torneo.squadre} squadre invece delle ${torneo.con} confrontabili`,
+  );
+});
+
+
+test("la quota della shot map si fa sui totali, non come media delle quote", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+
+  // Si sceglie il caso in cui le due formule si separano di piu': su una squadra dove
+  // coincidono la prova sarebbe verde comunque, e non direbbe niente.
+  const casi = await sql<{
+    squadra: string; nome: string; competizione: string; stagione: string;
+    pesata: string; non_pesata: string;
+  }[]>`
+    select t.source_id::text as squadra, t.name as nome,
+           c.source_id::text as competizione, s.source_id::text as stagione,
+           (sum(o.shot_map_share_in_box * o.shot_map_total)
+              / sum(o.shot_map_total))::text as pesata,
+           (avg(o.shot_map_share_in_box))::text as non_pesata
+    from football.team_match_observations o
+    join football.team_match_observations a
+      on a.match_id = o.match_id and a.side <> o.side
+    join football.teams t on t.id = o.team_id
+    join football.competitions c on c.id = o.competition_id
+    join football.seasons s on s.id = o.season_id
+    where o.side = 'home'
+      and o.shot_map_share_in_box is not null and a.shot_map_share_in_box is not null
+      and o.shot_map_total is not null and a.shot_map_total is not null
+    group by 1, 2, 3, 4
+    having count(*) >= 5
+    order by abs(sum(o.shot_map_share_in_box * o.shot_map_total) / sum(o.shot_map_total)
+                 - avg(o.shot_map_share_in_box)) desc
+    limit 1
+  `;
+  const caso = casi[0];
+  assert.ok(caso !== undefined, "nessuna squadra con la shot map su cinque gare in casa");
+
+  const pesata = Number(caso.pesata);
+  const nonPesata = Number(caso.non_pesata);
+  const divario = Math.abs(pesata - nonPesata);
+  // Se il divario massimo dell'intero livello dati fosse trascurabile, questa prova non
+  // saprebbe piu' distinguere le due formule: si dice, invece di restare verde a vuoto.
+  assert.ok(
+    divario > 0.005,
+    `il divario massimo fra quota sui totali e media delle quote e' ${(divario * 100).toFixed(2)} `
+      + "punti: sotto mezzo punto la prova non discrimina piu' le due formule",
+  );
+
+  const lato = await medieDiLato(
+    Number(caso.squadra), Number(caso.competizione), Number(caso.stagione), "home",
+  );
+  assert.ok(lato !== null, `nessun lato per ${caso.nome}`);
+  const quota = lato.voci.find((v) => v.chiave === "quota_area");
+  assert.ok(quota !== undefined, `${caso.nome} non ha la quota dall'area fra le voci`);
+
+  assert.ok(
+    Math.abs(quota.prodotto.media - pesata) < 1e-9,
+    `${caso.nome}: quota dichiarata ${quota.prodotto.media}, sui totali ${pesata}`,
+  );
+  assert.ok(
+    Math.abs(quota.prodotto.media - nonPesata) > 1e-9,
+    `${caso.nome}: la quota dichiarata coincide con la media delle quote di gara `
+      + `(${nonPesata}), che pesa una partita da tre tiri quanto una da venti`,
+  );
+});
+
+test("l'errore della media viene dalle gare, non dalle squadre", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+  const caso = await unCaso();
+
+  const conti = await sql<{ scarto: string; campione: string }[]>`
+    select (stddev_samp(o.fouls) filter (
+             where o.fouls is not null and a.fouls is not null
+           ))::text as scarto,
+           (count(*) filter (
+             where o.fouls is not null and a.fouls is not null
+           ))::text as campione
+    from football.team_match_observations o
+    join football.team_match_observations a
+      on a.match_id = o.match_id and a.side <> o.side
+    join football.teams t on t.id = o.team_id
+    join football.competitions c on c.id = o.competition_id
+    join football.seasons s on s.id = o.season_id
+    where t.source_id = ${caso.squadra}::bigint
+      and c.source_id = ${caso.competizione}::bigint
+      and s.source_id = ${caso.stagione}::bigint
+      and o.side = 'home'
+  `;
+  const conto = conti[0];
+  assert.ok(conto !== undefined, `nessun conto per ${caso.nome}`);
+  const atteso = Number(conto.scarto) / Math.sqrt(Number(conto.campione));
+
+  const lato = await medieDiLato(caso.squadra, caso.competizione, caso.stagione, "home");
+  assert.ok(lato !== null, `nessun lato per ${caso.nome}`);
+  const falli = lato.voci.find((v) => v.chiave === "falli");
+  assert.ok(falli !== undefined, `${caso.nome} non ha i falli fra le voci`);
+  assert.ok(falli.prodotto.errore !== null, `${caso.nome}: errore della media assente`);
+
+  assert.ok(
+    Math.abs(falli.prodotto.errore - atteso) < 1e-9,
+    `${caso.nome}: errore dichiarato ${falli.prodotto.errore}, ricontato sulle sue gare `
+      + `${atteso}. Con lo scarto fra le squadre uscirebbe `
+      + `${(falli.prodotto.dispersione ?? NaN) / Math.sqrt(falli.campione)}, che e' un'altra cosa`,
   );
 });

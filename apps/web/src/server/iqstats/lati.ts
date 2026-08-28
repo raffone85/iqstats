@@ -38,8 +38,10 @@ const GARE_MINIME = 5;
  * avendo il dato. E' gia' successo in `team-metro.ts`, e si vedeva solo guardando la pagina.
  *
  * I primi sette sono i bersagli del motore, e portano gli stessi nomi che il prodotto usa
- * altrove. Gli altri dodici descrivono **come** si gioca, non quanto: sono le colonne che il
- * motore usa gia' come ingressi di contesto e che nessuna pagina ha mai mostrato.
+ * altrove. I dodici che seguono descrivono **come** si gioca, non quanto: sono le colonne che
+ * il motore usa gia' come ingressi di contesto e che nessuna pagina ha mai mostrato. Le
+ * ultime quattro vengono dalla shot map e sono **quote**, non conteggi: portano un `peso` e
+ * si aggregano sui totali.
  */
 const METRICHE = [
   { chiave: "tiri", colonna: "total_shots", nome: "Tiri" },
@@ -61,7 +63,44 @@ const METRICHE = [
   { chiave: "tackle", colonna: "tackles", nome: "Tackle" },
   { chiave: "intercetti", colonna: "interceptions", nome: "Intercetti" },
   { chiave: "recuperi", colonna: "recoveries", nome: "Recuperi" },
+  // **Le quattro della shot map sono quote, non conteggi, e per questo portano un peso.**
+  // La quota di una squadra si fa sui suoi totali - somma su somma - non come media delle
+  // quote delle singole gare: una partita da tre tiri peserebbe quanto una da venti. E'
+  // lo stesso errore corretto sull'arbitro il 28 agosto. Misurato su 1.148 celle
+  // squadra/lato: la media non pesata si scosta dalla quota vera fino a **10,88 punti**,
+  // in media 1,23, e supera il punto in **535 celle su 1.148**.
+  { chiave: "quota_area", colonna: "shot_map_share_in_box", peso: "shot_map_total", nome: "Tiri dall'area" },
+  { chiave: "distanza_tiro", colonna: "shot_map_avg_distance", peso: "shot_map_total", nome: "Distanza del tiro" },
+  { chiave: "qualita_tiro", colonna: "shot_map_xg_per_shot", peso: "shot_map_total", nome: "Qualita del tiro" },
+  { chiave: "quota_murati", colonna: "shot_map_share_blocked", peso: "shot_map_total", nome: "Tiri murati" },
 ] as const;
+
+/** Le colonne che entrano nella metrica: la sua, piu' il peso quando e' una quota. */
+function colonneDi(m: (typeof METRICHE)[number]): readonly string[] {
+  const peso = "peso" in m ? m.peso : null;
+  return peso === null ? [m.colonna] : [m.colonna, peso];
+}
+
+/**
+ * Il filtro che tiene prodotto, concesso e campione sulle stesse gare.
+ *
+ * Per una quota servono **entrambe** le colonne su **entrambi** i lati: senza il peso la
+ * quota non si puo' ricomporre sui totali, e una gara a meta' falserebbe il conto.
+ */
+function filtroDi(m: (typeof METRICHE)[number]): string {
+  return "where " + colonneDi(m)
+    .map((c) => "o." + c + " is not null and a." + c + " is not null")
+    .join(" and ");
+}
+
+/** Il valore di una gara aggregato sul lato `lettera`: media per i conteggi, somma su somma per le quote. */
+function valoreDi(lettera: "o" | "a", m: (typeof METRICHE)[number], filtro: string): string {
+  const peso = "peso" in m ? m.peso : null;
+  if (peso === null) return "avg(" + lettera + "." + m.colonna + ") filter (" + filtro + ")";
+  return "sum(" + lettera + "." + m.colonna + " * " + lettera + "." + peso + ")"
+    + " filter (" + filtro + ")"
+    + " / nullif(sum(" + lettera + "." + peso + ") filter (" + filtro + "), 0)";
+}
 
 export type ChiaveDiLato = (typeof METRICHE)[number]["chiave"];
 
@@ -88,6 +127,17 @@ export interface ConMetro {
   readonly dispersione: number | null;
   /** Quante squadre ne supera, da 0 a 1. */
   readonly posizione: number;
+  /**
+   * L'errore della **sua** media: quanto ballerebbe rifacendo il conto su altre gare.
+   *
+   * E' lo scarto fra le gare di questa squadra diviso la radice del campione, e non ha
+   * niente a che vedere con `dispersione`, che dice quanto le squadre si discostano fra
+   * loro. Serve a non chiamare differenza una differenza piu' piccola del rumore: due
+   * medie si dicono diverse solo se lo scarto supera l'errore di entrambe messo insieme.
+   *
+   * `null` sotto le due gare, dove lo scarto non esiste.
+   */
+  readonly errore: number | null;
 }
 
 export interface VoceDiLato {
@@ -115,6 +165,12 @@ export interface MedieDiLato {
   readonly voci: readonly VoceDiLato[];
   /** Le metriche che questo torneo non osserva, o non abbastanza: si dicono, non spariscono. */
   readonly assenti: readonly string[];
+}
+
+/** L'errore della media: lo scarto fra le gare diviso la radice del campione. */
+function errore(scarto: number | null, campione: number): number | null {
+  if (scarto === null || campione < 2) return null;
+  return scarto / Math.sqrt(campione);
 }
 
 /** Il numero, o `null` se la colonna non c'era: un'assenza non diventa zero. */
@@ -151,11 +207,20 @@ export async function medieDiLato(
   // tiene prodotto, concesso e campione sulle stesse gare.
   const aggregati = METRICHE
     .flatMap((m) => {
-      const entrambi = "where o." + m.colonna + " is not null and a." + m.colonna + " is not null";
+      const entrambi = filtroDi(m);
       return [
-        "avg(o." + m.colonna + ") filter (" + entrambi + ") as p_" + m.chiave,
-        "avg(a." + m.colonna + ") filter (" + entrambi + ") as c_" + m.chiave,
+        valoreDi("o", m, entrambi) + " as p_" + m.chiave,
+        valoreDi("a", m, entrambi) + " as c_" + m.chiave,
         "count(*) filter (" + entrambi + ") as n_" + m.chiave,
+        // **Lo scarto fra le gare della squadra, che non e' quello fra le squadre.** Serve
+        // all'errore della media: senza, «12,8 contro 11,9» non dice se e' una differenza o
+        // rumore. Il metro qui sotto misura un'altra cosa - quanto le squadre si discostano
+        // fra loro - e dividerlo per il campione darebbe un errore che non e' quello di
+        // questa squadra.
+        // ponytail: per le quote e' lo scarto non pesato delle quote di gara, non quello
+        // della quota sui totali; e' una stima prudente, si affina se un giorno serve.
+        "stddev_samp(o." + m.colonna + ") filter (" + entrambi + ") as ds_p_" + m.chiave,
+        "stddev_samp(a." + m.colonna + ") filter (" + entrambi + ") as ds_c_" + m.chiave,
       ];
     })
     .join(",\n               ");
@@ -200,7 +265,8 @@ export async function medieDiLato(
   const scelte = METRICHE
     .flatMap((m) => {
       const k = m.chiave;
-      return ["p_", "c_", "n_", "lega_p_", "lega_c_", "sd_p_", "sd_c_", "rk_p_", "rk_c_", "nq_"]
+      return ["p_", "c_", "n_", "ds_p_", "ds_c_",
+        "lega_p_", "lega_c_", "sd_p_", "sd_c_", "rk_p_", "rk_c_", "nq_"]
         .map((prefisso) => prefisso + k + "::text");
     })
     .join(", ");
@@ -276,12 +342,14 @@ export async function medieDiLato(
           mediaDiLega: legaProdotto,
           dispersione: numero(riga["sd_p_" + k]),
           posizione: (rangoProdotto - 1) / (quante - 1),
+          errore: errore(numero(riga["ds_p_" + k]), campione),
         },
         concesso: {
           media: concesso,
           mediaDiLega: legaConcesso,
           dispersione: numero(riga["sd_c_" + k]),
           posizione: (rangoConcesso - 1) / (quante - 1),
+          errore: errore(numero(riga["ds_c_" + k]), campione),
         },
       });
     }
