@@ -6,6 +6,7 @@ import { TeamCompareSection } from "@/components/team-compare-section";
 import {
   BERSAGLI_PUBBLICI,
   classificaSquadre,
+  type PerimetroClassifica,
   competizioniConSquadre,
   profiloSquadra,
 } from "@/server/iqstats/team-stats";
@@ -41,9 +42,19 @@ function giorno(iso: string): string {
     : data.toLocaleDateString("it-IT", GIORNO);
 }
 
-function numeroDecimale(valore: number, percentuale: boolean): string {
-  const cifre = percentuale ? 1 : valore < 10 ? 2 : 1;
+function numeroDecimale(valore: number, percentuale: boolean, cifreDate?: number): string {
+  const cifre = cifreDate ?? (percentuale ? 1 : valore < 10 ? 2 : 1);
   return valore.toFixed(cifre).replace(".", ",") + (percentuale ? "%" : "");
+}
+
+/**
+ * Le cifre con cui scrivere prodotto e concesso **della stessa riga**.
+ *
+ * Stanno uno accanto all'altro e si confrontano a occhio: «17,3» accanto a «8,83» si legge
+ * come due scale diverse. Comanda il prodotto, che e' il numero su cui la classifica ordina.
+ */
+function cifreDellaRiga(media: number, percentuale: boolean): number {
+  return percentuale ? 1 : media < 10 ? 2 : 1;
 }
 
 export default async function SquadrePage({ searchParams }: Props) {
@@ -80,9 +91,16 @@ export default async function SquadrePage({ searchParams }: Props) {
   const bersaglio = BERSAGLI_PUBBLICI.find((b) => b.chiave === chiesto) ?? PRINCIPALI[0];
 
   const confronto = scalare(parametri.vista) === "confronto";
+  // **Il perimetro, come nel resto del prodotto.** In casa e in trasferta i livelli sono
+  // diversi, e una classifica che li mescola nasconde proprio la differenza che si cerca.
+  const chiestoLato = scalare(parametri.lato);
+  const perimetro: PerimetroClassifica = chiestoLato === "home" || chiestoLato === "away"
+    ? chiestoLato
+    : "tutte";
   const classifica = await classificaSquadre(
     scelta.sourceId,
     confronto ? "gol_fatti" : bersaglio.chiave,
+    perimetro,
   );
 
   // Le due squadre del confronto si scelgono dalla classifica della competizione: la lista
@@ -104,6 +122,7 @@ export default async function SquadrePage({ searchParams }: Props) {
       competizione: String(scelta.sourceId),
       vista: confronto ? "confronto" : "classifiche",
       bersaglio: bersaglio.chiave,
+      lato: perimetro,
       ...(primaId === undefined ? {} : { a: String(primaId) }),
       ...(secondaId === undefined ? {} : { b: String(secondaId) }),
     });
@@ -148,6 +167,25 @@ export default async function SquadrePage({ searchParams }: Props) {
             Confronto
           </Link>
         </nav>
+
+        {confronto ? null : (
+          <nav className="partite-index" aria-label="Perimetro della classifica">
+            {([
+              { chiave: "tutte", nome: "Tutte le gare" },
+              { chiave: "home", nome: "Solo in casa" },
+              { chiave: "away", nome: "Solo in trasferta" },
+            ] as const).map((v) => (
+              <Link
+                className="partite-index-link"
+                key={v.chiave}
+                href={indirizzo({ lato: v.chiave })}
+                aria-current={v.chiave === perimetro ? "page" : undefined}
+              >
+                {v.nome}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <nav className="partite-index" aria-label="Competizione">
           {competizioni.map((c) => (
@@ -256,7 +294,19 @@ export default async function SquadrePage({ searchParams }: Props) {
                       </span>
                       <span className="partite-read">
                         <b>{numeroDecimale(r.media, bersaglio.percentuale)}</b>
-                        <i>a gara</i>
+                        {/* Il concesso accanto al prodotto: chi ne fa quindici e ne concede
+                            cinque e chi ne fa quindici e ne concede venti hanno la stessa
+                            riga e due partite diverse. */}
+                        <i>
+                          a gara
+                          {r.concessa === null
+                            ? ""
+                            : ` · concede ${numeroDecimale(
+                              r.concessa,
+                              bersaglio.percentuale,
+                              cifreDellaRiga(r.media, bersaglio.percentuale),
+                            )}`}
+                        </i>
                       </span>
                     </Link>
                   </li>

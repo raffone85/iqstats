@@ -124,7 +124,19 @@ export interface RigaClassificaSquadre {
   readonly nome: string;
   readonly campione: number;
   readonly media: number;
+  /**
+   * Quanto la squadra **concede** agli avversari della stessa metrica.
+   *
+   * Sta accanto a quello che produce perche' una classifica di soli tiri fatti dice meta'
+   * della storia: chi ne fa quindici e ne concede cinque e chi ne fa quindici e ne concede
+   * venti hanno la stessa riga e due partite diverse. `null` se il dato dell'altro lato
+   * manca.
+   */
+  readonly concessa: number | null;
 }
+
+/** Il perimetro della classifica: tutte le gare, o solo quelle di un lato. */
+export type PerimetroClassifica = "tutte" | "home" | "away";
 
 export interface CompetizioneConSquadre {
   readonly sourceId: number;
@@ -422,14 +434,19 @@ export async function competizioniConSquadre(): Promise<readonly CompetizioneCon
 export async function classificaSquadre(
   competitionSourceId: number,
   chiave: ChiaveBersaglio,
+  perimetro: PerimetroClassifica = "tutte",
 ): Promise<readonly RigaClassificaSquadre[]> {
   const sql = connessione();
   if (sql === null) return [];
   const bersaglio = BERSAGLI.find((b) => b.chiave === chiave);
   if (bersaglio === undefined) return [];
+  const col = bersaglio.colonna;
+  // Prodotto e concesso nascono dalle **stesse** gare: senza questo filtro comune le due
+  // colonne poggerebbero su campioni diversi e la loro differenza non direbbe niente.
+  const entrambi = "where o." + col + " is not null and a." + col + " is not null";
   try {
     const righe = await sql<Array<{
-      source_id: string; name: string; campione: string; media: string;
+      source_id: string; name: string; campione: string; media: string; concessa: string | null;
     }>>`
       with recente as (
         select o.competition_id, o.season_id
@@ -441,20 +458,26 @@ export async function classificaSquadre(
         limit 1
       )
       select t.source_id::text, t.name,
-             count(o.${sql.unsafe(bersaglio.colonna)})::text as campione,
-             avg(o.${sql.unsafe(bersaglio.colonna)})::text as media
+             count(*) filter (${sql.unsafe(entrambi)})::text as campione,
+             avg(o.${sql.unsafe(col)}) filter (${sql.unsafe(entrambi)})::text as media,
+             avg(a.${sql.unsafe(col)}) filter (${sql.unsafe(entrambi)})::text as concessa
       from football.team_match_observations o
+      -- La riga dell'altro lato della stessa gara: e' da li' che viene il concesso.
+      join football.team_match_observations a
+        on a.match_id = o.match_id and a.side <> o.side
       join recente r on r.competition_id = o.competition_id and r.season_id = o.season_id
       join football.teams t on t.id = o.team_id
+      where ${perimetro === "tutte" ? sql`true` : sql`o.side = ${perimetro}`}
       group by 1, 2
-      having count(o.${sql.unsafe(bersaglio.colonna)}) >= ${GARE_MINIME}
-      order by avg(o.${sql.unsafe(bersaglio.colonna)}) desc, t.name
+      having count(*) filter (${sql.unsafe(entrambi)}) >= ${GARE_MINIME}
+      order by avg(o.${sql.unsafe(col)}) filter (${sql.unsafe(entrambi)}) desc, t.name
     `;
     return righe.map((r) => ({
       sourceId: Number(r.source_id),
       nome: r.name,
       campione: Number(r.campione),
       media: Number(r.media),
+      concessa: r.concessa === null ? null : Number(r.concessa),
     }));
   } catch {
     return [];
