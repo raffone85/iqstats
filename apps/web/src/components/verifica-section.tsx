@@ -1,4 +1,6 @@
-import type { GruppoVerifica, VerificaDiGara, VoceVerifica } from "@/server/iqstats/verifica";
+import type {
+  GruppoVerifica, Taratura, VerificaDiGara, VoceVerifica,
+} from "@/server/iqstats/verifica";
 
 import { FAMIGLIE } from "./match-projection-section";
 
@@ -57,8 +59,19 @@ function Gruppo({ gruppo }: { readonly gruppo: GruppoVerifica }) {
   );
 }
 
-export function VerificaSection({ verifica }: { readonly verifica: VerificaDiGara | null }) {
+export function VerificaSection({
+  verifica,
+  taratura,
+}: {
+  readonly verifica: VerificaDiGara | null;
+  readonly taratura: Taratura | null;
+}) {
   if (verifica === null) return null;
+  // **Il livello si scrive tondo, la misura con un decimale**, e non e' un vezzo: con due
+  // numeri arrotondati allo stesso modo la frase diventava «dichiarati all'80% e ne coprono
+  // l'80%», che si legge come una tautologia invece che come una misura riuscita.
+  const tondo = (v: number) => `${Math.round(v * 100)}%`;
+  const preciso = (v: number) => `${(v * 100).toFixed(1).replace(".", ",")}%`;
   return (
     <section className="dossier-panel verifica" aria-labelledby="verifica-title">
       <p className="dossier-kick">Come è andata</p>
@@ -68,6 +81,18 @@ export function VerificaSection({ verifica }: { readonly verifica: VerificaDiGar
       <p className="verifica-conto">
         <b>{verifica.presi}</b> previsioni su <b>{verifica.totali}</b> sono cadute dentro
         l&apos;intervallo che avevamo dichiarato.
+        {/* **Il conto di una gara non si legge da solo.** Un intervallo dichiarato all'ottanta
+            per cento deve coprire circa l'ottanta per cento dei casi: sopra sarebbe troppo
+            largo, sotto prometterebbe piu' di quanto mantiene. Il numero non lo calcola
+            questa pagina, sta gia' negli artefatti promossi. */}
+        {taratura === null ? null : (
+          <>
+            {" "}Su una gara sola è normale allontanarsi: fuori campione questi intervalli
+            sono dichiarati all&apos;<b>{tondo(taratura.dichiarato)}</b> e ne coprono davvero
+            il <b>{preciso(taratura.copertura)}</b>, misurato su{" "}
+            <b>{taratura.bersagli}</b> famiglie quando i modelli sono stati addestrati.
+          </>
+        )}
       </p>
       {verifica.gruppi.map((g) => <Gruppo key={g.bersaglio} gruppo={g} />)}
       <p className="dossier-src">

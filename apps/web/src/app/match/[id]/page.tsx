@@ -40,7 +40,9 @@ import {
 } from "@/server/iqstats/lati";
 import { ConteseSection } from "@/components/contese-section";
 import { VerificaSection } from "@/components/verifica-section";
-import { realeDellaGara, verificaDellaGara } from "@/server/iqstats/verifica";
+import {
+  realeDellaGara, taraturaDegliIntervalli, verificaDellaGara,
+} from "@/server/iqstats/verifica";
 import { TrendRecente } from "@/components/trend-recente";
 
 /**
@@ -481,6 +483,9 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // fonte: le colonne che il motore prevede si chiamano gia' come le nostre.
   const reale = played ? await realeDellaGara(eventId) : null;
   const verifica = verificaDellaGara(proiezioni?.bersagli ?? [], reale);
+  // Il metro con cui leggere il conto: quanto quegli intervalli coprono davvero, misurato
+  // fuori campione all'addestramento e non qui.
+  const taratura = verifica === null ? null : taraturaDegliIntervalli();
 
   const saltiCasa = saltiDelTrend(latoCasa, trendCasa);
   const saltiFuori = saltiDelTrend(latoFuori, trendFuori);
@@ -996,7 +1001,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        <VerificaSection verifica={verifica} />
+        <VerificaSection verifica={verifica} taratura={taratura} />
 
         {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
         <MatchFinishedSection

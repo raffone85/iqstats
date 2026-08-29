@@ -19,6 +19,7 @@
 import "server-only";
 
 import { connessione } from "./lettura.ts";
+import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import type { ProiezioneDiGara } from "./projection/match.ts";
 
 /** Le sette colonne che il motore prevede e che il livello dati conserva con lo stesso nome. */
@@ -176,5 +177,55 @@ export function verificaDellaGara(
     presi: voci.filter((v) => v.dentro).length,
     totali: voci.length,
     senzaGiudizio,
+  };
+}
+
+/**
+ * La taratura degli intervalli, misurata **fuori campione** quando i modelli sono stati
+ * addestrati.
+ *
+ * **E' il metro con cui va letto il conto della singola gara.** «Sedici su ventuno» da solo
+ * non dice niente: dice qualcosa accanto alla frequenza che ci si deve aspettare. Un
+ * intervallo dichiarato all'ottanta per cento deve coprire circa l'ottanta per cento dei
+ * casi: se ne coprisse il novanta sarebbe troppo largo, se ne coprisse il sessanta
+ * prometterebbe piu' di quanto mantiene.
+ *
+ * **Non e' un numero nuovo e non lo calcola questa pagina.** Sta gia' negli artefatti
+ * promossi, sotto `validation_metrics.copertura_intervallo`, misurato con una finestra
+ * avanzante su cinque origini. Qui si legge e basta.
+ */
+export interface Taratura {
+  /** Quanto l'intervallo copre davvero, da 0 a 1, sulla media dei sette bersagli. */
+  readonly copertura: number;
+  /** Il livello a cui l'intervallo e' dichiarato, da 0 a 1. */
+  readonly dichiarato: number;
+  /** Su quanti bersagli e' misurata. */
+  readonly bersagli: number;
+}
+
+function quota(valore: unknown): number | null {
+  return typeof valore === "number" && Number.isFinite(valore) && valore > 0 && valore <= 1
+    ? valore
+    : null;
+}
+
+export function taraturaDegliIntervalli(): Taratura | null {
+  const coperture: number[] = [];
+  const livelli: number[] = [];
+  for (const artefatto of ARTEFATTI_DI_PRODUZIONE.values()) {
+    const misurata = quota(artefatto.validation_metrics?.copertura_intervallo);
+    const dichiarato = quota(
+      (artefatto.calibration as unknown as Record<string, unknown>).livello_dichiarato,
+    );
+    if (misurata === null || dichiarato === null) continue;
+    coperture.push(misurata);
+    livelli.push(dichiarato);
+  }
+  if (coperture.length === 0) return null;
+  const media = (v: readonly number[]) => v.reduce((t, x) => t + x, 0) / v.length;
+  return {
+    copertura: media(coperture),
+    dichiarato: media(livelli),
+    bersagli: coperture.length,
   };
 }
