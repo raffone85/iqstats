@@ -31,6 +31,7 @@ import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli"
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
 import { ContestoGara } from "@/components/contesto-gara";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
+import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { medieDiLato } from "@/server/iqstats/lati";
 
@@ -504,6 +505,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
     : giudizioSulMetro(
       arbitroBanner.gialli, arbitroMetro?.gialli ?? null, arbitroMetro?.dispersioneGialli ?? null,
     );
+  // **Quando l'arbitro non c'e', l'assenza si dichiara dove starebbe il nome.** Misurato il
+  // 29 agosto 2026 su Remo-Corinthians: la fonte risponde `referee_id: null` perche' la gara
+  // e' del 2 dicembre, e la testata restava muta - l'assenza si leggeva solo in fondo, dentro
+  // «Il contorno», dopo migliaia di pixel.
+  const avvisoArbitro = detail.refereeId === null
+    ? avvisoSenzaArbitro(detail.kickoff, new Date())
+    : null;
   const weatherLabel = weatherText(detail.weather);
   // L'ora italiana dell'ultima lettura delle formazioni: senza, «previste» non dice quanto
   // è vecchia la previsione.
@@ -661,12 +669,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
             {/* Tutto il riquadro apre la scheda dell'arbitro, non il solo nome: un link
                 inline e' alto quanto il testo, cioe' 19 px, e sul telefono il minimo tattile
                 del design system e' 44. Il nome resta sottolineato per dire che si apre. */}
-            {referee === null ? null : detail.refereeId === null ? (
-              <p className="oggi-hero-ref">{banner}</p>
-            ) : (
-              <Link className="oggi-hero-ref" href={`/arbitri/${detail.refereeId}`}>
-                {banner}
-              </Link>
+            {referee !== null ? (
+              detail.refereeId === null ? (
+                <p className="oggi-hero-ref">{banner}</p>
+              ) : (
+                <Link className="oggi-hero-ref" href={`/arbitri/${detail.refereeId}`}>
+                  {banner}
+                </Link>
+              )
+            ) : avvisoArbitro === null ? null : (
+              /* Stesso riquadro del designato, con l'etichetta che dice di che si parla: qui
+                 non c'e' nessun numero, perche' non c'e' nessun arbitro di cui dirlo. */
+              <p className="oggi-hero-ref">
+                <span className="oggi-hero-ref-who">
+                  <span className="oggi-hero-ref-tag">Arbitro</span>
+                  <span>{avvisoArbitro.titolo}</span>
+                </span>
+                <span className="oggi-hero-ref-nota">{avvisoArbitro.riga}</span>
+              </p>
             )}
           </div>
         </article>
