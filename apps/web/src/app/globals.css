@@ -1483,3 +1483,11 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .verifica-esito { font: 700 10px/1.6 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
 .verifica-riga.is-presa .verifica-esito { color: var(--card-up); }
 .verifica-riga:not(.is-presa) .verifica-esito { color: var(--card-down); }
+
+/* I quattro filtri di stato del calendario, e la riga che dichiara chi resta fuori. */
+.partite-stati { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.partite-stato { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--card-stroke); border-radius: 999px; background: var(--card-panel); font-size: 14px; color: var(--card-ink-2); text-decoration: none; }
+.partite-stato i { font-style: normal; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
+.partite-stato.is-active { border-color: var(--card-brand-soft); background: var(--card-panel-2); color: var(--card-brand-strong); }
+.partite-stato.is-active i { color: var(--card-brand-strong); }
+.partite-fuori { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }

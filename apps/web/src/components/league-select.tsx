@@ -9,9 +9,11 @@ type LeagueSelectProps = Readonly<{
   current: number | null;
   options: readonly LeagueOption[];
   total: number;
+  /** Il filtro di stato attivo, che cambiare campionato non deve azzerare. */
+  stato?: string;
 }>;
 
-export function LeagueSelect({ date, current, options, total }: LeagueSelectProps) {
+export function LeagueSelect({ date, current, options, total, stato }: LeagueSelectProps) {
   const router = useRouter();
   return (
     <select
@@ -23,6 +25,9 @@ export function LeagueSelect({ date, current, options, total }: LeagueSelectProp
         const params = new URLSearchParams();
         params.set("date", date);
         if (value) params.set("leagueId", value);
+        // Cambiare campionato non deve rimettere il calendario su «tutte»: il filtro di
+        // stato scelto resta, altrimenti si perde a ogni scelta.
+        if (stato && stato !== "tutte") params.set("stato", stato);
         router.push(`/partite?${params.toString()}`);
       }}
     >

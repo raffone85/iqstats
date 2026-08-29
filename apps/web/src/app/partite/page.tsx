@@ -48,6 +48,22 @@ function initials(name: string): string {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
 }
 
+/**
+ * I quattro filtri di stato del calendario.
+ *
+ * **Rinviate e annullate stanno solo in «tutte»**, e non e' una dimenticanza: non sono ne'
+ * in corso, ne' da giocare, ne' finite, e infilarle in uno dei tre gruppi farebbe sparire
+ * dal conto una gara che esiste. Chi le cerca le trova dove ci sono tutte.
+ */
+const STATI = [
+  { chiave: "tutte", nome: "Tutte", stati: null },
+  { chiave: "live", nome: "Live", stati: ["inprogress", "live"] },
+  { chiave: "da-giocare", nome: "Da giocare", stati: ["notstarted", "upcoming"] },
+  { chiave: "finite", nome: "Finite", stati: ["finished"] },
+] as const;
+
+type ChiaveStato = (typeof STATI)[number]["chiave"];
+
 function statusInfo(status: string): { label: string; tone: string } {
   const map: Record<string, { label: string; tone: string }> = {
     notstarted: { label: "Prossima", tone: "next" },
@@ -84,6 +100,10 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
   const activeDate = /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : today;
   const leagueParam = scalar(query.leagueId);
   const leagueId = /^[1-9]\d*$/.test(leagueParam) ? Number(leagueParam) : null;
+  const statoChiesto = scalar(query.stato);
+  const stato: ChiaveStato = STATI.some((s) => s.chiave === statoChiesto)
+    ? (statoChiesto as ChiaveStato)
+    : "tutte";
 
   // Gare e letture dello stesso giorno: le letture arrivano da una richiesta sola, quindi
   // l'assaggio in ogni riga non costa traffico in più.
@@ -104,7 +124,39 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
   }
   const leagueOptions = [...optionMap.values()].sort((a, b) => a.label.localeCompare(b.label));
 
-  const shown = leagueId ? allMatches.filter((m) => m.leagueId === leagueId) : allMatches;
+  const dellaLega = leagueId ? allMatches.filter((m) => m.leagueId === leagueId) : allMatches;
+  // I conteggi rispettano il campionato gia' scelto: un numero che non corrisponde a quello
+  // che si vedra' cliccando e' peggio di nessun numero.
+  const quante = new Map<string, number>(STATI.map((v) => [
+    v.chiave,
+    v.stati === null
+      ? dellaLega.length
+      : dellaLega.filter((m) => (v.stati as readonly string[]).includes(m.status)).length,
+  ]));
+  // **Quante gare non stanno in nessuno dei tre gruppi.** Rinviate, annullate, e quelle con
+  // uno stato che la fonte non dichiara: misurato il 29 agosto 2026, sulle 161 gare del
+  // giorno ne restavano fuori 24. Un buco silenzioso in un conteggio si legge come un
+  // difetto, quindi la pagina lo dice.
+  const dentroIGruppi = STATI
+    .filter((v) => v.stati !== null)
+    .reduce((totale, v) => totale + (quante.get(v.chiave) ?? 0), 0);
+  const fuoriDaiGruppi = dellaLega.length - dentroIGruppi;
+
+  const sceltoStati = STATI.find((v) => v.chiave === stato)?.stati ?? null;
+  const shown = sceltoStati === null
+    ? dellaLega
+    : dellaLega.filter((m) => (sceltoStati as readonly string[]).includes(m.status));
+
+  /** L'indirizzo che cambia una cosa sola e conserva le altre due. */
+  const indirizzo = (cambio: { date?: string; leagueId?: number | null; stato?: ChiaveStato }) => {
+    const p = new URLSearchParams();
+    p.set("date", cambio.date ?? activeDate);
+    const lega = cambio.leagueId === undefined ? leagueId : cambio.leagueId;
+    if (lega !== null) p.set("leagueId", String(lega));
+    const s = cambio.stato ?? stato;
+    if (s !== "tutte") p.set("stato", s);
+    return `/partite?${p.toString()}`;
+  };
 
   const groups: Group[] = [];
   const groupMap = new Map<number | string, Group>();
@@ -149,7 +201,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           {dateBar.map((d) => (
             <Link
               key={d.iso}
-              href={`/partite?date=${d.iso}`}
+              href={indirizzo({ date: d.iso })}
               className={`partite-date${d.iso === activeDate ? " is-active" : ""}`}
               aria-current={d.iso === activeDate ? "page" : undefined}
             >
@@ -158,10 +210,40 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           ))}
         </nav>
 
+        <nav className="partite-stati" aria-label="Stato delle gare">
+          {STATI.map((v) => (
+            <Link
+              key={v.chiave}
+              className={`partite-stato${v.chiave === stato ? " is-active" : ""}`}
+              href={indirizzo({ stato: v.chiave })}
+              aria-current={v.chiave === stato ? "page" : undefined}
+            >
+              {v.nome} <i>{quante.get(v.chiave) ?? 0}</i>
+            </Link>
+          ))}
+        </nav>
+
+        {fuoriDaiGruppi > 0 ? (
+          <p className="partite-fuori">
+            {fuoriDaiGruppi === 1
+              ? "Una gara non è né in corso né da giocare né finita: è rinviata, annullata, o "
+                + "ha uno stato che la fonte non dichiara. La trovi in «Tutte»."
+              : `${fuoriDaiGruppi} gare non sono né in corso né da giocare né finite: sono `
+                + "rinviate, annullate, o hanno uno stato che la fonte non dichiara. Le trovi "
+                + "in «Tutte»."}
+          </p>
+        ) : null}
+
         {leagueOptions.length > 0 ? (
           <div className="partite-filter">
             <label htmlFor="league-filter" className="partite-filter-label">Campionato</label>
-            <LeagueSelect date={activeDate} current={leagueId} options={leagueOptions} total={allMatches.length} />
+            <LeagueSelect
+              date={activeDate}
+              current={leagueId}
+              options={leagueOptions}
+              total={allMatches.length}
+              stato={stato}
+            />
             <span className="partite-filter-hint">Facoltativo · di default vedi tutte le gare del giorno.</span>
           </div>
         ) : null}
