@@ -5,10 +5,6 @@ import "server-only";
 
 import {
   aggregateTeamReferees,
-  readReferee,
-  type RefereeLeagueBenchmark,
-  type RefereeProfile,
-  type RefereeReading,
   type TeamRefereeRecord,
 } from "@iqstats/shared";
 import { cache } from "react";
@@ -25,6 +21,10 @@ import type {
   TeamSquad,
 } from "@iqstats/shared";
 
+import {
+  classificaArbitri, letturaArbitro, metriDiLega, metroDiCompetizione,
+  type LetturaArbitro, type MetroDiLega,
+} from "./referees.ts";
 import { getTeamGateway } from "./runtime.ts";
 import type { TeamCompetitionOption } from "./team-selection.ts";
 
@@ -220,13 +220,15 @@ export const getTeamSplits = cache(
 
 export interface TeamRefereeEntry {
   readonly record: TeamRefereeRecord;
-  readonly profile: RefereeProfile | null;
-  readonly reading: RefereeReading | null;
+  readonly nome: string | null;
+  /** `null` quando di quell'arbitro non abbiamo abbastanza gare in questa competizione. */
+  readonly lettura: LetturaArbitro | null;
 }
 
 export interface TeamRefereePanel {
   readonly entries: readonly TeamRefereeEntry[];
-  readonly benchmark: RefereeLeagueBenchmark | null;
+  /** Il metro dei colleghi che dirigono questa competizione, dalle nostre osservazioni. */
+  readonly metro: MetroDiLega | null;
   readonly teamFoulsPerMatch: number | null;
   readonly teamYellowsPerMatch: number | null;
   readonly matchesWithReferee: number;
@@ -241,34 +243,52 @@ function averageOf(
 }
 
 /**
- * Arbitri incontrati nel campione. Il record "con questa squadra" si ricava dalle
- * gare già scaricate; nomi, aggregati e metro di lega costano un solo GET.
+ * Arbitri incontrati nel campione, e come fischiano rispetto ai colleghi di questa
+ * competizione.
+ *
+ * **Le medie e il metro vengono dalle nostre righe, non dalla fonte.** Fino al 29 agosto
+ * 2026 questo pannello chiedeva alla fonte l'aggregato dell'arbitro - una finestra che la
+ * fonte non dichiara, quindi possibilmente tutta la carriera su tutte le competizioni - e
+ * lo confrontava con il metro di **questa** lega: e' lo stesso difetto corretto nel banner
+ * del dossier il 28 agosto, ed era ancora vivo qui.
+ *
+ * **La soglia non e' piu' un cinque per cento scelto a tavolino** (`REFEREE_INLINE_TOLERANCE`)
+ * ma mezza dispersione fra i colleghi della competizione, la stessa disciplina del dossier:
+ * dove gli arbitri si somigliano serve poco per staccarsi, dove variano molto serve di piu'.
+ *
+ * **E c'e' un minimo di gare**, che prima mancava: sotto le cinque gare in competizione
+ * `classificaArbitri` non restituisce l'arbitro, quindi niente medie e niente etichetta, e
+ * la pagina lo dichiara invece di dedurre un carattere da una partita sola.
+ *
+ * Il record «con questa squadra» resta quello di prima: si ricava dalle gare gia' scaricate.
  */
 export async function getTeamRefereePanel(
   teamId: string,
   selection: TeamSelection,
 ): Promise<TeamRefereePanel | null> {
-  const [splitsEnvelope, directoryEnvelope] = await Promise.all([
+  const competizione = Number(selection.leagueId);
+  const [splitsEnvelope, classifica, metri] = await Promise.all([
     getTeamSplits(teamId, selection.leagueId, selection.seasonId),
-    safely(() => getTeamGateway().getRefereeDirectory(selection.leagueId)),
+    Number.isFinite(competizione) ? classificaArbitri(competizione, "gialli") : Promise.resolve([]),
+    Number.isFinite(competizione) ? metriDiLega([competizione]) : Promise.resolve(new Map()),
   ]);
   const splits = splitsEnvelope?.data ?? null;
   if (splits === null) return null;
 
-  const directory = directoryEnvelope?.data ?? null;
-  const profiles = new Map((directory?.referees ?? []).map((referee) => [referee.refereeId, referee]));
+  // Il metro e' quello di **tutta** la competizione, come le medie qui accanto: un metro di
+  // stagione sopra medie di competizione confronterebbe due perimetri diversi.
+  const metro = Number.isFinite(competizione)
+    ? metroDiCompetizione(metri, competizione)
+    : null;
+  const nostre = new Map(classifica.map((r) => [String(r.sourceId), r]));
   const records = aggregateTeamReferees(splits.matchLog);
 
   return {
     entries: records.map((record) => {
-      const profile = profiles.get(record.refereeId) ?? null;
-      return {
-        record,
-        profile,
-        reading: profile === null ? null : readReferee(profile, directory?.benchmark ?? null),
-      };
+      const riga = nostre.get(record.refereeId) ?? null;
+      return { record, nome: riga?.nome ?? null, lettura: letturaArbitro(riga, metro) };
     }),
-    benchmark: directory?.benchmark ?? null,
+    metro,
     teamFoulsPerMatch: averageOf(splits, "fouls"),
     teamYellowsPerMatch: averageOf(splits, "yellowCards"),
     matchesWithReferee: records.reduce((total, record) => total + record.matches, 0),

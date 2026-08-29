@@ -38,30 +38,6 @@ export interface RefereeDirectory {
   readonly provenance: DataProvenance;
 }
 
-/**
- * Scostamento oltre il quale l'arbitro esce dalla media di lega. Dichiarato perché
- * è una scelta nostra, non un dato della fonte.
- */
-export const REFEREE_INLINE_TOLERANCE = 0.05;
-
-export type RefereeAxisLevel = "lenient" | "inline" | "strict";
-
-export interface RefereeAxis {
-  /** `null` quando manca il valore dell'arbitro o il metro di lega. */
-  readonly level: RefereeAxisLevel | null;
-  readonly value: number | null;
-  readonly leagueAverage: number | null;
-}
-
-/**
- * Falli e cartellini restano due assi distinti: un arbitro può fischiare molto e
- * ammonire poco, e un aggettivo solo mentirebbe.
- */
-export interface RefereeReading {
-  readonly fouls: RefereeAxis;
-  readonly cards: RefereeAxis;
-}
-
 /** Come si è comportata *questa* squadra sotto *questo* arbitro, calcolato da noi. */
 export interface TeamRefereeRecord {
   readonly refereeId: string;

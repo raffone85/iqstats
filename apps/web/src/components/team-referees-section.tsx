@@ -1,5 +1,4 @@
-import type { RefereeAxis, RefereeAxisLevel } from "@iqstats/shared";
-
+import type { Giudizio } from "@/server/iqstats/referees";
 import type { TeamRefereePanel, TeamRefereeEntry } from "@/server/iqstats/team-page";
 
 type TeamRefereesSectionProps = Readonly<{
@@ -10,36 +9,52 @@ type TeamRefereesSectionProps = Readonly<{
 
 /**
  * Falli e cartellini restano due letture distinte: un arbitro può fischiare molto e
- * ammonire poco. Ogni etichetta è ancorata alla media degli arbitri della lega.
+ * ammonire poco, e un aggettivo solo mentirebbe.
+ *
+ * **L'etichetta viene da `giudizioSulMetro`, la stessa del dossier:** mezza dispersione fra
+ * i colleghi che dirigono questa competizione, non uno scarto percentuale deciso da noi.
  */
-const FOULS_LABELS: Readonly<Record<RefereeAxisLevel, string>> = {
-  lenient: "lascia correre",
-  inline: "in linea con la lega",
-  strict: "fischia stretto",
+const FALLI_LABELS: Readonly<Record<Giudizio, string>> = {
+  permissivo: "lascia correre",
+  "in linea": "in linea con la lega",
+  severo: "fischia stretto",
 };
 
-const CARDS_LABELS: Readonly<Record<RefereeAxisLevel, string>> = {
-  lenient: "parco di cartellini",
-  inline: "in linea con la lega",
-  strict: "facile al cartellino",
+const GIALLI_LABELS: Readonly<Record<Giudizio, string>> = {
+  permissivo: "parco di cartellini",
+  "in linea": "in linea con la lega",
+  severo: "facile al cartellino",
 };
 
 function formatDecimal(value: number | null, digits = 2): string {
-  return value === null ? "n/d" : value.toFixed(digits);
+  return value === null ? "n/d" : value.toFixed(digits).replace(".", ",");
 }
 
-function AxisTag({
-  axis,
+function Etichetta({
+  giudizio,
   labels,
-}: Readonly<{ axis: RefereeAxis; labels: Readonly<Record<RefereeAxisLevel, string>> }>) {
-  if (axis.level === null) {
+  valore,
+  metro,
+  cifre,
+}: Readonly<{
+  giudizio: Giudizio | null;
+  labels: Readonly<Record<Giudizio, string>>;
+  valore: number | null;
+  metro: number | null;
+  cifre: number;
+}>) {
+  if (giudizio === null) {
     return <span className="referee-axis is-unknown">metro non calcolabile</span>;
   }
+  // Le tre classi restano quelle del foglio di stile: cambiano nome le parole, non il verso.
+  const classe = giudizio === "severo"
+    ? "strict"
+    : giudizio === "permissivo" ? "lenient" : "inline";
   return (
-    <span className={`referee-axis is-${axis.level}`}>
-      {labels[axis.level]}
+    <span className={`referee-axis is-${classe}`}>
+      {labels[giudizio]}
       <em>
-        {formatDecimal(axis.value, 2)} contro {formatDecimal(axis.leagueAverage, 2)} di lega
+        {formatDecimal(valore, cifre)} contro {formatDecimal(metro, cifre)} dei colleghi
       </em>
     </span>
   );
@@ -50,33 +65,53 @@ function RefereeCard({
   teamName,
   teamFoulsPerMatch,
   teamYellowsPerMatch,
+  metro,
 }: Readonly<{
   entry: TeamRefereeEntry;
   teamName: string;
   teamFoulsPerMatch: number | null;
   teamYellowsPerMatch: number | null;
+  metro: TeamRefereePanel["metro"];
 }>) {
-  const { record, profile, reading } = entry;
+  const { record, nome, lettura } = entry;
 
   return (
     <li className="referee-card">
       <p className="referee-name">
-        {profile?.name ?? `Arbitro ${record.refereeId}`}
+        {nome ?? `Arbitro ${record.refereeId}`}
         <em>
           {record.matches === 1 ? "1 gara" : `${record.matches} gare`} con {teamName}
         </em>
       </p>
 
-      {reading ? (
-        <div className="referee-axes">
-          <AxisTag axis={reading.fouls} labels={FOULS_LABELS} />
-          <AxisTag axis={reading.cards} labels={CARDS_LABELS} />
-        </div>
-      ) : (
+      {lettura === null ? (
         <p className="squad-empty-inline">
-          Il profilo di questo arbitro non è fra quelli esposti per la competizione: nessuna
-          lettura viene dedotta.
+          Di questo arbitro non abbiamo ancora abbastanza gare osservate in questa
+          competizione: nessun carattere viene dedotto da un campione troppo piccolo.
         </p>
+      ) : (
+        <>
+          <div className="referee-axes">
+            <Etichetta
+              giudizio={lettura.giudizioFalli}
+              labels={FALLI_LABELS}
+              valore={lettura.falli}
+              metro={metro?.falli ?? null}
+              cifre={1}
+            />
+            <Etichetta
+              giudizio={lettura.giudizioGialli}
+              labels={GIALLI_LABELS}
+              valore={lettura.gialli}
+              metro={metro?.gialli ?? null}
+              cifre={2}
+            />
+          </div>
+          <p className="referee-career">
+            Le due medie qui sopra stanno su <b>{lettura.gare}</b> gare che gli abbiamo
+            osservato in questa competizione, non sulla sua carriera.
+          </p>
+        </>
       )}
 
       <dl className="squad-facts">
@@ -103,14 +138,6 @@ function RefereeCard({
           <dd>{formatDecimal(record.opponentYellowsPerMatch, 2)}</dd>
         </div>
       </dl>
-
-      {profile ? (
-        <p className="referee-career">
-          Carriera: {profile.careerGames ?? "n/d"} gare · {profile.careerYellowCards ?? "n/d"}{" "}
-          gialli · {profile.careerRedCards ?? "n/d"} rossi. Aggregato recente della fonte:{" "}
-          {profile.matches ?? "n/d"} gare, {formatDecimal(profile.avgGoalsPerMatch, 2)} gol a gara.
-        </p>
-      ) : null}
     </li>
   );
 }
@@ -130,15 +157,20 @@ export function TeamRefereesSection({
         Arbitri incontrati nelle {panel.matches} gare di {competitionLabel}, con falli e cartellini
         delle due squadre sotto ciascuno: è calcolato da noi sulle stesse gare delle medie, non
         chiesto alla fonte.{" "}
-        {panel.benchmark && panel.benchmark.avgFoulsPerMatch !== null ? (
+        {panel.metro && panel.metro.falli !== null ? (
           <>
-            Il metro di riferimento è la media dei <b>{panel.benchmark.referees}</b> arbitri della
-            competizione: <b>{formatDecimal(panel.benchmark.avgFoulsPerMatch, 2)}</b> falli e{" "}
-            <b>{formatDecimal(panel.benchmark.avgYellowPerMatch, 2)}</b> gialli a gara.
-            L&apos;etichetta è una scelta nostra e non un dato della fonte.
+            Il metro è la media dei <b>{panel.metro.arbitri}</b> arbitri che dirigono questa
+            competizione, sulle <b>{panel.metro.gare}</b> gare che abbiamo osservato:{" "}
+            <b>{formatDecimal(panel.metro.falli, 1)}</b> falli e{" "}
+            <b>{formatDecimal(panel.metro.gialli, 2)}</b> gialli a gara. Un arbitro esce dalla
+            media quando si stacca di <b>mezza dispersione</b> dai colleghi: dove si somigliano
+            basta poco, dove variano molto serve di più.
           </>
         ) : (
-          <>Il metro di lega non è disponibile: nessuna etichetta viene assegnata.</>
+          <>
+            Il metro di questa competizione non è calcolabile: nessuna etichetta viene
+            assegnata.
+          </>
         )}
       </p>
 
@@ -156,6 +188,7 @@ export function TeamRefereesSection({
               teamName={teamName}
               teamFoulsPerMatch={panel.teamFoulsPerMatch}
               teamYellowsPerMatch={panel.teamYellowsPerMatch}
+              metro={panel.metro}
             />
           ))}
         </ul>

@@ -1003,8 +1003,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .referee-axes { display: flex; flex-wrap: wrap; gap: 8px; }
 .referee-axis { display: inline-flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel-2); font-size: 13px; font-weight: 600; color: var(--card-ink); }
 .referee-axis em { font-style: normal; font-family: var(--font-mono, monospace); font-size: 10.5px; font-weight: 400; color: var(--card-ink-3); }
-.referee-axis.is-lenient { border-color: var(--card-up); color: var(--card-up); }
-.referee-axis.is-strict { border-color: var(--card-down); color: var(--card-down); }
+/* Severo o permissivo non e' un merito, e' un carattere: verde e mattone qui direbbero
+   un verso che non esiste, e per giunta li dicevano al contrario - il verde stava sopra
+   chi fischia MENO della media. Si usa la stessa convenzione del banner del dossier:
+   bordeaux per chi fischia stretto, inchiostro tenue per chi lascia correre. */
+.referee-axis.is-lenient { border-color: var(--card-stroke); color: var(--card-ink-3); }
+.referee-axis.is-strict { border-color: var(--card-brand-soft); color: var(--card-brand-strong); }
 .referee-axis.is-inline { border-color: var(--card-stroke); color: var(--card-ink-2); }
 .referee-axis.is-unknown { color: var(--card-ink-3); font-weight: 400; }
 .referee-card .squad-facts dd em { display: block; margin-top: 2px; font-style: normal; font-size: 10.5px; font-weight: 400; color: var(--card-ink-3); }

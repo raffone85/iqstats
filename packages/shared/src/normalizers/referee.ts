@@ -1,11 +1,8 @@
 import type { DataEnvelope } from "../contracts/common.ts";
 import {
-  REFEREE_INLINE_TOLERANCE,
-  type RefereeAxis,
   type RefereeDirectory,
   type RefereeLeagueBenchmark,
   type RefereeProfile,
-  type RefereeReading,
   type TeamRefereeRecord,
 } from "../contracts/referee.ts";
 import type { TeamMatchLogEntry } from "../contracts/team.ts";
@@ -138,31 +135,6 @@ export function normalizeRefereeDirectory(
     availability,
     provenance,
     calculation: null,
-  };
-}
-
-function axis(value: number | null, leagueAverage: number | null): RefereeAxis {
-  if (value === null || leagueAverage === null || leagueAverage === 0) {
-    return { level: null, value, leagueAverage };
-  }
-  const deviation = (value - leagueAverage) / leagueAverage;
-  if (Math.abs(deviation) <= REFEREE_INLINE_TOLERANCE) {
-    return { level: "inline", value, leagueAverage };
-  }
-  return { level: deviation > 0 ? "strict" : "lenient", value, leagueAverage };
-}
-
-/**
- * Lettura del metro dell'arbitro contro la media della sua lega. Non inventa
- * soglie: se manca il valore o manca il metro, il livello resta `null`.
- */
-export function readReferee(
-  profile: RefereeProfile,
-  benchmark: RefereeLeagueBenchmark | null,
-): RefereeReading {
-  return {
-    fouls: axis(profile.avgFoulsPerMatch, benchmark?.avgFoulsPerMatch ?? null),
-    cards: axis(profile.avgYellowPerMatch, benchmark?.avgYellowPerMatch ?? null),
   };
 }
 

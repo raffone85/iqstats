@@ -13,7 +13,6 @@ import {
   normalizeRefereeDirectory,
   normalizeRefereeProfile,
   normalizeSeasonCatalog,
-  readReferee,
   normalizeTeamManager,
   normalizeTeamMatchMetrics,
   normalizeTeamProfile,
@@ -328,28 +327,22 @@ test("il metro di lega si calcola dai 42 arbitri della competizione", () => {
   assert.ok(Math.abs((directory.benchmark.avgFoulsPerMatch ?? 0) - 25.28333333333333) < 1e-9);
 });
 
-test("falli e cartellini restano due letture distinte", () => {
+test("il profilo dell'arbitro e il metro della lega restano quelli della fonte", () => {
+  // La lettura «severo o permissivo» non nasce piu' qui: la fa il livello dati sulle nostre
+  // osservazioni, con mezza dispersione fra i colleghi invece della vecchia tolleranza fissa
+  // del cinque per cento. Qui resta la sola normalizzazione.
   const referee = requireData(
     normalizeRefereeProfile(readJson("referee-detail.json"), { capturedAt }),
   );
   assert.equal(referee.name, "Marco Guida");
   assert.equal(referee.careerGames, 328);
+  assert.equal(referee.avgFoulsPerMatch, 23.1);
+  assert.equal(referee.avgYellowPerMatch, 3.74);
 
   const directory = requireData(
     normalizeRefereeDirectory(readJson("referees-league.json"), { leagueId: "4", capturedAt }),
   );
-  const reading = readReferee(referee, directory.benchmark);
-  // 23,1 falli contro 25,28 di lega: -8,6%, oltre la tolleranza del 5%.
-  assert.equal(reading.fouls.level, "lenient");
-  // 3,74 gialli contro 3,85: -2,8%, dentro la tolleranza.
-  assert.equal(reading.cards.level, "inline");
-  assert.equal(reading.fouls.value, 23.1);
-  assert.equal(reading.cards.value, 3.74);
-
-  // Senza metro di lega non si inventa un'etichetta.
-  const blind = readReferee(referee, null);
-  assert.equal(blind.fouls.level, null);
-  assert.equal(blind.cards.level, null);
+  assert.equal(directory.benchmark.avgFoulsPerMatch?.toFixed(2), "25.28");
 });
 
 test("il rapporto con l'arbitro si ricava dalle gare, senza richieste in più", () => {

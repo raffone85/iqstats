@@ -71,20 +71,15 @@ export type {
 } from "./contracts/team.ts";
 export { PLAYER_METRIC_KEYS, SQUAD_ROLE_METRICS } from "./contracts/team.ts";
 export type {
-  RefereeAxis,
-  RefereeAxisLevel,
   RefereeDirectory,
   RefereeLeagueBenchmark,
   RefereeProfile,
-  RefereeReading,
   TeamRefereeRecord,
 } from "./contracts/referee.ts";
-export { REFEREE_INLINE_TOLERANCE } from "./contracts/referee.ts";
 export {
   aggregateTeamReferees,
   normalizeRefereeDirectory,
   normalizeRefereeProfile,
-  readReferee,
   type RefereeDirectoryContext,
   type RefereeNormalizationContext,
 } from "./normalizers/referee.ts";

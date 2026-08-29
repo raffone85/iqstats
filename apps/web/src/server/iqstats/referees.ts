@@ -920,6 +920,52 @@ export async function metriDiLega(
   }
 }
 
+/** Le due medie di un arbitro con i due giudizi sul metro dei suoi colleghi. */
+export interface LetturaArbitro {
+  readonly gare: number;
+  readonly falli: number | null;
+  readonly gialli: number;
+  readonly giudizioFalli: Giudizio | null;
+  readonly giudizioGialli: Giudizio | null;
+}
+
+/**
+ * La lettura di un arbitro dentro la sua competizione, o `null` quando non ne abbiamo
+ * abbastanza gare.
+ *
+ * **Il `null` non e' un caso limite, e' la regola che mancava.** Prima la scheda squadra
+ * dava un carattere a chiunque, anche a chi avevamo visto una volta sola: qui la riga arriva
+ * da `classificaArbitri`, che sotto le cinque gare non restituisce nessuno, e senza riga non
+ * c'e' ne' media ne' etichetta.
+ */
+export function letturaArbitro(
+  riga: RigaClassifica | null,
+  metro: MetroDiLega | null,
+): LetturaArbitro | null {
+  if (riga === null) return null;
+  return {
+    gare: riga.gare,
+    falli: riga.falli,
+    gialli: riga.gialli,
+    giudizioFalli: giudizioSulMetro(riga.falli, metro?.falli ?? null, metro?.dispersioneFalli ?? null),
+    giudizioGialli: giudizioSulMetro(riga.gialli, metro?.gialli ?? null, metro?.dispersioneGialli ?? null),
+  };
+}
+
+/**
+ * Il metro di **tutta** la competizione, senza passare da una stagione.
+ *
+ * Serve dove le medie che gli stanno accanto sono anch'esse su tutta la competizione - la
+ * scheda squadra le prende cosi' - perche' un metro di stagione accanto a una media di
+ * competizione confronterebbe due perimetri diversi.
+ */
+export function metroDiCompetizione(
+  metri: ReadonlyMap<string, MetroDiLega>,
+  competitionSourceId: number,
+): MetroDiLega | null {
+  return metri.get(`${competitionSourceId}|`) ?? null;
+}
+
 /**
  * Il metro giusto per una riga: quello della sua stagione se ha abbastanza gare, altrimenti
  * quello di tutta la competizione. `null` quando non ne abbiamo nessuno dei due.
