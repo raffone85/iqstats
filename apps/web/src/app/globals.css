@@ -263,9 +263,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   .product-header { position: static; }
   .product-header-inner { width: min(100% - 32px, 1180px); min-height: 62px; grid-template-columns: 1fr; }
   .product-nav { display: none; }
-  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 98px; }
+  /* Con «Cerca» le destinazioni sono sei: due righe da tre, e il contenuto lascia sotto
+     lo spazio della barra piu' alta. Con quattro colonne la sesta voce finiva su una riga
+     propria e la barra copriva il fondo della pagina. */
+  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 136px; }
   .email-access-secondary-actions { grid-template-columns: minmax(0, 1fr); }
-  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 64px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 8px 16px env(safe-area-inset-bottom); }
+  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 64px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 8px 16px env(safe-area-inset-bottom); }
   .product-mobile-nav a { display: grid; min-width: 0; min-height: 44px; place-items: center; border-radius: var(--r-inset); color: var(--product-muted); font-size: 14px; font-weight: 800; transition: background-color 180ms ease, color 180ms ease; }
   .product-mobile-nav a[aria-current="page"] { background: var(--product-surface-soft); color: var(--product-primary-deep); }
   .page-intro h1, .data-state h1 { font-size: clamp(2rem, 9.5vw, 2.8rem); }
@@ -364,7 +367,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 /* Bottom nav mobile — 5 voci, identità Cardinale */
 @media (max-width: 640px) {
-  .product-shell .product-mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
+  .product-shell .product-mobile-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
   .product-shell .product-mobile-nav a { color: var(--card-ink-3); font-size: 11px; font-weight: 700; }
   .product-shell .product-mobile-nav a[aria-current="page"] { background: var(--card-brand-pale); color: var(--card-brand-strong); }
 }
@@ -1501,3 +1504,15 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .partite-salto-label { font: 700 10px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
 .partite-salto-input { min-height: 44px; padding: 0 12px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
 .partite-salto-input:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+
+/* La ricerca: un modulo normale, che funziona anche senza JavaScript. */
+.cerca-modulo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin: 16px 0 18px; }
+.cerca-etichetta { grid-column: 1 / -1; font: 700 10px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
+.cerca-campo { min-height: var(--h-action); padding: 0 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); font-size: 16px; color: var(--card-ink); }
+.cerca-campo:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.cerca-invia { min-height: var(--h-action); padding: 0 20px; border: 1px solid var(--card-brand); border-radius: var(--r-control); background: var(--card-brand); color: var(--card-on-brand); font-size: 15px; font-weight: 700; cursor: pointer; }
+.cerca-invia:hover { background: var(--card-brand-strong); }
+/* La riga di ricerca non ha l'orario: due colonne, nome e campione, altrimenti il nome
+   eredita la colonna stretta del calendario e «Marco Guida» va a capo. Visto in pagina. */
+.cerca-riga { grid-template-columns: minmax(0, 1fr) auto; }
+.cerca-riga .partite-teams { font-size: 15px; }

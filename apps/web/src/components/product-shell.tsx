@@ -15,6 +15,7 @@ type ProductSection =
   | "teams"
   | "referees"
   | "method"
+  | "search"
   | "billing"
   | "account";
 
@@ -34,6 +35,7 @@ const PRIMARY_NAV: ReadonlyArray<{ section: ProductSection; href: string; label:
   { section: "matches", href: "/partite", label: "Partite", short: "Partite" },
   { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
   { section: "teams", href: "/squadre", label: "Squadre", short: "Squadre" },
+  { section: "search", href: "/cerca", label: "Cerca", short: "Cerca" },
   { section: "method", href: "/metodo", label: "Metodo", short: "Metodo" },
 ];
 

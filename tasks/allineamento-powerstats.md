@@ -58,10 +58,12 @@ attivi non sono opzionali.
 
 ## Blocco 3 — la navigazione
 
-9. **Barra in basso sul telefono**, in alto da tablet in su. *Criterio:* le destinazioni
-   restano quelle, i comandi sono a 44 px, e il pollice le raggiunge a 375 px.
-10. **Cerca**: squadre, arbitri, gare. *Criterio:* da vuoto a risultato in un tocco, con le
-    tre categorie separate.
+9. ~~Barra in basso sul telefono~~ — **c'era gia'** dal riordino di agosto (`.product-mobile-nav`,
+   fissa sotto i 640 px). Il piano la dava per mancante: errore di chi ha scritto il piano,
+   corretto il 30 agosto dopo averla misurata in pagina.
+10. ~~**Cerca**: squadre e arbitri~~ — **fatto il 30 agosto**. Le gare restano fuori: si
+    trovano dal calendario, che filtra gia' per giorno, campionato e stato, e un risultato
+    che non porta a una scheda sarebbe rumore.
 11. **Preferiti**: squadre e leghe salvate, in cima al calendario. *Criterio:* sopravvivono
     al ricaricamento e sono legati all'account, non al browser.
 12. **Profilo strutturato**: abbonamento, fatturazione, preferenze, salvataggi, assistenza.
