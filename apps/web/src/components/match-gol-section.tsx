@@ -110,35 +110,28 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
           <ul className="engine-splits">
             <li className="engine-split">
               <span className="engine-who">{homeTeam}</span>
-              <span className="engine-exp">
-                {valore(m.casa.attesi)}
-                <span className="engine-obs">
-                  fra {m.casa.minimo} e {m.casa.massimo} gol · {gare(gol.campioneCasa, "in casa")}
-                </span>
+              <span className="engine-exp">{valore(m.casa.attesi)}</span>
+              <span className="engine-dettaglio">
+                fra {m.casa.minimo} e {m.casa.massimo} gol · {gare(gol.campioneCasa, "in casa")}
               </span>
             </li>
             <li className="engine-split">
               <span className="engine-who">{awayTeam}</span>
-              <span className="engine-exp">
-                {valore(m.trasferta.attesi)}
-                <span className="engine-obs">
-                  fra {m.trasferta.minimo} e {m.trasferta.massimo} gol ·{" "}
-                  {gare(gol.campioneTrasferta, "fuori casa")}
-                </span>
+              <span className="engine-exp">{valore(m.trasferta.attesi)}</span>
+              <span className="engine-dettaglio">
+                fra {m.trasferta.minimo} e {m.trasferta.massimo} gol ·{" "}
+                {gare(gol.campioneTrasferta, "fuori casa")}
               </span>
             </li>
             <li className="engine-split">
               <span className="engine-who">Totale gara</span>
-              <span className="engine-exp">
-                {valore(m.attesiTotali)}
-                <span className="engine-obs">
-                  fra {m.totaliMinimo} e {m.totaliMassimo} gol
-                </span>
+              <span className="engine-exp">{valore(m.attesiTotali)}</span>
+              <span className="engine-dettaglio">
+                fra {m.totaliMinimo} e {m.totaliMassimo} gol
               </span>
             </li>
           </ul>
         </Riga>
-
         <Riga titolo="Esito finale">
           <Scala
             titolo="Probabilità dei tre esiti"
@@ -149,7 +142,33 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             ]}
           />
         </Riga>
+        <Riga titolo="Gol totali, sopra la linea">
+          <Scala
+            titolo="Probabilità di superare ciascuna linea"
+            voci={m.overUnder.map((linea) => ({
+              etichetta: `Over ${String(linea.linea).replace(".", ",")}`,
+              probabilita: linea.sopra,
+            }))}
+          />
+        </Riga>
+        <Riga titolo="Entrambe le squadre segnano">
+          <Scala
+            titolo="Probabilità che segnino entrambe"
+            voci={[
+              { etichetta: "Sì", probabilita: m.gg },
+              { etichetta: "No", probabilita: m.ng },
+            ]}
+          />
+        </Riga>
+      </ul>
 
+      {/* **I quattro mercati derivati si aprono.** Doppia chance, gol esatti, risultati e
+          multigol escono dalla stessa distribuzione dei quattro sopra: non sono
+          informazione nuova, sono la stessa informazione tagliata in altri modi. Chi li
+          vuole li apre; chi cerca quanti gol si ferma prima. */}
+      <details className="gol-derivati">
+        <summary>Doppia chance, gol esatti, risultati e multigol</summary>
+        <ul className="engine-rows">
         <Riga titolo="Doppia chance">
           <Scala
             titolo="Probabilità delle doppie chance"
@@ -160,27 +179,6 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             ]}
           />
         </Riga>
-
-        <Riga titolo="Gol totali, sopra la linea">
-          <Scala
-            titolo="Probabilità di superare ciascuna linea"
-            voci={m.overUnder.map((linea) => ({
-              etichetta: `Over ${String(linea.linea).replace(".", ",")}`,
-              probabilita: linea.sopra,
-            }))}
-          />
-        </Riga>
-
-        <Riga titolo="Entrambe le squadre segnano">
-          <Scala
-            titolo="Probabilità che segnino entrambe"
-            voci={[
-              { etichetta: "Sì", probabilita: m.gg },
-              { etichetta: "No", probabilita: m.ng },
-            ]}
-          />
-        </Riga>
-
         <Riga titolo="Quanti gol segna ciascuna">
           <ul className="engine-splits">
             <li className="engine-split">
@@ -195,7 +193,6 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             </li>
           </ul>
         </Riga>
-
         <Riga titolo="I cinque risultati più probabili">
           <Scala
             titolo="Risultati esatti più probabili"
@@ -205,7 +202,6 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             }))}
           />
         </Riga>
-
         <Riga titolo="Multigol">
           <ul className="engine-splits">
             <li className="engine-split">
@@ -225,8 +221,14 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             </li>
           </ul>
         </Riga>
-      </ul>
+        </ul>
+      </details>
 
+      {/* Le due note che spiegano **come** nasce il numero si aprono: sono uguali su ogni
+          gara, e chi le ha lette una volta non le rilegge. Il limite invece resta in
+          pagina: una lettura che sottostima i pareggi bassi deve dirlo, non nasconderlo. */}
+      <details className="dossier-spiega">
+        <summary>Come nascono questi numeri</summary>
       <p className="dossier-src">
         I gol attesi nascono dai <b>gol attesi osservati</b> nelle gare già giocate in questa
         stagione: quanto ciascuna squadra ne produce dal suo lato del campo, per quanto
@@ -243,12 +245,12 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
         squadra pesa per un quinto, a dieci per il 71%. Senza questa cautela un solo risultato
         fuori scala verrebbe scambiato per una forza.
       </p>
+      </details>
+
       <p className="dossier-src">
-        <b>Il limite, dichiarato.</b> I gol delle due squadre sono trattati come indipendenti.
-        È l&apos;approssimazione classica e regge sui totali, ma <b>sottostima i risultati
-        bassi in parità</b> &mdash; lo 0-0 e l&apos;1-1 &mdash; perché nel gioco vero i due
-        punteggi si influenzano. La probabilità del pareggio va letta come un minimo. È una
-        lettura probabilistica, non un consiglio di giocata.
+        <b>Il limite, dichiarato.</b> I due attacchi sono trattati come indipendenti: regge
+        sui totali, ma <b>sottostima i pareggi bassi</b>, lo 0-0 e l&apos;1-1. La probabilità
+        del pareggio va letta come un minimo.
       </p>
     </section>
   );

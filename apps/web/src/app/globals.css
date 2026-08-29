@@ -1409,3 +1409,11 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    /expected che tiene `.engine-split` su una colonna sola. */
 .engine-row.is-famiglia .engine-split { grid-template-columns: minmax(0, 1fr) auto; }
 .engine-dettaglio { grid-column: 1 / -1; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+/* I mercati derivati dei gol e le note che spiegano come nasce il numero: stesso comando
+   nativo del resto del dossier. Il limite dei pareggi bassi resta in pagina, non qui. */
+.gol-derivati { margin-top: 10px; }
+.gol-derivati > summary { display: flex; align-items: center; min-height: var(--h-control); cursor: pointer; font-family: var(--font-inter, sans-serif); font-size: 12.5px; font-weight: 600; color: var(--card-brand); }
+.gol-derivati > summary:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; border-radius: var(--r-inset); }
+/* Anche qui il nome e il numero stanno affiancati: i nomi sono nomi di squadra. */
+.engine-rows .engine-split:has(> .engine-dettaglio) { grid-template-columns: minmax(0, 1fr) auto; }
