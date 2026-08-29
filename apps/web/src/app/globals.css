@@ -1424,3 +1424,12 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .affronto-tutte { margin-top: 12px; padding-top: 4px; border-top: 1px solid var(--card-stroke); }
 .affronto-tutte > summary { display: flex; align-items: center; min-height: var(--h-control); cursor: pointer; font-family: var(--font-inter, sans-serif); font-size: 12.5px; font-weight: 600; color: var(--card-brand); }
 .affronto-tutte > summary:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; border-radius: var(--r-inset); }
+
+/* L'analisi finale in fondo al dossier: prosa, e ogni voce col suo rimando al capitolo.
+   Nessuna cifra qui dentro: i numeri stanno nei capitoli, con campione e metro. */
+.analisi-voci { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 16px; }
+.analisi-voci li { display: grid; gap: 2px; font-size: 15px; line-height: 1.55; color: var(--card-ink-2); }
+.analisi-voci a { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; color: var(--card-brand); font-size: 14px; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.analisi-voci a:hover { text-decoration-thickness: 2px; }
+.analisi-limiti li { color: var(--card-ink-3); }
+.analisi-titoletto { margin: 22px 0 0; font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }

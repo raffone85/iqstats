@@ -31,6 +31,8 @@ import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli"
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
 import { ContestoGara } from "@/components/contesto-gara";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
+import { AnalisiFinale } from "@/components/analisi-finale";
+import { analisiFinale } from "@/server/iqstats/analisi-finale";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { medieDiLato } from "@/server/iqstats/lati";
@@ -38,18 +40,20 @@ import { medieDiLato } from "@/server/iqstats/lati";
 /**
  * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
  *
- * Sono quattro e non sei: «Come si affrontano» e «Analisi finale» entrano quando avranno il
- * loro contenuto, perche' una sezione compare solo con il suo contratto dati. Questi quattro
- * ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza - quindi
- * l'indice non promette mai un capitolo che non si trova.
+ * Quattro ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza -
+ * e due entrano con il loro contenuto: «Come si affrontano» quando i due lati si separano,
+ * «Analisi finale» quando c'e' qualcosa da rileggere. L'indice non promette mai un capitolo
+ * che non si trova.
  */
-function capitoliDi(conAffronto: boolean): readonly { id: string; nome: string }[] {
+function capitoliDi(conAffronto: boolean, conAnalisi: boolean):
+  readonly { id: string; nome: string }[] {
   return [
     { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
     ...(conAffronto ? [{ id: "cap-affronto", nome: "Come si affrontano" }] : []),
     { id: "cap-gol", nome: "Gol" },
     { id: "cap-gioco", nome: "Gioco" },
     { id: "cap-contesto", nome: "Contesto" },
+    ...(conAnalisi ? [{ id: "cap-analisi", nome: "Analisi finale" }] : []),
   ];
 }
 import { MatchStandingsSection } from "@/components/match-standings-section";
@@ -566,6 +570,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
     avvertenze,
   });
 
+  // **L'analisi finale, in fondo:** la rilettura in parole di quello che il dossier ha gia'
+  // detto sopra, senza una cifra, con il rimando al capitolo da cui ogni frase esce. Nasce
+  // dagli stessi oggetti che i capitoli mostrano, quindi non puo' divergere da loro.
+  const nomeFamiglia = (target: string) =>
+    (FAMIGLIE[target]?.nome ?? target).toLowerCase();
+  const analisi = analisiFinale({
+    favorito: verdictFav?.name ?? null,
+    // Una famiglia per lettura, senza ripetizioni, e non piu' di due: oltre e' un elenco.
+    famiglieForti: [...new Set((forti?.letture ?? []).map((l) => l.bersaglio))]
+      .slice(0, 2).map(nomeFamiglia),
+    cappello,
+    arbitroGiudizio,
+    senzaArbitro: avvisoArbitro !== null,
+    senzaMisura: (forti?.senzaMisura ?? []).map(nomeFamiglia),
+    senzaGol: proiezioni !== null && proiezioni.gol === null,
+    senzaProiezione: proiezioni === null || proiezioni.bersagli.length === 0,
+  });
+
   // Il contenuto del riquadro arbitro nel banner, montato una volta sola: lo stesso corpo
   // vive dentro un collegamento quando la scheda esiste, e dentro un paragrafo quando no.
   const banner = referee === null ? null : (
@@ -701,7 +723,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             ordine: qui si aggiungono solo i titoli e l'indice che li segue. I due capitoli
             mancanti - «Come si affrontano» e «Analisi finale» - compariranno quando avranno
             il loro contratto dati, non prima. */}
-        <DossierCapitoli capitoli={capitoliDi(letture.length > 0)} />
+        <DossierCapitoli capitoli={capitoliDi(letture.length > 0, analisi !== null)} />
 
         <DossierCapitolo
           id="cap-colpo-occhio"
@@ -1068,6 +1090,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <p className="dossier-src">Su {h2h.totalMatches} precedenti registrati dalla fonte.</p>
           </section>
         ) : null}
+
+        {analisi === null ? null : (
+          <>
+            <DossierCapitolo
+              id="cap-analisi"
+              nome="Analisi finale"
+              descrizione="Quello che il dossier dice e quello che non dice, con il rimando ai numeri."
+            />
+            <AnalisiFinale analisi={analisi} />
+          </>
+        )}
 
         <p className="dossier-note">
           Dati letti soltanto lato server. Le probabilità sono letture di un modello statistico, mai certezze; nessun consiglio finanziario.
