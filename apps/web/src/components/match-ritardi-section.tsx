@@ -71,14 +71,20 @@ export function MatchRitardiSection({ casa, trasferta, homeTeam, awayTeam }: Pro
         lettura sbagliata più comune di questo numero, e lasciarla implicita significherebbe
         suggerirla.
       </p>
-      <p className="dossier-src">
-        Per questo ogni riga porta <b>due numeri</b>: da quante gare non succede, e quante
-        volte su cento succede davvero. Nove gare senza valgono molto o poco a seconda del
-        secondo numero, e il primo da solo non lo dice. Un evento che non abbiamo mai visto
-        non compare: «non succede da trenta gare su trenta» non è un ritardo, è una cosa che
-        quella squadra, da quel lato del campo, non ha ancora fatto. Si guarda un lato solo,
-        perché casa e trasferta sono due popolazioni diverse.
-      </p>
+      {/* Il monito resta in pagina: e' la lettura sbagliata piu' comune di questo numero, e
+          nasconderla dietro un comando significherebbe suggerirla. La spiegazione di come
+          si legge la riga, invece, si apre. */}
+      <details className="dossier-spiega">
+        <summary>Come si legge questa sezione</summary>
+        <p className="dossier-src">
+          Ogni riga porta <b>due numeri</b>: da quante gare non succede, e quante volte su
+          cento succede davvero. Nove gare senza valgono molto o poco a seconda del secondo
+          numero, e il primo da solo non lo dice. Un evento che non abbiamo mai visto non
+          compare: «non succede da trenta gare su trenta» non è un ritardo, è una cosa che
+          quella squadra, da quel lato del campo, non ha ancora fatto. Si guarda un lato
+          solo, perché casa e trasferta sono due popolazioni diverse.
+        </p>
+      </details>
     </section>
   );
 }

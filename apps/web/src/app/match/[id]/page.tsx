@@ -25,7 +25,6 @@ import { MatchLettureFortiSection } from "@/components/match-letture-forti";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
-import { MatchContestoSection } from "@/components/match-contesto-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
@@ -883,14 +882,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         )}
 
-        {/* Il contesto: le colonne che i modelli usano gia', finora invisibili in pagina. */}
-        {proiezioni ? (
-          <MatchContestoSection
-            contesto={proiezioni.contesto}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
-        ) : null}
+        {/* «Il contesto» e' stato assorbito da «Come si affrontano» il 29 agosto 2026: le
+            due sezioni facevano lo stesso confronto - quanto una produce contro quanto
+            l'altra concede, ciascuna dal proprio lato - con due finestre diverse, e per lo
+            stesso fatto scrivevano 18,4 e 18,9. La tabella completa vive li', dietro
+            «Tutte le metriche», con una finestra sola. Il componente resta: su /expected e'
+            l'unica cosa che risponde a quella domanda, e li' non c'e' un capitolo che lo
+            faccia. */}
 
         {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
             contate in un altro modo. */}

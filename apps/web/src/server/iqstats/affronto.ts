@@ -64,13 +64,14 @@ const LETTURE = [
     id: "combattimento",
     nome: "Combattimento",
     frase: "Quanto si contende il pallone, e quanto lo si riprende.",
-    chiavi: ["duelli", "tackle", "intercetti", "recuperi"],
+    chiavi: ["duelli", "duelli_aerei", "tackle", "intercetti", "recuperi", "punizioni"],
   },
   {
     id: "tiro",
     nome: "Tiro",
     frase: "Da dove si tira, quanto vale il tiro e quanto ne arriva a destinazione.",
-    chiavi: ["quota_area", "distanza_tiro", "qualita_tiro", "quota_murati"],
+    chiavi: ["tiri_in_area", "tiri_da_fuori", "grandi_occasioni", "quota_area",
+      "distanza_tiro", "qualita_tiro", "quota_murati"],
   },
 ] as const;
 
@@ -184,7 +185,8 @@ export interface Tratto {
    */
   readonly metroSecondo: string | null;
   readonly campione: number;
-  readonly verso: -1 | 1;
+  /** `0` quando lo scostamento non supera l'errore: la riga resta, il colore no. */
+  readonly verso: -1 | 0 | 1;
   readonly punti: readonly [Punto, Punto];
 }
 
@@ -197,6 +199,15 @@ export interface Cappello {
   readonly fase: string | null;
   /** Le prove, al massimo quattro: una riga e un asse ciascuna, tutte della stessa forma. */
   readonly tratti: readonly Tratto[];
+  /**
+   * **Tutte** le metriche osservate, dai due lati, nella stessa forma delle prove.
+   *
+   * E' cio' che era la sezione «Il contesto», assorbita qui: due sezioni facevano lo stesso
+   * confronto - quanto una produce contro quanto l'altra concede - con due finestre diverse,
+   * e per lo stesso fatto scrivevano 18,4 e 18,9. Ora la finestra e' una, i numeri sono gli
+   * stessi delle prove sopra, e questo elenco e' la loro tabella completa.
+   */
+  readonly tutte: readonly Tratto[];
   /** Le letture che non separano le due squadre e i confronti tagliati, o `null`. */
   readonly mute: string | null;
   /** La riserva, in una riga: vale se continuano cosi', e parla di gioco, non di esito. */
@@ -264,6 +275,32 @@ function quanteVolte(c: ConMetro): number {
  * shot map fra -0,01 e +0,05: quelle il confronto lo reggono.
  */
 const SOLIDALI: ReadonlySet<string> = new Set(["recuperi"]);
+
+/** Una riga della stessa forma, che venga da una prova o dalla tabella completa. */
+function trattoDa(d: {
+  chiave: string; nome: string; produce: NumeroDiLato; concede: NumeroDiLato;
+  chiAttacca: string; chiDifende: string; campione: number; verso: -1 | 0 | 1;
+  lettura: string; fase: string | null;
+}): Tratto {
+  return {
+    chiave: `${d.chiave}-${d.chiAttacca}`,
+    parola: d.verso === 0 ? d.nome.toLowerCase()
+      : d.verso === 1 ? (VOCABOLARIO[d.chiave]?.sopra ?? d.nome.toLowerCase())
+        : (VOCABOLARIO[d.chiave]?.sotto ?? d.nome.toLowerCase()),
+    nome: d.nome,
+    lettura: d.lettura,
+    fase: d.fase,
+    metro: d.produce.metro,
+    metroSecondo: d.concede.metro === d.produce.metro ? null : d.concede.metro,
+    campione: d.campione,
+    verso: d.verso,
+    punti: [
+      { chi: d.chiAttacca, valore: d.produce.testo, x: d.produce.x },
+      { chi: `avversari di ${d.chiDifende}`, valore: d.concede.testo, x: d.concede.x },
+    ],
+  };
+}
+
 
 /**
  * Quanti confronti stanno in un colpo d'occhio.
@@ -369,6 +406,11 @@ const VOCABOLARIO: Readonly<Record<string, {
   // Un duello lo giocano in due e nessuna delle due lo fa «in attacco»: senza una fase
   // vera non se ne dichiara una falsa, e la frase la lascia fuori.
   duelli: { sotto: "gioco continuo", sopra: "partita spezzettata", fase: null },
+  duelli_aerei: { sotto: "palla che resta bassa", sopra: "molto gioco aereo", fase: null },
+  tiri_in_area: { sotto: "poche conclusioni da dentro", sopra: "molte conclusioni da dentro", fase: "attacco" },
+  tiri_da_fuori: { sotto: "pochi tiri da fuori", sopra: "molti tiri da fuori", fase: "attacco" },
+  grandi_occasioni: { sotto: "poche occasioni nitide", sopra: "molte occasioni nitide", fase: "attacco" },
+  punizioni: { sotto: "gioco che scorre", sopra: "gioco spesso fermo", fase: null },
 };
 
 function parolaDi(f: Forte): string | null {
@@ -414,12 +456,28 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
     .flatMap((l) => l.candidati.map((f) => ({ f, lettura: l.nome })))
     .sort((x, y) => y.f.forza - x.f.forza);
 
+  // **La tabella completa, nella stessa forma delle prove.** Ogni metrica, dai due lati:
+  // e' quello che era «Il contesto», con una finestra sola e gli stessi numeri di sopra.
+  const tutte: Tratto[] = letture.flatMap((l) => l.direzioni.flatMap((d) =>
+    d.confronti.map((c) => {
+      const fase = VOCABOLARIO[c.chiave]?.fase ?? null;
+      return trattoDa({
+        chiave: c.chiave, nome: c.nome, produce: c.produce, concede: c.concede,
+        chiAttacca: d.chiAttacca, chiDifende: d.chiDifende, campione: c.campione,
+        verso: c.produce.oltreIlRumore && c.concede.oltreIlRumore
+          && c.produce.verso === c.concede.verso ? c.produce.verso : 0,
+        lettura: l.nome,
+        fase: fase === null ? null : fase === "attacco" ? d.chiAttacca : d.chiDifende,
+      });
+    })));
+
   if (tutti.length === 0) {
     return {
       titolo: "Numeri troppo vicini per separare le due squadre",
       parole: [],
       fase: null,
       tratti: [],
+      tutte,
       mute: null,
       nota: "Nessun confronto supera l'errore delle proprie medie: dentro il rumore non c'è "
         + "una differenza da leggere.",
@@ -428,20 +486,10 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
   }
 
   const scelti = tutti.slice(0, QUANTI);
-  const tratti: Tratto[] = scelti.map(({ f, lettura }) => ({
-    chiave: `${f.chiave}-${f.chiAttacca}`,
-    parola: parolaDi(f) ?? f.nome.toLowerCase(),
-    nome: f.nome,
-    lettura,
-    fase: faseDi(f),
-    metro: f.produce.metro,
-    metroSecondo: f.concede.metro === f.produce.metro ? null : f.concede.metro,
-    campione: f.campione,
-    verso: f.verso,
-    punti: [
-      { chi: f.chiAttacca, valore: f.produce.testo, x: f.produce.x },
-      { chi: `avversari di ${f.chiDifende}`, valore: f.concede.testo, x: f.concede.x },
-    ],
+  const tratti: Tratto[] = scelti.map(({ f, lettura }) => trattoDa({
+    chiave: f.chiave, nome: f.nome, produce: f.produce, concede: f.concede,
+    chiAttacca: f.chiAttacca, chiDifende: f.chiDifende, campione: f.campione,
+    verso: f.verso, lettura, fase: faseDi(f),
   }));
 
   // Il titolo si ferma a due parole: quattro etichette in fila non sono piu' un titolo.
@@ -467,6 +515,7 @@ export function cappelloDi(letture: readonly Lettura[]): Cappello | null {
     parole,
     fase,
     tratti,
+    tutte,
     mute: coda.length === 0 ? null : `${coda.join(". ")}.`,
     nota: "Vale se le due squadre continuano così, e dice come si gioca: del risultato non "
       + "parla.",

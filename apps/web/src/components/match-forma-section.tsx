@@ -84,6 +84,10 @@ export function MatchFormaSection({ casa, trasferta, homeTeam, awayTeam }: Props
         )}
       </ul>
 
+      {/* Le due note spiegano **come** si legge la sezione, e sono uguali su ogni gara: si
+          aprono. In pagina resta la tabella, che parla di questa gara. */}
+      <details className="dossier-spiega">
+        <summary>Come si legge questa sezione</summary>
       <p className="dossier-src">
         <b>Tre finestre e non una.</b> Tre gare dicono il momento, dieci dicono la squadra,
         cinque stanno in mezzo: mostrarne una sola vorrebbe dire scegliere per te quanto
@@ -98,6 +102,7 @@ export function MatchFormaSection({ casa, trasferta, homeTeam, awayTeam }: Props
         risultati della fonte, che sta nella sezione «Classifica e forma» e risponde a una
         domanda diversa.
       </p>
+      </details>
     </section>
   );
 }

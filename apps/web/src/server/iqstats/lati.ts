@@ -63,6 +63,15 @@ const METRICHE = [
   { chiave: "tackle", colonna: "tackles", nome: "Tackle" },
   { chiave: "intercetti", colonna: "interceptions", nome: "Intercetti" },
   { chiave: "recuperi", colonna: "recoveries", nome: "Recuperi" },
+  // Le cinque che aveva solo «Il contesto», portate qui quando quella sezione e' stata
+  // assorbita: due sezioni davano lo stesso confronto con due finestre diverse e per lo
+  // stesso fatto scrivevano 18,4 e 18,9. Copertura su entrambi i lati, misurata su 10.699
+  // gare: 9.289, 9.261, 9.261, 9.290, 9.275.
+  { chiave: "duelli_aerei", colonna: "aerial_duels_total", nome: "Duelli aerei" },
+  { chiave: "tiri_in_area", colonna: "shots_inside_box", nome: "Tiri dall'interno" },
+  { chiave: "tiri_da_fuori", colonna: "shots_outside_box", nome: "Tiri da fuori area" },
+  { chiave: "grandi_occasioni", colonna: "big_chances", nome: "Grandi occasioni" },
+  { chiave: "punizioni", colonna: "free_kicks", nome: "Punizioni" },
   // **Le quattro della shot map sono quote, non conteggi, e per questo portano un peso.**
   // La quota di una squadra si fa sui suoi totali - somma su somma - non come media delle
   // quote delle singole gare: una partita da tre tiri peserebbe quanto una da venti. E'

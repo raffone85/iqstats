@@ -341,3 +341,47 @@ test("il testo che va in pagina e' scritto con gli accenti, non con gli apostrof
     );
   }
 });
+
+test("la tabella completa ha ogni metrica dai due lati, e gli stessi numeri delle prove", () => {
+  // **E' cio' che era la sezione «Il contesto».** Faceva lo stesso confronto con un'altra
+  // finestra, e per lo stesso fatto scriveva 18,4 dove il capitolo scriveva 18,9. Qui la
+  // finestra e' una: la tabella e le prove devono dire lo stesso numero.
+  const [pc, pf] = separaInCasa("precisione", 90, 80);
+  const quieto = voce("palle_lunghe", con(52, 52), con(52, 52));
+  const c = cappelloDi(comeSiAffrontano(
+    lato("home", [pc, quieto]), lato("away", [pf, quieto]), "Casa", "Fuori",
+  ));
+  assert.ok(c !== null);
+  // Due metriche, due direzioni: quattro righe.
+  assert.equal(c.tutte.length, 4);
+  assert.deepEqual(
+    [...new Set(c.tutte.map((t) => t.punti[0].chi))].sort(),
+    ["Casa", "Fuori"],
+    "la tabella guarda tutt'e due le direzioni",
+  );
+  // La metrica che non si scosta resta in tabella, senza verso e senza parola inventata.
+  const ferma = c.tutte.filter((t) => t.nome === "palle_lunghe");
+  assert.equal(ferma.length, 2);
+  assert.ok(ferma.every((t) => t.verso === 0), "senza scostamento non si dichiara un verso");
+
+  // **Un lato solo non basta neanche in tabella.** Qui chi attacca si scosta davvero, ma
+  // chi gli sta davanti e' in linea: il verso non si dichiara. Senza questo caso il
+  // controllo si poteva togliere senza che nulla arrossisse.
+  const meta = cappelloDi(comeSiAffrontano(
+    lato("home", [voce("cross", con(30, 20), con(20, 20))]),
+    lato("away", [voce("cross", con(20, 20), con(20, 20))]),
+    "Casa", "Fuori",
+  ));
+  const rigaCasa = meta?.tutte.find((t) => t.punti[0].chi === "Casa");
+  assert.ok(rigaCasa !== undefined);
+  assert.equal(rigaCasa.verso, 0, "chi attacca si scosta, chi difende no: niente verso");
+
+  // Una prova e la sua riga in tabella devono portare gli stessi numeri: e' il punto.
+  const prova = c.tratti[0];
+  assert.ok(prova !== undefined);
+  const stessa = c.tutte.find((t) => t.chiave === prova.chiave);
+  assert.ok(stessa !== undefined, "la prova deve stare anche nella tabella");
+  assert.equal(stessa.punti[0].valore, prova.punti[0].valore);
+  assert.equal(stessa.punti[1].valore, prova.punti[1].valore);
+  assert.equal(stessa.metro, prova.metro);
+});

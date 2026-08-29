@@ -57,8 +57,8 @@ test("prodotto e concesso poggiano sulle stesse gare", opzioni, async () => {
   assert.equal(lato.lato, "home");
   assert.ok(lato.voci.length > 0, "nessuna metrica misurata");
   assert.equal(
-    lato.voci.length + lato.assenti.length, 23,
-    "le ventitre metriche devono essere tutte o misurate o dichiarate assenti",
+    lato.voci.length + lato.assenti.length, 28,
+    "le ventotto metriche devono essere tutte o misurate o dichiarate assenti",
   );
 
   for (const voce of lato.voci) {

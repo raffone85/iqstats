@@ -26,9 +26,13 @@ function Prova({ t, faseDelTitolo }: {
   return (
     <div className="affronto-prova">
       <p className="affronto-prova-testa">
-        <span className="affronto-parola">{t.parola}</span>
+        {/* Dove lo scostamento non supera l'errore non c'e' una parola da dire: la riga
+            porta il nome della metrica e basta. Scriverli tutt'e due dava «passaggi
+            Passaggi · Palla». */}
+        <span className="affronto-parola">{t.verso === 0 ? t.nome : t.parola}</span>
         <span className="affronto-prova-fonte">
-          {t.nome} · {t.lettura}
+          {t.verso === 0 ? null : <>{t.nome} · </>}
+          {t.lettura}
           {fase === null ? null : <> · quando attacca {fase}</>}
           {" · "}{t.campione} gare
         </span>
@@ -66,6 +70,19 @@ export function ComeSiAffrontano({ cappello }: { readonly cappello: Cappello | n
         <Prova key={t.chiave} t={t} faseDelTitolo={cappello.fase === null ? null : cappello.fase.replace("quando attacca ", "")} />
       ))}
       {cappello.mute === null ? null : <p className="affronto-mute">{cappello.mute}</p>}
+      {/* **La tabella completa, nella stessa forma.** Era la sezione «Il contesto»: faceva
+          lo stesso confronto con un'altra finestra, e per lo stesso fatto scriveva 18,4
+          dove qui c'era 18,9. Ora la finestra e' una sola e i numeri sono questi. */}
+      {cappello.tutte.length === 0 ? null : (
+        <details className="affronto-tutte">
+          <summary>
+            Tutte le metriche, dai due lati ({cappello.tutte.length} confronti)
+          </summary>
+          {cappello.tutte.map((t) => (
+            <Prova key={t.chiave} t={t} faseDelTitolo={null} />
+          ))}
+        </details>
+      )}
       <p className="affronto-nota">{cappello.nota}</p>
     </section>
   );
