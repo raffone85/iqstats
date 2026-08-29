@@ -4,8 +4,10 @@ import Link from "next/link";
 import { ProductShell } from "@/components/product-shell";
 import { LeagueIdentity } from "@/components/league-identity";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
+import { Targhette } from "@/components/calendario-giornate";
 import { DateJump } from "@/components/date-jump";
 import { LeagueSelect, type LeagueOption } from "@/components/league-select";
+import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { getMatchesByDate, type MatchListItem } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
 import { readMatch, readOutcome } from "@/server/iqstats/match-reading";
@@ -166,6 +168,12 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
     if (s !== "tutte") p.set("stato", s);
     return `/partite?${p.toString()}`;
   };
+
+  // **Che cosa si trovera' aprendo ogni gara, prima di aprirla.** Il prodotto di
+  // riferimento appende l'etichetta al campionato; qui e' per gara, perche' non e' la
+  // competizione a decidere: due squadre della stessa lega possono avere una la stagione
+  // in corso dal lato giusto e l'altra no. Una interrogazione sola per tutto l'elenco.
+  const coperture = await coperturaDelleGare(shown);
 
   const groups: Group[] = [];
   const groupMap = new Map<number | string, Group>();
@@ -329,6 +337,11 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                                 </span>
                               ) : null}
                             </span>
+                            {/* Le targhette stanno in fondo alla cella, non fra i nomi e la
+                                lettura: li' spostavano in basso il secondo nome e lo
+                                disallineavano dal punteggio, che e' impilato apposta con una
+                                cifra per squadra. Visto nella cattura. */}
+                            <Targhette copertura={coperture.get(m.eventId)} />
                           </span>
                           <span className="partite-outcome">
                             {finished

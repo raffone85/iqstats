@@ -51,7 +51,13 @@ function Quando({ iso }: { readonly iso: string }) {
   );
 }
 
-function Targhette({ copertura }: { readonly copertura: CoperturaDiGara | undefined }) {
+/**
+ * Che cosa si trovera' aprendo quella gara, prima di aprirla.
+ *
+ * Esportata perche' la usa anche il calendario di `/partite`: e' la stessa domanda, e due
+ * versioni della stessa targhetta divergerebbero al primo cambio di soglia.
+ */
+export function Targhette({ copertura }: { readonly copertura: CoperturaDiGara | undefined }) {
   if (copertura === undefined) return null;
   const accese: string[] = [];
   if (copertura.proiezione) accese.push("Proiezione");
