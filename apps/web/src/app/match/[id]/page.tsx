@@ -35,7 +35,10 @@ import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
-import { medieDiLato, saltiDelTrend, trendUltime5 } from "@/server/iqstats/lati";
+import {
+  contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
+} from "@/server/iqstats/lati";
+import { ConteseSection } from "@/components/contese-section";
 import { TrendRecente } from "@/components/trend-recente";
 
 /**
@@ -458,6 +461,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
       trendUltime5(detail.homeTeamId, detail.leagueId, detail.seasonId),
       trendUltime5(detail.awayTeamId, detail.leagueId, detail.seasonId),
     ]);
+  // **Chi vince il confronto, gara per gara.** La media non lo dice: due squadre con la
+  // stessa media possono arrivarci vincendo sempre di poco o alternando gare estreme.
+  const [duelliCasa, duelliFuori] = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
+    ? [null, null]
+    : await Promise.all([
+      duelliDiLato(detail.homeTeamId, detail.leagueId, detail.seasonId, "home"),
+      duelliDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
+    ]);
+  const leContese = contese(duelliCasa, duelliFuori);
+
   const saltiCasa = saltiDelTrend(latoCasa, trendCasa);
   const saltiFuori = saltiDelTrend(latoFuori, trendFuori);
 
@@ -813,6 +827,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
               nomeFuori={detail.awayTeam}
               gareCasa={trendCasa?.gare ?? 0}
               gareFuori={trendFuori?.gare ?? 0}
+            />
+            <ConteseSection
+              contese={leContese}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
             />
           </>
         ) : null}

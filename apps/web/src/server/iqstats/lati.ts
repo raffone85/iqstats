@@ -568,3 +568,159 @@ export function saltiDelTrend(
     .filter((s) => (viste.has(s.chiave) ? false : (viste.add(s.chiave), true)))
     .slice(0, quanti);
 }
+
+// ---------------------------------------------------------------------------
+// Chi vince il confronto, gara per gara.
+//
+// **Non e' la media, ed e' il punto.** Due squadre possono avere la stessa media di corner e
+// arrivarci in modi opposti: una che ne fa sempre uno o due piu' dell'avversario, l'altra che
+// alterna gare da otto e gare da zero. La media le confonde, il conto delle gare vinte no.
+//
+// **Il perimetro e' il lato**, come tutto il resto del dossier: quante volte il Goias ne ha
+// fatti piu' dell'avversario **in casa**, non in generale. Il totale non si mostra: sarebbe
+// un secondo numero con un altro perimetro accanto al primo, ed e' l'errore che abbiamo gia'
+// corretto una volta togliendo «Il contesto».
+//
+// **I pareggi contano e si dichiarano.** Su fuorigioco e cartellini le gare pari sono tante -
+// due squadre che ne fanno zero pareggiano - e mostrarne solo le vinte direbbe meno del vero.
+// ---------------------------------------------------------------------------
+
+/** Come e' finito il confronto di una metrica, in quante gare. */
+export interface Duello {
+  readonly chiave: string;
+  readonly nome: string;
+  /** Gare in cui la squadra ne ha fatti piu' dell'avversario, dal suo lato. */
+  readonly piu: number;
+  readonly pari: number;
+  readonly meno: number;
+  /** Le gare su cui il conto poggia: la somma dei tre. */
+  readonly gare: number;
+  /** La quota di gare vinte, da 0 a 1. */
+  readonly quota: number;
+  /** L'errore della quota: `sqrt(p(1-p)/n)`, per sapere quanto quel numero regge. */
+  readonly errore: number;
+}
+
+export interface Duelli {
+  readonly lato: Lato;
+  readonly voci: readonly Duello[];
+}
+
+/**
+ * Quante volte la squadra ha vinto il confronto di ogni famiglia, dal suo lato.
+ *
+ * Solo le sette famiglie del motore: sono quelle di cui parlano le card, le letture e il
+ * trend, e un elenco di ventotto confronti non e' una lettura.
+ */
+export async function duelliDiLato(
+  teamSourceId: number,
+  competitionSourceId: number,
+  seasonSourceId: number,
+  lato: Lato,
+): Promise<Duelli | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+
+  const famiglie = METRICHE.filter((m) => FAMIGLIE_DEL_MOTORE.has(m.chiave));
+  const conti = famiglie
+    .flatMap((m) => {
+      const c = m.colonna;
+      const esiste = "o." + c + " is not null and a." + c + " is not null";
+      return [
+        "count(*) filter (where " + esiste + " and o." + c + " > a." + c + ") as piu_" + m.chiave,
+        "count(*) filter (where " + esiste + " and o." + c + " = a." + c + ") as pari_" + m.chiave,
+        "count(*) filter (where " + esiste + " and o." + c + " < a." + c + ") as meno_" + m.chiave,
+      ];
+    })
+    .join(",\n             ");
+
+  try {
+    const righe = await sql<RigaDiLato[]>`
+      select ${sql.unsafe(conti)}
+      from football.team_match_observations o
+      join football.team_match_observations a
+        on a.match_id = o.match_id and a.side <> o.side
+      join football.teams t on t.id = o.team_id
+      join football.competitions c on c.id = o.competition_id
+      join football.seasons s on s.id = o.season_id
+      where t.source_id = ${teamSourceId}::bigint
+        and c.source_id = ${competitionSourceId}::bigint
+        and s.source_id = ${seasonSourceId}::bigint
+        and o.side = ${lato}
+    `;
+
+    const riga = righe[0];
+    if (riga === undefined) return null;
+
+    const voci: Duello[] = [];
+    for (const m of famiglie) {
+      const piu = numero(riga["piu_" + m.chiave]);
+      const pari = numero(riga["pari_" + m.chiave]);
+      const meno = numero(riga["meno_" + m.chiave]);
+      if (piu === null || pari === null || meno === null) continue;
+      const gare = piu + pari + meno;
+      // Sotto il campione minimo un conto di gare non e' una tendenza, come per le medie.
+      if (gare < GARE_MINIME) continue;
+      const quota = piu / gare;
+      voci.push({
+        chiave: m.chiave,
+        nome: m.nome,
+        piu,
+        pari,
+        meno,
+        gare,
+        quota,
+        errore: Math.sqrt((quota * (1 - quota)) / gare),
+      });
+    }
+    if (voci.length === 0) return null;
+    return { lato, voci };
+  } catch {
+    return null;
+  }
+}
+
+/** Il confronto fra le due squadre su una famiglia, ciascuna dal suo lato. */
+export interface Contesa {
+  readonly chiave: string;
+  readonly nome: string;
+  readonly casa: Duello;
+  readonly fuori: Duello;
+  /** Quante volte l'errore composto vale la distanza fra le due quote. */
+  readonly forza: number;
+}
+
+/**
+ * Le famiglie in cui le due squadre si comportano piu' diversamente, dai rispettivi lati.
+ *
+ * **Passa solo cio' che supera l'errore delle due quote.** Con venti gare per lato una
+ * differenza di dieci punti percentuali e' dentro il rumore, e mostrarla come una differenza
+ * sarebbe la stessa cosa che dire che 0,51 e' diverso da 0,49.
+ */
+export function contese(
+  casa: Duelli | null,
+  fuori: Duelli | null,
+  quante = 3,
+): readonly Contesa[] {
+  if (casa === null || fuori === null) return [];
+  const diFuori = new Map(fuori.voci.map((v) => [v.chiave, v]));
+  const trovate: Contesa[] = [];
+
+  for (const voce of casa.voci) {
+    const altra = diFuori.get(voce.chiave);
+    if (altra === undefined) continue;
+    const errore = Math.sqrt(voce.errore * voce.errore + altra.errore * altra.errore);
+    if (errore <= 0) continue;
+    const distanza = Math.abs(voce.quota - altra.quota);
+    if (distanza <= errore) continue;
+    trovate.push({
+      chiave: voce.chiave,
+      nome: voce.nome,
+      casa: voce,
+      fuori: altra,
+      forza: distanza / errore,
+    });
+  }
+
+  return trovate.sort((a, b) => b.forza - a.forza).slice(0, quante);
+}

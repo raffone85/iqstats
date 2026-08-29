@@ -36,6 +36,7 @@
     "test:analisi-finale": "node --experimental-strip-types --test test/iqstats-analisi-finale.test.ts",
     "test:lettura-arbitro": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-lettura-arbitro.test.ts",
     "test:base-di-lega": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-base-di-lega.test.ts",
+    "test:contese": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-contese.test.ts",
     "test:trend": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-trend.test.ts",
     "test:lati": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-lati.test.ts",
     "test:team-stats": "node --import ./test/risolutore-ts.mjs --conditions=react-server --experimental-strip-types --test test/iqstats-team-stats.test.ts",

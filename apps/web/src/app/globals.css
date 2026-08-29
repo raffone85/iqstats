@@ -1448,3 +1448,18 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .trend-salti li.is-su { color: var(--card-up); }
 .trend-salti li.is-giu { color: var(--card-down); }
 .trend-vuoto { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--card-ink-3); }
+
+/* «Chi lo vince, gara per gara»: due quote affiancate, ciascuna dal suo lato.
+   Il rilievo va a chi sta avanti, e non e' verde ne' mattone: non c'e' un verso
+   rispetto a un riferimento, c'e' un confronto fra due squadre. */
+.contese-legenda { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--card-ink-2); }
+.contese-elenco { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 14px; }
+.contesa-nome { margin: 0 0 6px; font-family: var(--font-display); font-size: 14px; color: var(--card-ink); }
+.contesa-lati { display: grid; gap: 8px; }
+@media (min-width: 560px) { .contesa-lati { grid-template-columns: 1fr 1fr; gap: 12px; } }
+.contesa-lato { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--card-stroke); border-radius: var(--r-inset); background: var(--card-panel-2); }
+.contesa-lato b { font-family: var(--font-mono, monospace); font-size: 17px; font-variant-numeric: tabular-nums; color: var(--card-ink-3); }
+.contesa-lato span { font-size: 12px; line-height: 1.45; color: var(--card-ink-3); }
+.contesa-lato.is-avanti { border-color: var(--card-brand-soft); background: var(--card-panel); }
+.contesa-lato.is-avanti b { color: var(--card-brand-strong); }
+.contesa-lato.is-avanti span { color: var(--card-ink-2); }
