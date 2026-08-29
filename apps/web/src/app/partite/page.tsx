@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ProductShell } from "@/components/product-shell";
 import { LeagueIdentity } from "@/components/league-identity";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
+import { DateJump } from "@/components/date-jump";
 import { LeagueSelect, type LeagueOption } from "@/components/league-select";
 import { getMatchesByDate, type MatchListItem } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
@@ -24,12 +25,20 @@ function todayRomeIso(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome" }).format(new Date());
 }
 
-function buildDateBar(todayIso: string): { iso: string; label: string }[] {
-  const base = new Date(`${todayIso}T12:00:00Z`);
+/**
+ * I sette giorni della barra, **attorno a quello mostrato** e non a oggi.
+ *
+ * Prima la barra partiva sempre da oggi e guardava solo avanti: scelta una data, non si
+ * poteva proseguire oltre la settimana ne' tornare indietro di un giorno, e il passato era
+ * irraggiungibile. Con la finestra centrata la barra scorre nei due versi, e il passato
+ * serve: e' li' che vivono le gare finite, quindi la verifica di quello che avevamo detto.
+ */
+function buildDateBar(centroIso: string): { iso: string; label: string }[] {
+  const base = new Date(`${centroIso}T12:00:00Z`);
   const labelFmt = new Intl.DateTimeFormat("it-IT", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" });
   const isoFmt = new Intl.DateTimeFormat("en-CA", { timeZone: "UTC" });
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(base.getTime() + i * 86_400_000);
+    const d = new Date(base.getTime() + (i - 3) * 86_400_000);
     return { iso: isoFmt.format(d), label: labelFmt.format(d).replace(".", "") };
   });
 }
@@ -171,7 +180,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
     g.matches.push(m);
   }
 
-  const dateBar = buildDateBar(today);
+  const dateBar = buildDateBar(activeDate);
   const dateLabel = new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })
     .format(new Date(`${activeDate}T12:00:00Z`));
 
@@ -209,6 +218,15 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
             </Link>
           ))}
         </nav>
+
+        <div className="partite-salta">
+          {dateBar.some((d) => d.iso === today) ? null : (
+            <Link className="partite-date" href={indirizzo({ date: today })}>
+              Torna a oggi
+            </Link>
+          )}
+          <DateJump date={activeDate} leagueId={leagueId} stato={stato} />
+        </div>
 
         <nav className="partite-stati" aria-label="Stato delle gare">
           {STATI.map((v) => (

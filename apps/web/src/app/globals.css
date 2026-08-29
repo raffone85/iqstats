@@ -1491,3 +1491,13 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .partite-stato.is-active { border-color: var(--card-brand-soft); background: var(--card-panel-2); color: var(--card-brand-strong); }
 .partite-stato.is-active i { color: var(--card-brand-strong); }
 .partite-fuori { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
+
+/* Il salto a una data qualsiasi, accanto alla barra dei giorni. */
+/* «Torna a oggi» non e' un giorno della barra: la stessa forma, ma senza la maiuscola
+   automatica su ogni parola, che lo faceva uscire «Torna A Oggi». */
+.partite-salta .partite-date { text-transform: none; }
+.partite-salta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.partite-salto { display: inline-flex; align-items: center; gap: 8px; }
+.partite-salto-label { font: 700 10px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
+.partite-salto-input { min-height: 44px; padding: 0 12px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
+.partite-salto-input:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
