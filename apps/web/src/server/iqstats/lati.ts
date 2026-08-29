@@ -370,3 +370,201 @@ export async function medieDiLato(
     return null;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Il trend delle ultime cinque gare.
+//
+// **Cinque gare comunque giocate, casa e trasferta insieme.** Scelto dall'utente il 29
+// agosto 2026, come fa il prodotto di riferimento. Misura la forma davvero recente, e va
+// letto sapendo che mescola i due lati: la media che gli sta accanto e' invece di un lato
+// solo, quindi il confronto attraversa due perimetri e la pagina deve dirlo.
+//
+// **Il salto si dichiara solo quando supera l'errore delle due medie.** Cinque gare sono
+// poche: senza questo controllo qualunque oscillazione diventerebbe una tendenza. L'errore
+// della differenza si compone in quadratura, e le due medie non sono indipendenti - le
+// ultime cinque stanno anche dentro la media di lato - quindi la stima e' **prudente**: al
+// massimo dichiara meno di quanto potrebbe, mai piu'.
+// ---------------------------------------------------------------------------
+
+/** Quante gare fanno il trend. Non e' una soglia di prodotto: e' la definizione stessa. */
+const GARE_DEL_TREND = 5;
+
+export interface VoceDiTrend {
+  readonly chiave: string;
+  readonly nome: string;
+  readonly prodotto: number | null;
+  readonly concesso: number | null;
+  /** L'errore della media delle ultime gare, per capire se un salto e' un salto. */
+  readonly erroreProdotto: number | null;
+  readonly erroreConcesso: number | null;
+  /** Su quante delle ultime gare quella metrica c'era davvero. */
+  readonly campione: number;
+}
+
+export interface Trend {
+  /** Quante gare sono entrate: cinque, o meno a inizio stagione. */
+  readonly gare: number;
+  readonly voci: readonly VoceDiTrend[];
+}
+
+/**
+ * Le medie delle ultime gare della squadra in questa competizione e stagione.
+ *
+ * Prodotto e concesso vengono dalle stesse gare e con lo stesso filtro delle medie di lato:
+ * i due numeri sono confrontabili perche' nascono dalla stessa definizione, non perche' si
+ * somigliano.
+ */
+export async function trendUltime5(
+  teamSourceId: number,
+  competitionSourceId: number,
+  seasonSourceId: number,
+): Promise<Trend | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+
+  const aggregati = METRICHE
+    .flatMap((m) => {
+      const entrambi = filtroDi(m);
+      return [
+        valoreDi("o", m, entrambi) + " as p_" + m.chiave,
+        valoreDi("a", m, entrambi) + " as c_" + m.chiave,
+        "count(*) filter (" + entrambi + ") as n_" + m.chiave,
+        "stddev_samp(o." + m.colonna + ") filter (" + entrambi + ") as ds_p_" + m.chiave,
+        "stddev_samp(a." + m.colonna + ") filter (" + entrambi + ") as ds_c_" + m.chiave,
+      ];
+    })
+    .join(",\n               ");
+
+  try {
+    const righe = await sql<RigaDiLato[]>`
+      with ultime as (
+        select o.match_id
+        from football.team_match_observations o
+        join football.teams t on t.id = o.team_id
+        join football.competitions c on c.id = o.competition_id
+        join football.seasons s on s.id = o.season_id
+        where t.source_id = ${teamSourceId}::bigint
+          and c.source_id = ${competitionSourceId}::bigint
+          and s.source_id = ${seasonSourceId}::bigint
+        order by o.kickoff_at desc
+        limit ${GARE_DEL_TREND}
+      )
+      select count(distinct o.match_id)::text as gare,
+             ${sql.unsafe(aggregati)}
+      from football.team_match_observations o
+      join football.team_match_observations a
+        on a.match_id = o.match_id and a.side <> o.side
+      join football.teams t on t.id = o.team_id
+      where t.source_id = ${teamSourceId}::bigint
+        and o.match_id in (select match_id from ultime)
+    `;
+
+    const riga = righe[0];
+    if (riga === undefined) return null;
+    const gare = numero(riga.gare);
+    if (gare === null || gare === 0) return null;
+
+    const voci: VoceDiTrend[] = [];
+    for (const m of METRICHE) {
+      const k = m.chiave;
+      const campione = numero(riga["n_" + k]);
+      if (campione === null || campione === 0) continue;
+      voci.push({
+        chiave: k,
+        nome: m.nome,
+        prodotto: numero(riga["p_" + k]),
+        concesso: numero(riga["c_" + k]),
+        erroreProdotto: errore(numero(riga["ds_p_" + k]), campione),
+        erroreConcesso: errore(numero(riga["ds_c_" + k]), campione),
+        campione,
+      });
+    }
+    if (voci.length === 0) return null;
+    return { gare, voci };
+  } catch {
+    return null;
+  }
+}
+
+/** I sette bersagli del motore: sono i primi sette di `METRICHE`, e non un elenco a parte. */
+const FAMIGLIE_DEL_MOTORE: ReadonlySet<string> = new Set(
+  METRICHE.slice(0, 7).map((m) => m.chiave),
+);
+
+/** Un salto fra la media della squadra e le sue ultime gare, con quanto regge. */
+export interface Salto {
+  readonly chiave: string;
+  readonly nome: string;
+  /** Se il salto e' in quello che la squadra fa o in quello che concede. */
+  readonly quale: "prodotto" | "concesso";
+  /** La media del lato che si sta guardando. */
+  readonly media: number;
+  /** La media delle ultime gare, casa e trasferta insieme. */
+  readonly ultime: number;
+  readonly delta: number;
+  readonly verso: -1 | 1;
+  /** Su quante delle ultime gare quella metrica c'era. */
+  readonly campione: number;
+  /** Quante volte l'errore vale il salto: e' il numero su cui si ordina. */
+  readonly forza: number;
+}
+
+/**
+ * I salti che superano l'errore, dal piu' forte.
+ *
+ * **Un salto sotto l'errore non e' un salto**, e qui non entra: con cinque gare qualunque
+ * oscillazione sembrerebbe una tendenza. L'errore della differenza si compone in quadratura
+ * dai due errori delle medie; dove uno dei due manca il salto non si puo' dichiarare e la
+ * voce resta fuori invece di essere mostrata senza metro.
+ */
+export function saltiDelTrend(
+  medie: MedieDiLato | null,
+  trend: Trend | null,
+  quanti = 3,
+): readonly Salto[] {
+  if (medie === null || trend === null) return [];
+  const perChiave = new Map(trend.voci.map((v) => [v.chiave, v]));
+  const salti: Salto[] = [];
+
+  for (const voce of medie.voci) {
+    // **Solo le sette famiglie del motore, e si vede perche' guardando la pagina.** Con
+    // tutte e ventotto le metriche i salti piu' forti finivano su palle lunghe, intercetti e
+    // qualita' del tiro: sono veri - hanno poca varianza, quindi bastano scarti piccoli per
+    // superare l'errore - ma non sono la lingua del prodotto. Qui il trend parla delle
+    // stesse famiglie di cui parlano le card e le letture.
+    if (!FAMIGLIE_DEL_MOTORE.has(voce.chiave)) continue;
+    const recente = perChiave.get(voce.chiave);
+    if (recente === undefined) continue;
+    const lati = [
+      { quale: "prodotto" as const, base: voce.prodotto, ora: recente.prodotto, err: recente.erroreProdotto },
+      { quale: "concesso" as const, base: voce.concesso, ora: recente.concesso, err: recente.erroreConcesso },
+    ];
+    for (const { quale, base, ora, err } of lati) {
+      if (ora === null || err === null || base.errore === null) continue;
+      const delta = ora - base.media;
+      const errore = Math.sqrt(base.errore * base.errore + err * err);
+      if (errore <= 0 || Math.abs(delta) <= errore) continue;
+      salti.push({
+        chiave: voce.chiave,
+        nome: voce.nome,
+        quale,
+        media: base.media,
+        ultime: ora,
+        delta,
+        verso: delta > 0 ? 1 : -1,
+        campione: recente.campione,
+        forza: Math.abs(delta) / errore,
+      });
+    }
+  }
+
+  // **Una famiglia compare una volta sola, con la sua faccia piu' forte.** E' la stessa
+  // regola del quadro in cima, ed e' uscita guardando la pagina: il Corinthians prendeva due
+  // righe su tre con la parola «fuorigioco», una per quello che fa e una per quello che
+  // concede. Sono due fatti diversi, ma su tre righe si legge come una ripetizione.
+  const viste = new Set<string>();
+  return salti
+    .sort((a, b) => b.forza - a.forza)
+    .filter((s) => (viste.has(s.chiave) ? false : (viste.add(s.chiave), true)))
+    .slice(0, quanti);
+}

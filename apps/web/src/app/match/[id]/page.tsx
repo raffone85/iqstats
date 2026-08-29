@@ -35,7 +35,8 @@ import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
-import { medieDiLato } from "@/server/iqstats/lati";
+import { medieDiLato, saltiDelTrend, trendUltime5 } from "@/server/iqstats/lati";
+import { TrendRecente } from "@/components/trend-recente";
 
 /**
  * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
@@ -445,6 +446,21 @@ export default async function MatchPage({ params }: MatchPageProps) {
       medieDiLato(detail.homeTeamId, detail.leagueId, detail.seasonId, "home"),
       medieDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
     ]);
+  // **Come stanno arrivando.** Le ultime cinque gare giocate davvero, casa e trasferta
+  // insieme - la definizione scelta dall'utente il 29 agosto 2026, la stessa del prodotto di
+  // riferimento - contro le medie del lato che si giochera' qui. Passa solo cio' che supera
+  // l'errore delle due medie: con cinque gare, sotto quella soglia un salto non si distingue
+  // da un'oscillazione.
+  const [trendCasa, trendFuori] = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
+    ? [null, null]
+    : await Promise.all([
+      trendUltime5(detail.homeTeamId, detail.leagueId, detail.seasonId),
+      trendUltime5(detail.awayTeamId, detail.leagueId, detail.seasonId),
+    ]);
+  const saltiCasa = saltiDelTrend(latoCasa, trendCasa);
+  const saltiFuori = saltiDelTrend(latoFuori, trendFuori);
+
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
 
@@ -790,6 +806,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
               descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
             />
             <ComeSiAffrontano cappello={cappello} />
+            <TrendRecente
+              casa={saltiCasa}
+              fuori={saltiFuori}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
+              gareCasa={trendCasa?.gare ?? 0}
+              gareFuori={trendFuori?.gare ?? 0}
+            />
           </>
         ) : null}
 
