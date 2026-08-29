@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ProductShell } from "@/components/product-shell";
 import { LeagueIdentity } from "@/components/league-identity";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
+import { CampionatiPreferiti } from "@/components/campionati-preferiti";
 import { Targhette } from "@/components/calendario-giornate";
 import { DateJump } from "@/components/date-jump";
 import { LeagueSelect, type LeagueOption } from "@/components/league-select";
@@ -277,18 +278,14 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
         {groups.length > 0 ? (
           <div className="partite-groups">
             {groups.length > 1 ? (
-              <nav className="partite-index" aria-label="Vai a un campionato">
-                {groups.map((g) => (
-                  <a
-                    className="partite-index-link"
-                    key={g.id ?? "unknown"}
-                    href={"#lega-".concat(String(g.id ?? "altre"))}
-                  >
-                    <LeagueIdentity leagueId={g.id} name={g.name ?? "Altre"} code={g.countryCode} size="sm" />
-                    <i>{g.matches.length}</i>
-                  </a>
-                ))}
-              </nav>
+              <CampionatiPreferiti
+                voci={groups.map((g) => ({
+                  id: g.id,
+                  nome: g.name,
+                  codice: g.countryCode,
+                  gare: g.matches.length,
+                }))}
+              />
             ) : null}
 
             {groups.map((g) => (

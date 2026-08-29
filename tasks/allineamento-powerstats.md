@@ -64,8 +64,11 @@ attivi non sono opzionali.
 10. ~~**Cerca**: squadre e arbitri~~ — **fatto il 30 agosto**. Le gare restano fuori: si
     trovano dal calendario, che filtra gia' per giorno, campionato e stato, e un risultato
     che non porta a una scheda sarebbe rumore.
-11. **Preferiti**: squadre e leghe salvate, in cima al calendario. *Criterio:* sopravvivono
-    al ricaricamento e sono legati all'account, non al browser.
+11. ~~**Preferiti**: campionati in cima al calendario~~ — **fatto il 30 agosto, a meta'.**
+    Sopravvivono al ricaricamento (misurato: il campionato scelto era ancora in cima al
+    giro successivo) ma restano **su questo dispositivo**, e la pagina lo dichiara.
+    Legarli all'account richiede una tabella nuova sul livello dati in linea: si fa quando
+    l'utente autorizza quella scrittura, non prima.
 12. **Profilo strutturato**: abbonamento, fatturazione, preferenze, salvataggi, assistenza.
     *Criterio:* ogni voce porta a qualcosa che esiste.
 13. **Installabile come app**: manifest, icone, scheda «installa». *Criterio:* si aggiunge

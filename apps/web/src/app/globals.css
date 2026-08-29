@@ -1516,3 +1516,14 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    eredita la colonna stretta del calendario e «Marco Guida» va a capo. Visto in pagina. */
 .cerca-riga { grid-template-columns: minmax(0, 1fr) auto; }
 .cerca-riga .partite-teams { font-size: 15px; }
+
+/* La stella dei campionati preferiti: li fa salire in cima all'indice, non li isola. */
+/* La fascia dei campionati scorre in orizzontale e comprime i suoi figli: senza
+   `flex: 0 0 auto` la coppia restava larga 179 px con dentro un link da 236, e la
+   stella finiva fuori dalla vista. Misurato in pagina. */
+.partite-index-coppia { display: inline-flex; align-items: stretch; gap: 2px; flex: 0 0 auto; }
+.partite-stella { min-width: 44px; min-height: 44px; padding: 0 6px; border: 1px solid var(--card-stroke); border-radius: var(--r-inset); background: var(--card-panel); color: var(--card-ink-3); font-size: 16px; line-height: 1; cursor: pointer; }
+.partite-stella:hover { color: var(--card-brand); }
+.partite-stella.is-scelta { border-color: var(--card-brand-soft); color: var(--card-brand-strong); }
+.partite-stella:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.partite-preferiti-nota { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
