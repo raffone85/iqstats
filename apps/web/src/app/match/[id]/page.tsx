@@ -39,6 +39,8 @@ import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
 } from "@/server/iqstats/lati";
 import { ConteseSection } from "@/components/contese-section";
+import { VerificaSection } from "@/components/verifica-section";
+import { realeDellaGara, verificaDellaGara } from "@/server/iqstats/verifica";
 import { TrendRecente } from "@/components/trend-recente";
 
 /**
@@ -471,6 +473,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
       duelliDiLato(detail.awayTeamId, detail.leagueId, detail.seasonId, "away"),
     ]);
   const leContese = contese(duelliCasa, duelliFuori);
+
+  // **A gara finita, quello che avevamo detto contro quello che e' successo.** Non e' una
+  // pagella scritta dopo: il motore legge soltanto cio' che esisteva prima del calcio
+  // d'inizio - e mai la gara stessa - quindi questa e' la previsione che la pagina mostrava
+  // prima che si giocasse. Il reale viene dalle nostre osservazioni, non dal tabellone della
+  // fonte: le colonne che il motore prevede si chiamano gia' come le nostre.
+  const reale = played ? await realeDellaGara(eventId) : null;
+  const verifica = verificaDellaGara(proiezioni?.bersagli ?? [], reale);
 
   const saltiCasa = saltiDelTrend(latoCasa, trendCasa);
   const saltiFuori = saltiDelTrend(latoFuori, trendFuori);
@@ -985,6 +995,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         ) : null}
+
+        <VerificaSection verifica={verifica} />
 
         {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
         <MatchFinishedSection

@@ -1463,3 +1463,23 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .contesa-lato.is-avanti { border-color: var(--card-brand-soft); background: var(--card-panel); }
 .contesa-lato.is-avanti b { color: var(--card-brand-strong); }
 .contesa-lato.is-avanti span { color: var(--card-ink-2); }
+
+/* «Come e' andata»: previsione dichiarata prima, contro il risultato.
+   Verde e mattone qui dicono un verso vero - dentro o fuori l'intervallo. */
+.verifica-conto { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--card-ink-2); }
+.verifica-gruppo { margin-top: 8px; }
+.verifica-famiglia { cursor: pointer; min-height: 44px; padding: 0 2px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0; font-family: var(--font-display); font-size: 14px; color: var(--card-ink); }
+.verifica-famiglia em { font-style: normal; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); }
+.verifica-elenco { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 6px; }
+.verifica-riga { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--card-stroke); border-left-width: 3px; border-radius: var(--r-inset); background: var(--card-panel-2); }
+@media (min-width: 640px) { .verifica-riga { grid-template-columns: 1fr auto auto; align-items: baseline; gap: 14px; } }
+.verifica-riga.is-presa { border-left-color: var(--card-up); }
+.verifica-riga:not(.is-presa) { border-left-color: var(--card-down); }
+.verifica-cosa { font-size: 14px; color: var(--card-ink); }
+.verifica-cosa em { font-style: normal; color: var(--card-ink-3); }
+.verifica-numeri { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink-2); font-variant-numeric: tabular-nums; display: inline-flex; align-items: baseline; gap: 6px; }
+.verifica-numeri i { font-style: normal; color: var(--card-ink-3); }
+.verifica-reale { color: var(--card-ink); }
+.verifica-esito { font: 700 10px/1.6 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
+.verifica-riga.is-presa .verifica-esito { color: var(--card-up); }
+.verifica-riga:not(.is-presa) .verifica-esito { color: var(--card-down); }
