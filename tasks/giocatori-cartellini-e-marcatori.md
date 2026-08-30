@@ -57,65 +57,105 @@ corso, 42 campionati su 63 sono coperti per intero e 13 sono a zero — Europa L
 questi. La copertura si accende e si spegne nel tempo, quindi **non si scrive un elenco di
 leghe ammesse**: si chiede la gara, e se il dato non c'è si dichiara assente.
 
-## 4. Il segnale esiste? Misurato, Serie A 2025/26
+## 4. Il segnale esiste? Misurato su 28 campionati
 
-380 gare, 11.920 righe con minuti sopra zero, **9.253 casi** con almeno cinque gare alle
-spalle. La media del giocatore è calcolata **solo sulle gare precedenti** a quella da prevedere:
-includere la gara stessa gonfierebbe ogni numero qui sotto. Riproducibile con
-`node scripts/verification/segnali-cartellini.mjs 4 2025-08-01 2026-05-31`.
+**254.743 casi**, 28 campionati, dalla raccolta locale `harvest/data/` — 10.716 gare già sul
+disco, nessuna richiesta di rete. Il passo del giocatore è calcolato **solo sulle gare
+precedenti** dentro la stessa stagione, con almeno novanta minuti alle spalle. Riproducibile
+con `.venv/Scripts/python.exe scripts/projection/dataset/build_player_base.py`.
 
-### 4.1 Cartellino — frequenza di base 8,9%
+### 4.0 L'errore che ha invalidato la prima misura
 
-| Fattore, calcolato prima della gara | Dal gruppo più basso al più alto | Rapporto |
-| --- | --- | ---: |
-| gialli per 90 del giocatore | 6,5% → 13,5% | **1,52x** |
-| contrasti per 90 | 4,7% → 11,2% | 1,27x |
-| media gialli dell'arbitro | 6,2% → 11,1% | 1,26x |
-| falli per 90 | 5,7% → 10,3% | 1,16x |
-| derby (121 casi) | 8,9% → 14,9% | 1,68x |
-| duelli persi per 90 | **non monotono**, sale e poi riscende | — |
-| falli subiti per 90 | 7,9% – 10,0% – 8,0% | **nessun segnale** |
+La prima misura leggeva il giallo dal campo `yellow_card` delle righe per giocatore.
+**È un sottoinsieme.** Sulle stesse 395 gare di Serie A, `/events/{id}/incidents/` attribuisce
+il giallo a **1.470 giocatori**, il campo ne dichiara **907**: ne mancano **564, il 38,4%**, e
+in qualche gara mancano tutti. Le righe non inventano mai — 906 dei 907 stanno anche negli
+episodi — ma perdono. Con quell'etichetta la Serie A risultava all'8,0% invece che all'11,8%,
+e due campionati risultavano all'1,8% e al 2,3%, che è impossibile.
 
-**Il segnale è vero ma modesto.** Il fattore più forte da solo porta da 8,9% a 13,5%. Anche
-combinando i tre indipendenti, il candidato più a rischio starà **attorno al 20%**, non al 60%:
-quattro volte su cinque non prenderà il giallo. La sezione deve dirlo, o promette una certezza
-che i numeri non sostengono.
+**Il giallo si legge dagli episodi.** I gol invece combaciano — 938 dalle righe contro 961
+dagli episodi, la differenza sono gli autogol — e restano presi dalle righe.
 
-**Il derby è il rapporto più alto ma il campione più piccolo**: 121 casi. Va rimisurato su più
-stagioni prima di appoggiarci un blocco.
+Gli episodi portano anche il minuto: **il 50,3% dei gialli arriva dopo il 60'** (mediana su 28
+campionati). Il blocco «dopo l'ora di gioco» delle immagini di riferimento è misurabile.
 
-**Una delle immagini si fonda su un fattore che qui non regge.** «Ha subito quattro falli e
-provocato due gialli: chi esce su di lui rischia» usa i falli subiti. Misurato: i falli subiti
-da un giocatore **non predicono il giallo di quel giocatore**. Predicono forse il giallo di
-*chi lo affronta*, che è una quantità diversa e non ancora misurata — sta fra le domande
-aperte, non fra le cose smentite.
+### 4.1 Cartellino — base mediana 13,4% per giocatore in campo
 
-### 4.2 Gol — frequenza di base 7,4%
+| Fattore | Gruppo più basso | Gruppo più alto | Cresce sempre in |
+| --- | ---: | ---: | --- |
+| contrasti per 90 | 0,67x | **1,25x** | 14 leghe su 26 |
+| falli per 90 | 0,69x | 1,17x | 10 leghe su 26 |
+| gialli per 90 | 0,85x | 1,16x | 16 leghe su 28 |
+| media gialli dell'arbitro | 0,91x | 1,01x | **2 leghe su 25** |
 
-| Fattore, calcolato prima della gara | Dal gruppo più basso al più alto | Rapporto |
-| --- | --- | ---: |
-| xG per 90 | 1,5% → 16,0% | **2,16x** |
-| tiri per 90 | 1,5% → 16,0% | 2,16x |
-| tiri in porta per 90 | 2,3% → 15,9% | 2,14x |
-| gol per 90 | 4,2% → 15,2% | 2,05x |
-| grandi occasioni sbagliate per 90 | il valore è zero per quasi tutti | inutilizzabile |
-| derby | 7,4% → 8,3% | 1,11x, niente |
+Le quote sono rispetto alla base del campionato stesso, non a una media generale.
 
-**Il marcatore si prevede meglio dell'ammonito**, e di parecchio: il quinto più alto per xG
-segna dieci volte più spesso del quinto più basso. I quattro fattori dicono in gran parte la
-stessa cosa e non vanno sommati come se fossero indipendenti.
+**Il segnale del cartellino è debole e non tiene fuori dalla lega dove lo si guarda.** Il
+fattore migliore porta da 13,4% a circa 17%: il candidato più esposto **non prende il giallo
+quattro volte su cinque**. E nessun fattore cresce in modo ordinato in più di sedici campionati
+su ventotto: metà delle volte i gruppi si scavalcano.
+
+**L'arbitro, per giocatore, non è un segnale**: 1,01x nel gruppo più severo, e cresce in ordine
+in due campionati su venticinque. Non significa che l'arbitro non conti — conta **per la
+squadra**, dove il repository lo modella già (`yellow_cards__poisson_glm`, in produzione): un
+arbitro più severo dà più cartellini alla gara, ma spalmati su ventidue giocatori il singolo
+quasi non se ne accorge. C'è anche un limite di misura: la media dell'arbitro qui è calcolata
+dentro la stagione con almeno cinque gare, e per molti arbitri sono poche — va rifatta
+mettendo insieme più stagioni prima di dichiararla morta.
+
+**Il derby non regge.** Su Serie A da sola dava 1,68x, ma su 121 casi. Su nove campionati con
+almeno cento casi la mediana è **1,10x**: era rumore.
+
+**Un blocco delle immagini si fonda su un fattore che non regge.** «Ha subito quattro falli e
+provocato due gialli: chi esce su di lui rischia» usa i falli subiti, che non predicono il
+giallo di quel giocatore. Potrebbero predire il giallo di *chi lo affronta*: quantità diversa,
+non ancora misurata, sta fra le domande aperte.
+
+### 4.2 Gol — base mediana 8,0% per giocatore in campo
+
+| Fattore | Gruppo più basso | Gruppo più alto | Cresce sempre in |
+| --- | ---: | ---: | --- |
+| xG per 90 | 0,26x | **2,28x** | 24 leghe su 26 |
+| tiri per 90 | 0,24x | 2,19x | **26 leghe su 26** |
+| tiri in porta per 90 | 0,41x | 2,18x | **26 leghe su 26** |
+| gol per 90 | 0,58x | 2,17x | 22 leghe su 22 |
+
+**Il marcatore si prevede bene, e ovunque.** Il gruppo più alto segna circa **il doppio** della
+base del suo campionato — dall'8,0% a circa il 18% — e il più basso un quarto. I tiri per 90
+crescono in ordine in **tutti e ventisei** i campionati misurati: è il segnale più solido di
+tutto il progetto per giocatore.
+
+I quattro fattori dicono in gran parte la stessa cosa e **non vanno sommati** come se fossero
+indipendenti.
+
+### 4.3 Campi vuoti che sembrano dati
+
+`fouls` è **zero su tutte le righe** in due campionati (identificativi 47 e 82), e su meno di un
+terzo delle righe in un terzo. Lo script lo dichiara con `falli_utilizzabili`: dove è falso,
+il blocco sui falli non si mostra, non si mostra a zero.
 
 ## 5. Le fasi
 
 Nessuna fase comincia prima che la precedente sia verificata.
 
-### Fase 1 — il retrospettivo, su più leghe *(fatto per la Serie A)*
+### Fase 1 — il retrospettivo su più leghe — **fatta il 30 agosto**
 
-Estendere la misura del §4 ad almeno cinque campionati coperti per intero, di dimensione e
-stile diversi. *Criterio:* i rapporti reggono fuori dalla Serie A, o si dichiara che il segnale
-è specifico e la lettura vale solo dove è stato misurato.
-*Verifica:* lo script si ferma con un `AssertionError` se il calcolo dei gruppi si rompe, e
-segnala da sé quando un fattore ha troppi pari merito per essere diviso in cinque.
+28 campionati, 254.743 casi, dalla raccolta locale. Esito nel §4:
+`scripts/projection/dataset/output/giocatori-base.json`.
+*Verifica:* lo script si ferma con un `AssertionError` se Wilson o i quantili si rompono —
+provato mutando il raggio dell'intervallo, che fa scattare l'asserzione. Dichiara da sé i
+fattori con troppi pari merito e i campi vuoti.
+
+**Esito che cambia il piano:** il gol regge ovunque, il cartellino no. La sezione dei marcatori
+può proseguire; quella dei cartellini ha un segnale debole e incostante, e non deve promettere
+più di quello che ha. Le due sezioni **non sono la stessa funzione con bersaglio diverso**,
+come sembrava all'inizio.
+
+### Fase 1b — decisa dall'utente il 30 agosto: **frequenza prima, probabilità dopo**
+
+I blocchi mostrano una frequenza osservata con il suo campione — «sta nel gruppo che poi prende
+il giallo il 17% delle volte, su N casi» — non una probabilità. È vero da subito e non ha
+bisogno di taratura. *Criterio:* nessun blocco senza il suo campione accanto.
 
 ### Fase 2 — la stima, e la sua taratura
 
@@ -151,14 +191,20 @@ non solo le volte che ha indovinato.
 ## 7. Domande aperte, da misurare e non da decidere
 
 1. I falli subiti da un giocatore predicono il giallo di **chi lo affronta**? Serve unire le
-   righe delle due squadre della stessa gara.
-2. Il derby regge su più stagioni, o i suoi 121 casi sono rumore?
-3. Il minuto conta? Le immagini insistono sul «dopo il 60'», e la fonte ha gli incidenti di
-   gara (`/api/v2/events/{id}/incidents/`) che non è ancora stato guardato.
+   righe delle due squadre della stessa gara. È l'unico modo per recuperare il blocco delle
+   immagini che oggi non regge.
+2. ~~Il derby regge?~~ **Chiuso il 30 agosto: no.** 1,10x di mediana su nove campionati con
+   almeno cento casi. Il 1,68x della Serie A era rumore su 121 casi.
+3. ~~Il minuto conta?~~ **Chiuso: sì, e si misura.** Il 50,3% dei gialli arriva dopo il 60'.
 4. La posizione in campo cambia la frequenza di base? Un difensore centrale e un attaccante non
-   hanno la stessa esposizione al giallo.
-5. Il secondo giallo e l'espulsione: `red_card` compare sullo 0,4% delle righe, campione troppo
-   sottile per una lettura a sé.
+   hanno la stessa esposizione al giallo, e la fonte porta `position` sul profilo. **È il primo
+   fattore da provare**, perché è l'unico non ancora guardato che potrebbe spiegare perché
+   contrasti e falli si scavalcano in metà dei campionati.
+5. L'arbitro rifatto **su più stagioni** invece che dentro una sola, e ristretto verso la media
+   della sua lega: 1,01x oggi può essere rumore di stima, non assenza di effetto.
+6. Il secondo giallo e l'espulsione: gli episodi separano `yellow`, `yellowRed` e `red`; il
+   `yellowRed` compare 26 volte su 395 gare di Serie A, campione troppo sottile per una lettura
+   a sé.
 
 ## 8. Rischi dichiarati
 
