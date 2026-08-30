@@ -365,6 +365,16 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 @media (max-width: 1024px) { .product-subnav { display: none; } }
 
+/* Guida in tre passi: sta in linea sotto il titolo, su carta tenue, e si distingue dal
+   contenuto senza coprirlo. Il conto dei passi è informazione di stato, non un fregio. */
+.guida { margin: 18px 0 22px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel-2); }
+.guida-conta { margin: 0 0 8px; color: var(--card-ink-3); font-family: var(--font-mono, monospace); font-size: 11px; font-weight: 600; letter-spacing: .06em; }
+.guida h2 { margin: 0 0 10px; color: var(--card-brand-strong); font-family: var(--font-display); font-size: clamp(1.1rem, 2.5vw, 1.4rem); letter-spacing: -.03em; line-height: 1.15; }
+.guida p { margin: 0; max-width: 64ch; color: var(--card-ink-2); font-size: 14px; line-height: 1.6; }
+.guida-azioni { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+.guida-salta { min-height: var(--h-control); padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: transparent; color: var(--card-ink-2); font-size: 14px; font-weight: 650; touch-action: manipulation; transition: border-color 180ms ease, color 180ms ease; }
+.guida-salta:hover { border-color: var(--card-ink-3); color: var(--card-ink); }
+
 /* Profilo — una voce per riquadro, tutte con lo stesso peso: nessuna è più importante,
    e l'elenco si legge scorrendo invece che decifrando una gerarchia. Solo token esistenti. */
 .account-voce { margin-top: 20px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel); }

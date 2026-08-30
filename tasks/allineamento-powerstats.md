@@ -94,7 +94,14 @@ attivi non sono opzionali.
     costava 5,81-8,77 s di primo byte su `/squadre/276` contro 1,16-1,59 s: il manifesto e'
     dichiarato in `layout.tsx`, che React issa in `head` a costo zero.
     **Resta all'utente:** l'aggiunta vera alla schermata home dal telefono.
-14. **Onboarding a passi** sulle funzioni nuove. *Criterio:* si può saltare e non ricompare.
+14. ~~**Onboarding a passi** sulle funzioni nuove. *Criterio:* si può saltare e non
+    ricompare.~~ — **fatto il 30 agosto.** Tre passi in cima al calendario, in linea e non
+    a velo: il giorno all'indietro, la stella dei preferiti, la riga che dichiara cosa si
+    trovera' aprendo la gara. *Misurato con clic veri:* i tre passi si succedono, all'ultimo
+    «Salta» sparisce e resta «Ho capito», sia «Salta» sia «Ho capito» scrivono la memoria e
+    la guida non torna al ricaricamento; togliendo la memoria torna, quindi la prova sa
+    diventare rossa. Nessun overflow a 375, 768, 1024 e 1440 px.
+    **Resta su questo dispositivo**, come i preferiti e l'invito a installare.
 
 ## Blocco 4 — il prodotto
 

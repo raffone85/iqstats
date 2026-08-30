@@ -7,6 +7,7 @@ import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { CampionatiPreferiti } from "@/components/campionati-preferiti";
 import { Targhette } from "@/components/calendario-giornate";
 import { DateJump } from "@/components/date-jump";
+import { GuidaPartite } from "@/components/guida-partite";
 import { LeagueSelect, type LeagueOption } from "@/components/league-select";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { getMatchesByDate, type MatchListItem } from "@/server/iqstats/matches";
@@ -214,6 +215,10 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           </span>
         </div>
         <h1 id="partite-title" className="partite-title">{dateLabel}</h1>
+
+        {/* Sotto il titolo e sopra i comandi che descrive: si legge una volta, si salta, e
+            chi la salta non la rivede. Non e' un velo sopra la pagina. */}
+        <GuidaPartite />
 
         <nav className="partite-datebar" aria-label="Scegli il giorno">
           {dateBar.map((d) => (
