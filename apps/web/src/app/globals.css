@@ -365,6 +365,16 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 @media (max-width: 1024px) { .product-subnav { display: none; } }
 
+/* Avvertenze in coda a ogni pagina di prodotto. Testo di servizio, non un allarme: niente
+   verde e niente mattone, che qui significano un verso. Il filetto la separa dal contenuto
+   senza chiuderla in un riquadro, perché non è un capitolo ma la cornice di tutti. */
+.product-avvertenze { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 34px; border-top: 1px solid var(--card-stroke); }
+.product-avvertenze p { max-width: 78ch; margin: 0 0 8px; color: var(--card-ink-3); font-size: 12.5px; line-height: 1.6; }
+.product-avvertenze p:last-child { margin-bottom: 0; }
+.product-avvertenze b { color: var(--card-ink-2); }
+.product-avvertenze a { color: var(--card-brand-strong); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) { .product-avvertenze { padding-bottom: 20px; } }
+
 /* Guida in tre passi: sta in linea sotto il titolo, su carta tenue, e si distingue dal
    contenuto senza coprirlo. Il conto dei passi è informazione di stato, non un fregio. */
 .guida { margin: 18px 0 22px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel-2); }

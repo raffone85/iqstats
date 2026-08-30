@@ -135,6 +135,24 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
             qualcosa da installare, e una volta chiuso non torna. */}
         <InstallaApp />
       </main>
+      {/* Le avvertenze stanno su ogni pagina di prodotto, non in una pagina defilata: sono
+          la cornice di ogni lettura, e una cornice che si trova solo cercandola non e' una
+          cornice. Non accanto a ogni singola lettura: in un dossier da diciassette capitoli
+          la stessa frase ripetuta diventa rumore, e il rumore si smette di leggere.
+          Il numero e' verificato alla fonte (Istituto Superiore di Sanità), non a memoria. */}
+      <footer className="product-avvertenze">
+        <p>
+          <b>IQstatS pubblica analisi statistiche, non consigli di scommessa.</b> Nessun
+          numero in queste pagine è un invito a giocare, e nessuna lettura è una previsione
+          garantita.
+        </p>
+        <p>
+          Vietato ai minori di diciotto anni. Il gioco d&apos;azzardo può causare dipendenza
+          patologica. Telefono Verde Nazionale{" "}
+          <a href="tel:800558822">800 55 88 22</a>, gratuito e anonimo, dal lunedì al venerdì
+          dalle 10 alle 16, Istituto Superiore di Sanità.
+        </p>
+      </footer>
       <nav className="product-mobile-nav" aria-label="Navigazione primaria mobile">
         {PRIMARY_NAV.map((item) => (
           <Link

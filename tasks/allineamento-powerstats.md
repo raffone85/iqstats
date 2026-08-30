@@ -27,8 +27,17 @@ voce è fatta solo quando il criterio è misurato, non quando il codice compila.
 
 ## Blocco 1 — obblighi, prima della pubblicazione
 
-Nessuna di queste pagine esiste oggi in `apps/web/src/app`. Con account e abbonamento
-attivi non sono opzionali.
+Con account e abbonamento attivi non sono opzionali.
+
+**Sospeso per decisione dell'utente, 30 agosto 2026.** Le voci 1, 2 e 5 chiedono un
+titolare del trattamento e un recapito che risponda; l'utente non ha partita IVA e ha
+scelto di rimandare a dopo la costruzione. Non serve una partita IVA per essere titolare
+— basta una persona fisica con nome e recapito — ma la decisione e' sua e il blocco
+resta fermo. **Finche' non si pubblica non e' un obbligo attivo.**
+
+Nota di ricognizione, 30 agosto: sul prodotto di riferimento la privacy policy **non e'
+una pagina propria**, e' un documento generato su un servizio esterno e collegato dal
+piede; i termini invece sono una pagina sul loro dominio.
 
 1. **Informativa privacy.** Titolare, dati raccolti, base giuridica, destinatari
    (Supabase, Stripe, Vercel, la fonte dati), conservazione, diritti, reclamo al Garante,
@@ -36,9 +45,14 @@ attivi non sono opzionali.
    tecnica verificata nel codice, non dedotta.
 2. **Termini di servizio.** Che cosa è il servizio, che cosa non è, abbonamento e recesso.
    *Criterio:* pagina raggiungibile e coerente con quello che Stripe fa davvero.
-3. **Avvertenze sul gioco.** Analisi statistiche e non consigli di scommessa, divieto ai
-   minori di diciotto anni, avvertenza sul disturbo da gioco d'azzardo con numero verde.
-   *Criterio:* visibili dove si mostrano letture, non solo in una pagina defilata.
+3. ~~**Avvertenze sul gioco.**~~ — **fatto il 30 agosto**, ed e' l'unica voce del blocco che
+   non dipendeva dai dati del titolare. In coda a **ogni** pagina di prodotto, dentro lo
+   shell: analisi statistiche e non consigli di scommessa, divieto ai minori di diciotto
+   anni, dipendenza patologica e Telefono Verde Nazionale **800 55 88 22**, gratuito e
+   anonimo, lunedi'-venerdi' 10-16, Istituto Superiore di Sanita'. **Il numero e' verificato
+   alla fonte**, non scritto a memoria. Non accanto a ogni singola lettura: in un dossier da
+   diciassette capitoli la stessa frase ripetuta diventa rumore. *Misurato:* presente a 375,
+   768, 1024 e 1440 px, nessun overflow.
 4. **Scarica i miei dati ed elimina account.** *Criterio:* l'esportazione produce un file
    con i dati che abbiamo davvero, e l'eliminazione cancella per davvero.
 5. **Assistenza e contatti.** *Criterio:* un recapito che funziona.
