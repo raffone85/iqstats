@@ -70,17 +70,21 @@ attivi non sono opzionali.
     Legarli all'account richiede una tabella nuova sul livello dati in linea: si fa quando
     l'utente autorizza quella scrittura, non prima.
 12. **Profilo strutturato**: abbonamento, fatturazione, preferenze, salvataggi, assistenza.
-    *Criterio:* ogni voce porta a qualcosa che esiste. — **costruito il 30 agosto, verifica
-    visiva a meta'.** `/account` con cinque voci reali (chi sei, abbonamento, fatturazione,
-    preferenze, schermata home) e quattro assenze dichiarate per nome. **Errore trovato:**
-    `/api/billing/portal` esisteva e funzionava ma **nessuna pagina lo chiamava**: metodo di
-    pagamento, ricevute e disdetta erano irraggiungibili. Ora c'e' il collegamento.
+    ~~*Criterio:* ogni voce porta a qualcosa che esiste.~~ — **fatto il 30 agosto.**
+    `/account` con cinque voci reali (chi sei, abbonamento, fatturazione, preferenze,
+    schermata home) e quattro assenze dichiarate per nome. *Misurato con una sessione vera,
+    su utente di prova creato e cancellato:* cinque voci e quattro assenze a 375, 768, 1024
+    e 1440 px, nessun overflow, e il portale su un utente senza pagamenti mostra l'avviso
+    del 409 senza lasciare la pagina.
+    **Errore trovato:** `/api/billing/portal` esisteva e funzionava ma **nessuna pagina lo
+    chiamava**: metodo di pagamento, ricevute e disdetta erano irraggiungibili. Ora c'e' il
+    collegamento.
+    **Secondo errore, trovato misurando:** a 375 px la porta del profilo in testata restava
+    **senza nome accessibile** (stringa vuota), perche' l'etichetta era nascosta e l'avatar
+    e' `aria-hidden`; ed e' l'unica porta su telefono. Ora ha `aria-label` e l'etichetta
+    resta visibile anche sotto i 640 px.
     **Discrepanza dichiarata:** l'architettura informativa chiama questa funzione
     `/impostazioni`, il codice usa `/account`; vince il codice, il documento va sanato.
-    **Manca:** la pagina con una sessione vera non e' mai stata guardata, e con lei il
-    collegamento al profilo dal cluster in testata, che su telefono e' l'unica porta.
-    Serve un accesso, oppure l'autorizzazione a usare `scripts/verification/`, che scrive
-    sul livello dati.
 13. ~~**Installabile come app**: manifest, icone, scheda «installa».~~ — **fatto il 30 agosto.**
     Manifesto, quattro icone disegnate con i token del wordmark, e una scheda che compare
     solo dove c'e' qualcosa da installare. *Misurato:* Chrome legge il manifesto, zero

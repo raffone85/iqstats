@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 /**
  * L'invito a installare IQstatS sulla schermata home.
@@ -17,6 +17,12 @@ import { useEffect, useState } from "react";
  *
  * **Non ricompare.** Chi la chiude non la rivede: la scelta sta nella memoria del browser,
  * con lo stesso idioma dei campionati preferiti, quindi vale su questo dispositivo.
+ *
+ * **Lo stato vive fuori da React, e si legge come tale.** L'evento arriva prima
+ * dell'idratazione e lo trattiene lo script in `layout.tsx`; la memoria del browser e' un
+ * altro stato esterno. `useSyncExternalStore` e' il modo previsto per entrambi: il server
+ * rende sempre niente, il client decide quando conosce l'uno e l'altra, e non c'e' nessun
+ * `setState` dentro un effetto.
  */
 const CHIUSA = "iqstats.installa.chiusa";
 
@@ -28,12 +34,32 @@ function stanzaEvento(): EventoInstalla | null {
   return (window as { __iqstatsInstalla?: EventoInstalla | null }).__iqstatsInstalla ?? null;
 }
 
+/** Le tre situazioni possibili, come stringa: l'istantanea deve essere stabile fra i giri. */
+type Situazione = "chrome" | "manuale" | "niente";
+
+/** Il server non ha ne' evento ne' memoria: rende niente, e il client corregge. */
+const SUL_SERVER: Situazione = "niente";
+
+const ascoltatori = new Set<() => void>();
+
+function sottoscrivi(avvisa: () => void): () => void {
+  ascoltatori.add(avvisa);
+  window.addEventListener("iqstats:installabile", avvisa);
+  // A installazione avvenuta la scheda sparisce senza aspettare un ricaricamento.
+  window.addEventListener("appinstalled", avvisa);
+  return () => {
+    ascoltatori.delete(avvisa);
+    window.removeEventListener("iqstats:installabile", avvisa);
+    window.removeEventListener("appinstalled", avvisa);
+  };
+}
+
 function giaChiusa(): boolean {
   try {
     return window.localStorage.getItem(CHIUSA) === "1";
   } catch {
-    // Memoria non disponibile: si mostra la scheda, che e' il male minore fra il ripetersi
-    // e lo sparire.
+    // Memoria disabilitata o piena: si mostra la scheda, che e' il male minore fra il
+    // ripetersi e lo sparire.
     return false;
   }
 }
@@ -44,46 +70,25 @@ function giaInstallata(): boolean {
     || ("standalone" in window.navigator && Boolean((window.navigator as { standalone?: boolean }).standalone));
 }
 
-/** Euristica dichiarata: iOS non manda `beforeinstallprompt`, e va riconosciuto dal nome. */
-function iOS(): boolean {
-  return /iPad|iPhone|iPod/.test(window.navigator.userAgent);
+function istantanea(): Situazione {
+  if (giaChiusa() || giaInstallata()) return "niente";
+  if (stanzaEvento()) return "chrome";
+  // Euristica dichiarata: iOS non manda `beforeinstallprompt`, e va riconosciuto dal nome.
+  return /iPad|iPhone|iPod/.test(window.navigator.userAgent) ? "manuale" : "niente";
+}
+
+function chiudi(): void {
+  try {
+    window.localStorage.setItem(CHIUSA, "1");
+  } catch {
+    // Se la memoria non accetta, la scheda sparisce per questa visita e basta.
+  }
+  for (const avvisa of ascoltatori) avvisa();
 }
 
 export function InstallaApp() {
-  const [evento, setEvento] = useState<EventoInstalla | null>(null);
-  const [manuale, setManuale] = useState(false);
-
-  useEffect(() => {
-    if (giaChiusa() || giaInstallata()) return;
-    if (iOS()) {
-      setManuale(true);
-      return;
-    }
-    // L'evento lo trattiene lo script in `layout.tsx`, che gira prima dell'idratazione:
-    // qui si legge quello che ha messo da parte, o si aspetta il suo avviso.
-    const leggi = () => setEvento(stanzaEvento());
-    leggi();
-    window.addEventListener("iqstats:installabile", leggi);
-    // A installazione avvenuta la scheda sparisce senza aspettare un ricaricamento.
-    const installata = () => setEvento(null);
-    window.addEventListener("appinstalled", installata);
-    return () => {
-      window.removeEventListener("iqstats:installabile", leggi);
-      window.removeEventListener("appinstalled", installata);
-    };
-  }, []);
-
-  if (!evento && !manuale) return null;
-
-  const chiudi = () => {
-    try {
-      window.localStorage.setItem(CHIUSA, "1");
-    } catch {
-      // Se la memoria non accetta, la scheda sparisce per questa visita e basta.
-    }
-    setEvento(null);
-    setManuale(false);
-  };
+  const situazione = useSyncExternalStore(sottoscrivi, istantanea, () => SUL_SERVER);
+  if (situazione === "niente") return null;
 
   return (
     <aside className="installa-app" aria-labelledby="installa-titolo">
@@ -93,19 +98,19 @@ export function InstallaApp() {
         giorno. Resta una pagina web: senza rete non mostra nulla, perché i numeri si leggono
         al momento e una copia salvata avrebbe una freschezza falsa.
       </p>
-      {manuale ? (
+      {situazione === "manuale" ? (
         <p className="installa-passi">
           Su iPhone il comando sta nel browser: tocca <b>Condividi</b>, poi{" "}
           <b>Aggiungi alla schermata Home</b>.
         </p>
       ) : null}
       <div className="installa-azioni">
-        {evento ? (
+        {situazione === "chrome" ? (
           <button
             type="button"
             className="button-link"
             onClick={() => {
-              void evento.prompt();
+              void stanzaEvento()?.prompt();
               // Il browser da qui in poi conduce lui: la scheda ha finito il suo lavoro,
               // sia che l'utente accetti sia che rifiuti.
               chiudi();

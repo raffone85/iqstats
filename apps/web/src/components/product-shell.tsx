@@ -93,9 +93,13 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
                 {/* Il cluster era statico: diceva chi sei e non portava da nessuna parte.
                     Ora e' la porta del profilo, ed e' l'unica su telefono, dove la subnav
                     e' nascosta sotto i 1024 px. */}
+                {/* `aria-label` perche' sotto i 640 px l'etichetta e' nascosta e l'avatar e'
+                    aria-hidden: misurato il 30 agosto, il collegamento restava senza nome
+                    accessibile a 375 px, ed e' l'unica porta al profilo su telefono. */}
                 <Link
                   className="product-account-link"
                   href="/account"
+                  aria-label="Profilo"
                   aria-current={activeSection === "account" ? "page" : undefined}
                 >
                   <span className="product-avatar" aria-hidden="true">

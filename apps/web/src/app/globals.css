@@ -1223,9 +1223,11 @@ a.home-tile-feature:hover::before, a.home-tile-feature:focus-visible::before { o
 .product-signout:hover { border-color: var(--card-brand); color: var(--card-brand-strong); }
 .product-signout:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; }
 
-/* Sotto i 640 px resta l'essenziale: chi sei si legge dall'iniziale, l'uscita resta raggiungibile. */
+/* Sotto i 640 px resta l'essenziale: cade l'indirizzo, che e' lungo e si legge nel profilo,
+   e resta l'etichetta, perche' da quando il cluster e' un collegamento un cerchio con una
+   lettera non dice dove porta. L'uscita resta raggiungibile. */
 @media (max-width: 640px) {
-  .product-account-id { display: none; }
+  .product-account-id strong { display: none; }
 }
 
 /* Menu di ingresso: la prossima giornata, campionato per campionato.
