@@ -216,3 +216,29 @@ non solo le volte che ha indovinato.
   lettura è costruita su giocatori che non giocheranno: va detto in pagina finché è `predicted`.
 - **Il campione di agosto è corto.** Serie A ha 15 gare in questa stagione: le medie per
   giocatore vanno prese dalla stagione precedente finché quella in corso non regge da sola.
+
+---
+
+## 9. Quanto campione serve — misurato il 30 agosto
+
+Domanda dell'utente: se un campionato ha giocato due giornate, si usano quelle due, e le
+medie si solidificano andando avanti? **Sì, e si misura.** Separando i casi per minuti già
+giocati dal giocatore, mediana su 28 campionati:
+
+| Gare alle spalle | Gol, gruppo alto | Gol, scarto alto−basso | Giallo, scarto |
+| --- | ---: | ---: | ---: |
+| 1-3 | 1,95x | 1,50x | 0,40x |
+| 3-6 | 2,04x | 1,71x | 0,48x |
+| 6-12 | 2,24x | 2,04x | 0,51x |
+| 12-24 | 2,50x | 2,35x | 0,68x |
+| oltre 24 | 3,03x | 2,95x | 0,73x |
+
+Riproducibile con `--stabilita`.
+
+**Il segnale esiste già dalla seconda gara** — il gruppo che tira di più segna quasi il doppio
+della base anche con una sola gara alle spalle — e quasi raddoppia il suo scarto a stagione
+inoltrata. Non c'è quindi una soglia sotto la quale non si mostra niente.
+
+**C'è però una conseguenza per la pagina, e non è negoziabile:** il campione si scrive accanto
+al numero. «Su 2 gare» e «su 24 gare» non pesano uguale, e chi legge deve poterlo vedere senza
+chiederlo.

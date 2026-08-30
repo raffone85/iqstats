@@ -193,6 +193,7 @@ def casi_di_lega(lega):
                     "gol_per90": 90 * p["gol"] / m,
                     "arbitro_gialli_per_gara": media_arbitro,
                     "derby": derby,
+                    "minuti_alle_spalle": m,
                 })
             s = storia[chiave]
             s["minuti"] += r.get("minutes_played") or 0
@@ -268,10 +269,47 @@ def tabella(casi, fattore, bersaglio):
     }
 
 
+# Quanti minuti alle spalle servono perche' il passo di un giocatore valga qualcosa. A inizio
+# stagione la media di chi ha giocato una gara e' quasi solo rumore: separare i casi per
+# minuti accumulati dice da dove in poi il gruppo alto si stacca davvero dal gruppo basso.
+SCAGLIONI_MINUTI = ((90, 270), (270, 540), (540, 1080), (1080, 2160), (2160, 10 ** 9))
+
+
+def stabilita(casi, fattore, bersaglio):
+    righe = []
+    for minimo, massimo in SCAGLIONI_MINUTI:
+        fetta = [c for c in casi if minimo <= c["minuti_alle_spalle"] < massimo and c.get(fattore) is not None]
+        if len(fetta) < MIN_CASI_FATTORE:
+            righe.append({"da_minuti": minimo, "casi": len(fetta), "sufficiente": False})
+            continue
+        base = sum(c[bersaglio] for c in fetta) / len(fetta)
+        tagli = tagli_quantili([c[fattore] for c in fetta], GRUPPI)
+        secchi = [{"n": 0, "colpi": 0} for _ in range(GRUPPI)]
+        for c in fetta:
+            s = secchi[indice_gruppo(c[fattore], tagli)]
+            s["n"] += 1
+            s["colpi"] += c[bersaglio]
+        pieni = [s for s in secchi if s["n"] > 0]
+        alto = pieni[-1]["colpi"] / pieni[-1]["n"]
+        basso = pieni[0]["colpi"] / pieni[0]["n"]
+        righe.append({
+            "da_minuti": minimo,
+            "casi": len(fetta),
+            "sufficiente": True,
+            "base": round(base, 5),
+            "gruppo_basso_su_base": round(basso / base, 3) if base else None,
+            "gruppo_alto_su_base": round(alto / base, 3) if base else None,
+            "gruppi_ottenuti": len(pieni),
+        })
+    return righe
+
+
 def main():
     _autoverifica()
     parser = argparse.ArgumentParser()
     parser.add_argument("--lega", help="una sola lega, per identificativo della fonte")
+    parser.add_argument("--stabilita", action="store_true",
+                        help="quanto il segnale cresce con i minuti gia' giocati")
     argomenti = parser.parse_args()
 
     leghe = [argomenti.lega] if argomenti.lega else sorted(os.listdir(GIOCATORI_DIR))
@@ -303,6 +341,11 @@ def main():
                     "casi": len(derby), "colpi": colpi,
                     "frequenza": round(colpi / len(derby), 5), "ic95": [round(b, 5), round(a, 5)],
                 }
+        if argomenti.stabilita:
+            voce["stabilita"] = {
+                "giallo_contrasti_per90": stabilita(casi, "contrasti_per90", "giallo"),
+                "gol_tiri_per90": stabilita(casi, "tiri_per90", "gol"),
+            }
         risultato[lega] = voce
         print(
             f"lega {lega}: {conta['gare_con_statistiche']} gare, {len(casi)} casi · "
