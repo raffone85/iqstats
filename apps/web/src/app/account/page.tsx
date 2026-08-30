@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { signOutAction } from "@/app/actions/session";
+import { eliminaAccountAction } from "@/app/actions/account";
 import { PortaleFatturazione } from "@/components/portale-fatturazione";
 import { ProductShell } from "@/components/product-shell";
 import { getBillingPageData } from "@/server/billing/catalog";
@@ -23,7 +24,11 @@ function dataItaliana(valore: string) {
   return new Date(valore).toLocaleDateString("it-IT", { dateStyle: "long", timeZone: "Europe/Rome" });
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: Readonly<{ searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
+  const parametri = await searchParams;
+  const esitoEliminazione = typeof parametri.elimina === "string" ? parametri.elimina : null;
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getClaims();
   const claims = error ? null : data?.claims;
@@ -136,23 +141,60 @@ export default async function AccountPage() {
 
       {/* Quello che non c'e' si dice per nome. Elencarlo come voce disabilitata sarebbe
           promettere una data che non abbiamo; tacerlo sarebbe far cercare a vuoto. */}
+      <section className="account-voce" aria-labelledby="account-dati-title">
+        <h2 id="account-dati-title">I tuoi dati</h2>
+        <p>
+          Scarica tutto quello che IQstatS conserva su di te, in un file leggibile anche da
+          un altro programma: l&apos;indirizzo email, il profilo, il cliente di fatturazione,
+          gli abbonamenti e le funzioni a cui hai diritto. Preferiti e guida già vista stanno
+          solo nel tuo browser e non arrivano a noi, quindi non sono nel file.
+        </p>
+        <a className="button-link" href="/api/account/dati" download>
+          Scarica i miei dati
+        </a>
+      </section>
+
+      {/* L'eliminazione sta in fondo, dopo tutto il resto: e' l'unica azione della pagina
+          che non si puo' disfare, e non va incontrata mentre si cerca altro. */}
+      <section className="account-voce account-elimina" aria-labelledby="account-elimina-title">
+        <h2 id="account-elimina-title">Elimina il tuo account</h2>
+        <p>
+          Cancella l&apos;account e con esso profilo, dati di fatturazione, abbonamenti e
+          diritti. <b>Non si può annullare</b>, e non è una disattivazione: le righe vengono
+          rimosse. Restano solo i documenti di pagamento presso Stripe, che la legge impone
+          di conservare e che non sono nostri da cancellare.
+        </p>
+        {esitoEliminazione === "indirizzo-non-corrisponde" ? (
+          <p className="account-errore" role="alert">
+            L&apos;indirizzo scritto non è quello di questo account. Non è stato cancellato
+            niente.
+          </p>
+        ) : esitoEliminazione === "non-riuscita" ? (
+          <p className="account-errore" role="alert">
+            La cancellazione non è riuscita e il tuo account è ancora qui. Riprova, e se
+            succede di nuovo scrivi al canale di assistenza.
+          </p>
+        ) : null}
+        <form action={eliminaAccountAction} className="account-elimina-form">
+          <label htmlFor="conferma">
+            Per confermare, scrivi il tuo indirizzo: <b>{email}</b>
+          </label>
+          <input
+            id="conferma"
+            name="conferma"
+            type="email"
+            required
+            autoComplete="off"
+            placeholder="il tuo indirizzo email"
+          />
+          <button type="submit">Elimina definitivamente</button>
+        </form>
+      </section>
+
       <section className="account-mancanze" aria-labelledby="account-mancanze-title">
         <p className="eyebrow">Non c&apos;è ancora</p>
-        <h2 id="account-mancanze-title">Quattro cose che questa pagina non sa fare.</h2>
+        <h2 id="account-mancanze-title">Una cosa che questa pagina non sa fare.</h2>
         <ul>
-          <li>
-            <b>Scarica i miei dati</b> e <b>elimina l&apos;account</b>: l&apos;esportazione
-            deve contenere i dati che abbiamo davvero e l&apos;eliminazione deve cancellare
-            davvero. Nessuna delle due è stata ancora costruita.
-          </li>
-          <li>
-            <b>Assistenza</b>: manca un recapito che risponda. Metterne uno finto sarebbe
-            peggio di non averlo.
-          </li>
-          <li>
-            <b>Informativa privacy</b> e <b>termini di servizio</b>: non esistono come pagine.
-            Servono prima della pubblicazione, non dopo.
-          </li>
           <li>
             <b>Salvataggi</b>: non c&apos;è niente da salvare, perché IQstatS non tiene
             schedine né selezioni.

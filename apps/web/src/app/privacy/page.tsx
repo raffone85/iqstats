@@ -145,8 +145,9 @@ export default function PrivacyPage() {
 
         <h2>Per quanto li teniamo</h2>
         <p>
-          I dati dell&apos;account restano finché l&apos;account esiste. Quando chiedi la
-          cancellazione, vengono eliminati insieme all&apos;account. Restano soltanto i
+          I dati dell&apos;account restano finché l&apos;account esiste. Quando lo elimini,
+          spariscono con lui: profilo, cliente di fatturazione, abbonamenti e diritti se ne
+          vanno nello stesso momento, perché il database li lega alla tua utenza. Restano soltanto i
           documenti che la legge impone di conservare per la contabilità, e restano presso
           Stripe secondo i suoi tempi. I registri tecnici dei fornitori si cancellano da soli
           nei tempi che il fornitore applica.
@@ -160,10 +161,11 @@ export default function PrivacyPage() {
           entro un mese.
         </p>
         <p>
-          <b>La richiesta si fa a mano, oggi.</b> Il pulsante che esporta i tuoi dati e quello
-          che cancella l&apos;account non sono ancora in pagina: lo diciamo invece di
-          prometterli. Fino ad allora scrivi al canale di assistenza e le due cose vengono
-          fatte lo stesso.
+          <b>Due li puoi esercitare da solo, subito.</b> Dal tuo{" "}
+          <Link href="/account">profilo</Link> scarichi tutti i tuoi dati in un file
+          leggibile anche da un altro programma, e cancelli l&apos;account: la cancellazione
+          rimuove profilo, dati di fatturazione, abbonamenti e diritti, e non è una
+          disattivazione. Per tutto il resto scrivi al canale di assistenza.
         </p>
         <p>
           Se ritieni che il trattamento violi il regolamento europeo puoi rivolgerti al{" "}

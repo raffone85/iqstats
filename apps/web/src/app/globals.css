@@ -1674,3 +1674,16 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .riservata-elenco li { position: relative; padding-left: 16px; color: var(--card-ink-2); font-size: 14px; line-height: 1.5; }
 .riservata-elenco li::before { position: absolute; left: 0; color: var(--card-ink-3); content: "-"; }
 .riservata .button-link { margin-top: 14px; }
+/* Elimina account: l'unica azione della pagina che non si puo' disfare. Il mattone
+   dichiara il verso, come ovunque nel sistema; il campo obbligato a contenere il proprio
+   indirizzo e' il freno, non un avviso che si chiude senza leggerlo. */
+.account-elimina { border-color: var(--card-down); }
+.account-elimina-form { display: grid; gap: 10px; margin-top: 16px; max-width: 420px; }
+/* L'indirizzo e' una stringa senza spazi e puo' essere lungo: a 375 px, senza questa
+   riga, esce dal riquadro invece di andare a capo. */
+.account-elimina-form label { color: var(--card-ink-2); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.account-elimina-form input { min-height: var(--h-action); padding: 0 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); color: var(--card-ink); font-size: 16px; }
+.account-elimina-form input:focus-visible { outline: 2px solid var(--card-down); outline-offset: 2px; }
+.account-elimina-form button { min-height: var(--h-action); border: 1px solid var(--card-down); border-radius: var(--r-control); background: var(--card-down); color: white; font-size: 14px; font-weight: 750; cursor: pointer; }
+.account-elimina-form button:hover { background: var(--card-brand-strong); border-color: var(--card-brand-strong); }
+.account-errore { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--card-down); border-radius: var(--r-control); color: var(--card-down); font-size: 14px; line-height: 1.5; }
