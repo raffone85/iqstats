@@ -81,19 +81,31 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
           </nav>
           <div className="product-header-right">
             <nav className="product-subnav" aria-label="Sezioni secondarie">
+              <Link href="/account" aria-current={activeSection === "account" ? "page" : undefined}>
+                Profilo
+              </Link>
               <Link href="/account/billing" aria-current={activeSection === "billing" ? "page" : undefined}>
                 Piani
               </Link>
             </nav>
             {authenticated ? (
               <div className="product-account">
-                <span className="product-avatar" aria-hidden="true">
-                  {initialOf(email ?? "?")}
-                </span>
-                <span className="product-account-id">
-                  <small>Sessione attiva</small>
-                  <strong>{email ?? "accesso verificato"}</strong>
-                </span>
+                {/* Il cluster era statico: diceva chi sei e non portava da nessuna parte.
+                    Ora e' la porta del profilo, ed e' l'unica su telefono, dove la subnav
+                    e' nascosta sotto i 1024 px. */}
+                <Link
+                  className="product-account-link"
+                  href="/account"
+                  aria-current={activeSection === "account" ? "page" : undefined}
+                >
+                  <span className="product-avatar" aria-hidden="true">
+                    {initialOf(email ?? "?")}
+                  </span>
+                  <span className="product-account-id">
+                    <small>Profilo</small>
+                    <strong>{email ?? "accesso verificato"}</strong>
+                  </span>
+                </Link>
                 <form action={signOutAction}>
                   <button type="submit" className="product-signout">
                     Esci
