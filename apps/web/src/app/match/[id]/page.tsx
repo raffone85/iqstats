@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { AggiornamentoLive } from "@/components/aggiornamento-live";
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
+import { SezioneRiservata } from "@/components/sezione-riservata";
 import { StatEngineSection } from "@/components/stat-engine-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import {
@@ -34,6 +35,7 @@ import { ContestoGara } from "@/components/contesto-gara";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
+import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import {
@@ -443,6 +445,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const proiezioni = typeof esitoProiezione === "string" ? null : esitoProiezione;
   const senzaProiezione = typeof esitoProiezione === "string" ? esitoProiezione : null;
 
+  // **Il confine commerciale, deciso il 30 agosto 2026.** Il dato della gara resta libero
+  // - chi gioca, classifica, forma, precedenti, panchine, contorno - e si paga la lettura
+  // che ci mettiamo sopra. Due chiamate e non dieci: i due gruppi si accendono interi, e
+  // dieci controlli che rispondono sempre insieme sono un controllo scritto dieci volte.
+  const [insight, motore] = await Promise.all([
+    readFeatureDecision("match.statistics.read"),
+    readFeatureDecision("engine.read"),
+  ]);
+  const senzaAccount = !insight.allowed && insight.code === "unauthenticated";
+
   const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
 
   // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
@@ -794,7 +806,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
             ordine: qui si aggiungono solo i titoli e l'indice che li segue. I due capitoli
             mancanti - «Come si affrontano» e «Analisi finale» - compariranno quando avranno
             il loro contratto dati, non prima. */}
-        <DossierCapitoli capitoli={capitoliDi(letture.length > 0, analisi !== null)} />
+        {/* I due capitoli condizionati seguono il diritto, non solo il dato: senza il piano
+            Insight quelle sezioni non si disegnano, e un indice che punta a un'ancora che
+            non esiste manda chi tocca in fondo alla pagina, dove non c'e' niente. */}
+        <DossierCapitoli
+          capitoli={capitoliDi(insight.allowed && letture.length > 0, insight.allowed && analisi !== null)}
+        />
 
         <DossierCapitolo
           id="cap-colpo-occhio"
@@ -810,7 +827,23 @@ export default async function MatchPage({ params }: MatchPageProps) {
         <ContestoGara contesto={contesto} />
 
         {/* Modello e mercato affiancati: nessun operatore nominato, nessun collegamento fuori */}
-        {marketReading ? (
+        {!insight.allowed ? (
+          <SezioneRiservata
+            piano="Insight"
+            id="riservata-insight-title"
+            autenticato={!senzaAccount}
+            motivo="Sono le letture che nascono dai nostri conti sulle gare già giocate, non dal tabellino di questa."
+            contenuto={[
+              "Quote, movimento e confronto con il mercato",
+              "Le letture più forti della gara",
+              "Come si affrontano, famiglia per famiglia",
+              "I mercati dei gol",
+              "L’arbitro con i nostri numeri",
+              "Da quanto non succede",
+              "L’analisi finale",
+            ]}
+          />
+        ) : marketReading ? (
           <section className="dossier-panel" aria-labelledby="market-title">
             <p className="dossier-kick">Modello e mercato</p>
             <h2 id="market-title" className="sr-only-heading">Confronto con il mercato</h2>
@@ -845,7 +878,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
         {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
             gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
             a mente. Ordinate per quanto reggono, non per percentuale. */}
-        {forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
+        {!insight.allowed || forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
           <MatchLettureFortiSection
             letture={forti}
             homeTeam={detail.homeTeam}
@@ -853,7 +886,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         )}
 
-        {letture.length > 0 ? (
+        {insight.allowed && letture.length > 0 ? (
           <>
             <DossierCapitolo
               id="cap-affronto"
@@ -884,7 +917,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
         />
 
         {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
-        {proiezioni?.gol ? (
+        {!insight.allowed ? null : proiezioni?.gol ? (
           <MatchGolSection
             gol={proiezioni.gol}
             homeTeam={detail.homeTeam}
@@ -916,7 +949,19 @@ export default async function MatchPage({ params }: MatchPageProps) {
         />
 
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
-        {proiezioni === null || proiezioni.bersagli.length === 0 ? (
+        {!motore.allowed ? (
+          <SezioneRiservata
+            piano="Pro"
+            id="riservata-pro-title"
+            autenticato={!senzaAccount}
+            motivo="È il motore: modelli addestrati fuori campione e tarati, la parte che nessun altro prodotto mette accanto ai propri numeri."
+            contenuto={[
+              "Le giocate statistiche dei sette bersagli, con intervallo e linea",
+              "Chi può segnare e chi rischia il cartellino",
+              "Il riscontro fra previsto e reale, con la taratura",
+            ]}
+          />
+        ) : proiezioni === null || proiezioni.bersagli.length === 0 ? (
           <>
             {/* **Il silenzio si legge come un guasto.** Quando la proiezione non c'e', la
                 pagina scriveva soltanto la lettura di ENG-1 e nessuno poteva sapere se il
@@ -980,7 +1025,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
         {/* Chi rischia il cartellino, chi puo' segnare. Sta prima dell'arbitro perche' e'
             una lettura sui giocatori attesi in campo, e l'arbitro e' il contesto in cui
             quei giocatori giocheranno. */}
-        {giocatori === null ? null : (
+        {!motore.allowed || giocatori === null ? null : (
           <MatchGiocatoriSection
             lettura={giocatori}
             formazioneConfermata={lineups?.confirmed ?? false}
@@ -989,7 +1034,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
         {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
             proiezione: 16 ingressi su 85 nel modello dei gialli. */}
-        {arbitroNostro === null ? null : (
+        {!insight.allowed || arbitroNostro === null ? null : (
           <MatchArbitroSection
             profilo={arbitroNostro}
             homeTeam={detail.homeTeam}
@@ -1028,7 +1073,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
         {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
             contate in un altro modo. */}
-        {proiezioni ? (
+        {insight.allowed && proiezioni ? (
           <MatchRitardiSection
             casa={proiezioni.ritardi.casa}
             trasferta={proiezioni.ritardi.trasferta}
@@ -1037,7 +1082,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        <VerificaSection verifica={verifica} taratura={taratura} />
+        {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
 
         {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
         <MatchFinishedSection
@@ -1187,7 +1232,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
-        {analisi === null ? null : (
+        {!insight.allowed || analisi === null ? null : (
           <>
             <DossierCapitolo
               id="cap-analisi"

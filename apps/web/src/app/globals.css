@@ -1665,3 +1665,12 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 /* Il nome di chi risponde del sito, in coda e in minuscolo. Il contrasto resta quello
    del testo di servizio (5,41 su carta), quindi legge chiunque anche se non grida. */
 .product-avvertenze .product-titolare { margin-top: 16px; color: var(--card-ink-3); font-size: 12.5px; text-transform: lowercase; }
+/* Il riquadro che dice quale piano contiene una lettura. Nessun colore nuovo e nessun
+   blocco pieno: la quota della pagina e' gia' spesa dalla testata, e un invito che grida
+   piu' del contenuto e' pubblicita'. Il filetto lo stacca, non un'ombra. */
+.riservata { border: 1px dashed var(--card-stroke); }
+.riservata-motivo { margin: 6px 0 14px; color: var(--card-ink-2); font-size: 14.5px; line-height: 1.6; }
+.riservata-elenco { display: grid; gap: 7px; margin: 0 0 16px; padding: 0; list-style: none; }
+.riservata-elenco li { position: relative; padding-left: 16px; color: var(--card-ink-2); font-size: 14px; line-height: 1.5; }
+.riservata-elenco li::before { position: absolute; left: 0; color: var(--card-ink-3); content: "-"; }
+.riservata .button-link { margin-top: 14px; }

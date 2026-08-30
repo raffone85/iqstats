@@ -5,6 +5,8 @@ import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchProjectionSection } from "@/components/match-projection-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
+import { SezioneRiservata } from "@/components/sezione-riservata";
+import { readFeatureDecision } from "@/server/auth/authorization";
 import { ProductShell } from "@/components/product-shell";
 import {
   allenatoreDellaSquadra,
@@ -52,6 +54,27 @@ const GIORNO: Intl.DateTimeFormatOptions = {
 };
 
 export default async function ExpectedPage({ searchParams }: Props) {
+  // Pagina intera del piano Pro: qui non c'e' un dato libero sotto da lasciare scoperto,
+  // e' tutta lettura del motore. Si dice, non si nasconde.
+  const motore = await readFeatureDecision("engine.read");
+  if (!motore.allowed) {
+    return (
+      <ProductShell activeSection="expected">
+        <SezioneRiservata
+          piano="Pro"
+          id="riservata-pro-title"
+          autenticato={motore.code !== "unauthenticated"}
+          motivo="È il confronto fra quello che una squadra produce e quello che l’altra concede, famiglia per famiglia, sui numeri del motore."
+          contenuto={[
+            "Attesi e concessi per ogni famiglia statistica",
+            "Il metro della competizione accanto a ogni numero",
+            "Il campione su cui poggia ogni riga",
+          ]}
+        />
+      </ProductShell>
+    );
+  }
+
   const parametri = await searchParams;
   const competizioni = await competizioniConSquadre();
 
