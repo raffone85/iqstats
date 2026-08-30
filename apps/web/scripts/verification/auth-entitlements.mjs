@@ -205,11 +205,74 @@ try {
     { headers: { cookie } },
     400,
   );
-  await expectStatus(
-    `${baseUrl}/api/iqstats/v1/matches/not-a-number/statistics`,
-    { headers: { cookie } },
-    403,
+  // **Perche' non si prova piu' il 403 su una rotta `v1`.** Fino al 30 agosto 2026
+  // `match.statistics.read` era riservata a Pro, e una rotta che la chiedeva serviva da
+  // controprova del diniego. Con la scala decisa quel giorno Insight comprende ogni
+  // funzione che una rotta `v1` chiede, quindi non esiste piu' una rotta che quell'utente
+  // debba vedersi negare: l'asserzione sarebbe diventata verde per il motivo sbagliato.
+  // Il diniego si prova dove il confine e' davvero: la chiave del motore.
+  const { data: motorePrimaDelDiritto, error: erroreMotore } = await browser.rpc(
+    "has_active_entitlement",
+    { p_feature_code: "engine.read" },
   );
+  if (erroreMotore) throw erroreMotore;
+  if (motorePrimaDelDiritto !== false) {
+    throw new Error(
+      `Un utente Insight non deve avere engine.read, ricevuto ${JSON.stringify(motorePrimaDelDiritto)}`,
+    );
+  }
+
+  // Il muro in pagina, provato dai due lati sullo stesso utente. `/pronostici` e' lettura
+  // del motore per intero, quindi o si vede o si vede il riquadro: non c'e' una via di
+  // mezzo che possa far passare la prova per caso.
+  const conMuro = await (await fetch(`${baseUrl}/pronostici`, { headers: { cookie } })).text();
+  if (!conMuro.includes("riservata-pro-title")) {
+    throw new Error("Senza engine.read la pagina del motore doveva dichiarare il piano Pro");
+  }
+
+  // Si concede il diritto allo stesso utente di prova, che verra' cancellato in fondo, e
+  // si rilegge la stessa pagina: e' l'unico modo di sapere che il muro sa anche aprirsi.
+  // L'inizio si mette cinque minuti indietro e non a «adesso»: l'orologio di questa
+  // macchina e quello del database non sono lo stesso orologio, e un `valid_from` di un
+  // istante nel futuro rende il diritto invisibile senza che niente sia rotto.
+  const adesso = new Date();
+  const cinqueMinutiFa = new Date(adesso.getTime() - 5 * 60 * 1000);
+  const fraUnGiorno = new Date(adesso.getTime() + 24 * 60 * 60 * 1000);
+  // `source_subscription_id` e' la chiave numerica della riga di abbonamento, non
+  // l'identificativo di Stripe: si rilegge invece di indovinarla.
+  const { data: rigaAbbonamento, error: erroreRiga } = await admin
+    .from("subscriptions")
+    .select("id")
+    .eq("user_id", userId)
+    .single();
+  if (erroreRiga) throw erroreRiga;
+  const { error: erroreConcessione } = await admin.from("entitlements").insert({
+    user_id: userId,
+    feature_code: "engine.read",
+    plan_code: "pro_monthly",
+    source_subscription_id: rigaAbbonamento.id,
+    valid_from: cinqueMinutiFa.toISOString(),
+    valid_until: fraUnGiorno.toISOString(),
+  });
+  if (erroreConcessione) throw erroreConcessione;
+
+  // Prima di guardare la pagina si controlla il diritto: se questa e' falsa il problema
+  // sta nel database, se e' vera e la pagina non cambia il problema sta nella pagina.
+  const { data: motoreDopoIlDiritto, error: erroreMotore2 } = await browser.rpc(
+    "has_active_entitlement",
+    { p_feature_code: "engine.read" },
+  );
+  if (erroreMotore2) throw erroreMotore2;
+  if (motoreDopoIlDiritto !== true) {
+    throw new Error(
+      `Il diritto engine.read e' stato scritto ma non si rilegge: ${JSON.stringify(motoreDopoIlDiritto)}`,
+    );
+  }
+
+  const senzaMuro = await (await fetch(`${baseUrl}/pronostici`, { headers: { cookie } })).text();
+  if (senzaMuro.includes("riservata-pro-title")) {
+    throw new Error("Con engine.read attivo il riquadro del piano Pro non doveva comparire");
+  }
   await expectStatus(
     `${baseUrl}/auth/signout`,
     { method: "POST", headers: { cookie } },
@@ -221,7 +284,7 @@ try {
       authCookie: "verified",
       anonymousOrUnentitled: "denied",
       insightRoute: "allowed_before_validation",
-      proOnlyRoute: "denied",
+      engineWall: "denied_then_opened",
       signout: "verified",
     }),
   );
