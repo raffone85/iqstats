@@ -131,17 +131,22 @@ piede; i termini invece sono una pagina sul loro dominio.
 ## Blocco 4 — il prodotto
 
 15. **Giocatori.** *Criterio:* prima si misura la copertura per giocatore; la sezione
-    esiste solo dove il dato regge, e dichiara dove non c'è. — **misura fatta il 30 agosto,
-    interfaccia non iniziata.** Il documento e' `docs/product/copertura-giocatori.md`, lo
-    script che la rifa' e' `apps/web/scripts/verification/copertura-giocatori.mjs`.
-    In breve: i dati per giocatore **non stanno nel nostro livello dati** e **non stanno
-    nelle formazioni**; arrivano da `/api/v2/events/{id}/player-stats/`, che l'app non usa
-    ancora. Su **72 gare** e **2.990 righe**, il **68,5%** ha minuti sopra zero e **65 gare
-    su 72 (90,3%)** portano statistiche: **una gara su dieci non ne porta nessuna**.
-    **Tre campionati su ventidue sono a zero** (National League, Liga Portugal 2, Club
-    Friendlies) e la **Conference League e' coperta cinque volte su sette**.
-    **Prossimo passo prima di qualunque interfaccia:** rifare la misura con un campione
-    **per lega** e fissare li' la soglia. Nessuna soglia decisa a tavolino.
+    esiste solo dove il dato regge, e dichiara dove non c'è. — **misura per lega e censimento
+    di stagione fatti il 30 agosto, interfaccia non iniziata.** Il documento e'
+    `docs/product/copertura-giocatori.md`, lo script `apps/web/scripts/verification/
+    copertura-giocatori.mjs`. I dati per giocatore **non stanno nel nostro livello dati** e
+    **non stanno nelle formazioni**; arrivano da `/api/v2/events/{id}/player-stats/`, e la
+    fonte **non ha aggregati di stagione**: la somma la facciamo noi.
+    **Su 83 campionati e 2.637 gare della stagione in corso, 1.854 coprono (70,3%)**: 42
+    campionati per intero, 8 parziali, **13 a zero** — Europa League 0/80 fra questi.
+    **La soglia per campionato e' lo strumento sbagliato:** la copertura si accende e si
+    spegne nel tempo (Parva Liga tornata ad agosto, Europa League spenta a luglio), quindi
+    **si decide sulla gara al momento della lettura**, e la classifica di stagione dichiara
+    quante gare su quelle giocate ha davvero.
+    **Il seguito operativo — probabili ammoniti e probabili marcatori — sta in
+    `tasks/giocatori-cartellini-e-marcatori.md`**, con il segnale gia' misurato su 380 gare
+    di Serie A: base del giallo 8,9% e fattore piu' forte 1,52x, base del gol 7,4% e fattore
+    piu' forte 2,16x. Nessuna lettura in pagina prima della taratura.
 16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
     dichiarare la correlazione fra le due linee.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
