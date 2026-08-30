@@ -365,6 +365,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 @media (max-width: 1024px) { .product-subnav { display: none; } }
 
+/* La riga che dichiara l'aggiornamento automatico. Vive accanto ai punteggi che si muovono,
+   e usa lo stesso filetto di richiamo delle note di copertura: dice una regola della pagina,
+   non un valore, quindi niente verde e niente mattone. */
+.aggiornamento-live { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--card-brand); border-radius: 0 var(--r-inset) var(--r-inset) 0; background: var(--card-panel-2); color: var(--card-ink-2); font-size: 13px; line-height: 1.55; max-width: 74ch; }
+.aggiornamento-live b { color: var(--card-ink); }
+
 /* Avvertenze in coda a ogni pagina di prodotto. Testo di servizio, non un allarme: niente
    verde e niente mattone, che qui significano un verso. Il filetto la separa dal contenuto
    senza chiuderla in un riquadro, perché non è un capitolo ma la cornice di tutti. */

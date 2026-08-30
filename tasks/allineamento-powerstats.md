@@ -68,7 +68,18 @@ piede; i termini invece sono una pagina sul loro dominio.
    *Criterio:* compare quando il campione della lega è sotto la soglia del motore, e dice
    perché.
 8. **Punteggi che si muovono** sulle gare in corso. *Criterio:* una gara live cambia
-   punteggio senza ricaricare, e la pagina dichiara ogni quanto si aggiorna.
+   punteggio senza ricaricare, e la pagina dichiara ogni quanto si aggiorna. —
+   **costruito il 30 agosto, verifica a meta'.** `AggiornamentoLive` su calendario e dossier:
+   con gare in corso rende la dichiarazione e chiama `router.refresh()` al ritmo di
+   `MATCHES_TTL_MS`, cioe' 120 s, che e' quanto dura la copia della fonte; chiedere piu'
+   spesso restituirebbe gli stessi numeri.
+   *Verificato:* con **zero** gare in corso (161 gare del 30 agosto: 123 da giocare, 37
+   finite, 0 live) la riga non compare e in venti secondi d'ascolto **zero** richieste alla
+   pagina, quindi nessun timer armato a vuoto.
+   **Non verificato:** che il punteggio cambi davvero senza ricaricare. Alle 10:18 non c'era
+   nessuna gara in corso e la prima era alle 12:00. **Si misura con una gara in corso**,
+   aprendo il dossier di quella gara e contando le richieste alla pagina in quattro minuti:
+   devono essere due.
 
 ## Blocco 3 — la navigazione
 

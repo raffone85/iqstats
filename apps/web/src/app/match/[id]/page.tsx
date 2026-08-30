@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AggiornamentoLive } from "@/components/aggiornamento-live";
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
 import { StatEngineSection } from "@/components/stat-engine-section";
@@ -74,7 +75,7 @@ import {
   getTeamForm,
 } from "@/server/iqstats/team-page";
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
-import { getLeaguesIndex } from "@/server/iqstats/matches";
+import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
@@ -755,6 +756,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
                 <span className="oggi-hero-ref-nota">{avvisoArbitro.riga}</span>
               </p>
             )}
+            {/* A gara in corso il punteggio in testata si muove da solo. Fuori dalla gara in
+                corso il componente non rende nulla e non arma nessun timer. */}
+            <AggiornamentoLive
+              gareLive={detail.status === "inprogress" || detail.status === "live" ? 1 : 0}
+              ogniMs={MATCHES_TTL_MS}
+            />
           </div>
         </article>
 

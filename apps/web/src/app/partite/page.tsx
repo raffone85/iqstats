@@ -7,10 +7,11 @@ import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { CampionatiPreferiti } from "@/components/campionati-preferiti";
 import { Targhette } from "@/components/calendario-giornate";
 import { DateJump } from "@/components/date-jump";
+import { AggiornamentoLive } from "@/components/aggiornamento-live";
 import { GuidaPartite } from "@/components/guida-partite";
 import { LeagueSelect, type LeagueOption } from "@/components/league-select";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
-import { getMatchesByDate, type MatchListItem } from "@/server/iqstats/matches";
+import { getMatchesByDate, MATCHES_TTL_MS, type MatchListItem } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
 import { readMatch, readOutcome } from "@/server/iqstats/match-reading";
 
@@ -265,6 +266,14 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                 + "in «Tutte»."}
           </p>
         ) : null}
+
+        {/* Si contano le gare in corso **fra quelle mostrate**: con il filtro «finite»
+            attivo non c'è nessun punteggio che si muove sotto gli occhi, e annunciare un
+            aggiornamento che non si vedrebbe sarebbe una promessa vuota. */}
+        <AggiornamentoLive
+          gareLive={shown.filter((m) => m.status === "inprogress" || m.status === "live").length}
+          ogniMs={MATCHES_TTL_MS}
+        />
 
         {leagueOptions.length > 0 ? (
           <div className="partite-filter">

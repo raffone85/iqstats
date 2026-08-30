@@ -9,7 +9,10 @@ import { countryCode, countryInItalian } from "./country-names.ts";
 import { previousUtcDay, romeDayOf } from "./rome-day.ts";
 
 const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
-const MATCHES_TTL_MS = 120_000;
+/** Quanto dura la copia di una risposta del calendario. È anche il ritmo con cui la pagina
+ *  si aggiorna da sola sulle gare in corso: chiedere più spesso restituirebbe gli stessi
+ *  numeri, e mostrerebbe una freschezza che non c'è. */
+export const MATCHES_TTL_MS = 120_000;
 const LEAGUES_TTL_MS = 3_600_000;
 /** Pagina massima ammessa dalla fonte. */
 const PAGE_LIMIT = 200;
