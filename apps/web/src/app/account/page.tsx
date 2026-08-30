@@ -102,9 +102,10 @@ export default async function AccountPage() {
       <section className="account-voce" aria-labelledby="account-fatturazione-title">
         <h2 id="account-fatturazione-title">Fatturazione</h2>
         <p>
-          Metodo di pagamento, ricevute e disdetta si gestiscono nel portale di <b>Stripe</b>,
-          che tratta i pagamenti per noi: il pulsante ti porta fuori da IQstatS, e al termine
-          ti riporta qui.
+          Metodo di pagamento e ricevute si gestiscono nel portale di <b>Stripe</b>, che
+          tratta i pagamenti per noi: il pulsante ti porta fuori da IQstatS, e al termine ti
+          riporta qui. Non c&apos;è niente da disdire, perché nessun piano si rinnova da
+          solo: ogni acquisto vale per il suo periodo e alla scadenza finisce.
         </p>
         <PortaleFatturazione />
       </section>

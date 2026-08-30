@@ -81,16 +81,18 @@ export default function TerminiPage() {
           verranno attivati davvero, questa pagina lo dirà prima.
         </p>
         <p>
-          Quando saranno attivi: l&apos;abbonamento si rinnova da sé alla scadenza del
-          periodo, il prezzo è quello mostrato al momento dell&apos;acquisto e la disdetta si
-          fa dal portale di fatturazione raggiungibile dal tuo profilo. Una disdetta ferma il
-          rinnovo successivo e lascia attivo il periodo già pagato.
+          <b>Nessun piano si rinnova da solo.</b> Paghi una volta, l&apos;accesso vale per il
+          numero di giorni scritto accanto al piano, e alla scadenza finisce senza che tu
+          debba fare niente. Non ci sono addebiti ricorrenti, non c&apos;è una disdetta da
+          ricordarsi, e nessuno ti toglie soldi mentre non guardi. Se vuoi continuare,
+          compri un altro periodo quando ti pare.
         </p>
         <p>
-          <b>Recesso.</b> Come consumatore hai quattordici giorni per ripensarci. Chiedendo di
-          usare subito il servizio, e ottenendolo, quel diritto si esaurisce per la parte già
-          fruita: è la regola dei contratti a distanza sui contenuti digitali, e te la
-          ricordiamo qui invece di lasciarla implicita.
+          <b>Recesso.</b> Come consumatore hai quattordici giorni per ripensarci, e per ora
+          te li lasciamo interi: se cambi idea entro quattordici giorni scrivi al canale di
+          assistenza e ti rimborsiamo. La legge permetterebbe di far decadere quel diritto
+          raccogliendo il tuo consenso espresso all&apos;uso immediato, ma finché non te lo
+          chiediamo davvero non lo diamo per ottenuto.
         </p>
 
         <h2>Che cosa non promettiamo</h2>
@@ -132,8 +134,8 @@ export default function TerminiPage() {
         <h2>Se questi termini cambiano</h2>
         <p>
           La data in cima dice quando sono stati rivisti. Un cambiamento che tocca prezzo,
-          durata o contenuto dell&apos;abbonamento viene comunicato prima che diventi
-          efficace, e ti lascia libero di disdire.
+          durata o contenuto dei piani vale per gli acquisti futuri e non tocca un periodo
+          che hai già pagato: quello resta com&apos;era quando l&apos;hai comprato.
         </p>
 
         <p className="legale-vicino">
