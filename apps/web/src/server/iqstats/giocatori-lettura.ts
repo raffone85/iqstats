@@ -16,28 +16,32 @@
 // campionati controllati; il gruppo che contrasta di piu' prende il giallo 1,25 volte la
 // base, e l'ordine regge in 14 campionati su 26. La lettura del cartellino porta quindi la
 // sua debolezza scritta, invece di nasconderla dietro un titolo sicuro.
+//
+// **Il metro e' il ruolo, dal 30 agosto 2026.** Misurato su 224.836 casi: il difensore
+// prende il giallo il 16,5% delle volte e l'attaccante il 10,6%, contro una base di lega
+// del 13,4%, e quell'ordine regge in 26 campionati su 27. Confrontare un difensore con la
+// media del campionato lo faceva quindi risultare esposto **solo perche' e' un difensore**,
+// e la lettura finiva per proporre difensori spacciando il ruolo per propensione. Ora ogni
+// giocatore si confronta con quelli del suo stesso ruolo. Dove la tabella del ruolo non
+// regge il campione si ripiega su quella del campionato, e la pagina lo dichiara.
 import "server-only";
 
 import { unstable_cache } from "next/cache";
 
 import tabella from "./artefatti/giocatori-base.json" with { type: "json" };
+import {
+  metroDi,
+  type Bersaglio,
+  type Ruolo,
+  type VoceLega,
+} from "./giocatori-metro.ts";
 import { ProviderClient } from "./provider-client.ts";
 
-const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
-/** Un'ora: le gare gia' finite non cambiano, e il passo di un giocatore nemmeno. */
-const CACHE_TTL_SECONDS = 3600;
-/** Sotto novanta minuti giocati un per-novanta non e' un tasso: e' la stessa soglia
- *  della tabella di base, e cambiarla qui la renderebbe incoerente. */
-const MIN_MINUTI = 90;
-/** Quanti nomi mostra una lettura. Quattro come i blocchi, non di piu': una lista lunga
- *  non e' una lettura, e' un elenco. */
-const QUANTI = 4;
-
-type Fattore = { readonly tagli: readonly number[]; readonly gruppi: readonly { readonly gruppo: number; readonly frequenza: number; readonly casi: number }[] };
-type Bersaglio = { readonly base: number; readonly fattori: Record<string, Fattore | undefined> };
-type VoceLega = { readonly gare: number; readonly casi: number; readonly falli_utilizzabili: boolean; readonly giallo: Bersaglio; readonly gol: Bersaglio };
-
 const LEGHE = (tabella as { leghe: Record<string, VoceLega> }).leghe;
+
+// La pagina importa da qui, non dal modulo puro: il confine del prodotto resta uno solo.
+export { isRuolo } from "./giocatori-metro.ts";
+export type { Ruolo } from "./giocatori-metro.ts";
 
 export interface Candidato {
   readonly id: number;
@@ -53,8 +57,12 @@ export interface Candidato {
   /** Quante volte quel gruppo ha poi preso il giallo o segnato, e su quanti casi. */
   readonly frequenza: number;
   readonly casi: number;
-  /** La base del campionato, per il confronto. */
+  /** La base del confronto: quella del suo ruolo dove regge, altrimenti del campionato. */
   readonly base: number;
+  /** Con chi e' stato confrontato, gia' con la preposizione giusta per le due frasi. */
+  readonly metro: { readonly fra: string; readonly dei: string };
+  /** Falso quando il ruolo non bastava e si e' ripiegato sul campionato. */
+  readonly metroDelRuolo: boolean;
   /** Su quante gare e quanti minuti poggia il suo passo. */
   readonly gare: number;
   readonly minuti: number;
@@ -82,6 +90,26 @@ function resolveProviderConfig(): { baseUrl: string; token: string } | null {
   return { baseUrl, token };
 }
 
+const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
+/** Un'ora: le gare gia' finite non cambiano, e il passo di un giocatore nemmeno. */
+const CACHE_TTL_SECONDS = 3600;
+/** Sotto novanta minuti giocati un per-novanta non e' un tasso: e' la stessa soglia
+ *  della tabella di base, e cambiarla qui la renderebbe incoerente. */
+const MIN_MINUTI = 90;
+/**
+ * La forma del dato messo in cache, non la versione del prodotto.
+ *
+ * Scoperto guardando la cattura il 30 agosto 2026: cambiando `metro` da stringa a coppia
+ * di frasi, la pagina ha continuato a leggere per un'ora la forma vecchia e a stampare il
+ * vuoto al posto del confronto. La chiave non conteneva niente che distinguesse le due
+ * forme. **Si alza a ogni cambio di forma di `LetturaGiocatori`**, altrimenti il difetto
+ * torna identico e si vede solo in pagina.
+ */
+const VERSIONE_LETTURA = 2;
+/** Quanti nomi mostra una lettura. Quattro come i blocchi, non di piu': una lista lunga
+ *  non e' una lettura, e' un elenco. */
+const QUANTI = 4;
+
 /** In quale gruppo cade un valore, dati i tagli. Stesso calcolo della tabella. */
 function gruppoDi(valore: number, tagli: readonly number[]): number {
   let g = 0;
@@ -92,7 +120,7 @@ function gruppoDi(valore: number, tagli: readonly number[]): number {
 type Passo = {
   minuti: number; gare: number;
   contrasti: number; falli: number; tiri: number; xg: number;
-  nome: string; squadra: string;
+  nome: string; squadra: string; ruolo: Ruolo | null;
 };
 
 function candidati(
@@ -104,9 +132,14 @@ function candidati(
   const fuori: Candidato[] = [];
   for (const [id, p] of passi) {
     if (p.minuti < MIN_MINUTI) continue;
+    // **Il metro si sceglie una volta per giocatore, non per fattore.** Se il suo ruolo ha
+    // una tabella che regge il campione, tutti i suoi confronti avvengono li' dentro;
+    // altrimenti tutti sul campionato. Mescolare i due metri sullo stesso nome renderebbe
+    // il numero incomparabile con quello del nome sopra.
+    const { conRuolo, base, metro, fattori } = metroDi(bersaglio, p.ruolo);
     let migliore: Candidato | null = null;
     for (const [campo, chiaveFattore, etichetta] of chiavi) {
-      const fattore = bersaglio.fattori[chiaveFattore];
+      const fattore = fattori[chiaveFattore];
       if (!fattore || !utilizzabile(chiaveFattore)) continue;
       const valore = (90 * (p[campo] as number)) / p.minuti;
       const indice = gruppoDi(valore, fattore.tagli);
@@ -123,21 +156,28 @@ function candidati(
         gruppi: fattore.gruppi.length,
         frequenza: gruppo.frequenza,
         casi: gruppo.casi,
-        base: bersaglio.base,
+        base,
+        metro,
+        metroDelRuolo: conRuolo,
         gare: p.gare,
         minuti: Math.round(p.minuti),
       };
     }
     if (migliore !== null) fuori.push(migliore);
   }
-  fuori.sort((a, b) => b.frequenza - a.frequenza || b.valore - a.valore);
+  // **Si ordina per quanto sorprende, non per quanto e' alto.** Con il metro del ruolo le
+  // frequenze grezze non sono piu' confrontabili fra ruoli diversi: un difensore parte dal
+  // 16% e un attaccante dall'11%, quindi ordinare sulla frequenza rimetterebbe in cima i
+  // difensori, che e' esattamente il difetto che questa misura ha corretto. Si ordina sullo
+  // scarto dal proprio metro.
+  fuori.sort((a, b) => b.frequenza - b.base - (a.frequenza - a.base) || b.valore - a.valore);
   return fuori.slice(0, QUANTI);
 }
 
 async function leggi(
   leagueId: number,
   seasonId: number | null,
-  ammessi: ReadonlyMap<number, { nome: string; squadra: string }>,
+  ammessi: ReadonlyMap<number, { nome: string; squadra: string; ruolo: Ruolo | null }>,
 ): Promise<LetturaGiocatori | null> {
   const voce = LEGHE[String(leagueId)];
   if (!voce) return null;
@@ -171,7 +211,8 @@ async function leggi(
       const chi = typeof pid === "number" ? ammessi.get(pid) : undefined;
       if (typeof pid !== "number" || chi === undefined) continue;
       const p = passi.get(pid) ?? {
-        minuti: 0, gare: 0, contrasti: 0, falli: 0, tiri: 0, xg: 0, nome: chi.nome, squadra: chi.squadra,
+        minuti: 0, gare: 0, contrasti: 0, falli: 0, tiri: 0, xg: 0,
+        nome: chi.nome, squadra: chi.squadra, ruolo: chi.ruolo,
       };
       p.minuti += Number(r.minutes_played) || 0;
       p.gare += 1;
@@ -211,11 +252,19 @@ export async function letturaGiocatori(
   matchId: number,
   leagueId: number,
   seasonId: number | null,
-  rosa: readonly { readonly id: number; readonly nome: string; readonly squadra: string }[],
+  rosa: readonly {
+    readonly id: number;
+    readonly nome: string;
+    readonly squadra: string;
+    /** Dalla formazione, che porta gia' `position`: nessuna chiamata in piu'. */
+    readonly ruolo: Ruolo | null;
+  }[],
 ): Promise<LetturaGiocatori | null> {
   if (rosa.length === 0) return null;
-  const ammessi = new Map(rosa.map((g) => [g.id, { nome: g.nome, squadra: g.squadra }]));
-  const chiave = `giocatori-lettura:${matchId}:${leagueId}:${seasonId ?? "x"}`;
+  const ammessi = new Map(
+    rosa.map((g) => [g.id, { nome: g.nome, squadra: g.squadra, ruolo: g.ruolo }]),
+  );
+  const chiave = `giocatori-lettura:v${VERSIONE_LETTURA}:${matchId}:${leagueId}:${seasonId ?? "x"}`;
   return unstable_cache(() => leggi(leagueId, seasonId, ammessi), [chiave], {
     revalidate: CACHE_TTL_SECONDS,
     tags: [`giocatori-lettura-${matchId}`],

@@ -386,8 +386,12 @@ def main():
                         help="la frequenza di base dentro ogni ruolo, e i fattori dentro il ruolo")
     argomenti = parser.parse_args()
 
-    ruoli = mappa_ruoli() if argomenti.ruolo else {}
-    if argomenti.ruolo and not ruoli:
+    # `--per-app` implica `--ruolo`: dal 30 agosto 2026 la lettura in pagina confronta un
+    # giocatore con quelli del suo stesso ruolo, e senza la tabella per ruolo l'artefatto
+    # sarebbe monco proprio dove serve.
+    vuole_ruolo = argomenti.ruolo or argomenti.per_app
+    ruoli = mappa_ruoli() if vuole_ruolo else {}
+    if vuole_ruolo and not ruoli:
         raise SystemExit(
             "Nessuna rosa in harvest/data/squads: eseguire prima fetch_squads.py"
         )
@@ -420,7 +424,7 @@ def main():
                     "casi": len(derby), "colpi": colpi,
                     "frequenza": round(colpi / len(derby), 5), "ic95": [round(b, 5), round(a, 5)],
                 }
-        if argomenti.ruolo:
+        if vuole_ruolo:
             noti = sum(1 for c in casi if c.get("ruolo") is not None)
             voce["ruolo"] = {
                 "casi_con_ruolo": noti,
@@ -429,6 +433,8 @@ def main():
                 "gol": per_ruolo(casi, "gol"),
                 "contrasti_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "contrasti_per90", "giallo"),
                 "falli_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "falli_per90", "giallo"),
+                "tiri_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "tiri_per90", "gol"),
+                "xg_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "xg_per90", "gol"),
             }
         if argomenti.stabilita:
             voce["stabilita"] = {
@@ -472,6 +478,22 @@ def scrivi_per_app(risultato, destinazione):
     la frequenza osservata con il suo campione. Fuori tutto il resto.
     """
     MOSTRATI = {"giallo": ("contrasti_per90", "falli_per90"), "gol": ("tiri_per90", "xg_per90")}
+    # fattore -> la chiave con cui il blocco `ruolo` lo espone
+    DENTRO = {
+        "contrasti_per90": "contrasti_dentro_il_ruolo",
+        "falli_per90": "falli_dentro_il_ruolo",
+        "tiri_per90": "tiri_dentro_il_ruolo",
+        "xg_per90": "xg_dentro_il_ruolo",
+    }
+
+    def snellisci(t):
+        return {
+            "tagli": t["tagli"],
+            "gruppi": [
+                {"gruppo": g["gruppo"], "frequenza": g["frequenza"], "casi": g["casi"]}
+                for g in t["gruppi"]
+            ],
+        }
     snello = {}
     for lega, voce in risultato.items():
         if not voce.get("casi"):
@@ -487,13 +509,32 @@ def scrivi_per_app(risultato, destinazione):
                 t = voce[bersaglio]["fattori"].get(f)
                 if not t or not t.get("sufficiente"):
                     continue
-                dentro[bersaglio]["fattori"][f] = {
-                    "tagli": t["tagli"],
-                    "gruppi": [
-                        {"gruppo": g["gruppo"], "frequenza": g["frequenza"], "casi": g["casi"]}
-                        for g in t["gruppi"]
-                    ],
-                }
+                dentro[bersaglio]["fattori"][f] = snellisci(t)
+
+            # Il metro del ruolo: la base dentro ogni ruolo e gli stessi fattori misurati
+            # li' dentro. Senza questo la pagina confronterebbe un difensore con la media
+            # del campionato, e un difensore qualsiasi la supera solo perche' e' difensore.
+            blocco = voce.get("ruolo")
+            if blocco:
+                basi = {}
+                for ruolo, x in blocco[bersaglio].items():
+                    if ruolo != "ignoto" and x.get("sufficiente"):
+                        basi[ruolo] = {"base": x["frequenza"], "casi": x["casi"]}
+                per_ruolo_fattori = {}
+                for ruolo in basi:
+                    tabelle = {}
+                    for f in fattori:
+                        t = (blocco.get(DENTRO[f]) or {}).get(ruolo)
+                        if t and t.get("sufficiente"):
+                            tabelle[f] = snellisci(t)
+                    if tabelle:
+                        per_ruolo_fattori[ruolo] = tabelle
+                if basi:
+                    dentro[bersaglio]["ruoli"] = basi
+                if per_ruolo_fattori:
+                    dentro[bersaglio]["per_ruolo"] = per_ruolo_fattori
+        if voce.get("ruolo"):
+            dentro["copertura_ruolo"] = voce["ruolo"]["copertura"]
         snello[lega] = dentro
     with open(destinazione, "w", encoding="utf-8") as handle:
         json.dump({

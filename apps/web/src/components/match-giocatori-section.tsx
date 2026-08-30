@@ -18,6 +18,13 @@ import type { Candidato, LetturaGiocatori } from "@/server/iqstats/giocatori-let
  * il giallo 1,25 volte la base, e l'ordine regge in quattordici su ventisei. La debolezza
  * del cartellino sta scritta sopra i nomi, non nascosta sotto.
  *
+ * **Il metro e' il ruolo, dal 30 agosto 2026.** Ogni giocatore si confronta con quelli del
+ * suo stesso ruolo, non con la media del campionato: misurato su 224.836 casi, il difensore
+ * prende il giallo il 16,5% delle volte e l'attaccante il 10,6% contro una base del 13,4%,
+ * e con il vecchio metro un difensore qualsiasi risultava esposto **solo perche' difensore**.
+ * Il ruolo compare quindi in ogni riga, perche' il numero accanto al nome non si legge
+ * senza sapere con chi e' stato confrontato.
+ *
  * **Il limite non sta dentro un comando che si apre.** Formazione prevista, campione corto e
  * forza del segnale si leggono senza aprire niente; il dettaglio che si apre aggiunge solo
  * l'aritmetica.
@@ -59,13 +66,15 @@ function Blocco({ c, verbo, cosa }: {
           </span>
           <span className="gioc-num">
             <b className={verso}>{percento(c.frequenza)}</b>
-            <span className="gioc-base">nel campionato {percento(c.base)}</span>
+            <span className="gioc-base">
+              {c.metro.fra} {percento(c.base)}
+            </span>
           </span>
         </summary>
         <p className="gioc-perche">
           {decimale(c.valore)} {c.fattore} ogni 90&apos;, su {c.gare}{" "}
           {c.gare === 1 ? "gara" : "gare"} di questa stagione. &Egrave; il{" "}
-          <b>{c.gruppo}&ordm; gruppo su {c.gruppi}</b> del campionato per questo numero, e chi
+          <b>{c.gruppo}&ordm; gruppo su {c.gruppi}</b> {c.metro.fra} per questo numero, e chi
           sta in quel gruppo {verbo} <b>{percento(c.frequenza)}</b> delle volte, su {c.casi}{" "}
           casi misurati.
         </p>
@@ -73,9 +82,12 @@ function Blocco({ c, verbo, cosa }: {
         <p className="gioc-conto">
           {cosa} osservato {percento(c.frequenza)} contro {percento(c.base)} di base:{" "}
           {rapporto >= 1
-            ? `${decimale(rapporto)} volte la media del campionato`
-            : `sotto la media del campionato`}
+            ? `${decimale(rapporto)} volte la media ${c.metro.dei}`
+            : `sotto la media ${c.metro.dei}`}
           . Il suo passo poggia su {c.minuti} minuti giocati.
+          {c.metroDelRuolo
+            ? ""
+            : " Il suo ruolo non ha un campione abbastanza largo in questo campionato, quindi il confronto è con tutti."}
         </p>
       </details>
     </li>
@@ -139,7 +151,7 @@ export function MatchGiocatoriSection({ lettura, formazioneConfermata }: Props) 
         cosa="Gol"
         blocchi={marcatori}
         limite={`${formazione} Non è una probabilità: è quante volte, in questo campionato, chi tira come loro ha poi segnato.`}
-        provenienza={`${stagione} Chi tira di più segna circa il doppio della base del proprio campionato, e l'ordine dei gruppi regge in tutti e 26 i campionati misurati: è la lettura per giocatore che tiene meglio.`}
+        provenienza={`${stagione} Il confronto è con i giocatori dello stesso ruolo: l'attaccante segna nel 18,4% delle presenze e il difensore nel 3,6%, e quell'ordine regge in tutti e 27 i campionati misurati. Dentro il ruolo, chi tira di più segna di più: è la lettura per giocatore che tiene meglio.`}
       />
       <Lettura
         famiglia="gialli"
@@ -148,8 +160,8 @@ export function MatchGiocatoriSection({ lettura, formazioneConfermata }: Props) 
         verbo="prende il giallo"
         cosa="Giallo"
         blocchi={cartellini}
-        limite={`${formazione} Questa lettura è più debole dell'altra: anche il nome più in alto, quattro volte su cinque, il giallo non lo prende.`}
-        provenienza={`${stagione} Il gruppo più esposto prende il giallo 1,25 volte la base, e l'ordine dei gruppi regge in 14 campionati su 26: fuori da quelli si scavalcano. Per questo qui non c'è nessun numero che finga di essere una probabilità.`}
+        limite={`${formazione} Questa lettura è più debole dell'altra: anche il nome più in alto, quattro volte su cinque, il giallo non lo prende. I nomi sono scelti per quanto superano il proprio ruolo, non per la frequenza più alta: un difensore parte da più in alto di un attaccante e non è merito suo.`}
+        provenienza={`${stagione} Il confronto è con i giocatori dello stesso ruolo: il difensore prende il giallo il 16,5% delle volte e l'attaccante il 10,6%, e quell'ordine regge in 26 campionati su 27. Dentro il ruolo il segnale è debole: fra i difensori i contrasti valgono 1,12 volte e ordinano in 3 campionati su 28, i falli 1,40 volte in 10 su 28. Per questo qui non c'è nessun numero che finga di essere una probabilità.`}
       />
     </>
   );

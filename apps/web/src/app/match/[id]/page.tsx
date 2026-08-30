@@ -77,7 +77,7 @@ import {
   getTeamForm,
 } from "@/server/iqstats/team-page";
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
-import { haTabellaDiBase, letturaGiocatori } from "@/server/iqstats/giocatori-lettura";
+import { haTabellaDiBase, isRuolo, letturaGiocatori } from "@/server/iqstats/giocatori-lettura";
 import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
 import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
@@ -533,14 +533,21 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // prevista o ufficiale, nominare qualcuno significherebbe nominare chi non gioca. E serve
   // una tabella di base misurata per quel campionato: dove non c'e', la sezione non esiste,
   // e non si mostra a zero. A gara finita non ha piu' senso: e' una lettura del prima.
+  // Il ruolo viaggia con la formazione, che porta gia' `position`: e' il metro con cui la
+  // lettura confronta un giocatore, e prenderlo da qui non costa una chiamata in piu'.
   const rosaAttesa = finished ? [] : [
     ...(lineups?.home?.starters ?? []).map((g) => ({
       id: g.id, nome: g.name, squadra: lineups?.home?.teamName ?? detail.homeTeam,
+      ruolo: isRuolo(g.position) ? g.position : null,
     })),
     ...(lineups?.away?.starters ?? []).map((g) => ({
       id: g.id, nome: g.name, squadra: lineups?.away?.teamName ?? detail.awayTeam,
+      ruolo: isRuolo(g.position) ? g.position : null,
     })),
-  ].filter((g): g is { id: number; nome: string; squadra: string } => g.id !== null);
+  ].filter(
+    (g): g is { id: number; nome: string; squadra: string; ruolo: "G" | "D" | "M" | "F" | null } =>
+      g.id !== null,
+  );
   const giocatori =
     rosaAttesa.length === 0 || detail.leagueId === null || !haTabellaDiBase(detail.leagueId)
       ? null
