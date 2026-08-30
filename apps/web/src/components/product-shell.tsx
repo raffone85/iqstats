@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { signOutAction } from "@/app/actions/session";
+import { InstallaApp } from "@/components/installa-app";
 import { createSupabaseServerClient } from "@/server/supabase/server";
 
 /** `teams` è entrata nella barra il 24 agosto 2026, quando `/squadre` è diventata una
@@ -113,6 +114,10 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
       </header>
       <main id="main-content" className="product-main" tabIndex={-1}>
         {children}
+        {/* In coda al contenuto, non sopra: un invito che copre la pagina e' pubblicita',
+            uno che aspetta la fine e' un'offerta. Si mostra da solo soltanto dove c'e'
+            qualcosa da installare, e una volta chiuso non torna. */}
+        <InstallaApp />
       </main>
       <nav className="product-mobile-nav" aria-label="Navigazione primaria mobile">
         {PRIMARY_NAV.map((item) => (

@@ -365,6 +365,17 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 @media (max-width: 1024px) { .product-subnav { display: none; } }
 
+/* Invito a installare l'app: un riquadro in coda al contenuto, mai un velo sopra la pagina.
+   Nessun colore nuovo e nessuna misura scritta a mano: i sei token del ritmo e i token
+   --card-*. La riga di azioni va a capo da sola, così l'etichetta lunga non si spezza. */
+.installa-app { margin-top: 36px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel); }
+.installa-app h2 { margin-bottom: 10px; color: var(--card-brand-strong); font-family: var(--font-display); font-size: clamp(1.15rem, 2.6vw, 1.5rem); letter-spacing: -.035em; line-height: 1.15; }
+.installa-app p { margin: 0; max-width: 62ch; color: var(--card-ink-2); font-size: 14px; line-height: 1.6; }
+.installa-app .installa-passi { margin-top: 10px; color: var(--card-ink); }
+.installa-azioni { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+.installa-rinuncia { min-height: var(--h-control); padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: transparent; color: var(--card-ink-2); font-size: 14px; font-weight: 650; touch-action: manipulation; transition: border-color 180ms ease, color 180ms ease; }
+.installa-rinuncia:hover { border-color: var(--card-ink-3); color: var(--card-ink); }
+
 /* Bottom nav mobile — 5 voci, identità Cardinale */
 @media (max-width: 640px) {
   .product-shell .product-mobile-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }

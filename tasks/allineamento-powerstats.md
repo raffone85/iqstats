@@ -71,8 +71,15 @@ attivi non sono opzionali.
     l'utente autorizza quella scrittura, non prima.
 12. **Profilo strutturato**: abbonamento, fatturazione, preferenze, salvataggi, assistenza.
     *Criterio:* ogni voce porta a qualcosa che esiste.
-13. **Installabile come app**: manifest, icone, scheda «installa». *Criterio:* si aggiunge
-    alla schermata home e si apre a schermo pieno.
+13. ~~**Installabile come app**: manifest, icone, scheda «installa».~~ — **fatto il 30 agosto.**
+    Manifesto, quattro icone disegnate con i token del wordmark, e una scheda che compare
+    solo dove c'e' qualcosa da installare. *Misurato:* Chrome legge il manifesto, zero
+    errori, tre icone, e manda `beforeinstallprompt`; prima non scaricava nemmeno il file.
+    **Errore trovato e corretto:** Next trasmette a flusso i tag di `generateMetadata` e li
+    appende in fondo al `<body>`, dove `rel="manifest"` viene ignorato. Spegnere il flusso
+    costava 5,81-8,77 s di primo byte su `/squadre/276` contro 1,16-1,59 s: il manifesto e'
+    dichiarato in `layout.tsx`, che React issa in `head` a costo zero.
+    **Resta all'utente:** l'aggiunta vera alla schermata home dal telefono.
 14. **Onboarding a passi** sulle funzioni nuove. *Criterio:* si può saltare e non ricompare.
 
 ## Blocco 4 — il prodotto
