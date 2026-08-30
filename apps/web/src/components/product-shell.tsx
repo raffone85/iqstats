@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { signOutAction } from "@/app/actions/session";
 import { InstallaApp } from "@/components/installa-app";
+import { TITOLARE } from "@/lib/titolare";
 import { createSupabaseServerClient } from "@/server/supabase/server";
 
 /** `teams` è entrata nella barra il 24 agosto 2026, quando `/squadre` è diventata una
@@ -18,7 +19,10 @@ type ProductSection =
   | "method"
   | "search"
   | "billing"
-  | "account";
+  | "account"
+  /** Privacy e termini non stanno nella barra: si raggiungono dal piede, e questa voce
+   *  serve solo a non accendere «Partite» su una pagina che con le partite non c'entra. */
+  | "legal";
 
 type ProductShellProps = Readonly<{
   children: React.ReactNode;
@@ -151,6 +155,13 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
           patologica. Telefono Verde Nazionale{" "}
           <a href="tel:800558822">800 55 88 22</a>, gratuito e anonimo, dal lunedì al venerdì
           dalle 10 alle 16, Istituto Superiore di Sanità.
+        </p>
+        {/* Le pagine legali stanno qui e non nella barra: si cercano quando servono, e
+            quando servono si devono trovare da qualsiasi pagina. */}
+        <p className="product-legale">
+          <Link href="/privacy">Informativa privacy</Link>
+          <Link href="/termini">Termini di servizio</Link>
+          <a href={TITOLARE.telegramUrl}>Assistenza</a>
         </p>
       </footer>
       <nav className="product-mobile-nav" aria-label="Navigazione primaria mobile">

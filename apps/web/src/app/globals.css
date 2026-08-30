@@ -1637,3 +1637,28 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 /* Il limite sta sopra i nomi, in prosa: e' un giudizio sulla lettura, non provenienza.
    La provenienza resta in mono, sotto la lista, dove serve a chi vuole controllare. */
 .gioc-limite { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--card-ink-2); }
+
+/* Pagine legali: un documento, non una vetrina. Nessun blocco pieno (la quota della
+   pagina resta zero, la hero qui e' l'intestazione di testo), nessun colore nuovo, i sei
+   token del ritmo per raggi e padding. La misura di riga resta sotto i 70 caratteri:
+   un'informativa si legge una volta sola e deve reggerla. */
+.legale { max-width: 68ch; margin-top: 34px; }
+.legale h2 { margin: 34px 0 10px; color: var(--product-primary-deep); font-size: clamp(1.15rem, 2.6vw, 1.5rem); letter-spacing: -.035em; line-height: 1.15; }
+.legale h2:first-of-type { margin-top: 0; }
+.legale p { margin: 0 0 12px; color: var(--card-ink-2); font-size: 15px; line-height: 1.7; }
+.legale a { color: var(--card-brand-strong); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.legale b { color: var(--card-ink); }
+.legale code { font-family: var(--font-mono); font-size: 13px; }
+.legale-dati { margin: 0 0 12px; }
+.legale-dati dt { margin-top: 16px; color: var(--card-ink); font-weight: 700; font-size: 15px; }
+.legale-dati dd { margin: 4px 0 0; color: var(--card-ink-2); font-size: 15px; line-height: 1.7; }
+.legale-elenco { margin: 0 0 12px; padding-left: 20px; list-style: disc; }
+.legale-elenco li { margin-bottom: 8px; color: var(--card-ink-2); font-size: 15px; line-height: 1.7; }
+/* L'assenza del titolare si dichiara in pagina, non in un commento del codice: e' il
+   difetto piu' grave che questa pagina possa avere, e va visto da chi la apre. */
+.legale-mancante { padding: var(--pad-panel); border: 1px solid var(--card-down); border-radius: var(--r-panel); background: var(--product-surface-soft); }
+.legale-vicino { margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--card-stroke); color: var(--card-ink-3); font-size: 14px; }
+/* I collegamenti legali nel piede: stessa voce di servizio delle avvertenze sopra, in
+   riga su schermo largo e a capo sul telefono, con il minimo tattile rispettato. */
+.product-avvertenze .product-legale { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 14px; }
+.product-legale a { display: inline-flex; align-items: center; min-height: 44px; }
