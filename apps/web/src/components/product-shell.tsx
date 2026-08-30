@@ -156,6 +156,11 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
           <a href="tel:800558822">800 55 88 22</a>, gratuito e anonimo, dal lunedì al venerdì
           dalle 10 alle 16, Istituto Superiore di Sanità.
         </p>
+        {/* Chi risponde del sito sta in fondo, piccolo e in minuscolo: non e' un'insegna,
+            e' il modo di sapere con chi si ha a che fare da qualsiasi pagina senza dover
+            aprire l'informativa. Il minuscolo lo fa il foglio di stile, non la stringa:
+            il nome resta scritto giusto per chi legge con la voce. */}
+        <p className="product-titolare">{TITOLARE.nome}</p>
         {/* Le pagine legali stanno qui e non nella barra: si cercano quando servono, e
             quando servono si devono trovare da qualsiasi pagina. */}
         <p className="product-legale">

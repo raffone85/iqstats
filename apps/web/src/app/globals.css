@@ -1662,3 +1662,6 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
    riga su schermo largo e a capo sul telefono, con il minimo tattile rispettato. */
 .product-avvertenze .product-legale { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 14px; }
 .product-legale a { display: inline-flex; align-items: center; min-height: 44px; }
+/* Il nome di chi risponde del sito, in coda e in minuscolo. Il contrasto resta quello
+   del testo di servizio (5,41 su carta), quindi legge chiunque anche se non grida. */
+.product-avvertenze .product-titolare { margin-top: 16px; color: var(--card-ink-3); font-size: 12.5px; text-transform: lowercase; }
