@@ -583,7 +583,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   font-size: clamp(21px, 3.4vw, 27px); line-height: 1.2; color: var(--card-ink); }
 .dossier-capitolo p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-3); }
 
-.dossier-kick { margin: 0 0 12px; font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .15em; text-transform: uppercase; color: var(--card-brand); }
+/* line-height 1.35 e non 1: la classe trasforma in maiuscolo, e un maiuscolo accentato
+   (PUÒ, PIÙ, È) porta l'accento sopra l'altezza delle maiuscole. Con l'interlinea pari al
+   corpo il riquadro restava alto 11 px contro 12 di contenuto e l'accento veniva tagliato,
+   misurato il 30 agosto 2026 sul primo occhiello accentato del prodotto. */
+.dossier-kick { margin: 0 0 12px; font: 700 11px/1.35 var(--font-inter, sans-serif); letter-spacing: .15em; text-transform: uppercase; color: var(--card-brand); }
 .dossier-verdict-lead { margin: 0 0 16px; font-family: var(--font-display); font-size: clamp(17px, 2.4vw, 22px); color: var(--card-ink); line-height: 1.4; }
 .dossier-verdict-lead b { color: var(--card-brand-strong); }
 .dossier-1x2 { display: grid; gap: 8px; }
@@ -1584,3 +1588,52 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .partite-stella.is-scelta { border-color: var(--card-brand-soft); color: var(--card-brand-strong); }
 .partite-stella:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
 .partite-preferiti-nota { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
+
+/* Chi rischia il cartellino, chi puo' segnare.
+   Due card di famiglia dentro la deroga del dossier: fascia stretta in testata, alta quanto
+   una riga, dello stesso rango delle altre sette. Nessuna ombra: il sistema usa il filetto.
+   Il blocco che si apre e' un <details> nativo, quindi tastiera e lettori di schermo
+   funzionano senza codice, e il limite resta scritto fuori. */
+.gioc-panel { position: relative; overflow: hidden; }
+.gioc-fascia { position: absolute; inset: 0 0 auto; height: 4px; }
+.gioc-fascia-gialli { background: var(--fam-gialli); }
+.gioc-fascia-tiri { background: var(--fam-tiri); }
+
+.gioc-blocchi { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.gioc-blocco { border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); }
+
+.gioc-sum {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: var(--h-control); padding: 9px 13px; cursor: pointer; list-style: none;
+  border-radius: var(--r-control);
+}
+.gioc-sum::-webkit-details-marker { display: none; }
+.gioc-sum:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.gioc-det[open] .gioc-sum { border-bottom: 1px solid var(--card-stroke); border-radius: var(--r-control) var(--r-control) 0 0; }
+
+.gioc-chi { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.gioc-nome { font: 600 14.5px/1.2 var(--font-display, sans-serif); color: var(--card-ink); overflow-wrap: anywhere; }
+.gioc-squadra { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
+
+.gioc-num { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex: none; }
+.gioc-num b { font: 600 16px/1 var(--font-mono, monospace); font-variant-numeric: tabular-nums; color: var(--card-ink); }
+.gioc-num .gioc-su { color: var(--card-up); }
+.gioc-num .gioc-giu { color: var(--card-down); }
+.gioc-base { font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); white-space: nowrap; }
+
+.gioc-perche { margin: 11px 13px 0; font-size: 13px; line-height: 1.55; color: var(--card-ink-2); }
+.gioc-conto { margin: 2px 13px 12px; font-family: var(--font-mono, monospace); font-size: 11px; line-height: 1.5; color: var(--card-ink-3); }
+
+/* Dove sta il giocatore fra i gruppi del campionato. Segmenti pieni, nessuna traccia di
+   fondo riempita: il filo dice la posizione, non finge una barra di punteggio. */
+.gioc-posto { display: flex; gap: 3px; height: 3px; margin: 9px 13px 0; }
+.gioc-posto i { display: block; flex: 1; border-radius: 2px; background: var(--card-stroke); }
+.gioc-posto .gioc-posto-qui { background: var(--card-brand); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gioc-det, .gioc-sum { transition-duration: .01ms; }
+}
+
+/* Il limite sta sopra i nomi, in prosa: e' un giudizio sulla lettura, non provenienza.
+   La provenienza resta in mono, sotto la lista, dove serve a chi vuole controllare. */
+.gioc-limite { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--card-ink-2); }

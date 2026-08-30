@@ -1,0 +1,4162 @@
+{
+ "generato_da": "scripts/projection/dataset/build_player_base.py --per-app",
+ "min_minuti_alle_spalle": 90,
+ "nota": "frequenze osservate per gruppo, non probabilita'",
+ "leghe": {
+  "1": {
+   "gare": 395,
+   "casi": 10263,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.12988,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.67416,
+       1.23393,
+       1.71429,
+       2.29462
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08236,
+        "casi": 2052
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11593,
+        "casi": 2053
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13255,
+        "casi": 2052
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14564,
+        "casi": 2053
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17292,
+        "casi": 2053
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.51487,
+       0.8427,
+       1.10721,
+       1.52878
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08626,
+        "casi": 2052
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12671,
+        "casi": 2052
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13005,
+        "casi": 2053
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15733,
+        "casi": 2053
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14905,
+        "casi": 2053
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.0835,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.34091,
+       0.74792,
+       1.22542,
+       2.03501
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02242,
+        "casi": 2052
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0385,
+        "casi": 2052
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06137,
+        "casi": 2053
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10862,
+        "casi": 2053
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18656,
+        "casi": 2053
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01867,
+       0.05463,
+       0.10666,
+       0.22592
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0229,
+        "casi": 2052
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03897,
+        "casi": 2053
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05945,
+        "casi": 2052
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10472,
+        "casi": 2053
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19143,
+        "casi": 2053
+       }
+      ]
+     }
+    }
+   }
+  },
+  "10": {
+   "gare": 349,
+   "casi": 7446,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.1018,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.63417,
+       1.08959,
+       1.61677,
+       2.2634
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.06582,
+        "casi": 1489
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.09402,
+        "casi": 1489
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.09879,
+        "casi": 1488
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11879,
+        "casi": 1490
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.13154,
+        "casi": 1490
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.508,
+       0.85598,
+       1.125,
+       1.53409
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.06917,
+        "casi": 1489
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.10141,
+        "casi": 1489
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.10282,
+        "casi": 1488
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11575,
+        "casi": 1486
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.11981,
+        "casi": 1494
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.09696,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.34596,
+       0.78261,
+       1.37931,
+       2.46154
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02619,
+        "casi": 1489
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04245,
+        "casi": 1484
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.08969,
+        "casi": 1494
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.13029,
+        "casi": 1489
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19597,
+        "casi": 1490
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01787,
+       0.05944,
+       0.12552,
+       0.2611
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02821,
+        "casi": 1489
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.05037,
+        "casi": 1489
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07656,
+        "casi": 1489
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11954,
+        "casi": 1489
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.21007,
+        "casi": 1490
+       }
+      ]
+     }
+    }
+   }
+  },
+  "11": {
+   "gare": 327,
+   "casi": 8031,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.14955,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.62069,
+       1.11111,
+       1.54982,
+       2.06487
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11713,
+        "casi": 1605
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14232,
+        "casi": 1602
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15705,
+        "casi": 1611
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14384,
+        "casi": 1606
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18731,
+        "casi": 1607
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.62937,
+       1.00982,
+       1.3799,
+       1.88811
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11776,
+        "casi": 1605
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12943,
+        "casi": 1607
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15576,
+        "casi": 1605
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17497,
+        "casi": 1606
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16978,
+        "casi": 1608
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07894,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.32258,
+       0.72917,
+       1.27559,
+       2.18525
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0106,
+        "casi": 1604
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02736,
+        "casi": 1608
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04795,
+        "casi": 1606
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11582,
+        "casi": 1606
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19291,
+        "casi": 1607
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01188,
+       0.04162,
+       0.09312,
+       0.20905
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.00996,
+        "casi": 1606
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03176,
+        "casi": 1606
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05106,
+        "casi": 1606
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08966,
+        "casi": 1606
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.2122,
+        "casi": 1607
+       }
+      ]
+     }
+    }
+   }
+  },
+  "12": {
+   "gare": 593,
+   "casi": 15269,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.12627,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.66408,
+       1.13768,
+       1.57784,
+       2.09302
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08352,
+        "casi": 3053
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12574,
+        "casi": 3054
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13785,
+        "casi": 3054
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12574,
+        "casi": 3054
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15848,
+        "casi": 3054
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.53254,
+       0.85066,
+       1.125,
+       1.51685
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09171,
+        "casi": 3053
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12083,
+        "casi": 3054
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13397,
+        "casi": 3038
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14081,
+        "casi": 3068
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14398,
+        "casi": 3056
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07722,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.36785,
+       0.7732,
+       1.33174,
+       2.10074
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01867,
+        "casi": 3053
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03864,
+        "casi": 3054
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05959,
+        "casi": 3054
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10707,
+        "casi": 3054
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16208,
+        "casi": 3054
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01885,
+       0.05346,
+       0.10965,
+       0.22255
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01834,
+        "casi": 3053
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03929,
+        "casi": 3054
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06123,
+        "casi": 3054
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09921,
+        "casi": 3054
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16798,
+        "casi": 3054
+       }
+      ]
+     }
+    }
+   }
+  },
+  "13": {
+   "gare": 244,
+   "casi": 6086,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13161,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.72973,
+       1.14286,
+       1.52695,
+       2.1365
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08299,
+        "casi": 1217
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12016,
+        "casi": 1215
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14028,
+        "casi": 1219
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15037,
+        "casi": 1217
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1642,
+        "casi": 1218
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.55088,
+       0.9345,
+       1.24528,
+       1.74612
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0871,
+        "casi": 1217
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13065,
+        "casi": 1217
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14708,
+        "casi": 1217
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1479,
+        "casi": 1217
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14532,
+        "casi": 1218
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08216,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.32067,
+       0.66359,
+       1.30263,
+       2.12042
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01972,
+        "casi": 1217
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03701,
+        "casi": 1216
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07307,
+        "casi": 1218
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10691,
+        "casi": 1216
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17391,
+        "casi": 1219
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0168,
+       0.04873,
+       0.10619,
+       0.24052
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02547,
+        "casi": 1217
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0378,
+        "casi": 1217
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06245,
+        "casi": 1217
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10107,
+        "casi": 1217
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18391,
+        "casi": 1218
+       }
+      ]
+     }
+    }
+   }
+  },
+  "14": {
+   "gare": 350,
+   "casi": 8801,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.12533,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.70932,
+       1.21348,
+       1.65138,
+       2.29008
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08011,
+        "casi": 1760
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.1132,
+        "casi": 1758
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13879,
+        "casi": 1758
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12755,
+        "casi": 1764
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16695,
+        "casi": 1761
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.52083,
+       0.9,
+       1.19681,
+       1.66667
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.07789,
+        "casi": 1759
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12287,
+        "casi": 1758
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14067,
+        "casi": 1763
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12628,
+        "casi": 1758
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15882,
+        "casi": 1763
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08192,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.35573,
+       0.78148,
+       1.2929,
+       2.16346
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02049,
+        "casi": 1757
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.038,
+        "casi": 1763
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06193,
+        "casi": 1760
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12969,
+        "casi": 1758
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15939,
+        "casi": 1763
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01906,
+       0.05705,
+       0.1091,
+       0.2329
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02102,
+        "casi": 1760
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04886,
+        "casi": 1760
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05795,
+        "casi": 1760
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10511,
+        "casi": 1760
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1766,
+        "casi": 1761
+       }
+      ]
+     }
+    }
+   }
+  },
+  "15": {
+   "gare": 252,
+   "casi": 6503,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.14716,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.71178,
+       1.31267,
+       1.77632,
+       2.34783
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09615,
+        "casi": 1300
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13221,
+        "casi": 1301
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16564,
+        "casi": 1298
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14823,
+        "casi": 1302
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19355,
+        "casi": 1302
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.60322,
+       1.0,
+       1.37195,
+       1.85567
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09846,
+        "casi": 1300
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.1487,
+        "casi": 1271
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16491,
+        "casi": 1328
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17051,
+        "casi": 1302
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15284,
+        "casi": 1302
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.09672,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.40724,
+       0.84639,
+       1.56328,
+       2.39468
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02079,
+        "casi": 1299
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03917,
+        "casi": 1302
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07692,
+        "casi": 1300
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.13836,
+        "casi": 1301
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.2083,
+        "casi": 1301
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.02045,
+       0.0535,
+       0.12794,
+       0.30831
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02538,
+        "casi": 1300
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04074,
+        "casi": 1301
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07385,
+        "casi": 1300
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.13605,
+        "casi": 1301
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.20753,
+        "casi": 1301
+       }
+      ]
+     }
+    }
+   }
+  },
+  "17": {
+   "gare": 339,
+   "casi": 8240,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13301,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.57692,
+       1.08515,
+       1.56863,
+       2.22772
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0808,
+        "casi": 1646
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11394,
+        "casi": 1650
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13714,
+        "casi": 1648
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17132,
+        "casi": 1646
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16182,
+        "casi": 1650
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.50752,
+       0.87456,
+       1.19693,
+       1.63636
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0844,
+        "casi": 1647
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.1134,
+        "casi": 1649
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13471,
+        "casi": 1648
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16616,
+        "casi": 1637
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16637,
+        "casi": 1659
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08944,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.20737,
+       0.54545,
+       1.05058,
+       1.93317
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.017,
+        "casi": 1647
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02495,
+        "casi": 1643
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04414,
+        "casi": 1654
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11772,
+        "casi": 1648
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.24333,
+        "casi": 1648
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00663,
+       0.0364,
+       0.09137,
+       0.21434
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01456,
+        "casi": 1648
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02488,
+        "casi": 1648
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.0534,
+        "casi": 1648
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10255,
+        "casi": 1648
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.25182,
+        "casi": 1648
+       }
+      ]
+     }
+    }
+   }
+  },
+  "18": {
+   "gare": 855,
+   "casi": 22442,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.14094,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.65165,
+       1.17733,
+       1.62978,
+       2.21831
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09046,
+        "casi": 4488
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13327,
+        "casi": 4487
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15412,
+        "casi": 4490
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15808,
+        "casi": 4485
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16874,
+        "casi": 4492
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.54217,
+       0.94737,
+       1.27016,
+       1.72524
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08921,
+        "casi": 4484
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12804,
+        "casi": 4475
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14913,
+        "casi": 4506
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16251,
+        "casi": 4486
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17568,
+        "casi": 4491
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08956,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.26432,
+       0.63331,
+       1.16129,
+       2.06897
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01939,
+        "casi": 4487
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03163,
+        "casi": 4489
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05527,
+        "casi": 4487
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11282,
+        "casi": 4485
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.22853,
+        "casi": 4494
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0125,
+       0.04371,
+       0.09932,
+       0.23953
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02094,
+        "casi": 4488
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0332,
+        "casi": 4488
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05369,
+        "casi": 4489
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11029,
+        "casi": 4488
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.22967,
+        "casi": 4489
+       }
+      ]
+     }
+    }
+   }
+  },
+  "19": {
+   "gare": 218,
+   "casi": 4961,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.15763,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.54878,
+       1.10429,
+       1.60356,
+       2.15569
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11741,
+        "casi": 988
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14271,
+        "casi": 995
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.17019,
+        "casi": 993
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17659,
+        "casi": 991
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18109,
+        "casi": 994
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.4918,
+       0.9,
+       1.25,
+       1.80133
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09798,
+        "casi": 990
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.1459,
+        "casi": 987
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.17944,
+        "casi": 992
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17918,
+        "casi": 999
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1853,
+        "casi": 993
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08768,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.24161,
+       0.66667,
+       1.25,
+       2.18447
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02319,
+        "casi": 992
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03846,
+        "casi": 962
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06621,
+        "casi": 1012
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11489,
+        "casi": 1001
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19416,
+        "casi": 994
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00669,
+       0.03987,
+       0.09847,
+       0.22787
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0252,
+        "casi": 992
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03125,
+        "casi": 992
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07157,
+        "casi": 992
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10383,
+        "casi": 992
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.20645,
+        "casi": 993
+       }
+      ]
+     }
+    }
+   }
+  },
+  "2": {
+   "gare": 336,
+   "casi": 8477,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.15642,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.62069,
+       1.16785,
+       1.61194,
+       2.16
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11747,
+        "casi": 1694
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14976,
+        "casi": 1696
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16804,
+        "casi": 1696
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16352,
+        "casi": 1694
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18326,
+        "casi": 1697
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.67416,
+       1.08,
+       1.44835,
+       1.9708
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11858,
+        "casi": 1695
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.15239,
+        "casi": 1693
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16608,
+        "casi": 1698
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.18702,
+        "casi": 1695
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15802,
+        "casi": 1696
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07892,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.26163,
+       0.65158,
+       1.16061,
+       2.01493
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02242,
+        "casi": 1695
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03953,
+        "casi": 1695
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04717,
+        "casi": 1696
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1039,
+        "casi": 1694
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1815,
+        "casi": 1697
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01128,
+       0.03736,
+       0.08818,
+       0.22078
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02183,
+        "casi": 1695
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04307,
+        "casi": 1695
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04776,
+        "casi": 1696
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09617,
+        "casi": 1695
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18573,
+        "casi": 1696
+       }
+      ]
+     }
+    }
+   }
+  },
+  "20": {
+   "gare": 167,
+   "casi": 4166,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.1505,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.625,
+       1.0686,
+       1.52975,
+       2.07692
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.12005,
+        "casi": 833
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13806,
+        "casi": 833
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15865,
+        "casi": 832
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16187,
+        "casi": 834
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17386,
+        "casi": 834
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.53754,
+       0.96983,
+       1.35135,
+       1.80678
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.10924,
+        "casi": 833
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12365,
+        "casi": 833
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.18007,
+        "casi": 833
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16447,
+        "casi": 833
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17506,
+        "casi": 834
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08521,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.32258,
+       0.77419,
+       1.29808,
+       2.36066
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01321,
+        "casi": 833
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02881,
+        "casi": 833
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05402,
+        "casi": 833
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12485,
+        "casi": 833
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.20504,
+        "casi": 834
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01066,
+       0.04059,
+       0.09086,
+       0.21454
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.012,
+        "casi": 833
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03121,
+        "casi": 833
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06242,
+        "casi": 833
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11525,
+        "casi": 833
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.20504,
+        "casi": 834
+       }
+      ]
+     }
+    }
+   }
+  },
+  "22": {
+   "gare": 189,
+   "casi": 4586,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.15046,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.26354,
+       0.52872
+      ],
+      "gruppi": [
+       {
+        "gruppo": 3,
+        "frequenza": 0.13377,
+        "casi": 2751
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17339,
+        "casi": 917
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17756,
+        "casi": 918
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.42453,
+       0.82286,
+       1.11724,
+       1.58513
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11245,
+        "casi": 916
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14924,
+        "casi": 918
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15376,
+        "casi": 917
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14395,
+        "casi": 917
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19281,
+        "casi": 918
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.23077,
+       0.59603,
+       1.10807,
+       1.94754
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01969,
+        "casi": 914
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02397,
+        "casi": 918
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05441,
+        "casi": 919
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.0807,
+        "casi": 917
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17102,
+        "casi": 918
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00409,
+       0.04,
+       0.10214,
+       0.22
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01854,
+        "casi": 917
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02404,
+        "casi": 915
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04788,
+        "casi": 919
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09269,
+        "casi": 917
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16667,
+        "casi": 918
+       }
+      ]
+     }
+    }
+   }
+  },
+  "23": {
+   "gare": 368,
+   "casi": 9571,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13489,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.67444,
+       1.21771,
+       1.68182,
+       2.24199
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.10188,
+        "casi": 1914
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.12905,
+        "casi": 1914
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13271,
+        "casi": 1914
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14263,
+        "casi": 1914
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16815,
+        "casi": 1915
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.56367,
+       0.94406,
+       1.25,
+       1.68
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.10449,
+        "casi": 1914
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.138,
+        "casi": 1913
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13784,
+        "casi": 1908
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14167,
+        "casi": 1920
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1524,
+        "casi": 1916
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07418,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.37895,
+       0.78035,
+       1.45357,
+       2.21918
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01725,
+        "casi": 1913
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0376,
+        "casi": 1915
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05434,
+        "casi": 1914
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12703,
+        "casi": 1913
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.13466,
+        "casi": 1916
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00211,
+       0.04308,
+       0.10228,
+       0.21805
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0371,
+        "casi": 1914
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02821,
+        "casi": 1914
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05486,
+        "casi": 1914
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09666,
+        "casi": 1914
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15405,
+        "casi": 1915
+       }
+      ]
+     }
+    }
+   }
+  },
+  "24": {
+   "gare": 244,
+   "casi": 6248,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.16229,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.5547,
+       1.0,
+       1.43569,
+       1.91489
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.14331,
+        "casi": 1249
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.16251,
+        "casi": 1163
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.17365,
+        "casi": 1336
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15751,
+        "casi": 1238
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17353,
+        "casi": 1262
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.76271,
+       1.14772,
+       1.51134,
+       2.03883
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11939,
+        "casi": 1248
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.18785,
+        "casi": 1251
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16333,
+        "casi": 1249
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15933,
+        "casi": 1249
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18145,
+        "casi": 1251
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07506,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.30999,
+       0.71739,
+       1.21228,
+       1.98529
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01521,
+        "casi": 1249
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0336,
+        "casi": 1250
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06725,
+        "casi": 1249
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1024,
+        "casi": 1250
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1568,
+        "casi": 1250
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01167,
+       0.04344,
+       0.09386,
+       0.2245
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01361,
+        "casi": 1249
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0296,
+        "casi": 1250
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06645,
+        "casi": 1249
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1,
+        "casi": 1250
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1656,
+        "casi": 1250
+       }
+      ]
+     }
+    }
+   }
+  },
+  "25": {
+   "gare": 350,
+   "casi": 8931,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13156,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.57692,
+       1.02792,
+       1.46819,
+       1.98642
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.07791,
+        "casi": 1784
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13591,
+        "casi": 1788
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14446,
+        "casi": 1786
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1495,
+        "casi": 1786
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14997,
+        "casi": 1787
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.60948,
+       0.96774,
+       1.30841,
+       1.77165
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09183,
+        "casi": 1786
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11653,
+        "casi": 1785
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14382,
+        "casi": 1787
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14558,
+        "casi": 1786
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16004,
+        "casi": 1787
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08107,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.43103,
+       0.82569,
+       1.37714,
+       2.17666
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02464,
+        "casi": 1786
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03978,
+        "casi": 1785
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06323,
+        "casi": 1787
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10582,
+        "casi": 1786
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1718,
+        "casi": 1787
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.02175,
+       0.05643,
+       0.1148,
+       0.2276
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02688,
+        "casi": 1786
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04311,
+        "casi": 1786
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05935,
+        "casi": 1786
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09462,
+        "casi": 1786
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18131,
+        "casi": 1787
+       }
+      ]
+     }
+    }
+   }
+  },
+  "26": {
+   "gare": 386,
+   "casi": 9681,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.12406,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.70312,
+       1.25,
+       1.75268,
+       2.45774
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08523,
+        "casi": 1936
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11971,
+        "casi": 1913
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.11741,
+        "casi": 1959
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1281,
+        "casi": 1936
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16985,
+        "casi": 1937
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.54217,
+       0.96013,
+       1.28834,
+       1.82812
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08734,
+        "casi": 1935
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11719,
+        "casi": 1937
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.12661,
+        "casi": 1935
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14094,
+        "casi": 1937
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14817,
+        "casi": 1937
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08635,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.30405,
+       0.74817,
+       1.32353,
+       2.19512
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02223,
+        "casi": 1934
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04128,
+        "casi": 1938
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07076,
+        "casi": 1936
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11365,
+        "casi": 1927
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18345,
+        "casi": 1946
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01287,
+       0.05167,
+       0.11028,
+       0.22565
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02841,
+        "casi": 1936
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04649,
+        "casi": 1936
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.0594,
+        "casi": 1936
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10589,
+        "casi": 1936
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19153,
+        "casi": 1937
+       }
+      ]
+     }
+    }
+   }
+  },
+  "3": {
+   "gare": 405,
+   "casi": 10752,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13969,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.75104,
+       1.27389,
+       1.73077,
+       2.25847
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08752,
+        "casi": 2148
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13151,
+        "casi": 2152
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14379,
+        "casi": 2149
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15567,
+        "casi": 2152
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17992,
+        "casi": 2151
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.625,
+       0.98039,
+       1.28072,
+       1.71429
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09524,
+        "casi": 2142
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13179,
+        "casi": 2155
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14949,
+        "casi": 2154
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.15826,
+        "casi": 2142
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1635,
+        "casi": 2159
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.0785,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.33226,
+       0.69767,
+       1.2,
+       2.11957
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01395,
+        "casi": 2150
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0354,
+        "casi": 2147
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.0516,
+        "casi": 2151
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09011,
+        "casi": 2153
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.2013,
+        "casi": 2151
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0152,
+       0.0441,
+       0.09069,
+       0.2372
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01581,
+        "casi": 2150
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0293,
+        "casi": 2150
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04928,
+        "casi": 2151
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08791,
+        "casi": 2150
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.21013,
+        "casi": 2151
+       }
+      ]
+     }
+    }
+   }
+  },
+  "38": {
+   "gare": 495,
+   "casi": 13284,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.16599,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.75,
+       1.23548,
+       1.64259,
+       2.20116
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.10939,
+        "casi": 2651
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14876,
+        "casi": 2662
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16974,
+        "casi": 2657
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.20286,
+        "casi": 2657
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1991,
+        "casi": 2657
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.71618,
+       1.05572,
+       1.40625,
+       1.92857
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.10923,
+        "casi": 2655
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.15801,
+        "casi": 2658
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.18953,
+        "casi": 2654
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17494,
+        "casi": 2658
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19819,
+        "casi": 2659
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07483,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.33333,
+       0.71925,
+       1.26761,
+       2.15753
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01332,
+        "casi": 2627
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03351,
+        "casi": 2686
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05384,
+        "casi": 2656
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10421,
+        "casi": 2658
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16899,
+        "casi": 2657
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0166,
+       0.05052,
+       0.10645,
+       0.22424
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01732,
+        "casi": 2656
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02785,
+        "casi": 2657
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05119,
+        "casi": 2657
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09447,
+        "casi": 2657
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.18329,
+        "casi": 2657
+       }
+      ]
+     }
+    }
+   }
+  },
+  "4": {
+   "gare": 395,
+   "casi": 10571,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.11796,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.625,
+       1.13654,
+       1.59574,
+       2.09091
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.06957,
+        "casi": 2113
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11253,
+        "casi": 2115
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.12441,
+        "casi": 2114
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.13765,
+        "casi": 2114
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.14563,
+        "casi": 2115
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.67669,
+       1.02725,
+       1.37555,
+       1.78611
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08045,
+        "casi": 2113
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11584,
+        "casi": 2115
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.12677,
+        "casi": 2114
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12583,
+        "casi": 2114
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1409,
+        "casi": 2115
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07294,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.34483,
+       0.72454,
+       1.23077,
+       2.06107
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0123,
+        "casi": 2114
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04305,
+        "casi": 2114
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05866,
+        "casi": 2114
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09224,
+        "casi": 2114
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15839,
+        "casi": 2115
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01761,
+       0.04995,
+       0.10232,
+       0.20209
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01703,
+        "casi": 2114
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03548,
+        "casi": 2114
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06717,
+        "casi": 2114
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08657,
+        "casi": 2114
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15839,
+        "casi": 2115
+       }
+      ]
+     }
+    }
+   }
+  },
+  "47": {
+   "gare": 117,
+   "casi": 2567,
+   "falli_utilizzabili": false,
+   "giallo": {
+    "base": 0.13362,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.13362,
+        "casi": 2567
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.13362,
+        "casi": 2567
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.05882,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.05882,
+        "casi": 2567
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.05882,
+        "casi": 2567
+       }
+      ]
+     }
+    }
+   }
+  },
+  "49": {
+   "gare": 402,
+   "casi": 9477,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.08399,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.5,
+       1.0,
+       1.4,
+       1.98895
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.05892,
+        "casi": 1850
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.07421,
+        "casi": 1927
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.08132,
+        "casi": 1906
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09273,
+        "casi": 1898
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.11234,
+        "casi": 1896
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.38352,
+       0.74689,
+       1.03448,
+       1.53488
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.05699,
+        "casi": 1895
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0792,
+        "casi": 1894
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.08803,
+        "casi": 1897
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08865,
+        "casi": 1895
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.10707,
+        "casi": 1896
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.07745,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.2897,
+       0.7438,
+       1.26168,
+       2.07692
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02322,
+        "casi": 1895
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04764,
+        "casi": 1889
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.06112,
+        "casi": 1898
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.09604,
+        "casi": 1895
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15895,
+        "casi": 1900
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.04233,
+       0.24499
+      ],
+      "gruppi": [
+       {
+        "gruppo": 3,
+        "frequenza": 0.06384,
+        "casi": 5686
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.06332,
+        "casi": 1895
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.13238,
+        "casi": 1896
+       }
+      ]
+     }
+    }
+   }
+  },
+  "5": {
+   "gare": 315,
+   "casi": 8350,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.11725,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.66667,
+       1.15519,
+       1.55748,
+       2.0339
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.06359,
+        "casi": 1667
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11118,
+        "casi": 1673
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.11078,
+        "casi": 1670
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14628,
+        "casi": 1668
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15431,
+        "casi": 1672
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.5,
+       0.82569,
+       1.13309,
+       1.55172
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.07229,
+        "casi": 1660
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.10614,
+        "casi": 1677
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.1256,
+        "casi": 1672
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14311,
+        "casi": 1670
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.13884,
+        "casi": 1671
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.09449,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.39867,
+       0.82569,
+       1.37667,
+       2.22527
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02036,
+        "casi": 1670
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.04491,
+        "casi": 1670
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.08623,
+        "casi": 1670
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12455,
+        "casi": 1670
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19641,
+        "casi": 1670
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.02302,
+       0.06085,
+       0.12688,
+       0.25658
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02036,
+        "casi": 1670
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0509,
+        "casi": 1670
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.07246,
+        "casi": 1670
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.11497,
+        "casi": 1670
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.21377,
+        "casi": 1670
+       }
+      ]
+     }
+    }
+   }
+  },
+  "52": {
+   "gare": 437,
+   "casi": 11311,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.13155,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.75078,
+       1.25874,
+       1.76471,
+       2.36842
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09682,
+        "casi": 2262
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13003,
+        "casi": 2261
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.12528,
+        "casi": 2251
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14103,
+        "casi": 2269
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16446,
+        "casi": 2268
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.66667,
+       1.03018,
+       1.3602,
+       1.85209
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.09575,
+        "casi": 2235
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.1232,
+        "casi": 2289
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.12688,
+        "casi": 2262
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.1481,
+        "casi": 2262
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1635,
+        "casi": 2263
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.09486,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.23747,
+       0.61983,
+       1.15659,
+       2.07294
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01194,
+        "casi": 2261
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02651,
+        "casi": 2263
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05659,
+        "casi": 2262
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12997,
+        "casi": 2262
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.24923,
+        "casi": 2263
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00712,
+       0.0359,
+       0.09499,
+       0.21449
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01459,
+        "casi": 2262
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02741,
+        "casi": 2262
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05747,
+        "casi": 2262
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12555,
+        "casi": 2262
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.24923,
+        "casi": 2263
+       }
+      ]
+     }
+    }
+   }
+  },
+  "53": {
+   "gare": 244,
+   "casi": 6261,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.15413,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.0,
+       0.12414,
+       0.30717,
+       0.59016
+      ],
+      "gruppi": [
+       {
+        "gruppo": 2,
+        "frequenza": 0.13509,
+        "casi": 2502
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13807,
+        "casi": 1253
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16374,
+        "casi": 1252
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19856,
+        "casi": 1254
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.49954,
+       0.84309,
+       1.18655,
+       1.73969
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.13498,
+        "casi": 1252
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.13749,
+        "casi": 1251
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16042,
+        "casi": 1253
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17013,
+        "casi": 1252
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1676,
+        "casi": 1253
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.06676,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.10727,
+       0.44444,
+       0.86724,
+       1.57434
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01597,
+        "casi": 1252
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0368,
+        "casi": 1250
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.04705,
+        "casi": 1254
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08307,
+        "casi": 1252
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15084,
+        "casi": 1253
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.00144,
+       0.02795,
+       0.07701,
+       0.18023
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01837,
+        "casi": 1252
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.02476,
+        "casi": 1252
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05192,
+        "casi": 1252
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.07588,
+        "casi": 1252
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.16281,
+        "casi": 1253
+       }
+      ]
+     }
+    }
+   }
+  },
+  "6": {
+   "gare": 324,
+   "casi": 8178,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.12485,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.71713,
+       1.23188,
+       1.68901,
+       2.27618
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08379,
+        "casi": 1635
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11675,
+        "casi": 1636
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.14015,
+        "casi": 1634
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.12584,
+        "casi": 1637
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1577,
+        "casi": 1636
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.63063,
+       1.0,
+       1.28725,
+       1.70886
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.08807,
+        "casi": 1635
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.11931,
+        "casi": 1626
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.13443,
+        "casi": 1644
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.14251,
+        "casi": 1635
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.1398,
+        "casi": 1638
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.08229,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.31579,
+       0.73569,
+       1.25348,
+       2.15569
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.0159,
+        "casi": 1635
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03484,
+        "casi": 1636
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05879,
+        "casi": 1633
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10928,
+        "casi": 1638
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.19254,
+        "casi": 1636
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01473,
+       0.04819,
+       0.11135,
+       0.26539
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.01896,
+        "casi": 1635
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.0379,
+        "casi": 1636
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05688,
+        "casi": 1635
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.08741,
+        "casi": 1636
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.21027,
+        "casi": 1636
+       }
+      ]
+     }
+    }
+   }
+  },
+  "82": {
+   "gare": 325,
+   "casi": 8009,
+   "falli_utilizzabili": false,
+   "giallo": {
+    "base": 0.14584,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.14584,
+        "casi": 8009
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.14584,
+        "casi": 8009
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.06867,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.06867,
+        "casi": 8009
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "gruppi": [
+       {
+        "gruppo": 5,
+        "frequenza": 0.06867,
+        "casi": 8009
+       }
+      ]
+     }
+    }
+   }
+  },
+  "9": {
+   "gare": 616,
+   "casi": 16281,
+   "falli_utilizzabili": true,
+   "giallo": {
+    "base": 0.15325,
+    "fattori": {
+     "contrasti_per90": {
+      "tagli": [
+       0.6383,
+       1.13924,
+       1.64547,
+       2.25
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11333,
+        "casi": 3256
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.15422,
+        "casi": 3255
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.15966,
+        "casi": 3257
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.16677,
+        "casi": 3238
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17221,
+        "casi": 3275
+       }
+      ]
+     },
+     "falli_per90": {
+      "tagli": [
+       0.62069,
+       1.02662,
+       1.44548,
+       1.95889
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.11354,
+        "casi": 3250
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.14273,
+        "casi": 3258
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.16534,
+        "casi": 3260
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.17081,
+        "casi": 3255
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.17373,
+        "casi": 3258
+       }
+      ]
+     }
+    }
+   },
+   "gol": {
+    "base": 0.0753,
+    "fattori": {
+     "tiri_per90": {
+      "tagli": [
+       0.37815,
+       0.7772,
+       1.37681,
+       2.22566
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02644,
+        "casi": 3253
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03745,
+        "casi": 3258
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05189,
+        "casi": 3257
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10995,
+        "casi": 3256
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15075,
+        "casi": 3257
+       }
+      ]
+     },
+     "xg_per90": {
+      "tagli": [
+       0.01397,
+       0.04317,
+       0.09959,
+       0.21688
+      ],
+      "gruppi": [
+       {
+        "gruppo": 1,
+        "frequenza": 0.02488,
+        "casi": 3256
+       },
+       {
+        "gruppo": 2,
+        "frequenza": 0.03378,
+        "casi": 3256
+       },
+       {
+        "gruppo": 3,
+        "frequenza": 0.05866,
+        "casi": 3256
+       },
+       {
+        "gruppo": 4,
+        "frequenza": 0.10319,
+        "casi": 3256
+       },
+       {
+        "gruppo": 5,
+        "frequenza": 0.15597,
+        "casi": 3257
+       }
+      ]
+     }
+    }
+   }
+  }
+ }
+}

@@ -308,6 +308,8 @@ def main():
     _autoverifica()
     parser = argparse.ArgumentParser()
     parser.add_argument("--lega", help="una sola lega, per identificativo della fonte")
+    parser.add_argument("--per-app", action="store_true",
+                        help="scrive anche la tabella ridotta che importa l'applicazione")
     parser.add_argument("--stabilita", action="store_true",
                         help="quanto il segnale cresce con i minuti gia' giocati")
     argomenti = parser.parse_args()
@@ -369,7 +371,51 @@ def main():
             "leghe": risultato,
         }, handle, ensure_ascii=False, indent=1)
     print(f"\nscritto {destinazione}")
+    if argomenti.per_app:
+        scrivi_per_app(risultato, os.path.join(
+            ROOT, "apps", "web", "src", "server", "iqstats", "artefatti", "giocatori-base.json"))
 
+
+
+def scrivi_per_app(risultato, destinazione):
+    """La tabella ridotta a cio' che la pagina legge davvero.
+
+    L'app importa staticamente, come gli altri artefatti: un file grande entra nel pacchetto
+    e va tenuto al minimo. Restano i due fattori che la pagina mostra, i tagli dei gruppi e
+    la frequenza osservata con il suo campione. Fuori tutto il resto.
+    """
+    MOSTRATI = {"giallo": ("contrasti_per90", "falli_per90"), "gol": ("tiri_per90", "xg_per90")}
+    snello = {}
+    for lega, voce in risultato.items():
+        if not voce.get("casi"):
+            continue
+        dentro = {
+            "gare": voce["gare_con_statistiche"],
+            "casi": voce["casi"],
+            "falli_utilizzabili": voce["falli_utilizzabili"],
+        }
+        for bersaglio, fattori in MOSTRATI.items():
+            dentro[bersaglio] = {"base": voce[bersaglio]["base"], "fattori": {}}
+            for f in fattori:
+                t = voce[bersaglio]["fattori"].get(f)
+                if not t or not t.get("sufficiente"):
+                    continue
+                dentro[bersaglio]["fattori"][f] = {
+                    "tagli": t["tagli"],
+                    "gruppi": [
+                        {"gruppo": g["gruppo"], "frequenza": g["frequenza"], "casi": g["casi"]}
+                        for g in t["gruppi"]
+                    ],
+                }
+        snello[lega] = dentro
+    with open(destinazione, "w", encoding="utf-8") as handle:
+        json.dump({
+            "generato_da": "scripts/projection/dataset/build_player_base.py --per-app",
+            "min_minuti_alle_spalle": MIN_MINUTI,
+            "nota": "frequenze osservate per gruppo, non probabilita'",
+            "leghe": snello,
+        }, handle, ensure_ascii=False, indent=1)
+    print(f"scritto per l'app {destinazione}")
 
 if __name__ == "__main__":
     main()

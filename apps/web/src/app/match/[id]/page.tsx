@@ -75,6 +75,8 @@ import {
   getTeamForm,
 } from "@/server/iqstats/team-page";
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
+import { haTabellaDiBase, letturaGiocatori } from "@/server/iqstats/giocatori-lettura";
+import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
 import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
@@ -514,6 +516,23 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ].filter((line): line is string => line !== null);
 
   const finished = detail.homeScore != null && detail.awayScore != null;
+
+  // **Chi rischia il cartellino e chi puo' segnare.** Serve un undici: senza formazione,
+  // prevista o ufficiale, nominare qualcuno significherebbe nominare chi non gioca. E serve
+  // una tabella di base misurata per quel campionato: dove non c'e', la sezione non esiste,
+  // e non si mostra a zero. A gara finita non ha piu' senso: e' una lettura del prima.
+  const rosaAttesa = finished ? [] : [
+    ...(lineups?.home?.starters ?? []).map((g) => ({
+      id: g.id, nome: g.name, squadra: lineups?.home?.teamName ?? detail.homeTeam,
+    })),
+    ...(lineups?.away?.starters ?? []).map((g) => ({
+      id: g.id, nome: g.name, squadra: lineups?.away?.teamName ?? detail.awayTeam,
+    })),
+  ].filter((g): g is { id: number; nome: string; squadra: string } => g.id !== null);
+  const giocatori =
+    rosaAttesa.length === 0 || detail.leagueId === null || !haTabellaDiBase(detail.leagueId)
+      ? null
+      : await letturaGiocatori(eventId, detail.leagueId, detail.seasonId, rosaAttesa);
   // **In quali attesi l'arbitro è entrato davvero.** Sotto un ripiego il modello non gira,
   // quindi i suoi ingressi d'arbitro non li guarda nessuno: la sezione non può dire «è già
   // dentro il numero» se non è vero. La regola del ripiego resta quella del motore.
@@ -957,6 +976,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         ) : null}
+
+        {/* Chi rischia il cartellino, chi puo' segnare. Sta prima dell'arbitro perche' e'
+            una lettura sui giocatori attesi in campo, e l'arbitro e' il contesto in cui
+            quei giocatori giocheranno. */}
+        {giocatori === null ? null : (
+          <MatchGiocatoriSection
+            lettura={giocatori}
+            formazioneConfermata={lineups?.confirmed ?? false}
+          />
+        )}
 
         {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
             proiezione: 16 ingressi su 85 nel modello dei gialli. */}
