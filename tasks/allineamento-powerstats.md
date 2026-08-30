@@ -131,7 +131,17 @@ piede; i termini invece sono una pagina sul loro dominio.
 ## Blocco 4 — il prodotto
 
 15. **Giocatori.** *Criterio:* prima si misura la copertura per giocatore; la sezione
-    esiste solo dove il dato regge, e dichiara dove non c'è.
+    esiste solo dove il dato regge, e dichiara dove non c'è. — **misura fatta il 30 agosto,
+    interfaccia non iniziata.** Il documento e' `docs/product/copertura-giocatori.md`, lo
+    script che la rifa' e' `apps/web/scripts/verification/copertura-giocatori.mjs`.
+    In breve: i dati per giocatore **non stanno nel nostro livello dati** e **non stanno
+    nelle formazioni**; arrivano da `/api/v2/events/{id}/player-stats/`, che l'app non usa
+    ancora. Su **72 gare** e **2.990 righe**, il **68,5%** ha minuti sopra zero e **65 gare
+    su 72 (90,3%)** portano statistiche: **una gara su dieci non ne porta nessuna**.
+    **Tre campionati su ventidue sono a zero** (National League, Liga Portugal 2, Club
+    Friendlies) e la **Conference League e' coperta cinque volte su sette**.
+    **Prossimo passo prima di qualunque interfaccia:** rifare la misura con un campione
+    **per lega** e fissare li' la soglia. Nessuna soglia decisa a tavolino.
 16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
     dichiarare la correlazione fra le due linee.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
