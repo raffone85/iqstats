@@ -402,11 +402,11 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
 
       {livello === null ? null : (
         <p className="dossier-src">
-          <b>L&apos;intervallo non e&apos; una forbice a occhio.</b> «Fra 11 e 18» vuol dire
-          che, alla calibrazione misurata su questo bersaglio, il valore vero cade li&apos;{" "}
+          <b>L&apos;intervallo non è una forbice a occhio.</b> «Fra 11 e 18» vuol dire
+          che, alla calibrazione misurata su questo bersaglio, il valore vero cade lì{" "}
           <b>{Math.round(livello * 100)} volte su 100</b>. Su una distribuzione a numeri
-          interi l&apos;intervallo e&apos; conservativo per costruzione, quindi quella quota
-          e&apos; un minimo, non una promessa. Un atteso senza intervallo nasconde quanto sia
+          interi l&apos;intervallo è conservativo per costruzione, quindi quella quota
+          è un minimo, non una promessa. Un atteso senza intervallo nasconde quanto sia
           incerto: 14,6 fra 13 e 16 e 14,6 fra 8 e 22 non dicono la stessa cosa.
         </p>
       )}

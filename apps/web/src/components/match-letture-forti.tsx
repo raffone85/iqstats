@@ -47,7 +47,7 @@ export function MatchLettureFortiSection({ letture, homeTeam, awayTeam }: Props)
     <section className="dossier-panel" aria-labelledby="letture-forti-title">
       <p className="dossier-kick">Dove il modello dice qualcosa</p>
       <h2 id="letture-forti-title" className="sr-only-heading">
-        Le letture piu&apos; solide di {homeTeam} contro {awayTeam}
+        Le letture più solide di {homeTeam} contro {awayTeam}
       </h2>
 
       <div className="dossier-1x2">

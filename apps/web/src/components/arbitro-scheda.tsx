@@ -191,7 +191,7 @@ export function ArbitroScheda({
         <p className="dossier-empty">
           Di {nome} non abbiamo ancora nessuna gara con entrambe le squadre osservate: senza
           tutte e due le righe il totale dei falli sarebbe dimezzato senza che si veda, e una
-          media sbagliata e&apos; peggio di una media assente.
+          media sbagliata è peggio di una media assente.
         </p>
       ) : (
         <>
@@ -262,25 +262,25 @@ export function ArbitroScheda({
           </div>
           <p className="dossier-src">
             Nostre osservazioni{daQuando === null ? "" : `, dal ${giorno(daQuando)}`}:{" "}
-            {gare(medieLunghe.partite)} in tutto. Ogni valore e&apos; <b>a partita</b>, mai un
-            totale, e dove il campione di una metrica e&apos; piu&apos; corto delle partite
+            {gare(medieLunghe.partite)} in tutto. Ogni valore è <b>a partita</b>, mai un
+            totale, e dove il campione di una metrica è più corto delle partite
             della riga sta scritto sotto il numero. <b>Le percentuali di casa e trasferta
-            ripartiscono</b> quello che e&apos; successo fra le due squadre: 50 e 50 significa
-            che ha diviso a meta&apos;, non che ha fischiato poco. Una riga da una gara sola
-            resta una gara sola: si mostra perche&apos; aver diretto li&apos; e&apos; un
+            ripartiscono</b> quello che è successo fra le due squadre: 50 e 50 significa
+            che ha diviso a metà, non che ha fischiato poco. Una riga da una gara sola
+            resta una gara sola: si mostra perché aver diretto lì è un
             fatto, e si legge sapendolo.
           </p>
           <p className="dossier-src">
             <b>Severo, in linea o permissivo si dice rispetto alla sua lega</b>, mai in
-            assoluto: fra i direttori con almeno cinque gare, chi sta nel terzo piu&apos; alto
+            assoluto: fra i direttori con almeno cinque gare, chi sta nel terzo più alto
             della propria competizione va da <b>2,85 a 7,80</b> gialli a partita e chi sta nel
-            terzo piu&apos; basso da <b>1,20 a 4,50</b>, quindi lo stesso numero cambia
-            significato a seconda di dove fischia. La soglia non e&apos; decisa da noi:
-            e&apos; <b>mezza dispersione</b> fra gli arbitri di quella competizione, che nei
+            terzo più basso da <b>1,20 a 4,50</b>, quindi lo stesso numero cambia
+            significato a seconda di dove fischia. La soglia non è decisa da noi:
+            è <b>mezza dispersione</b> fra gli arbitri di quella competizione, che nei
             dati vale <b>0,71 gialli</b>, il 18% del metro; dove gli arbitri si somigliano di
-            piu&apos;, si stringe da sola. <b>Non e&apos; un voto</b>, ed e&apos; instabile
+            più, si stringe da sola. <b>Non è un voto</b>, ed è instabile
             quando le gare sono poche: i gialli dello stesso direttore ballano da gara a gara
-            di <b>1,94</b>, quindi con poche partite l&apos;etichetta puo&apos; ribaltarsi, e
+            di <b>1,94</b>, quindi con poche partite l&apos;etichetta può ribaltarsi, e
             per questo il campione le sta sempre accanto.
           </p>
         </>
@@ -370,10 +370,10 @@ export function ArbitroScheda({
             </table>
           </div>
           <p className="dossier-src">
-            Il verde dice sopra la sua media, il mattone sotto: e&apos; un verso, non un
+            Il verde dice sopra la sua media, il mattone sotto: è un verso, non un
             giudizio. Cinque gare spostano poco, e uno scarto sotto <b>0,05</b> resta
-            inchiostro perche&apos; non si distingue dal rumore. Il parziale del primo tempo
-            non compare: nel nostro livello dati quella colonna e&apos; vuota su tutte e{" "}
+            inchiostro perché non si distingue dal rumore. Il parziale del primo tempo
+            non compare: nel nostro livello dati quella colonna è vuota su tutte e{" "}
             <b>9.384</b> le gare con arbitro osservato, e non lo inventiamo.
           </p>
         </>

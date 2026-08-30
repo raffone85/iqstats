@@ -873,7 +873,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           <section className="dossier-panel" aria-labelledby="senza-gol-title">
             <p className="dossier-kick">Gol non disponibili</p>
             <h2 id="senza-gol-title" className="sr-only-heading">
-              Perche&apos; i mercati dei gol non compaiono su questa gara
+              Perché i mercati dei gol non compaiono su questa gara
             </h2>
             <p className="dossier-src">
               I mercati dei gol poggiano sui <b>gol attesi osservati</b> nelle gare già giocate
@@ -898,7 +898,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <section className="dossier-panel" aria-labelledby="senza-proiezione-title">
               <p className="dossier-kick">Proiezione non disponibile</p>
               <h2 id="senza-proiezione-title" className="sr-only-heading">
-                Perche&apos; la proiezione non compare su questa gara
+                Perché la proiezione non compare su questa gara
               </h2>
               <p className="dossier-src">
                 {senzaProiezione === null
