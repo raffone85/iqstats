@@ -30,13 +30,20 @@ const required = (name) => {
 async function expectStatus(url, init, expected) {
   const response = await fetch(url, { redirect: "manual", ...init });
   if (response.status !== expected) {
-    throw new Error(`Expected HTTP ${expected}, received ${response.status}`);
+    // Un controllo che fallisce senza dire che cosa ha ricevuto costringe a rifare a mano
+    // la richiesta che ha appena fallito. Il corpo dell'errore e' la meta' utile.
+    const corpo = await response.text().catch(() => "");
+    throw new Error(
+      `Expected HTTP ${expected}, received ${response.status} on ${url}: ${corpo.slice(0, 300)}`,
+    );
   }
   return response;
 }
 
 loadLocalEnv();
-const baseUrl = process.argv[2] ?? "http://127.0.0.1:3107";
+// La porta di sviluppo e' cambiata nel tempo: si passa come primo argomento, e il
+// valore predefinito resta quello storico per non rompere chi lo invoca senza.
+const baseUrl = process.argv[2] ?? process.env.IQSTATS_VERIFY_BASE_URL ?? "http://127.0.0.1:3107";
 const supabaseUrl = required("SUPABASE_URL");
 const publishableKey = required("SUPABASE_ANON_KEY");
 const serviceRoleKey = required("SUPABASE_SERVICE_ROLE_KEY");
