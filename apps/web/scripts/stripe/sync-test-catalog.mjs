@@ -4,26 +4,14 @@ import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
+// Dal 30 agosto 2026 nessun piano si rinnova da solo: si paga un periodo e alla scadenza
+// finisce. Nessun `recurring`, quindi ogni prezzo e' a pagamento singolo e ogni piano
+// porta la propria durata in giorni. I codici restano quelli: sono chiavi, non etichette.
 const plans = [
-  { code: "trial_8_days", name: "IQstatS Trial 8 giorni", amount: 100 },
-  {
-    code: "insight_monthly",
-    name: "IQstatS Insight mensile",
-    amount: 690,
-    recurring: { interval: "month" },
-  },
-  {
-    code: "pro_monthly",
-    name: "IQstatS Pro mensile",
-    amount: 1290,
-    recurring: { interval: "month" },
-  },
-  {
-    code: "pro_annual",
-    name: "IQstatS Pro annuale",
-    amount: 10990,
-    recurring: { interval: "year" },
-  },
+  { code: "trial_8_days", name: "IQstatS Trial 8 giorni", amount: 100, accessDays: 8 },
+  { code: "insight_monthly", name: "IQstatS Insight 30 giorni", amount: 690, accessDays: 30 },
+  { code: "pro_monthly", name: "IQstatS Pro 30 giorni", amount: 1290, accessDays: 30 },
+  { code: "pro_annual", name: "IQstatS Pro 365 giorni", amount: 10990, accessDays: 365 },
 ];
 
 function loadLocalEnv() {
@@ -115,7 +103,7 @@ for (const plan of plans) {
   const databasePlan = databasePlans.find((candidate) => candidate.code === plan.code);
   const expectedMode = plan.recurring ? "subscription" : "one_time";
   const expectedInterval = plan.recurring?.interval ?? null;
-  const expectedAccessDays = plan.code === "trial_8_days" ? 8 : null;
+  const expectedAccessDays = plan.accessDays;
   if (
     !databasePlan ||
     databasePlan.billing_mode !== expectedMode ||
@@ -153,6 +141,12 @@ for (const plan of plans) {
     );
   }
 
+  // Il nome del prodotto lo legge chi paga, sulla pagina di Stripe: se resta «mensile»
+  // mentre il piano dura trenta giorni, la prima cosa che il cliente vede e' una bugia.
+  if (product && apply && product.name !== plan.name) {
+    product = await stripe.products.update(product.id, { name: plan.name });
+  }
+
   const matchingPrices = product
     ? pricesPage.data.filter((candidate) => isMatchingPrice(candidate, plan, product.id))
     : [];
@@ -173,7 +167,7 @@ for (const plan of plans) {
           iqstats_plan_code: plan.code,
         },
       },
-      { idempotencyKey: `iqstats-price-${plan.code}-v1` },
+      { idempotencyKey: `iqstats-price-${plan.code}-una-tantum-v1` },
     );
   }
 

@@ -29,11 +29,9 @@ voce è fatta solo quando il criterio è misurato, non quando il codice compila.
 
 Con account e abbonamento attivi non sono opzionali.
 
-**Sospeso per decisione dell'utente, 30 agosto 2026.** Le voci 1, 2 e 5 chiedono un
-titolare del trattamento e un recapito che risponda; l'utente non ha partita IVA e ha
-scelto di rimandare a dopo la costruzione. Non serve una partita IVA per essere titolare
-— basta una persona fisica con nome e recapito — ma la decisione e' sua e il blocco
-resta fermo. **Finche' non si pubblica non e' un obbligo attivo.**
+**Chiuso il 30 agosto 2026.** Il blocco era sospeso in attesa dei dati del titolare;
+l'utente li ha forniti dopo che l'applicazione era gia' pubblica, e tutte e cinque le voci
+sono state completate lo stesso giorno.
 
 Nota di ricognizione, 30 agosto: sul prodotto di riferimento la privacy policy **non e'
 una pagina propria**, e' un documento generato su un servizio esterno e collegato dal
@@ -53,9 +51,21 @@ piede; i termini invece sono una pagina sul loro dominio.
    alla fonte**, non scritto a memoria. Non accanto a ogni singola lettura: in un dossier da
    diciassette capitoli la stessa frase ripetuta diventa rumore. *Misurato:* presente a 375,
    768, 1024 e 1440 px, nessun overflow.
-4. **Scarica i miei dati ed elimina account.** *Criterio:* l'esportazione produce un file
-   con i dati che abbiamo davvero, e l'eliminazione cancella per davvero.
-5. **Assistenza e contatti.** *Criterio:* un recapito che funziona.
+4. ~~**Scarica i miei dati ed elimina account.**~~ — **fatto il 30 agosto.** L'esportazione
+   e' una rotta autenticata senza parametri (`/api/account/dati`) che restituisce un file
+   JSON scaricabile con l'anagrafica dell'accesso, il profilo, il cliente di fatturazione,
+   gli abbonamenti e i diritti: sono le sole quattro tavole con una colonna che punta a
+   `auth.users`, verificato sui vincoli del database. L'eliminazione toglie la riga da
+   `auth.users` e le quattro tavole seguono in cascata.
+   *Misurato con un utente di prova, creato e cancellato:* l'esportazione risponde 200 con
+   `Content-Disposition: attachment`, un profilo, un abbonamento, sette diritti e un
+   cliente. Il modulo chiede di **scrivere il proprio indirizzo**, e con l'indirizzo
+   sbagliato non cancella niente - riletto dopo il tentativo: utente, profilo, sette
+   diritti, abbonamento e cliente tutti ancora al loro posto. Con quello giusto porta a
+   `/?account=eliminato` e le cinque righe vanno tutte a zero, con i totali del livello
+   dati tornati identici a prima della prova.
+5. ~~**Assistenza e contatti.**~~ — **fatto il 30 agosto.** Canale Telegram in coda a ogni
+   pagina di prodotto e in entrambe le pagine legali.
 
 ---
 

@@ -167,6 +167,42 @@ applicata a se stessa, e la taratura è la cosa che nessun concorrente ha.
 *Verifica che sa diventare rossa:* la stessa misura applicata a una stima volutamente storta
 deve fallire il controllo. Se non fallisce, il controllo non vale.
 
+**Fatta il 31 agosto 2026.** `scripts/projection/dataset/calibra_giocatori.py`, 256.497 casi
+datati dalla raccolta locale. La stima è la stessa tabella del §4 — frequenza del gruppo del
+fattore, dentro il ruolo, dentro la lega — costruita sul solo addestramento e applicata al
+periodo dopo il taglio. Un fattore per bersaglio, non quattro: tiri per 90 per il gol, falli
+per 90 per il giallo.
+
+| Taglio, per data | Gol | Giallo |
+| --- | --- | --- |
+| 2026-06-01, 19.076 casi tenuti fuori | scarto massimo **1,48** punti, ECE 0,0072 | scarto massimo **2,31** punti, ECE 0,0060 |
+| 2026-02-01, 118.471 casi tenuti fuori | scarto massimo **1,58** punti, ECE 0,0066 | scarto massimo **1,64** punti, ECE 0,0074 |
+
+Dove la lettura nomina davvero, cioè nel gruppo più alto, il taglio di giugno dà **24,3%
+dichiarato contro 22,8% osservato** per il gol e **17,4% contro 18,0%** per il giallo: dentro
+l'intervallo tutti e due.
+
+**Due difetti trovati e corretti, misurati e non supposti.** La tabella nuda è troppo dispersa
+— pendenza di ricalibrazione fuori periodo fra 0,76 e 0,91, cioè allarga lo scarto fra gruppo
+alto e gruppo basso più di quanto la realtà lo allarghi. Cura: restringimento verso la base del
+ruolo, con la forza scelta per data dentro il solo addestramento. E **la base del giallo cala da
+un periodo all'altro** — 13,7% verso 12,5% a giugno, 13,9% verso 13,2% a febbraio — mentre
+quella del gol no. Cura: una retta di raddrizzatura nel logaritmo delle probabilità, imparata
+dentro l'addestramento e applicata **solo al giallo**; sul gol peggiora in entrambi i tagli, e
+questa è una proprietà del bersaglio da rimisurare quando il campione cambia.
+
+**Il conteggio dei gruppi fuori dall'intervallo misura il campione, non l'errore.** Con 1.908
+casi per gruppo l'intervallo di Wilson è di ±0,6 punti e ne cade fuori uno su dieci; con 11.847
+casi lo stesso errore ne fa cadere fuori sei o otto su dieci, mentre lo scarto massimo scende a
+1,6 punti. Il numero che decide è lo scarto, non il conteggio.
+
+*La verifica sa diventare rossa, provato:* sugli stessi dati veri, moltiplicando le stime per
+1,4, il gol passa da 1,48 a **11,20** punti di scarto e il giallo da 2,31 a **7,41**. Su dati
+sintetici a probabilità nota (`--autoverifica`) la stima onesta passa con zero gruppi fuori e la
+stessa moltiplicata per 1,5 viene bocciata dieci gruppi su dieci.
+
+Rapporti: `output/taratura-giocatori-2026-06-01.json` e `output/taratura-giocatori-2026-02-01.json`.
+
 ### Fase 3 — la lettura in pagina
 
 Solo qui si progetta, e con la skill `taste`. Ogni blocco: chi, il numero che lo ha scelto, la
@@ -196,10 +232,8 @@ non solo le volte che ha indovinato.
 2. ~~Il derby regge?~~ **Chiuso il 30 agosto: no.** 1,10x di mediana su nove campionati con
    almeno cento casi. Il 1,68x della Serie A era rumore su 121 casi.
 3. ~~Il minuto conta?~~ **Chiuso: sì, e si misura.** Il 50,3% dei gialli arriva dopo il 60'.
-4. La posizione in campo cambia la frequenza di base? Un difensore centrale e un attaccante non
-   hanno la stessa esposizione al giallo, e la fonte porta `position` sul profilo. **È il primo
-   fattore da provare**, perché è l'unico non ancora guardato che potrebbe spiegare perché
-   contrasti e falli si scavalcano in metà dei campionati.
+4. ~~La posizione in campo cambia la frequenza di base?~~ **Chiusa il 30 agosto: sì, ed è il
+   fattore più forte e più costante che abbiamo.** Misura per esteso nel §10.
 5. L'arbitro rifatto **su più stagioni** invece che dentro una sola, e ristretto verso la media
    della sua lega: 1,01x oggi può essere rumore di stima, non assenza di effetto.
 6. Il secondo giallo e l'espulsione: gli episodi separano `yellow`, `yellowRed` e `red`; il
@@ -242,3 +276,77 @@ inoltrata. Non c'è quindi una soglia sotto la quale non si mostra niente.
 **C'è però una conseguenza per la pagina, e non è negoziabile:** il campione si scrive accanto
 al numero. «Su 2 gare» e «su 24 gare» non pesano uguale, e chi legge deve poterlo vedere senza
 chiederlo.
+
+---
+
+## 10. Il ruolo in campo — misurato il 30 agosto 2026
+
+Il ruolo non stava da nessuna parte: né nelle settantacinque colonne delle righe per giocatore
+sul disco, né nelle quattordici della tavola del motore. Sta sulla rosa della squadra, e fra
+rosa e profilo si è scelta la rosa: **591 chiamate invece di 21.346**, una per squadra invece
+di una per giocatore, per lo stesso campo. Le rose stanno in
+`scripts/projection/harvest/data/squads/`, raccolte da
+`scripts/projection/harvest/fetch_squads.py`; la misura si rifà con
+`build_player_base.py --ruolo`.
+
+**Copertura: 224.836 casi su 254.743, l'88,3%.** Per lega va da un minimo del 70,3% a un
+massimo del 99,2%, con mediana 88,5%. Chi manca ha cambiato squadra o ha smesso: la rosa è
+quella di oggi. **`None` non è una quinta classe di ruolo** e i casi senza ruolo restano
+contati a parte, non spalmati sugli altri.
+
+### 10.1 Il cartellino
+
+| Ruolo | Frequenza mediana | Sulla base della sua lega |
+| --- | ---: | ---: |
+| Difensore | 16,5% | **1,22x** |
+| Centrocampista | 14,3% | 1,04x |
+| Attaccante | 10,6% | 0,76x |
+| Portiere | 5,9% | 0,42x |
+| senza ruolo noto | 13,2% | 0,94x |
+
+Base mediana di lega 13,4%. **L'ordine difensore, centrocampista, attaccante, portiere regge
+in 26 campionati su 27**; il difensore sta sopra l'attaccante in **27 su 27** e il portiere è
+ultimo in 26 su 27.
+
+**È il fattore più forte del cartellino, e per distacco.** Il migliore misurato prima erano i
+contrasti per 90: 1,25x, e cresceva in ordine in 14 leghe su 26. Il ruolo dà 1,22x fra i
+difensori contro 0,76x fra gli attaccanti, cioè **1,61x fra i due estremi di movimento**, e
+regge quasi ovunque. Si conosce inoltre **prima della prima partita**, mentre un per-novanta
+ha bisogno di novanta minuti alle spalle.
+
+### 10.2 E infatti i contrasti erano il ruolo travestito
+
+Lo stesso fattore, misurato **dentro un ruolo solo**:
+
+| Fattore, dentro il ruolo | Difensori | Centrocampisti | Attaccanti |
+| --- | --- | --- | --- |
+| contrasti per 90 | 1,12x, ordina in 3/28 | 1,50x, in 11/28 | 1,04x, in 2/28 |
+| falli per 90 | 1,40x, in 10/28 | 1,57x, in 15/28 | 1,54x, in 3/28 |
+
+**Fra i difensori i contrasti quasi non dicono più niente**: da 1,25x a 1,12x. Buona parte di
+quello che «contrasti per 90» misurava era il ruolo, ed è la risposta alla domanda che aveva
+aperto questa misura. **I falli invece sopravvivono**: 1,40x fra i difensori e 1,57x fra i
+centrocampisti, quindi portano qualcosa di proprio oltre al ruolo.
+
+**Un limite di lettura, dichiarato.** Dividere per ruolo taglia il campione di tre o quattro
+volte, e la crescita ordinata su cinque gruppi è un criterio severo che con meno casi si
+soddisfa meno spesso: il crollo da 14/26 a 3/28 è in parte potenza statistica e non solo
+segnale. Il restringimento del rapporto, da 1,25x a 1,12x, **non** è un effetto della potenza:
+quello misura la grandezza dell'effetto, e si è ristretto davvero.
+
+### 10.3 Il gol
+
+| Ruolo | Frequenza mediana | Sulla base della sua lega |
+| --- | ---: | ---: |
+| Attaccante | 18,4% | **2,26x** |
+| Centrocampista | 8,9% | 1,10x |
+| Difensore | 3,6% | 0,45x |
+| Portiere | 0,0% | 0,00x |
+
+Base mediana 8,0%. **L'ordine attaccante, centrocampista, difensore, portiere regge in 27
+campionati su 27**, senza una sola eccezione.
+
+Il ruolo vale quanto i tiri per 90 (2,19x, 26/26) ma **non è un secondo fattore da sommare**:
+un attaccante tira di più, e le due cose dicono in gran parte la stessa cosa. La lettura
+giusta è che il ruolo dà la base da cui partire, disponibile dal minuto zero, e i tiri la
+correggono quando c'è storia.

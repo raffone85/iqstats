@@ -41,12 +41,19 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")
 GIOCATORI_DIR = os.path.join(ROOT, "scripts", "projection", "harvest", "data", "player-stats")
 GARE_DIR = os.path.join(ROOT, "scripts", "projection", "harvest", "data", "match-detail")
 EPISODI_DIR = os.path.join(ROOT, "scripts", "projection", "harvest", "data", "incidents")
+ROSE_DIR = os.path.join(ROOT, "scripts", "projection", "harvest", "data", "squads")
 OUT_DIR = os.path.join(os.path.dirname(__file__), "output")
 
 MIN_MINUTI = 90        # sotto novanta minuti alle spalle un per-novanta non e' un tasso
 MIN_GARE_ARBITRO = 5   # sotto cinque gare dirette la media dell'arbitro e' rumore
 GRUPPI = 5             # in quanti gruppi si divide ogni fattore
 MIN_CASI_FATTORE = 200 # sotto questo il fattore non si divide affatto
+MIN_CASI_RUOLO = 200   # stesso metro per una classe di ruolo: sotto, non si legge
+
+# I quattro valori che la fonte usa sulla rosa. `None` non e' una quinta classe: e' un
+# giocatore che oggi non sta in nessuna rosa raccolta, e va contato a parte per non
+# gonfiare le altre.
+RUOLI = ("G", "D", "M", "F")
 
 # fattore -> (chiave del caso, bersaglio a cui serve)
 FATTORI = (
@@ -101,13 +108,75 @@ def _autoverifica():
     assert len({indice_gruppo(0, tagli_pari)}) == 1
 
 
+def mappa_ruoli():
+    """giocatore -> ruolo, dalle rose raccolte. Vuota se le rose non ci sono."""
+    ruoli = {}
+    if not os.path.isdir(ROSE_DIR):
+        return ruoli
+    for nome in os.listdir(ROSE_DIR):
+        if not nome.endswith(".json") or nome == "manifest.json":
+            continue
+        try:
+            with open(os.path.join(ROSE_DIR, nome), "r", encoding="utf-8") as handle:
+                dati = json.load(handle)
+        except (OSError, ValueError):
+            continue
+        for giocatore in dati.get("players", []):
+            ruolo = giocatore.get("position")
+            if giocatore.get("id") is not None and ruolo in RUOLI:
+                # Un giocatore puo' comparire in due rose se ha cambiato squadra: vince la
+                # prima letta, perche' il ruolo non cambia con la maglia.
+                ruoli.setdefault(int(giocatore["id"]), ruolo)
+    return ruoli
+
+
+def per_ruolo(casi, bersaglio):
+    """La frequenza di base dentro ogni ruolo, con il suo campione e il suo intervallo."""
+    gruppi = defaultdict(list)
+    for c in casi:
+        gruppi[c.get("ruolo")].append(c)
+    uscita = {}
+    for ruolo in RUOLI + (None,):
+        dentro = gruppi.get(ruolo, [])
+        chiave = ruolo or "ignoto"
+        if len(dentro) < MIN_CASI_RUOLO:
+            uscita[chiave] = {"casi": len(dentro), "sufficiente": False}
+            continue
+        colpi = sum(c[bersaglio] for c in dentro)
+        basso, alto = wilson(colpi, len(dentro))
+        uscita[chiave] = {
+            "casi": len(dentro),
+            "colpi": colpi,
+            "frequenza": round(colpi / len(dentro), 5),
+            "ic95": [round(basso, 5), round(alto, 5)],
+            "sufficiente": True,
+        }
+    return uscita
+
+
+def fattore_dentro_il_ruolo(casi, fattore, bersaglio):
+    """Lo stesso fattore, misurato separatamente dentro ogni ruolo.
+
+    E' la domanda vera: contrasti e falli si scavalcano in meta' dei campionati, e il
+    sospetto e' che sia il ruolo a mescolarli - un difensore contrasta di piu' *e* prende
+    piu' gialli, quindi il fattore potrebbe misurare il ruolo invece della propensione.
+    Se dentro un ruolo solo il fattore continua a ordinare, non era il ruolo.
+    """
+    uscita = {}
+    for ruolo in RUOLI:
+        dentro = [c for c in casi if c.get("ruolo") == ruolo]
+        uscita[ruolo] = tabella(dentro, fattore, bersaglio)
+    return uscita
+
+
 def leggi_json(percorso):
     with open(percorso, "r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
-def casi_di_lega(lega):
+def casi_di_lega(lega, ruoli=None):
     """Un caso per giocatore-gara, con i fattori calcolati sulle sole gare precedenti."""
+    ruoli = ruoli or {}
     dir_gare = os.path.join(GARE_DIR, lega)
     dir_stat = os.path.join(GIOCATORI_DIR, lega)
     if not os.path.isdir(dir_gare):
@@ -193,7 +262,11 @@ def casi_di_lega(lega):
                     "gol_per90": 90 * p["gol"] / m,
                     "arbitro_gialli_per_gara": media_arbitro,
                     "derby": derby,
+                    "ruolo": ruoli.get(r.get("player_id")),
                     "minuti_alle_spalle": m,
+                    # La data della gara: serve a tagliare addestramento e taratura per
+                    # data invece che a caso. Non entra in nessuna aggregazione.
+                    "quando": quando,
                 })
             s = storia[chiave]
             s["minuti"] += r.get("minutes_played") or 0
@@ -312,14 +385,25 @@ def main():
                         help="scrive anche la tabella ridotta che importa l'applicazione")
     parser.add_argument("--stabilita", action="store_true",
                         help="quanto il segnale cresce con i minuti gia' giocati")
+    parser.add_argument("--ruolo", action="store_true",
+                        help="la frequenza di base dentro ogni ruolo, e i fattori dentro il ruolo")
     argomenti = parser.parse_args()
 
+    # `--per-app` implica `--ruolo`: dal 30 agosto 2026 la lettura in pagina confronta un
+    # giocatore con quelli del suo stesso ruolo, e senza la tabella per ruolo l'artefatto
+    # sarebbe monco proprio dove serve.
+    vuole_ruolo = argomenti.ruolo or argomenti.per_app
+    ruoli = mappa_ruoli() if vuole_ruolo else {}
+    if vuole_ruolo and not ruoli:
+        raise SystemExit(
+            "Nessuna rosa in harvest/data/squads: eseguire prima fetch_squads.py"
+        )
     leghe = [argomenti.lega] if argomenti.lega else sorted(os.listdir(GIOCATORI_DIR))
     risultato = {}
     for lega in leghe:
         if not os.path.isdir(os.path.join(GIOCATORI_DIR, lega)):
             continue
-        casi, conta = casi_di_lega(lega)
+        casi, conta = casi_di_lega(lega, ruoli)
         if not casi:
             risultato[lega] = {"casi": 0, **conta}
             print(f"lega {lega}: nessun caso utile")
@@ -343,6 +427,18 @@ def main():
                     "casi": len(derby), "colpi": colpi,
                     "frequenza": round(colpi / len(derby), 5), "ic95": [round(b, 5), round(a, 5)],
                 }
+        if vuole_ruolo:
+            noti = sum(1 for c in casi if c.get("ruolo") is not None)
+            voce["ruolo"] = {
+                "casi_con_ruolo": noti,
+                "copertura": round(noti / len(casi), 4),
+                "giallo": per_ruolo(casi, "giallo"),
+                "gol": per_ruolo(casi, "gol"),
+                "contrasti_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "contrasti_per90", "giallo"),
+                "falli_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "falli_per90", "giallo"),
+                "tiri_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "tiri_per90", "gol"),
+                "xg_dentro_il_ruolo": fattore_dentro_il_ruolo(casi, "xg_per90", "gol"),
+            }
         if argomenti.stabilita:
             voce["stabilita"] = {
                 "giallo_contrasti_per90": stabilita(casi, "contrasti_per90", "giallo"),
@@ -385,6 +481,22 @@ def scrivi_per_app(risultato, destinazione):
     la frequenza osservata con il suo campione. Fuori tutto il resto.
     """
     MOSTRATI = {"giallo": ("contrasti_per90", "falli_per90"), "gol": ("tiri_per90", "xg_per90")}
+    # fattore -> la chiave con cui il blocco `ruolo` lo espone
+    DENTRO = {
+        "contrasti_per90": "contrasti_dentro_il_ruolo",
+        "falli_per90": "falli_dentro_il_ruolo",
+        "tiri_per90": "tiri_dentro_il_ruolo",
+        "xg_per90": "xg_dentro_il_ruolo",
+    }
+
+    def snellisci(t):
+        return {
+            "tagli": t["tagli"],
+            "gruppi": [
+                {"gruppo": g["gruppo"], "frequenza": g["frequenza"], "casi": g["casi"]}
+                for g in t["gruppi"]
+            ],
+        }
     snello = {}
     for lega, voce in risultato.items():
         if not voce.get("casi"):
@@ -400,13 +512,32 @@ def scrivi_per_app(risultato, destinazione):
                 t = voce[bersaglio]["fattori"].get(f)
                 if not t or not t.get("sufficiente"):
                     continue
-                dentro[bersaglio]["fattori"][f] = {
-                    "tagli": t["tagli"],
-                    "gruppi": [
-                        {"gruppo": g["gruppo"], "frequenza": g["frequenza"], "casi": g["casi"]}
-                        for g in t["gruppi"]
-                    ],
-                }
+                dentro[bersaglio]["fattori"][f] = snellisci(t)
+
+            # Il metro del ruolo: la base dentro ogni ruolo e gli stessi fattori misurati
+            # li' dentro. Senza questo la pagina confronterebbe un difensore con la media
+            # del campionato, e un difensore qualsiasi la supera solo perche' e' difensore.
+            blocco = voce.get("ruolo")
+            if blocco:
+                basi = {}
+                for ruolo, x in blocco[bersaglio].items():
+                    if ruolo != "ignoto" and x.get("sufficiente"):
+                        basi[ruolo] = {"base": x["frequenza"], "casi": x["casi"]}
+                per_ruolo_fattori = {}
+                for ruolo in basi:
+                    tabelle = {}
+                    for f in fattori:
+                        t = (blocco.get(DENTRO[f]) or {}).get(ruolo)
+                        if t and t.get("sufficiente"):
+                            tabelle[f] = snellisci(t)
+                    if tabelle:
+                        per_ruolo_fattori[ruolo] = tabelle
+                if basi:
+                    dentro[bersaglio]["ruoli"] = basi
+                if per_ruolo_fattori:
+                    dentro[bersaglio]["per_ruolo"] = per_ruolo_fattori
+        if voce.get("ruolo"):
+            dentro["copertura_ruolo"] = voce["ruolo"]["copertura"]
         snello[lega] = dentro
     with open(destinazione, "w", encoding="utf-8") as handle:
         json.dump({

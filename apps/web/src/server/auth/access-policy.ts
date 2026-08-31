@@ -5,7 +5,15 @@ export type FeatureKey =
   | "odds.snapshot.read"
   | "match.history.read"
   | "match.statistics.read"
-  | "match.context.read";
+  | "match.context.read"
+  /**
+   * Tutto quello che ci mettiamo noi sopra al dato: il motore di proiezione, le letture
+   * per giocatore, `/expected`, `/pronostici` e il consuntivo. Nasce il 30 agosto 2026
+   * con la scala decisa dall'utente: **il dato resta libero, si paga la lettura**.
+   * Una chiave sola e non cinque, perche' o si ha accesso al motore o non lo si ha: cinque
+   * chiavi che si accendono sempre insieme sono una chiave scritta cinque volte.
+   */
+  | "engine.read";
 
 export type AccessDecision =
   | { readonly allowed: true; readonly userId: string }

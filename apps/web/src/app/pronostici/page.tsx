@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LeagueIdentity } from "@/components/league-identity";
+import { SezioneRiservata } from "@/components/sezione-riservata";
+import { readFeatureDecision } from "@/server/auth/authorization";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
@@ -111,6 +113,28 @@ function marketLabel(market: Market): string {
 export default async function PronosticiPage({
   searchParams,
 }: Readonly<{ searchParams: SearchParams }>) {
+  // Pagina intera del piano Pro: qui non c'e' un dato libero sotto da lasciare scoperto,
+  // e' tutta lettura del motore. Si dice, non si nasconde.
+  const motore = await readFeatureDecision("engine.read");
+  if (!motore.allowed) {
+    return (
+      <ProductShell activeSection="predictions">
+        <SezioneRiservata
+          piano="Pro"
+          id="riservata-pro-title"
+          autenticato={motore.code !== "unauthenticated"}
+          motivo="Sono le letture del modello sulle gare in arrivo, quelle che il dossier calcola una gara alla volta, messe in fila."
+          contenuto={[
+            "Le gare in arrivo ordinate per quanto la lettura regge",
+            "La probabilità del modello accanto a quella del mercato",
+            "Il filtro per mercato e per campionato",
+          ]}
+        />
+      </ProductShell>
+    );
+  }
+
+
   // L'indice delle competizioni serve solo per la sigla del paese: è in cache e non
   // aggiunge una richiesta a ogni apertura della pagina.
   const [query, result, leagueIndex] = await Promise.all([

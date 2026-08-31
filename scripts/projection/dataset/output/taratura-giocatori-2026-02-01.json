@@ -1,0 +1,379 @@
+{
+ "taglio": "2026-02-01",
+ "storta": null,
+ "casi_totali": 256497,
+ "primo_giorno": "2025-02-28",
+ "ultimo_giorno": "2026-08-31",
+ "bersagli": {
+  "gol": {
+   "casi": 118471,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 11847,
+     "stima_media": 0.00703,
+     "osservata": 0.00996,
+     "ic95": [
+      0.00832,
+      0.01191
+     ],
+     "dentro": false,
+     "scarto": 0.00293
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.02889,
+     "osservata": 0.03419,
+     "ic95": [
+      0.03106,
+      0.03761
+     ],
+     "dentro": false,
+     "scarto": 0.0053
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.03774,
+     "osservata": 0.03706,
+     "ic95": [
+      0.0338,
+      0.04061
+     ],
+     "dentro": true,
+     "scarto": -0.00068
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.04756,
+     "osservata": 0.04626,
+     "ic95": [
+      0.04262,
+      0.05019
+     ],
+     "dentro": true,
+     "scarto": -0.00131
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.06342,
+     "osservata": 0.06069,
+     "ic95": [
+      0.05653,
+      0.06513
+     ],
+     "dentro": true,
+     "scarto": -0.00273
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.07665,
+     "osservata": 0.06922,
+     "ic95": [
+      0.06478,
+      0.07393
+     ],
+     "dentro": false,
+     "scarto": -0.00744
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.0876,
+     "osservata": 0.07344,
+     "ic95": [
+      0.06888,
+      0.07827
+     ],
+     "dentro": false,
+     "scarto": -0.01416
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.11494,
+     "osservata": 0.11463,
+     "ic95": [
+      0.10902,
+      0.12049
+     ],
+     "dentro": true,
+     "scarto": -0.00032
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.15747,
+     "osservata": 0.17329,
+     "ic95": [
+      0.16658,
+      0.18021
+     ],
+     "dentro": false,
+     "scarto": 0.01583
+    },
+    {
+     "casi": 11848,
+     "stima_media": 0.22134,
+     "osservata": 0.20653,
+     "ic95": [
+      0.19934,
+      0.21392
+     ],
+     "dentro": false,
+     "scarto": -0.0148
+    }
+   ],
+   "ece": 0.00655,
+   "scarto_massimo": 0.01583,
+   "gruppi_fuori": 6,
+   "tarata": false,
+   "restringimento": 50,
+   "raddrizzatura": {
+    "pendenza": 1.0,
+    "intercetta": 0.0,
+    "perdita_nuda": 0.266786,
+    "perdita_raddrizzata": 0.266023,
+    "casi_del_giudizio": 34085,
+    "sceglierebbe_da_sola": true,
+    "applicata": false
+   },
+   "prove_restringimento": [
+    {
+     "k": 0,
+     "perdita": 0.260229,
+     "casi": 34085
+    },
+    {
+     "k": 25,
+     "perdita": 0.259887,
+     "casi": 34085
+    },
+    {
+     "k": 50,
+     "perdita": 0.259773,
+     "casi": 34085
+    },
+    {
+     "k": 100,
+     "perdita": 0.259777,
+     "casi": 34085
+    },
+    {
+     "k": 200,
+     "perdita": 0.260007,
+     "casi": 34085
+    },
+    {
+     "k": 400,
+     "perdita": 0.260461,
+     "casi": 34085
+    },
+    {
+     "k": 800,
+     "perdita": 0.260997,
+     "casi": 34085
+    },
+    {
+     "k": 1600,
+     "perdita": 0.261458,
+     "casi": 34085
+    },
+    {
+     "k": 3200,
+     "perdita": 0.261779,
+     "casi": 34085
+    }
+   ],
+   "livelli": {
+    "ruolo+fattore": 101361,
+    "lega": 14471,
+    "ruolo": 2639
+   },
+   "casi_addestramento": 138026,
+   "base_addestramento": 0.08064,
+   "base_verifica": 0.08253
+  },
+  "giallo": {
+   "casi": 118471,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 11847,
+     "stima_media": 0.06102,
+     "osservata": 0.06711,
+     "ic95": [
+      0.06274,
+      0.07175
+     ],
+     "dentro": false,
+     "scarto": 0.00609
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.08957,
+     "osservata": 0.09479,
+     "ic95": [
+      0.08965,
+      0.1002
+     ],
+     "dentro": false,
+     "scarto": 0.00522
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.10556,
+     "osservata": 0.1126,
+     "ic95": [
+      0.10704,
+      0.11842
+     ],
+     "dentro": false,
+     "scarto": 0.00705
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.11779,
+     "osservata": 0.12602,
+     "ic95": [
+      0.12017,
+      0.13212
+     ],
+     "dentro": false,
+     "scarto": 0.00824
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.1258,
+     "osservata": 0.13269,
+     "ic95": [
+      0.1267,
+      0.13892
+     ],
+     "dentro": false,
+     "scarto": 0.00689
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.13234,
+     "osservata": 0.14139,
+     "ic95": [
+      0.13523,
+      0.14778
+     ],
+     "dentro": false,
+     "scarto": 0.00905
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.13913,
+     "osservata": 0.14375,
+     "ic95": [
+      0.13755,
+      0.15018
+     ],
+     "dentro": true,
+     "scarto": 0.00462
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.14738,
+     "osservata": 0.15396,
+     "ic95": [
+      0.14758,
+      0.16057
+     ],
+     "dentro": false,
+     "scarto": 0.00658
+    },
+    {
+     "casi": 11847,
+     "stima_media": 0.15615,
+     "osservata": 0.15962,
+     "ic95": [
+      0.15313,
+      0.16632
+     ],
+     "dentro": true,
+     "scarto": 0.00346
+    },
+    {
+     "casi": 11848,
+     "stima_media": 0.17193,
+     "osservata": 0.1883,
+     "ic95": [
+      0.18136,
+      0.19544
+     ],
+     "dentro": false,
+     "scarto": 0.01637
+    }
+   ],
+   "ece": 0.00736,
+   "scarto_massimo": 0.01637,
+   "gruppi_fuori": 8,
+   "tarata": false,
+   "restringimento": 400,
+   "raddrizzatura": {
+    "pendenza": 0.9148,
+    "intercetta": -0.2973,
+    "perdita_nuda": 0.38879,
+    "perdita_raddrizzata": 0.38623,
+    "casi_del_giudizio": 34085,
+    "sceglierebbe_da_sola": true,
+    "applicata": true
+   },
+   "prove_restringimento": [
+    {
+     "k": 0,
+     "perdita": 0.386529,
+     "casi": 34085
+    },
+    {
+     "k": 25,
+     "perdita": 0.386163,
+     "casi": 34085
+    },
+    {
+     "k": 50,
+     "perdita": 0.385963,
+     "casi": 34085
+    },
+    {
+     "k": 100,
+     "perdita": 0.385764,
+     "casi": 34085
+    },
+    {
+     "k": 200,
+     "perdita": 0.385644,
+     "casi": 34085
+    },
+    {
+     "k": 400,
+     "perdita": 0.385634,
+     "casi": 34085
+    },
+    {
+     "k": 800,
+     "perdita": 0.3857,
+     "casi": 34085
+    },
+    {
+     "k": 1600,
+     "perdita": 0.385781,
+     "casi": 34085
+    },
+    {
+     "k": 3200,
+     "perdita": 0.385844,
+     "casi": 34085
+    }
+   ],
+   "livelli": {
+    "ruolo+fattore": 97902,
+    "lega": 14471,
+    "ruolo": 6098
+   },
+   "casi_addestramento": 138026,
+   "base_addestramento": 0.13941,
+   "base_verifica": 0.13202
+  }
+ }
+}
