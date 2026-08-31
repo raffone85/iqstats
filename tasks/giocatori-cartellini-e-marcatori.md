@@ -167,6 +167,42 @@ applicata a se stessa, e la taratura è la cosa che nessun concorrente ha.
 *Verifica che sa diventare rossa:* la stessa misura applicata a una stima volutamente storta
 deve fallire il controllo. Se non fallisce, il controllo non vale.
 
+**Fatta il 31 agosto 2026.** `scripts/projection/dataset/calibra_giocatori.py`, 256.497 casi
+datati dalla raccolta locale. La stima è la stessa tabella del §4 — frequenza del gruppo del
+fattore, dentro il ruolo, dentro la lega — costruita sul solo addestramento e applicata al
+periodo dopo il taglio. Un fattore per bersaglio, non quattro: tiri per 90 per il gol, falli
+per 90 per il giallo.
+
+| Taglio, per data | Gol | Giallo |
+| --- | --- | --- |
+| 2026-06-01, 19.076 casi tenuti fuori | scarto massimo **1,48** punti, ECE 0,0072 | scarto massimo **2,31** punti, ECE 0,0060 |
+| 2026-02-01, 118.471 casi tenuti fuori | scarto massimo **1,58** punti, ECE 0,0066 | scarto massimo **1,64** punti, ECE 0,0074 |
+
+Dove la lettura nomina davvero, cioè nel gruppo più alto, il taglio di giugno dà **24,3%
+dichiarato contro 22,8% osservato** per il gol e **17,4% contro 18,0%** per il giallo: dentro
+l'intervallo tutti e due.
+
+**Due difetti trovati e corretti, misurati e non supposti.** La tabella nuda è troppo dispersa
+— pendenza di ricalibrazione fuori periodo fra 0,76 e 0,91, cioè allarga lo scarto fra gruppo
+alto e gruppo basso più di quanto la realtà lo allarghi. Cura: restringimento verso la base del
+ruolo, con la forza scelta per data dentro il solo addestramento. E **la base del giallo cala da
+un periodo all'altro** — 13,7% verso 12,5% a giugno, 13,9% verso 13,2% a febbraio — mentre
+quella del gol no. Cura: una retta di raddrizzatura nel logaritmo delle probabilità, imparata
+dentro l'addestramento e applicata **solo al giallo**; sul gol peggiora in entrambi i tagli, e
+questa è una proprietà del bersaglio da rimisurare quando il campione cambia.
+
+**Il conteggio dei gruppi fuori dall'intervallo misura il campione, non l'errore.** Con 1.908
+casi per gruppo l'intervallo di Wilson è di ±0,6 punti e ne cade fuori uno su dieci; con 11.847
+casi lo stesso errore ne fa cadere fuori sei o otto su dieci, mentre lo scarto massimo scende a
+1,6 punti. Il numero che decide è lo scarto, non il conteggio.
+
+*La verifica sa diventare rossa, provato:* sugli stessi dati veri, moltiplicando le stime per
+1,4, il gol passa da 1,48 a **11,20** punti di scarto e il giallo da 2,31 a **7,41**. Su dati
+sintetici a probabilità nota (`--autoverifica`) la stima onesta passa con zero gruppi fuori e la
+stessa moltiplicata per 1,5 viene bocciata dieci gruppi su dieci.
+
+Rapporti: `output/taratura-giocatori-2026-06-01.json` e `output/taratura-giocatori-2026-02-01.json`.
+
 ### Fase 3 — la lettura in pagina
 
 Solo qui si progetta, e con la skill `taste`. Ogni blocco: chi, il numero che lo ha scelto, la

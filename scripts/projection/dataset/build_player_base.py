@@ -264,6 +264,9 @@ def casi_di_lega(lega, ruoli=None):
                     "derby": derby,
                     "ruolo": ruoli.get(r.get("player_id")),
                     "minuti_alle_spalle": m,
+                    # La data della gara: serve a tagliare addestramento e taratura per
+                    # data invece che a caso. Non entra in nessuna aggregazione.
+                    "quando": quando,
                 })
             s = storia[chiave]
             s["minuti"] += r.get("minutes_played") or 0
