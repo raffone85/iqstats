@@ -121,8 +121,12 @@ const MIN_MINUTI = 90;
  * vuoto al posto del confronto. La chiave non conteneva niente che distinguesse le due
  * forme. **Si alza a ogni cambio di forma di `LetturaGiocatori`**, altrimenti il difetto
  * torna identico e si vede solo in pagina.
+ *
+ * Dal 31 agosto 2026 si alza anche quando cambia **chi** entra nella lettura, non solo la
+ * forma: aggiungendo la soglia di ammissione la pagina ha continuato a mostrare il portiere
+ * allo 0% che la soglia doveva togliere, perche' la chiave non era cambiata.
  */
-const VERSIONE_LETTURA = 3;
+const VERSIONE_LETTURA = 5;
 /** Quanti nomi mostra una lettura. Quattro come i blocchi, non di piu': una lista lunga
  *  non e' una lettura, e' un elenco. */
 const QUANTI = 4;
@@ -186,6 +190,20 @@ function candidati(
   const chiaveFattore = bersaglio.fattore_tarato;
   const incertezza = bersaglio.incertezza_punti ?? 0;
   if (chiaveFattore === undefined) return [];
+  // **La soglia per essere nominato e' la base del campionato, non quella del proprio
+  // ruolo.** Il metro del ruolo serve a ordinare - senza, i difensori occuperebbero i
+  // cartellini solo perche' difensori - ma non basta a meritare un nome: il 31 agosto 2026
+  // la lettura «chi puo' segnare» ha proposto un portiere allo 0% e tre difensori al 4%
+  // contro una base di lega del 7,4%, perche' a inizio stagione i giocatori con novanta
+  // minuti alle spalle erano pochi ed entravano tutti. Chi segna meno della media del suo
+  // campionato non e' chi puo' segnare, per quanto stia bene fra i portieri.
+  const soglia = bersaglio.stima ?? bersaglio.base;
+  // **E deve distinguersi dal proprio ruolo di piu' di quanto la stima sappia sbagliare.**
+  // Sulla gara vera del 31 agosto 2026 la lettura dei cartellini mostrava quattro difensori
+  // tutti al 14%, cioe' esattamente la base del loro ruolo, due dei quali con 0,00 falli
+  // ogni 90 minuti: la stima non aveva niente da dire su di loro e la pagina li nominava
+  // lo stesso. Uno scarto piu' piccolo dell'incertezza non e' uno scarto, e un nome messo
+  // li' senza scarto e' una scelta arbitraria travestita da misura.
   const fuori: Candidato[] = [];
   for (const [id, p] of passi) {
     if (p.minuti < MIN_MINUTI) continue;
@@ -202,6 +220,8 @@ function candidati(
     // Senza la stima tarata non si mostra un numero: l'artefatto e' vecchio, e un numero
     // vecchio accanto a un nome vale meno di nessun numero.
     if (!gruppo || gruppo.stima === undefined) continue;
+    if (gruppo.stima < soglia) continue;
+    if ((gruppo.stima - stimaBase) * 100 <= incertezza) continue;
     fuori.push({
       id, nome: p.nome, squadra: p.squadra,
       fattore: etichetta,

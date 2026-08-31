@@ -2,6 +2,7 @@ import "server-only";
 
 import { createSupabaseServerClient } from "@/server/supabase/server";
 import {
+  accessoDaCantiere,
   authorizeFeature,
   type AccessDecision,
   type FeatureKey,
@@ -64,6 +65,8 @@ export async function requireFeature(feature: FeatureKey): Promise<Response | nu
  * naviga in fretta.
  */
 export async function readFeatureDecision(feature: FeatureKey): Promise<AccessDecision> {
+  const cantiere = accessoDaCantiere();
+  if (cantiere) return cantiere;
   const supabase = await createSupabaseServerClient();
   const decision = await authorizeFeature(feature, {
     async getUserId() {
