@@ -77,3 +77,34 @@ test("un campionato senza alcuna tabella per ruolo non si rompe", () => {
     assert.equal(esito.base, 0.1);
   }
 });
+
+/**
+ * La stima tarata, dal 31 agosto 2026.
+ *
+ * Il numero grande in pagina non e' piu' la frequenza osservata ma la probabilita' tarata,
+ * e il confronto deve avvenire fra due stime, non fra una stima e una frequenza: mescolarle
+ * darebbe uno scarto che non appartiene a nessuna delle due misure.
+ */
+const conStima: Bersaglio = {
+  base: 0.134,
+  stima: 0.131,
+  incertezza_punti: 2.3,
+  fattore_tarato: "falli_per90",
+  fattori: { falli_per90: fattore(0.2) },
+  ruoli: { D: { base: 0.165, casi: 40000, stima: 0.161 } },
+  per_ruolo: { D: { falli_per90: fattore(0.24) } },
+};
+
+test("il metro del ruolo porta la stima del ruolo, non quella del campionato", () => {
+  const d = metroDi(conStima, "D");
+  assert.equal(d.stimaBase, 0.161);
+  // Se la stima del ruolo sparisse, il confronto ricadrebbe sulla base grezza e lo scarto
+  // mostrato in pagina cambierebbe di quattro decimi di punto senza che niente lo dica.
+  assert.notEqual(d.stimaBase, d.base);
+});
+
+test("senza ruolo la stima e' quella del campionato, e senza stima si ripiega sulla base", () => {
+  assert.equal(metroDi(conStima, null).stimaBase, 0.131);
+  const senzaStima: Bersaglio = { base: 0.1, fattori: { falli_per90: fattore(0.3) } };
+  assert.equal(metroDi(senzaStima, null).stimaBase, 0.1);
+});

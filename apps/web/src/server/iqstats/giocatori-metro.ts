@@ -3,14 +3,24 @@
 // intera tira dentro la cache di Next e la fonte, e una decisione che si puo' provare da
 // sola non deve avere bisogno di tutto quello.
 
-type Fattore = { readonly tagli: readonly number[]; readonly gruppi: readonly { readonly gruppo: number; readonly frequenza: number; readonly casi: number }[] };
+/** Un gruppo porta due numeri diversi, e restano diversi: `frequenza` e' quante volte e'
+ *  successo davvero in quel gruppo, `stima` e' la probabilita' tarata - restringimento
+ *  verso la base del ruolo e, per il giallo, la raddrizzatura della deriva fra periodi.
+ *  `stima` esiste solo sul fattore tarato, e solo dopo `calibra_giocatori.py --per-app`. */
+type Fattore = { readonly tagli: readonly number[]; readonly gruppi: readonly { readonly gruppo: number; readonly frequenza: number; readonly casi: number; readonly stima?: number }[] };
 export type Bersaglio = {
   readonly base: number;
   readonly fattori: Record<string, Fattore | undefined>;
   /** La base dentro ogni ruolo, dove il campione la regge. */
-  readonly ruoli?: Record<string, { readonly base: number; readonly casi: number } | undefined>;
+  readonly ruoli?: Record<string, { readonly base: number; readonly casi: number; readonly stima?: number } | undefined>;
   /** Gli stessi fattori, misurati dentro un ruolo solo. */
   readonly per_ruolo?: Record<string, Record<string, Fattore | undefined> | undefined>;
+  /** La stima del livello piu' grosso, quando ne' ruolo ne' gruppo reggono il campione. */
+  readonly stima?: number;
+  /** Di quanti punti percentuali la stima puo' sbagliare, misurato fuori periodo. */
+  readonly incertezza_punti?: number;
+  /** Quale fattore porta la stima: gli altri restano frequenze osservate. */
+  readonly fattore_tarato?: string;
 };
 export type VoceLega = { readonly gare: number; readonly casi: number; readonly falli_utilizzabili: boolean; readonly giallo: Bersaglio; readonly gol: Bersaglio };
 
@@ -50,6 +60,7 @@ export function metroDi(bersaglio: Bersaglio, ruolo: Ruolo | null) {
     return {
       conRuolo: false as const,
       base: bersaglio.base,
+      stimaBase: bersaglio.stima ?? bersaglio.base,
       metro: NOME_RUOLO.lega,
       fattori: bersaglio.fattori,
     };
@@ -57,6 +68,7 @@ export function metroDi(bersaglio: Bersaglio, ruolo: Ruolo | null) {
   return {
     conRuolo: true as const,
     base: baseRuolo.base,
+    stimaBase: baseRuolo.stima ?? baseRuolo.base,
     metro: NOME_RUOLO[ruolo as Ruolo],
     fattori: tabelle,
   };

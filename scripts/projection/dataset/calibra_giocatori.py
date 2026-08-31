@@ -35,6 +35,7 @@ from collections import defaultdict
 
 from build_player_base import (
     GRUPPI,
+    ROOT,
     MIN_CASI_RUOLO,
     RUOLI,
     casi_di_lega,
@@ -181,7 +182,14 @@ def addestra(casi, bersaglio, meta, k=0.0):
                     if len(valori) >= MIN_CASI_GRUPPO:
                         colpi = sum(valori)
                         p = (colpi + k * base_ruolo) / (len(valori) + k)
-                        gruppi[indice] = {"p": p, "casi": len(valori)}
+                        gruppi[indice] = {
+                            "p": p,
+                            # La frequenza osservata nuda resta accanto alla stima: la
+                            # pagina dice quante volte e' successo *e* quanto e' probabile,
+                            # e sono due numeri diversi.
+                            "grezza": colpi / len(valori),
+                            "casi": len(valori),
+                        }
                 if gruppi:
                     riga["tagli"] = tagli
                     riga["gruppi"] = gruppi
@@ -409,6 +417,81 @@ def _autoverifica():
           f"{storta['gruppi_fuori']} gruppi su {len(storta['gruppi'])} fuori")
 
 
+# Quanto sbaglia la stima, misurato sul taglio piu' simile alla produzione (2026-06-01,
+# 19.076 casi mai visti): e' lo scarto massimo fra quello che dichiara e quello che poi
+# succede. Va in pagina accanto al numero, perche' un numero senza il suo errore promette
+# una precisione che non ha.
+INCERTEZZA_PUNTI = {"gol": 1.5, "giallo": 2.3}
+
+
+def scrivi_per_app(destinazione):
+    """Aggiunge la stima tarata all'artefatto che l'applicazione importa.
+
+    Non crea un secondo file: apre `giocatori-base.json`, e per il solo fattore tarato di
+    ogni bersaglio riscrive tagli e gruppi con la probabilita' invece della sola frequenza
+    osservata. Tagli e stime devono nascere dallo stesso calcolo, altrimenti la pagina
+    metterebbe un giocatore in un gruppo con i tagli di una tabella e leggerebbe il numero
+    di un'altra.
+
+    Qui il modello si addestra su **tutti** i casi disponibili, con la stessa procedura
+    misurata al taglio: restringimento scelto per data, raddrizzatura dove RADDRIZZA la
+    vuole e imparata sull'ultimo quarto del dato.
+    """
+    casi, meta = carica()
+    with open(destinazione, "r", encoding="utf-8") as handle:
+        artefatto = json.load(handle)
+
+    for bersaglio in ("gol", "giallo"):
+        fattore = FATTORE[bersaglio]
+        k, _ = scegli_k(casi, bersaglio, meta)
+        pendenza, intercetta, resoconto = impara_raddrizzatura(casi, bersaglio, meta, k)
+        applica = RADDRIZZA[bersaglio]
+        if not applica:
+            pendenza, intercetta = 1.0, 0.0
+        modello = addestra(casi, bersaglio, meta, k)
+        print(f"{bersaglio}: restringimento {k}, raddrizzatura "
+              f"{'pendenza ' + str(round(pendenza, 4)) + ' intercetta ' + str(round(intercetta, 4)) if applica else 'nessuna'}")
+
+        def taratura_di(p):
+            return round(raddrizza(p, pendenza, intercetta) if applica else p, 5)
+
+        for lega, voce in modello.items():
+            dentro = artefatto["leghe"].get(lega)
+            if dentro is None:
+                continue
+            blocco = dentro[bersaglio]
+            blocco["stima"] = taratura_di(voce["base"])
+            blocco["incertezza_punti"] = INCERTEZZA_PUNTI[bersaglio]
+            blocco["fattore_tarato"] = fattore
+            for ruolo, riga in voce["ruoli"].items():
+                dentro_ruolo = blocco.setdefault("ruoli", {}).setdefault(ruolo, {})
+                dentro_ruolo["base"] = round(riga["base"], 5)
+                dentro_ruolo["casi"] = riga["casi"]
+                dentro_ruolo["stima"] = taratura_di(riga["base"])
+                if "gruppi" not in riga:
+                    continue
+                blocco.setdefault("per_ruolo", {}).setdefault(ruolo, {})[fattore] = {
+                    "tagli": riga["tagli"],
+                    "gruppi": [
+                        {
+                            "gruppo": indice + 1,
+                            "stima": taratura_di(riga["gruppi"][indice]["p"]),
+                            "frequenza": round(riga["gruppi"][indice]["grezza"], 5),
+                            "casi": riga["gruppi"][indice]["casi"],
+                        }
+                        for indice in sorted(riga["gruppi"])
+                    ],
+                }
+    artefatto["stima"] = {
+        "generata_da": "scripts/projection/dataset/calibra_giocatori.py --per-app",
+        "nota": "probabilita' tarata su un periodo tenuto fuori dall'addestramento",
+        "casi": len(casi),
+    }
+    with open(destinazione, "w", encoding="utf-8") as handle:
+        json.dump(artefatto, handle, ensure_ascii=False, indent=1)
+    print(f"scritta la stima in {destinazione}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", action="store_true",
@@ -418,6 +501,8 @@ def main():
                         help="moltiplica la stima: serve a provare che il controllo boccia")
     parser.add_argument("--nuda", action="store_true",
                         help="salta la raddrizzatura anche dove RADDRIZZA la vuole")
+    parser.add_argument("--per-app", action="store_true",
+                        help="aggiunge la stima tarata a output/giocatori-base.json")
     parser.add_argument("--autoverifica", action="store_true",
                         help="prova la misura su dati sintetici e si ferma")
     argomenti = parser.parse_args()
@@ -427,6 +512,11 @@ def main():
         return
     if argomenti.cache:
         costruisci_cache()
+        return
+    if argomenti.per_app:
+        _autoverifica()
+        scrivi_per_app(os.path.join(
+            ROOT, "apps", "web", "src", "server", "iqstats", "artefatti", "giocatori-base.json"))
         return
     if not argomenti.taglio:
         raise SystemExit("Serve --taglio anno-mese-giorno, oppure --cache")
