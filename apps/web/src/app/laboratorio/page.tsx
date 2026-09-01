@@ -16,7 +16,7 @@ import {
   type MercatiGol,
 } from "@/server/iqstats/projection/gol";
 import type { ProiezioneDiGara } from "@/server/iqstats/projection/match";
-import { getStatEngineReading, type StatMetric } from "@/server/iqstats/stat-engine";
+import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 
 export const metadata: Metadata = {
   title: "Laboratorio dossier",
@@ -210,12 +210,8 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
     { key: "goalkeeper_saves", casa: attesoBersaglio(bersagli, "goalkeeper_saves", "casa"), away: attesoBersaglio(bersagli, "goalkeeper_saves", "trasferta") },
   ].filter((r) => r.casa !== null || r.away !== null);
 
-  const engineByMetric = engine.available
-    ? Object.fromEntries(engine.metrics.map((m) => [m.metric, m])) as Partial<Record<StatMetric, (typeof engine.metrics)[number]>>
-    : {};
-
   const segnali: { titolo: string; motivo: string; forza: string }[] = [];
-  if (mercati1t && mercati1t.overUnder.find((l) => l.linea === 0.5)?.sopra != null) {
+  if (mercati1t) {
     const o05 = 1 - Math.exp(-mercati1t.attesiTotali);
     if (o05 >= 0.62) {
       segnali.push({
@@ -447,32 +443,28 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
                   ))}
                 </ul>
               </li>
-              {mercatiFt.multigolCasa ? (
-                <li className="engine-row">
-                  <p className="engine-metric">{detail.homeTeam}</p>
-                  <ul className="engine-ladder">
-                    {mercatiFt.multigolCasa.slice(0, 4).map((i) => (
-                      <li key={`c-${i.da}-${i.a}`} className="engine-step">
-                        <span className="engine-step-line">{i.da}–{i.a}</span>
-                        <span className="engine-step-prob">{pct(i.probabilita)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ) : null}
-              {mercatiFt.multigolTrasferta ? (
-                <li className="engine-row">
-                  <p className="engine-metric">{detail.awayTeam}</p>
-                  <ul className="engine-ladder">
-                    {mercatiFt.multigolTrasferta.slice(0, 4).map((i) => (
-                      <li key={`a-${i.da}-${i.a}`} className="engine-step">
-                        <span className="engine-step-line">{i.da}–{i.a}</span>
-                        <span className="engine-step-prob">{pct(i.probabilita)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ) : null}
+              <li className="engine-row">
+                <p className="engine-metric">{detail.homeTeam}</p>
+                <ul className="engine-ladder">
+                  {mercatiFt.casa.multigol.slice(0, 4).map((i) => (
+                    <li key={`c-${i.da}-${i.a}`} className="engine-step">
+                      <span className="engine-step-line">{i.da}–{i.a}</span>
+                      <span className="engine-step-prob">{pct(i.probabilita)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+              <li className="engine-row">
+                <p className="engine-metric">{detail.awayTeam}</p>
+                <ul className="engine-ladder">
+                  {mercatiFt.trasferta.multigol.slice(0, 4).map((i) => (
+                    <li key={`a-${i.da}-${i.a}`} className="engine-step">
+                      <span className="engine-step-line">{i.da}–{i.a}</span>
+                      <span className="engine-step-prob">{pct(i.probabilita)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
             </ul>
           </section>
         ) : null}
