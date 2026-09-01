@@ -7,10 +7,11 @@ export function MatchPrevisioneSection({ previsione }: { readonly previsione: Pr
       <p className="dossier-kick">Previsione</p>
       <h2 id="previsione-title" className="sr-only-heading">Che gara è attesa</h2>
       <p className="dossier-verdict-lead">{previsione.titolo}</p>
-      <ol className="previsione-voci">
+      <ol className="analisi-punti">
         {previsione.voci.map((voce) => (
           <li key={voce.etichetta}>
-            <span className="previsione-etichetta">{voce.etichetta}</span>
+            <span className="analisi-titoletto">{voce.etichetta}</span>
+            {" "}
             <span>{voce.testo}</span>
           </li>
         ))}
