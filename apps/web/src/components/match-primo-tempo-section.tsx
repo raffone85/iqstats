@@ -1,5 +1,5 @@
 import type { MercatiGol } from "@/server/iqstats/projection/gol";
-import { QUOTA_PRIMO_TEMPO } from "@/server/iqstats/projection/gol";
+import { QUOTA_PRIMO_TEMPO } from "@/server/iqstats/projection/gol-primo-tempo";
 
 function percento(quota: number): string {
   return `${Math.round(quota * 100)}%`;
