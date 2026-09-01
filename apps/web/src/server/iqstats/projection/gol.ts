@@ -41,6 +41,17 @@ const MULTIGOL_SQUADRA: ReadonlyArray<readonly [number, number]> = [
   [0, 1], [0, 2], [1, 2], [1, 3], [2, 3], [2, 4], [2, 5],
 ];
 
+/**
+ * Quota dei gol che si colloca nel primo tempo, usata per derivare i mercati 1T.
+ *
+ * Le osservazioni del motore non portano i gol attesi per tempo: inventarli da zero
+ * sarebbe peggio di una quota dichiarata. 0,44 e' la quota europea tipica dei gol
+ * nel primo tempo sul totale (poco sotto la meta', perche' il secondo tempo e' piu'
+ * lungo di recupero). Non e' la quota di *questa* gara: e' il ripiego tarato, e la
+ * pagina deve dirlo.
+ */
+export const QUOTA_PRIMO_TEMPO = 0.44;
+
 export interface Intervallo {
   readonly da: number;
   readonly a: number;
@@ -196,6 +207,20 @@ export function mercatiGol(attesiCasa: number, attesiTrasferta: number): Mercati
       da, a, probabilita: fra(totale, da, a),
     })),
   };
+}
+
+/**
+ * Gli stessi mercati, ma sul primo tempo.
+ *
+ * Si riapplica la stessa griglia Poisson agli attesi scalati per `QUOTA_PRIMO_TEMPO`.
+ * Non e' un secondo modello: e' la stessa lettura, tagliata a 45'.
+ */
+export function mercatiPrimoTempo(
+  attesiCasa: number,
+  attesiTrasferta: number,
+  quota = QUOTA_PRIMO_TEMPO,
+): MercatiGol {
+  return mercatiGol(attesiCasa * quota, attesiTrasferta * quota);
 }
 
 /**

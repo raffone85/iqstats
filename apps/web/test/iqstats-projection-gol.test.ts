@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { attesiDellaGara, mercatiGol } from "../src/server/iqstats/projection/gol.ts";
+import { attesiDellaGara, mercatiGol, mercatiPrimoTempo, QUOTA_PRIMO_TEMPO } from "../src/server/iqstats/projection/gol.ts";
 
 /** Le probabilita' sono numeri fra zero e uno: nessun mercato puo' uscirne. */
 function fraZeroEUno(valore: number, dove: string) {
@@ -19,8 +19,6 @@ test("la griglia e' una distribuzione: i tre esiti sommano a uno", () => {
 
 test("i gol attesi tornano indietro dalla distribuzione", () => {
   const m = mercatiGol(2.54, 0.98);
-  // La media di una Poisson e' il suo parametro: se la griglia fosse troncata troppo
-  // presto, o la ricorrenza sbagliata, questo scarto crescerebbe.
   assert.ok(Math.abs(m.casa.attesi - 2.54) < 1e-6, `casa: ${m.casa.attesi}`);
   assert.ok(Math.abs(m.trasferta.attesi - 0.98) < 1e-6, `trasferta: ${m.trasferta.attesi}`);
   assert.equal(m.attesiTotali, 2.54 + 0.98);
@@ -45,8 +43,6 @@ test("l'intervallo centrale racconta dove si concentra la meta' dei casi", () =>
     "con 2,54 gol attesi la meta' centrale sta fra 1 e 3",
   );
   assert.deepEqual([forte.trasferta.minimo, forte.trasferta.massimo], [0, 1]);
-  // Piu' gol attesi, intervallo piu' in alto: se il criterio fosse un indice fisso questo
-  // confronto non si muoverebbe.
   const dilagante = mercatiGol(4.2, 0.5);
   assert.ok(dilagante.casa.minimo > forte.casa.minimo);
 });
@@ -74,7 +70,6 @@ test("nessun mercato esce dalla scala", () => {
     fraZeroEUno(intervallo.probabilita, `multigol casa ${intervallo.da}-${intervallo.a}`);
   }
   for (const esatto of m.casa.esatti) fraZeroEUno(esatto, "gol esatti casa");
-  // Le tre doppie chance coprono ogni esito due volte: la loro somma vale due.
   const somma = m.doppiaChance.unoX + m.doppiaChance.xDue + m.doppiaChance.unoDue;
   assert.ok(Math.abs(somma - 2) < 1e-9, `somma delle doppie chance: ${somma}`);
 });
@@ -86,7 +81,6 @@ test("un pareggio simmetrico resta simmetrico", () => {
 });
 
 test("attesiDellaGara pesa attacco e difesa contro il metro di lega", () => {
-  // Con un campione lungo l'ancoraggio pesa poco e il conto e' quello classico.
   const lungo = { campione: 200 };
   const media = attesiDellaGara({
     attaccoCasa: { media: 1.5, ...lungo }, difesaCasa: { media: 1.1, ...lungo },
@@ -94,10 +88,8 @@ test("attesiDellaGara pesa attacco e difesa contro il metro di lega", () => {
     legaCasa: 1.5, legaTrasferta: 1.1,
   });
   assert.ok(media !== null);
-  // Due squadre esattamente nella media: il conto deve restituire il metro, intatto.
   assert.ok(Math.abs(media.casa - 1.5) < 1e-9, `casa: ${media.casa}`);
   assert.ok(Math.abs(media.trasferta - 1.1) < 1e-9, `trasferta: ${media.trasferta}`);
-  // Il vantaggio del campo non e' un coefficiente aggiunto: sta nei due metri diversi.
   assert.ok(media.casa > media.trasferta);
 
   const forte = attesiDellaGara({
@@ -110,9 +102,6 @@ test("attesiDellaGara pesa attacco e difesa contro il metro di lega", () => {
 });
 
 test("una gara sola non diventa una stagione: il caso Go Ahead Eagles", () => {
-  // Il 23 agosto 2026, con una gara per lato, il conto senza ancoraggio dava 4,55 gol
-  // attesi alla squadra di casa, vittoria al 95% e Over 4,5 al 59%. Questo test esiste
-  // perche' quel numero non torni.
   const unaSola = attesiDellaGara({
     attaccoCasa: { media: 3.0, campione: 1 }, difesaCasa: { media: 1.5, campione: 1 },
     attaccoTrasferta: { media: 0.4, campione: 1 }, difesaTrasferta: { media: 3.0, campione: 1 },
@@ -129,7 +118,6 @@ test("una gara sola non diventa una stagione: il caso Go Ahead Eagles", () => {
     `con una gara sola la vittoria non puo' stare al ${Math.round(mercati.esito.uno * 100)}%`,
   );
 
-  // Lo stesso rendimento, ma tenuto per venti gare, deve invece contare davvero.
   const venti = attesiDellaGara({
     attaccoCasa: { media: 3.0, campione: 20 }, difesaCasa: { media: 1.5, campione: 20 },
     attaccoTrasferta: { media: 0.4, campione: 20 }, difesaTrasferta: { media: 3.0, campione: 20 },
@@ -148,4 +136,12 @@ test("senza un metro di lega non si inventa un numero", () => {
   assert.equal(attesiDellaGara({ ...forze, legaCasa: 0, legaTrasferta: 1.1 }), null);
   assert.equal(attesiDellaGara({ ...forze, legaCasa: 1.5, legaTrasferta: 0 }), null);
   assert.equal(attesiDellaGara({ ...forze, legaCasa: NaN, legaTrasferta: 1.1 }), null);
+});
+
+test("il primo tempo e' la stessa griglia sugli attesi scalati", () => {
+  const pieno = mercatiGol(2.0, 1.0);
+  const primo = mercatiPrimoTempo(2.0, 1.0);
+  assert.ok(Math.abs(primo.casa.attesi - 2.0 * QUOTA_PRIMO_TEMPO) < 1e-6);
+  assert.ok(primo.attesiTotali < pieno.attesiTotali);
+  assert.ok(Math.abs(primo.esito.uno + primo.esito.x + primo.esito.due - 1) < 1e-9);
 });
