@@ -10,6 +10,7 @@ import { readMarket } from "@/server/iqstats/match-reading";
 import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
 import {
   QUOTA_PRIMO_TEMPO,
+  mercatiGol,
   mercatiPrimoTempo,
   mercatiSecondoTempo,
   type MercatiGol,
@@ -67,12 +68,8 @@ function attesoBersaglio(bersagli: readonly ProiezioneDiGara[], target: string, 
   return latoEsito.stato === "prevista" ? latoEsito.valoreAtteso : null;
 }
 
-function topMultigol(m: MercatiGol): { da: number; a: number; probabilita: number } {
+function topMultigol(m: MercatiGol) {
   return [...m.multigolPartita].sort((a, b) => b.probabilita - a.probabilita)[0];
-}
-
-function topTeam(m: MercatiGol["casa"]): { da: number; a: number; probabilita: number } {
-  return [...m.multigol].sort((a, b) => b.probabilita - a.probabilita)[0];
 }
 
 type PageProps = { searchParams: Promise<{ id?: string }> };
@@ -93,7 +90,7 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
           <Link className="dossier-back" href="/">← Home</Link>
           <div className="oggi-empty">
             <h2>Nessuna gara dall'endpoint</h2>
-            <p>predictions/?date_from non ha restituito righe. Riprova fra un minuto.</p>
+            <p>predictions/?date_from non ha restituito righe.</p>
           </div>
         </div>
       </ProductShell>
@@ -101,14 +98,14 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
   }
 
   const esito = await getMatchDetail(eventId);
-  if (esito.stato !== "ok") {
+  if (esito.stato !== "trovato") {
     return (
       <ProductShell>
         <div className="dossier">
           <Link className="dossier-back" href="/">← Home</Link>
           <div className="oggi-empty">
             <h2>Gara {eventId} non leggibile</h2>
-            <p>events/{eventId}/ non ha dato un dettaglio utilizzabile.</p>
+            <p>events/{eventId}/ non ha dato un dettaglio utilizzabile ({esito.stato}).</p>
           </div>
         </div>
       </ProductShell>
@@ -128,7 +125,7 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
   const fuoriAttesi = gol?.mercati.trasferta.attesi ?? prediction?.xgAway ?? null;
   const totAttesi = casaAttesi !== null && fuoriAttesi !== null ? casaAttesi + fuoriAttesi : null;
   const mercatiFt = gol?.mercati ?? (casaAttesi !== null && fuoriAttesi !== null
-    ? mercatiPrimoTempo(casaAttesi / QUOTA_PRIMO_TEMPO, fuoriAttesi / QUOTA_PRIMO_TEMPO)
+    ? mercatiGol(casaAttesi, fuoriAttesi)
     : null);
   const mercati1t = casaAttesi !== null && fuoriAttesi !== null
     ? mercatiPrimoTempo(casaAttesi, fuoriAttesi)
@@ -138,8 +135,6 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
     : null;
 
   const pHome = as01(prediction?.probHome ?? null);
-  const pDraw = as01(prediction?.probDraw ?? null);
-  const pAway = as01(prediction?.probAway ?? null);
   const pOver25 = as01(prediction?.probOver25 ?? mercatiFt?.overUnder.find((l) => l.linea === 2.5)?.sopra ?? null);
   const pBtts = as01(prediction?.probBtts ?? mercatiFt?.gg ?? null);
 
@@ -177,7 +172,6 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
       <div className="oggi-backdrop" aria-hidden="true" />
       <div className="dossier">
         <Link className="dossier-back" href="/">← Home</Link>
-
         <article className="oggi-hero">
           <div className="oggi-hero-stadium" aria-hidden="true" />
           <div className="oggi-hero-scrim" aria-hidden="true" />
@@ -216,12 +210,12 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
             <li className="contesto-riga">
               <span className="contesto-fam">Gol <em>· 1T</em></span>
               <span className="contesto-atteso">{mercati1t ? fmt(mercati1t.attesiTotali) : "—"}</span>
-              <span className="contesto-metro">{Math.round(QUOTA_PRIMO_TEMPO * 100)}% del totale, quota europea</span>
+              <span className="contesto-metro">44% del totale, quota europea</span>
             </li>
             <li className="contesto-riga">
               <span className="contesto-fam">Gol <em>· 2T</em></span>
               <span className="contesto-atteso">{mercati2t ? fmt(mercati2t.attesiTotali) : "—"}</span>
-              <span className="contesto-metro">{Math.round((1 - QUOTA_PRIMO_TEMPO) * 100)}% del totale</span>
+              <span className="contesto-metro">56% del totale</span>
             </li>
             <li className="contesto-riga">
               <span className="contesto-fam">Entrambe</span>
@@ -232,7 +226,7 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
           <p className="contesto-riserva">
             {prediction?.modelVersion ? `Modello fonte ${prediction.modelVersion}. ` : ""}
             {gol ? `${gol.campioneCasa} gare casa, ${gol.campioneTrasferta} fuori, ${gol.campioneLega} righe di lega. ` : ""}
-            Passa `?id=` per un'altra gara.
+            Altra gara: /laboratorio?id=EVENT_ID
           </p>
         </section>
 
@@ -249,23 +243,11 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
                 </ul>
               </li>
               <li className="engine-row">
-                <p className="engine-metric">Frequenza 1T</p>
-                <ul className="engine-ladder">
-                  {mercati1t.casa.esatti.slice(0, 4).map((_, k) => {
-                    const p = k < 3
-                      ? (k === 0 ? 1 - mercati1t.casa.almenoUno : undefined)
-                      : undefined;
-                    return null;
-                  })}
-                  <li className="engine-step"><span className="engine-step-line">0 gol</span><span className="engine-step-prob">{pct(1 - mercati1t.casa.almenoUno * 0 - (1 - Math.exp(-mercati1t.attesiTotali)))}</span></li>
-                </ul>
-              </li>
-              <li className="engine-row">
                 <p className="engine-metric">Esito 1T</p>
                 <ul className="engine-ladder">
-                  <li className={`engine-step${mercati1t.esito.uno >= mercati1t.esito.x && mercati1t.esito.uno >= mercati1t.esito.due ? " is-central" : ""}`}><span className="engine-step-line">1</span><span className="engine-step-prob">{pct(mercati1t.esito.uno)}</span></li>
-                  <li className={`engine-step${mercati1t.esito.x >= mercati1t.esito.uno && mercati1t.esito.x >= mercati1t.esito.due ? " is-central" : ""}`}><span className="engine-step-line">X</span><span className="engine-step-prob">{pct(mercati1t.esito.x)}</span></li>
-                  <li className={`engine-step${mercati1t.esito.due >= mercati1t.esito.uno && mercati1t.esito.due >= mercati1t.esito.x ? " is-central" : ""}`}><span className="engine-step-line">2</span><span className="engine-step-prob">{pct(mercati1t.esito.due)}</span></li>
+                  <li className="engine-step"><span className="engine-step-line">1</span><span className="engine-step-prob">{pct(mercati1t.esito.uno)}</span></li>
+                  <li className="engine-step"><span className="engine-step-line">X</span><span className="engine-step-prob">{pct(mercati1t.esito.x)}</span></li>
+                  <li className="engine-step"><span className="engine-step-line">2</span><span className="engine-step-prob">{pct(mercati1t.esito.due)}</span></li>
                 </ul>
               </li>
               <li className="engine-row">
@@ -322,9 +304,9 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
         ) : null}
 
         <section className="dossier-panel" aria-labelledby="tiri">
-          <DossierCapitolo id="tiri" nome="Tiri e altri mercati" descrizione="Bersagli del motore di proiezione, se coperti." />
+          <DossierCapitolo id="tiri" nome="Tiri e altri mercati" descrizione="Bersagli del motore, se coperti." />
           {tiriCasa === null && tipCasa === null ? (
-            <p className="dossier-src">Nessun bersaglio tiri su questa gara (proiezione assente o senza copertura).</p>
+            <p className="dossier-src">Nessun bersaglio tiri su questa gara.</p>
           ) : (
             <ul className="engine-rows">
               {tiriCasa !== null && tiriFuori !== null ? (
@@ -353,7 +335,6 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
                   <ul className="engine-splits">
                     <li className="engine-split"><span className="engine-who">{detail.homeTeam}</span><span className="engine-exp">{fmt(cornerCasa, 1)}</span></li>
                     <li className="engine-split"><span className="engine-who">{detail.awayTeam}</span><span className="engine-exp">{fmt(cornerFuori, 1)}</span></li>
-                    <li className="engine-split"><span className="engine-who">Totale</span><span className="engine-exp">{fmt(cornerCasa + cornerFuori, 1)}</span></li>
                   </ul>
                 </li>
               ) : null}
@@ -381,7 +362,7 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
 
         {mercatiFt ? (
           <section className="dossier-panel" aria-labelledby="multigol">
-            <DossierCapitolo id="multigol" nome="Multigol" descrizione="Fasce più dense della stessa distribuzione." />
+            <DossierCapitolo id="multigol" nome="Multigol" descrizione="Fasce della stessa distribuzione." />
             <ul className="engine-rows">
               <li className="engine-row">
                 <p className="engine-metric">Gara</p>
@@ -399,7 +380,7 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
         ) : null}
 
         <section className="dossier-panel" aria-labelledby="quote">
-          <DossierCapitolo id="quote" nome="Quote a confronto" descrizione="odds/comparison/ · consenso, nessun book nominato." />
+          <DossierCapitolo id="quote" nome="Quote a confronto" descrizione="odds/comparison/ · consenso." />
           {market ? (
             <>
               <p className="dossier-verdict-lead">{market.sentence}</p>
@@ -424,15 +405,12 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
         </section>
 
         <section className="dossier-panel analisi" aria-labelledby="consigli">
-          <DossierCapitolo id="consigli" nome="Lettura finale" descrizione="Solo da numeri già in pagina. Non è una schedina." />
+          <DossierCapitolo id="consigli" nome="Lettura finale" descrizione="Solo da numeri già in pagina." />
           <ol className="analisi-voci">
             {mercatiFt ? (
               <li>
-                <span className="analisi-titoletto">Multigol gara</span>{" "}
-                <span>
-                  Fascia più densa {topMultigol(mercatiFt).da}–{topMultigol(mercatiFt).a}
-                  {" "}({pct(topMultigol(mercatiFt).probabilita)}).
-                </span>
+                <span className="analisi-titoletto">Multigol</span>{" "}
+                <span>Fascia più densa {topMultigol(mercatiFt).da}–{topMultigol(mercatiFt).a} ({pct(topMultigol(mercatiFt).probabilita)}).</span>
               </li>
             ) : null}
             {mercati2t ? (
@@ -447,18 +425,11 @@ export default async function LaboratorioPage({ searchParams }: PageProps) {
                 <span>{fmt(tipCasa, 1)} attesi dal motore.</span>
               </li>
             ) : null}
-            {pHome !== null && pHome < 0.45 ? (
-              <li>
-                <span className="analisi-titoletto">Esito</span>{" "}
-                <span>Nessun favorito netto dal /prediction/.</span>
-              </li>
-            ) : null}
           </ol>
         </section>
 
         <p className="dossier-note">
-          Laboratorio. Dati server-side da events, prediction, odds/comparison e livello proiezioni.
-          Produzione intatta. Gara {eventId}.
+          Laboratorio. Endpoint server-side. Produzione intatta. Gara {eventId}.
         </p>
       </div>
     </ProductShell>
