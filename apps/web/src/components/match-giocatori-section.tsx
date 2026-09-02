@@ -196,14 +196,21 @@ type Props = {
 };
 
 export function MatchGiocatoriSection({ lettura, formazioneConfermata }: Props) {
-  const { cartellini, marcatori, gareConDato, gareStagione, campioneTabella } = lettura;
+  const { cartellini, marcatori, gareConDato, gareStagione, garePrecedenti, campioneTabella } =
+    lettura;
   if (cartellini.length === 0 && marcatori.length === 0) return null;
 
   const formazione = formazioneConfermata
     ? "Formazioni ufficiali."
     : "Formazione prevista dalla fonte, non ancora ufficiale: se gli undici cambiano, cambiano anche questi nomi.";
   const casi = campioneTabella.casi.toLocaleString("it-IT");
-  const stagione = `Il passo di ogni giocatore viene dalle ${gareConDato} gare di questa stagione che portano statistiche per giocatore, su ${gareStagione} giocate. I gruppi e le stime escono da ${casi} casi di questo campionato, con le medie calcolate sulle sole gare precedenti a quella da leggere.`;
+  // Quando il campione poggia anche sull'anno scorso lo si dice, e si dice quante gare:
+  // un passo costruito sulla stagione passata non promette la stessa cosa di uno di adesso.
+  const daDove =
+    garePrecedenti > 0
+      ? `Il passo di ogni giocatore viene dalle ${gareConDato} gare con statistiche per giocatore fra le ${gareStagione} di questa stagione e le ${garePrecedenti} più recenti della precedente, che servono finché quella in corso è troppo corta da sola.`
+      : `Il passo di ogni giocatore viene dalle ${gareConDato} gare di questa stagione che portano statistiche per giocatore, su ${gareStagione} giocate.`;
+  const stagione = `${daDove} I gruppi e le stime escono da ${casi} casi di questo campionato, con le medie calcolate sulle sole gare precedenti a quella da leggere.`;
   const taratura =
     "La stima è tarata su gare tenute fuori dall'addestramento e divise per data, non a caso: quando dice 24% succede il 22,8%, quando dice 17% succede il 18%.";
 
@@ -226,7 +233,7 @@ export function MatchGiocatoriSection({ lettura, formazioneConfermata }: Props) 
         verbo="prendono il giallo"
         cosa="Giallo"
         blocchi={cartellini}
-        limite={`${formazione} Questa lettura è più debole dell'altra: anche il nome più in alto, quattro volte su cinque, il giallo non lo prende, e la stima sbaglia fino a 2,3 punti. I nomi sono scelti per quanto superano il proprio ruolo, non per la frequenza più alta.`}
+        limite={`${formazione} Questa lettura è più debole dell'altra: anche il nome più in alto, quattro volte su cinque, il giallo non lo prende, e la stima sbaglia fino a 2,3 punti. Entra solo chi supera il proprio ruolo di più di quanto la stima sappia sbagliare, così nessuno finisce qui per il fatto di essere difensore; fra quelli, l'ordine è per probabilità.`}
         provenienza={`${stagione} ${taratura} Il confronto è con i giocatori dello stesso ruolo: il difensore prende il giallo il 16,5% delle volte e l'attaccante il 10,6%, e quell'ordine regge in 26 campionati su 27. La severità dei cartellini cambia da una stagione all'altra, e la stima lo corregge: senza quella correzione prometteva 20,2% dove poi succedeva il 18,0%.`}
       />
     </>

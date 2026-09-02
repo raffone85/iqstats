@@ -90,6 +90,10 @@ export interface LetturaGiocatori {
   readonly marcatori: readonly Candidato[];
   /** Gare della stagione da cui esce il passo dei giocatori. */
   readonly gareStagione: number;
+  /** Quante gare della stagione precedente sono servite a completare il campione.
+   *  Zero quando la stagione in corso regge da sola. Va dichiarato in pagina: un numero
+   *  che poggia sull'anno scorso non promette la stessa cosa di uno di quest'anno. */
+  readonly garePrecedenti: number;
   /** Quante di quelle gare hanno davvero portato statistiche per giocatore. */
   readonly gareConDato: number;
   readonly base: { readonly giallo: number; readonly gol: number };
@@ -114,6 +118,19 @@ const CACHE_TTL_SECONDS = 3600;
  *  della tabella di base, e cambiarla qui la renderebbe incoerente. */
 const MIN_MINUTI = 90;
 /**
+ * Quante gare di campionato si leggono al massimo per costruire il passo dei giocatori.
+ *
+ * **E' un limite di latenza, non una soglia statistica.** Ogni gara costa una chiamata
+ * alla fonte, e la pagina le aspetta tutte. Cento gare bastano a dare una decina di
+ * presenze a un titolare in un campionato a venti squadre, che e' il campione da cui il
+ * retrospettivo vede il segnale staccarsi dal rumore; oltre, si paga latenza per una
+ * precisione che la stima non sa comunque usare.
+ */
+const MAX_GARE = 120;
+/** Quante letture per gara si chiedono insieme. In fila indiana centoventi gare fanno una
+ *  pagina che nessuno aspetta. */
+const BLOCCO = 8;
+/**
  * La forma del dato messo in cache, non la versione del prodotto.
  *
  * Scoperto guardando la cattura il 30 agosto 2026: cambiando `metro` da stringa a coppia
@@ -126,7 +143,7 @@ const MIN_MINUTI = 90;
  * forma: aggiungendo la soglia di ammissione la pagina ha continuato a mostrare il portiere
  * allo 0% che la soglia doveva togliere, perche' la chiave non era cambiata.
  */
-const VERSIONE_LETTURA = 5;
+const VERSIONE_LETTURA = 7;
 /** Quanti nomi mostra una lettura. Quattro come i blocchi, non di piu': una lista lunga
  *  non e' una lettura, e' un elenco. */
 const QUANTI = 4;
@@ -241,12 +258,14 @@ function candidati(
       statistiche: statistiche(p, campo),
     });
   }
-  // **Si ordina per quanto sorprende, non per quanto e' alto.** Con il metro del ruolo le
-  // stime grezze non sono piu' confrontabili fra ruoli diversi: un difensore parte dal 16%
-  // e un attaccante dall'11%, quindi ordinare sulla stima rimetterebbe in cima i difensori,
-  // che e' esattamente il difetto che questa misura ha corretto. Si ordina sullo scarto dal
-  // proprio metro.
-  fuori.sort((a, b) => b.stima - b.stimaBase - (a.stima - a.stimaBase) || b.valore - a.valore);
+  // **Si ordina per probabilita', perche' e' quello che il titolo promette.** Fino al 2
+  // settembre 2026 si ordinava per scarto dal proprio ruolo, e sotto «i quattro piu'
+  // probabili» usciva 25%, 10%, 10%, 22%: un ordine che il titolo smentiva riga per riga.
+  // Lo scarto serviva a impedire che i difensori occupassero i cartellini solo perche'
+  // difensori, ma quel lavoro adesso lo fa la soglia d'ammissione qui sopra: in lista ci
+  // arriva solo chi supera il proprio ruolo di piu' di quanto la stima sappia sbagliare,
+  // quindi nessuno e' li' per il ruolo e il piu' probabile puo' stare in cima.
+  fuori.sort((a, b) => b.stima - a.stima || b.stima - b.stimaBase - (a.stima - a.stimaBase));
   return fuori.slice(0, QUANTI);
 }
 
@@ -264,53 +283,72 @@ async function leggi(
   const elenco = (await client.getJson(
     `/api/v2/events/?league=${leagueId}&status=finished&limit=200&offset=0`,
   )) as { results?: readonly Record<string, unknown>[] } | null;
-  const gare = (elenco?.results ?? []).filter(
-    (g) => seasonId === null || g.season_id === seasonId,
-  );
+  // **La stagione in corso da sola non basta ad agosto.** Misurato il 31 agosto 2026 sulla
+  // prima giornata: un titolare aveva una gara alle spalle, quasi nessuno si distingueva dal
+  // proprio ruolo e la lettura restava vuota o nominava chi non aveva niente da dire. Il §8
+  // del piano lo prevede: le medie si prendono anche dalla stagione precedente finche'
+  // quella in corso non regge da sola. L'elenco chiede gia' le ultime duecento gare finite
+  // del campionato, quindi completare non costa una chiamata in piu' per l'elenco: costa
+  // solo le letture per gara, ed e' per quelle che c'e' un tetto.
+  const tutte = [...(elenco?.results ?? [])]
+    .filter((g) => typeof g.id === "number")
+    .sort((a, b) => String(b.event_date ?? "").localeCompare(String(a.event_date ?? "")));
+  const diQuestaStagione = tutte.filter((g) => seasonId === null || g.season_id === seasonId);
+  const gare = diQuestaStagione.slice(0, MAX_GARE);
+  const suoi = new Set(gare.map((g) => g.id));
+  for (const g of tutte) {
+    if (gare.length >= MAX_GARE) break;
+    if (!suoi.has(g.id)) gare.push(g);
+  }
+  const garePrecedenti = gare.length - Math.min(diQuestaStagione.length, MAX_GARE);
   if (gare.length === 0) return null;
 
   const passi = new Map<number, Passo>();
   let gareConDato = 0;
-  for (const gara of gare) {
-    const id = gara.id;
-    if (typeof id !== "number") continue;
-    const stat = (await client.getJson(
-      `/api/v2/events/${id}/player-stats/`,
-    )) as { player_stats?: readonly Record<string, unknown>[]; results?: readonly Record<string, unknown>[] } | null;
-    const righe = (stat?.player_stats ?? stat?.results ?? []).filter(
-      (r) => typeof r.minutes_played === "number" && r.minutes_played > 0,
+  for (let inizio = 0; inizio < gare.length; inizio += BLOCCO) {
+    const risposte = await Promise.all(
+      gare.slice(inizio, inizio + BLOCCO).map((gara) =>
+        client.getJson(`/api/v2/events/${gara.id}/player-stats/`) as Promise<
+          { player_stats?: readonly Record<string, unknown>[]; results?: readonly Record<string, unknown>[] } | null
+        >,
+      ),
     );
-    if (righe.length === 0) continue;
-    gareConDato += 1;
-    for (const r of righe) {
-      const pid = r.player_id;
-      const chi = typeof pid === "number" ? ammessi.get(pid) : undefined;
-      if (typeof pid !== "number" || chi === undefined) continue;
-      const p = passi.get(pid) ?? {
-        minuti: 0, gare: 0, contrasti: 0, falli: 0, tiri: 0, xg: 0,
-        gol: 0, inPorta: 0, gialli: 0, falliSubiti: 0,
-        contrastiVinti: 0, duelliVinti: 0, duelliPersi: 0, passaggiChiave: 0,
-        nome: chi.nome, squadra: chi.squadra, ruolo: chi.ruolo,
-      };
-      p.minuti += Number(r.minutes_played) || 0;
-      p.gare += 1;
-      p.contrasti += Number(r.total_tackle) || 0;
-      p.falli += Number(r.fouls) || 0;
-      p.tiri += Number(r.total_shots) || 0;
-      // xG e' nullo esattamente quando i tiri sono zero: li' vale zero, mai mancante.
-      p.xg += Number(r.expected_goals) || 0;
-      p.gol += Number(r.goals) || 0;
-      p.inPorta += Number(r.shots_on_target) || 0;
-      // Il giallo sulle righe per giocatore e' un sottoinsieme di quello degli episodi -
-      // ne perde il 38,4% - ma qui non e' un'etichetta da prevedere: e' il passato del
-      // giocatore, e sotto conta e' meglio che assente.
-      p.gialli += Number(r.yellow_card) || 0;
-      p.falliSubiti += Number(r.was_fouled) || 0;
-      p.contrastiVinti += Number(r.won_tackle) || 0;
-      p.duelliVinti += Number(r.duel_won) || 0;
-      p.duelliPersi += Number(r.duel_lost) || 0;
-      p.passaggiChiave += Number(r.key_pass) || 0;
-      passi.set(pid, p);
+    for (const stat of risposte) {
+      const righe = (stat?.player_stats ?? stat?.results ?? []).filter(
+        (r) => typeof r.minutes_played === "number" && r.minutes_played > 0,
+      );
+      if (righe.length === 0) continue;
+      gareConDato += 1;
+      for (const r of righe) {
+        const pid = r.player_id;
+        const chi = typeof pid === "number" ? ammessi.get(pid) : undefined;
+        if (typeof pid !== "number" || chi === undefined) continue;
+        const p = passi.get(pid) ?? {
+          minuti: 0, gare: 0, contrasti: 0, falli: 0, tiri: 0, xg: 0,
+          gol: 0, inPorta: 0, gialli: 0, falliSubiti: 0,
+          contrastiVinti: 0, duelliVinti: 0, duelliPersi: 0, passaggiChiave: 0,
+          nome: chi.nome, squadra: chi.squadra, ruolo: chi.ruolo,
+        };
+        p.minuti += Number(r.minutes_played) || 0;
+        p.gare += 1;
+        p.contrasti += Number(r.total_tackle) || 0;
+        p.falli += Number(r.fouls) || 0;
+        p.tiri += Number(r.total_shots) || 0;
+        // xG e' nullo esattamente quando i tiri sono zero: li' vale zero, mai mancante.
+        p.xg += Number(r.expected_goals) || 0;
+        p.gol += Number(r.goals) || 0;
+        p.inPorta += Number(r.shots_on_target) || 0;
+        // Il giallo sulle righe per giocatore e' un sottoinsieme di quello degli episodi -
+        // ne perde il 38,4% - ma qui non e' un'etichetta da prevedere: e' il passato del
+        // giocatore, e sotto conta e' meglio che assente.
+        p.gialli += Number(r.yellow_card) || 0;
+        p.falliSubiti += Number(r.was_fouled) || 0;
+        p.contrastiVinti += Number(r.won_tackle) || 0;
+        p.duelliVinti += Number(r.duel_won) || 0;
+        p.duelliPersi += Number(r.duel_lost) || 0;
+        p.passaggiChiave += Number(r.key_pass) || 0;
+        passi.set(pid, p);
+      }
     }
   }
   if (passi.size === 0) return null;
@@ -323,7 +361,8 @@ async function leggi(
       ? candidati(passi, voce.giallo, "falli", "falli")
       : [],
     marcatori: candidati(passi, voce.gol, "tiri", "tiri"),
-    gareStagione: gare.length,
+    gareStagione: gare.length - garePrecedenti,
+    garePrecedenti,
     gareConDato,
     base: { giallo: voce.giallo.base, gol: voce.gol.base },
     campioneTabella: { gare: voce.gare, casi: voce.casi },
