@@ -88,6 +88,12 @@ import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
 import { MatchValoreSection } from "@/components/match-valore-section";
+import { matchIntelligence } from "@/server/iqstats/match-intelligence";
+import { MatchIntelligenceSection } from "@/components/match-intelligence-section";
+import { tempiDellaGara } from "@/server/iqstats/tempi";
+import { MatchTempiSection } from "@/components/match-tempi-section";
+import { ritmoDellaGara } from "@/server/iqstats/ritmo";
+import { MatchRitmoSection } from "@/components/match-ritmo-section";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
@@ -473,6 +479,27 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // **Il Value Engine, collegato.** Le regole di scelta stanno dove stavano; qui si porta
   // soltanto la stessa gara che la pagina sta gia' mostrando: i nostri gol, i bersagli del
   // motore quando ci sono, le quote gia' scaricate. Nessuna chiamata nuova alla fonte.
+  // **I due tempi e il ritmo, dal nostro livello dati.** Due interrogazioni in parallelo,
+  // nessuna chiamata nuova alla fonte: leggono le stesse tavole gia' aperte per il motore e
+  // per gli arbitri, con la stessa finestra `kickoff_at <` che il motore usa ovunque.
+  const [tempi, ritmo] = await Promise.all([
+    tempiDellaGara({
+      leagueId: detail.leagueId,
+      seasonId: detail.seasonId,
+      homeTeamId: detail.homeTeamId,
+      awayTeamId: detail.awayTeamId,
+      homeTeam: detail.homeTeam,
+      awayTeam: detail.awayTeam,
+      kickoffAt: detail.kickoff,
+    }),
+    ritmoDellaGara({
+      leagueId: detail.leagueId,
+      seasonId: detail.seasonId,
+      homeTeamId: detail.homeTeamId,
+      awayTeamId: detail.awayTeamId,
+      kickoffAt: detail.kickoff,
+    }),
+  ]);
   const picks = buildMatchPicks(
     confronto,
     engineReading,
@@ -482,6 +509,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
     proiezioni?.bersagli ?? [],
     campioneGol,
   );
+  // **Il dossier non calcola niente di nuovo**: conta quante letture indipendenti dicono la
+  // stessa cosa, fra quelle che le sezioni sotto mostrano gia' una per una.
+  const dossier = matchIntelligence({
+    tempi,
+    bersagli: proiezioni?.bersagli ?? [],
+    nomiBersagli: Object.fromEntries(
+      Object.entries(FAMIGLIE).map(([target, famiglia]) => [target, famiglia.nome]),
+    ),
+    picks,
+  });
 
   // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
   // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
@@ -911,6 +948,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
+        {/* La sintesi: quale lettura regge di piu' e quante altre la sostengono. Sta prima
+            del margine perche' risponde alla domanda che viene prima: che cosa dice questa
+            gara. Il valore, che e' un'altra domanda, sta subito sotto. */}
+        {insight.allowed ? <MatchIntelligenceSection dossier={dossier} /> : null}
+
         {/* Il margine fra la nostra lettura e il prezzo del mercato. Sta subito sotto il
             confronto, perche' e' la stessa domanda vista piu' da vicino: li' si vede che
             cosa dicono i due, qui di quanto si separano e quanto quella distanza regge. */}
@@ -985,6 +1027,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         )}
 
+        {insight.allowed && tempi !== null ? <MatchTempiSection tempi={tempi} /> : null}
+
         <DossierCapitolo
           id="cap-gioco"
           nome="Il gioco"
@@ -1037,6 +1081,10 @@ export default async function MatchPage({ params }: MatchPageProps) {
             awayTeam={detail.awayTeam}
           />
         )}
+
+        {insight.allowed && ritmo !== null ? (
+          <MatchRitmoSection ritmo={ritmo} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} />
+        ) : null}
 
         <DossierCapitolo
           id="cap-contesto"

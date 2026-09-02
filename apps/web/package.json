@@ -55,7 +55,8 @@
     "stripe:catalog:check": "node scripts/stripe/sync-test-catalog.mjs",
     "stripe:catalog:apply": "node scripts/stripe/sync-test-catalog.mjs --apply",
     "stripe:webhook-secret:sync": "node scripts/stripe/sync-listener-secret.mjs",
-    "test:valore": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-valore.test.ts"
+    "test:valore": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-valore.test.ts",
+    "test:dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-dossier.test.ts"
   },
   "dependencies": {
     "@iqstats/shared": "file:../../packages/shared",

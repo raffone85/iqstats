@@ -1704,6 +1704,112 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   .gioc-det, .gioc-sum, .gioc-blocco { transition-duration: .01ms; animation-duration: .01ms; }
 }
 
+/* Il dossier: segnale principale, secondo, conflitto. Il bordo dice la categoria, e il
+   colore lo usa solo dove significa un verso: verde la convergenza forte, mattone il
+   conflitto, filetto tutto il resto. */
+.intel-blocchi { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.intel-blocco {
+  border: 1px solid var(--card-stroke); border-left-width: 3px;
+  border-radius: var(--r-control); background: var(--card-panel); padding: 11px 13px 12px;
+}
+.intel-forte { border-left-color: var(--card-up); }
+.intel-conflitto { border-left-color: var(--card-down); }
+.intel-rango {
+  margin: 0 0 5px; font-family: var(--font-mono, monospace); font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--card-ink-3);
+}
+.intel-testa { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.intel-titolo { font: 600 14.5px/1.25 var(--font-display, sans-serif); color: var(--card-ink); }
+.intel-prob {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 19px; font-weight: 600; color: var(--card-ink); flex: none;
+}
+.intel-conv { margin: 3px 0 0; font-size: 12.5px; color: var(--card-ink-2); }
+.intel-fonti {
+  list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px;
+  font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3);
+}
+.intel-fonti b { font-weight: 600; color: var(--card-ink-2); }
+.intel-fonti .intel-pro b { color: var(--card-up); }
+.intel-fonti .intel-contro b { color: var(--card-down); }
+.intel-perche { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
+.intel-valore {
+  margin: 12px 0 0; padding: 10px 12px; border-radius: var(--r-inset);
+  background: var(--card-panel-2); border: 1px solid var(--card-stroke);
+  font-size: 12.5px; line-height: 1.55; color: var(--card-ink-2);
+}
+.intel-valore b { color: var(--card-ink); }
+
+/* I due tempi. Due colonne su schermo largo, una sotto l'altra sul telefono: la tabella
+   resta a quattro colonne perche' il confronto e' fra le due squadre e il campionato. */
+.tempi-due { display: grid; gap: 14px; margin-top: 14px; }
+@media (min-width: 860px) { .tempi-due { grid-template-columns: 1fr 1fr; } }
+.tempi-blocco {
+  border: 1px solid var(--card-stroke); border-radius: var(--r-control);
+  background: var(--card-panel); padding: 12px 13px 13px;
+}
+.tempi-titolo { margin: 0; font: 600 14.5px/1.2 var(--font-display, sans-serif); color: var(--card-ink); }
+.tempi-stima { margin: 6px 0 0; font-size: 13px; color: var(--card-ink-2); }
+.tempi-stima b { font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums; }
+.tempi-tabella { margin-top: 10px; }
+.tempi-riga {
+  display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px;
+  padding: 4px 0; align-items: baseline;
+}
+.tempi-riga + .tempi-riga { border-top: 1px solid var(--card-stroke); }
+.tempi-testa {
+  font-family: var(--font-mono, monospace); font-size: 10px; letter-spacing: .04em;
+  color: var(--card-ink-3); border-bottom: 1px solid var(--card-stroke); padding-bottom: 6px;
+}
+.tempi-etichetta { font-size: 12.5px; color: var(--card-ink-2); }
+.tempi-val {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 12.5px; color: var(--card-ink); min-inline-size: 3.2em; text-align: right;
+}
+.tempi-lega { color: var(--card-ink-3); }
+.tempi-campione, .tempi-intervallo {
+  margin: 9px 0 0; font-size: 12px; line-height: 1.5; color: var(--card-ink-3);
+}
+.tempi-intervallo { margin-top: 12px; color: var(--card-ink-2); font-size: 12.5px; }
+
+/* Il ritmo: un gruppo per riga, i due fili delle posizioni, le metriche dentro. */
+.ritmo-gruppi { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.ritmo-gruppo {
+  border: 1px solid var(--card-stroke); border-radius: var(--r-control);
+  background: var(--card-panel);
+}
+.ritmo-det { interpolate-size: allow-keywords; }
+.ritmo-sum {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 10px 13px; cursor: pointer; list-style: none; min-block-size: var(--h-control);
+}
+.ritmo-sum::-webkit-details-marker { display: none; }
+.ritmo-sum:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.ritmo-nome { font: 600 13.5px/1.2 var(--font-display, sans-serif); color: var(--card-ink); }
+.ritmo-quote { display: grid; gap: 3px; flex: none; min-inline-size: 46%; }
+.ritmo-lato {
+  display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: center;
+  font-size: 11px; color: var(--card-ink-3);
+}
+.ritmo-lato b {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 12px; color: var(--card-ink);
+}
+.ritmo-filo { grid-column: 1 / -1; display: block; block-size: 3px; background: var(--card-stroke); border-radius: 2px; }
+.ritmo-filo i { display: block; block-size: 100%; background: var(--card-brand); border-radius: 2px; }
+.ritmo-voci { padding: 0 13px 12px; }
+.ritmo-voce {
+  display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; padding: 4px 0;
+  border-top: 1px solid var(--card-stroke); align-items: baseline;
+}
+.ritmo-voce-nome { font-size: 12.5px; color: var(--card-ink-2); }
+.ritmo-voce-val {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 12px; color: var(--card-ink); min-inline-size: 3.2em; text-align: right;
+}
+.ritmo-voce-lega { color: var(--card-ink-3); }
+.ritmo-legenda { margin: 8px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--card-ink-3); }
+
 /* Dove ci stacchiamo dal mercato.
    Una riga per lettura: il margine grande a destra, i cinque numeri sotto in mono con le
    cifre tabellari, e la frase che dice se quel margine regge. Il verde compare solo dove
