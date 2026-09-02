@@ -9,7 +9,8 @@ gia' raccolto**, senza toccare la fonte.
 Che cosa e' reale e che cosa no, dichiarato una volta sola:
 
 - **reali**: identificativi di gara, squadra, stagione, arbitro e competizione,
-  calcio d'inizio, stato, turno, punteggi, nomi delle squadre;
+  calcio d'inizio, stato, turno, punteggi finali e all'intervallo, nomi
+  delle squadre;
 - **segnaposto**: i nomi di competizione, stagione e arbitro, che l'archivio non
   porta. Le tavole li vogliono non nulli e il motore non li legge mai: entrano
   nelle viste di lettura dell'app, non in un calcolo. Sono marcati come tali.
@@ -194,6 +195,8 @@ def main(destinazione: Path) -> int:
                 "round_name",
                 "home_score",
                 "away_score",
+                "home_score_halftime",
+                "away_score_halftime",
             ]
         )
         for gara, gruppo in sorted(per_gara.items()):
@@ -215,6 +218,17 @@ def main(destinazione: Path) -> int:
             casa_gol, fuori_gol = casa["goals_for"], casa["goals_against"]
             if casa_gol is None or fuori_gol is None:
                 casa_gol = fuori_gol = None
+            # L'intervallo sta solo nel dettaglio archiviato, e la tavola vuole le due
+            # colonne nulle insieme o piene insieme: o la coppia c'e', o non si scrive.
+            casa_ht, fuori_ht = (d or {}).get("home_score_ht"), (d or {}).get("away_score_ht")
+            if casa_ht is None or fuori_ht is None:
+                casa_ht = fuori_ht = None
+            # Un gol non si toglie: un intervallo maggiore del finale e' un dato rotto,
+            # e si dichiara assente invece di sceglierne uno. Misurato il 2 settembre
+            # 2026: capita su 180 gare su 10.810, e su 179 di quelle la fonte ha gia'
+            # corretto da sola. La cura vera e' rinfrescare l'archivio, non indovinare.
+            elif casa_gol is None or casa_ht > casa_gol or fuori_ht > fuori_gol:
+                casa_ht = fuori_ht = None
             scrittore.writerow(
                 [
                     gara,
@@ -227,6 +241,8 @@ def main(destinazione: Path) -> int:
                     turno or "",
                     "" if casa_gol is None else casa_gol,
                     "" if fuori_gol is None else fuori_gol,
+                    "" if casa_ht is None else casa_ht,
+                    "" if fuori_ht is None else fuori_ht,
                 ]
             )
             gare_scritte += 1

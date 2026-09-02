@@ -7,6 +7,11 @@ dell'applicazione, **senza sovrascrivere nulla di quello che DATA-1 ha gia'
 scritto**. Ogni innesto e' `on conflict do nothing`: dove una riga esiste, vince
 la sua, con il suo nome vero.
 
+**L'unica eccezione, e resta dentro la stessa regola:** il punteggio all'intervallo.
+Le colonne esistono nello schema dal 9 agosto ma nessuno le ha mai scritte, quindi
+sono nulle su tutte le righe e `do nothing` le lascerebbe nulle per sempre. Si
+aggiornano **solo dove sono nulle**: dove qualcuno le ha gia' scritte, vince la sua.
+
 Tre guardie, tutte gia' presenti nello schema e nessuna inventata qui:
 
 - le competizioni nuove entrano con `is_active = false`, e
@@ -65,7 +70,8 @@ APPOGGIO = {
         "source_id bigint, season_source_id bigint, home_team_source_id bigint,"
         " away_team_source_id bigint, referee_source_id bigint,"
         " kickoff_at timestamptz, normalized_status text, round_name text,"
-        " home_score smallint, away_score smallint",
+        " home_score smallint, away_score smallint,"
+        " home_score_halftime smallint, away_score_halftime smallint",
     ),
 }
 
@@ -101,9 +107,10 @@ on conflict (source_id) do nothing;
 insert into football.matches
   (source_id, competition_id, season_id, home_team_id, away_team_id, referee_id,
    kickoff_at, normalized_status, round_name, home_score, away_score,
-   observed_at, content_checksum)
+   home_score_halftime, away_score_halftime, observed_at, content_checksum)
 select g.source_id, c.id, st.id, casa.id, ospite.id, arbitro.id,
        g.kickoff_at, g.normalized_status, g.round_name, g.home_score, g.away_score,
+       g.home_score_halftime, g.away_score_halftime,
        now(), md5('motore:gara:' || g.source_id)
 from s_gare g
 join s_stagioni ss on ss.source_id = g.season_source_id
@@ -113,6 +120,19 @@ join football.teams casa on casa.source_id = g.home_team_source_id
 join football.teams ospite on ospite.source_id = g.away_team_source_id
 left join football.referees arbitro on arbitro.source_id = g.referee_source_id
 on conflict (source_id) do nothing;
+
+-- Le gare gia' presenti: `do nothing` non le ha toccate, e il punteggio
+-- all'intervallo e' rimasto nullo. Si riempie solo dove e' nullo e solo dove il
+-- riferimento porta la coppia intera, che e' quello che il vincolo della tavola
+-- chiede: `(home_score_halftime is null) = (away_score_halftime is null)`.
+update football.matches m
+set home_score_halftime = g.home_score_halftime,
+    away_score_halftime = g.away_score_halftime
+from s_gare g
+where m.source_id = g.source_id
+  and m.home_score_halftime is null
+  and g.home_score_halftime is not null
+  and g.away_score_halftime is not null;
 """
 
 
