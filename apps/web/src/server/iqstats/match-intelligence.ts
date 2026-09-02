@@ -215,6 +215,9 @@ export function matchIntelligence(args: {
   const ordinati = [...segnali].sort((a, b) => {
     const peso = PESO[b.convergenza] - PESO[a.convergenza];
     if (peso !== 0) return peso;
+    // Qui, e **solo** qui, un'affidabilita' assente vale zero: serve a ordinare, non a
+    // mostrare. Un segnale senza curva misurata finisce sotto uno che ce l'ha, che e' la
+    // scelta giusta; nel campo che la pagina legge resta `null` e si dichiara assente.
     const affidabilita = (b.affidabilita ?? 0) - (a.affidabilita ?? 0);
     if (affidabilita !== 0) return affidabilita;
     return b.probabilita - a.probabilita;

@@ -22,7 +22,16 @@ const ETICHETTA: Record<Convergenza, string> = {
 };
 
 function Blocco({ segnale, rango }: { readonly segnale: Segnale; readonly rango: string }) {
-  const pro = segnale.fonti.filter((f) => f.favorevole);
+  const pro = segnale.fonti.filter((f) => f.favorevole).length;
+  const contro = segnale.fonti.filter((f) => f.contraria).length;
+  // In un conflitto contare solo le letture d'accordo racconta meta' della cosa: si dicono
+  // tutte e due le parti. E una lettura sola non sono «1 letture».
+  const conteggio =
+    contro > 0
+      ? `${pro} ${pro === 1 ? "lettura" : "letture"} a favore, ${contro} ${contro === 1 ? "contraria" : "contrarie"}`
+      : pro > 0
+        ? `${pro} ${pro === 1 ? "lettura d’accordo" : "letture d’accordo"}`
+        : "";
   return (
     <li className={`intel-blocco intel-${segnale.convergenza}`}>
       <p className="intel-rango">{rango}</p>
@@ -32,7 +41,7 @@ function Blocco({ segnale, rango }: { readonly segnale: Segnale; readonly rango:
       </div>
       <p className="intel-conv">
         {ETICHETTA[segnale.convergenza]}
-        {pro.length > 0 ? `, ${pro.length} letture d’accordo` : ""}
+        {conteggio === "" ? "" : `, ${conteggio}`}
       </p>
       <ul className="intel-fonti">
         {segnale.fonti.map((f) => (

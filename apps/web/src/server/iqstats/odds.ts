@@ -6,6 +6,7 @@ import "server-only";
 
 import { ProviderClient } from "./provider-client.ts";
 import { GatewayError } from "./errors.ts";
+import { mediana } from "./statistica.ts";
 
 const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
 const CACHE_TTL_MS = 120_000;
@@ -40,12 +41,7 @@ function resolveProviderConfig(): { baseUrl: string; token: string } | null {
   return { baseUrl, token };
 }
 
-function median(values: readonly number[]): number | null {
-  if (values.length === 0) return null;
-  const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
-}
+
 
 interface RawOutcome {
   readonly key: string;
@@ -91,7 +87,7 @@ function readOutcome(key: string, value: unknown): RawOutcome | null {
   return {
     key,
     label: typeof row.outcome_name === "string" && row.outcome_name.length > 0 ? row.outcome_name : null,
-    odds: median(quotes),
+    odds: mediana(quotes),
     drift,
     books: quotes.length,
     latest,

@@ -9,7 +9,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { matchIntelligence } from "../src/server/iqstats/match-intelligence.ts";
-import { mediana, posizione } from "../src/server/iqstats/ritmo.ts";
+import { posizione } from "../src/server/iqstats/ritmo.ts";
+import { mediana } from "../src/server/iqstats/statistica.ts";
 import {
   attesiDelTempo,
   esitiAllIntervallo,
@@ -169,9 +170,11 @@ test("ritmo · la posizione e' la quota di chi sta sotto, non un punteggio inven
   assert.equal(posizione(7, []), 0.5);
 });
 
-test("ritmo · la mediana regge il numero pari di valori", () => {
+test("ritmo · la mediana regge il numero pari di valori, e il caso vuoto", () => {
   assert.equal(mediana([1, 3]), 2);
   assert.equal(mediana([5, 1, 3]), 3);
+  // Prima esistevano due mediane, e questa tornava NaN sul vuoto invece di dichiararlo.
+  assert.equal(mediana([]), null);
 });
 
 // ---------------------------------------------------------------- segnali

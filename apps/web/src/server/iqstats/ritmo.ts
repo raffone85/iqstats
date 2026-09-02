@@ -19,6 +19,7 @@
 import "server-only";
 
 import { connessione } from "./lettura.ts";
+import { mediana } from "./statistica.ts";
 
 const MAX_GARE = 400;
 /** Sotto queste gare per lato non si legge un ritmo: si leggono due o tre serate. */
@@ -89,14 +90,6 @@ interface Riga {
   readonly squadra: number;
   readonly lato: "home" | "away";
   readonly valori: Readonly<Record<string, number | null>>;
-}
-
-export function mediana(valori: readonly number[]): number {
-  const ordinati = [...valori].sort((a, b) => a - b);
-  const mezzo = Math.floor(ordinati.length / 2);
-  return ordinati.length % 2 === 0
-    ? (ordinati[mezzo - 1] + ordinati[mezzo]) / 2
-    : ordinati[mezzo];
 }
 
 /** Quota di valori del campionato che stanno sotto questo. */
@@ -193,7 +186,8 @@ export async function ritmoDellaGara(args: {
       gruppo: metrica.gruppo,
       casa: mediaCasa,
       trasferta: mediaTrasferta,
-      lega: Math.round(mediana(lega) * 100) / 100,
+      // `lega` non e' mai vuoto qui: la metrica e' entrata solo perche' ha righe piene.
+      lega: Math.round((mediana(lega) ?? 0) * 100) / 100,
       posizioneCasa: posizione(mediaCasa, lega),
       posizioneTrasferta: posizione(mediaTrasferta, lega),
       gareCasa: casa.length,
@@ -210,9 +204,10 @@ export async function ritmoDellaGara(args: {
     gruppi.push({
       gruppo,
       nome: NOME_GRUPPO[gruppo],
-      posizioneCasa: Math.round(mediana(dentro.map((v) => v.posizioneCasa)) * 1000) / 1000,
+      // `dentro` non e' mai vuoto qui: il gruppo esiste solo se ha almeno una voce.
+      posizioneCasa: Math.round((mediana(dentro.map((v) => v.posizioneCasa)) ?? 0) * 1000) / 1000,
       posizioneTrasferta:
-        Math.round(mediana(dentro.map((v) => v.posizioneTrasferta)) * 1000) / 1000,
+        Math.round((mediana(dentro.map((v) => v.posizioneTrasferta)) ?? 0) * 1000) / 1000,
       voci: dentro,
     });
   }
