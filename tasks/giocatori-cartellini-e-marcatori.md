@@ -212,6 +212,35 @@ La formazione dichiarata come **probabile** finché è `predicted`, e ridisegnat
 *Verifica:* 375, 768, 1024 e 1440 px, tastiera, contrasto, `prefers-reduced-motion`, e la
 cattura guardata, non solo le misure.
 
+**Fatta il 31 agosto e rifinita il 2 settembre 2026.** Il numero grande è la probabilità
+tarata, e accanto porta il suo errore: 1,5 punti sul gol, 2,3 sul giallo. Il dettaglio che si
+apre porta dodici voci per novanta minuti con il totale accanto e segna quale numero ha scelto
+quel giocatore, senza una chiamata in più alla fonte. Un fattore solo per bersaglio: solo
+quello è stato misurato fuori periodo, gli altri restano numeri del giocatore e non metro.
+
+**Chi entra, e in che ordine.** Un candidato compare se supera la base del suo campionato e se
+lo scarto dal proprio ruolo è più grande dell'incertezza della stima. L'ordine è per
+probabilità, perché è quello che il titolo promette. Prima era per scarto dal ruolo, e sotto «i
+quattro più probabili» usciva 25%, 10%, 10%, 22%.
+
+**Il campione arriva anche dalla stagione precedente**, come previsto al §8: fino a 120 gare
+del campionato, ordinate per data, con le letture per gara chieste a gruppi di otto. Il tetto è
+un limite di latenza e non una soglia statistica. Misurato: la pagina risponde in 6-12 secondi
+invece del minuto abbondante di prima, con sei volte i dati, e quante gare vengano dall'anno
+scorso sta scritto in fondo alla sezione.
+
+**Quattro difetti veri trovati guardando la cattura e la pagina vera**, non le misure: lo
+scarto scritto per esteso spingeva il numero fuori dal pannello, che lo tagliava a «31» senza
+il segno di percento; i nomi si spezzavano dentro la parola; il verbo non concordava col
+soggetto plurale; e sulla prima giornata la lettura nominava un portiere allo 0% sotto «chi può
+segnare» e quattro difensori tutti alla base del loro ruolo, due dei quali con zero falli.
+Dopo le correzioni: nessun overflow a 375, 768, 1024 e 1440 px, zero combinazioni sotto AA
+misurate sullo stack di rendering, sommario alto fra 99 e 161 px contro i 44 minimi.
+
+**`VERSIONE_LETTURA` si alza anche quando cambia chi entra nella lettura**, non solo la forma:
+con la sola soglia nuova la pagina ha continuato a mostrare per un'ora il portiere che la
+soglia doveva togliere.
+
 ### Fase 4 — il consuntivo
 
 Come la voce 17 del piano: accanto alla lettura sta **quanto ha preso e quanto ha sbagliato**,
