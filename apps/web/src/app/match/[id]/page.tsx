@@ -86,6 +86,8 @@ import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/lett
 import { baseDiLega } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
+import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
+import { MatchValoreSection } from "@/components/match-valore-section";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
@@ -455,7 +457,31 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ]);
   const senzaAccount = !insight.allowed && insight.code === "unauthenticated";
 
-  const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
+  // **Il modello del confronto e' il nostro, quando c'e'.** Fino al 2 settembre 2026 la
+  // colonna «Modello» del pannello del mercato veniva dalla previsione della fonte: un
+  // numero altrui accostato al mercato altrui. I mercati dei gol escono dai nostri attesi
+  // e hanno le stesse cinque voci, quindi entrano nello stesso confronto senza riscriverlo.
+  // Dove il motore non copre la gara si ripiega sulla previsione della fonte, e la pagina
+  // lo dichiara sotto la tabella.
+  const modelloDeiGol = proiezioni?.gol ? comparabileDaGol(proiezioni.gol.mercati) : null;
+  const confronto = modelloDeiGol ?? prediction;
+  const marketReading = odds ? readMarket(confronto, odds, detail.homeTeam, detail.awayTeam) : null;
+  // Il campione dei gol: il lato con meno storia fra i due, che e' quello che comanda.
+  const campioneGol = proiezioni?.gol
+    ? Math.min(proiezioni.gol.campioneCasa, proiezioni.gol.campioneTrasferta)
+    : null;
+  // **Il Value Engine, collegato.** Le regole di scelta stanno dove stavano; qui si porta
+  // soltanto la stessa gara che la pagina sta gia' mostrando: i nostri gol, i bersagli del
+  // motore quando ci sono, le quote gia' scaricate. Nessuna chiamata nuova alla fonte.
+  const picks = buildMatchPicks(
+    confronto,
+    engineReading,
+    odds,
+    detail.homeTeam,
+    detail.awayTeam,
+    proiezioni?.bersagli ?? [],
+    campioneGol,
+  );
 
   // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
   // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
@@ -877,9 +903,19 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <p className="dossier-src">
               Quota di consenso su {odds?.bookmakers ?? 0} operatori, riportata a somma cento per
               togliere il margine di chi quota. Nessun operatore viene nominato e non ci sono
-              collegamenti esterni: qui il mercato è una misura, non una vetrina.
+              collegamenti esterni: qui il mercato è una misura, non una vetrina.{" "}
+              {modelloDeiGol !== null
+                ? "La colonna del modello sono i nostri numeri, dagli attesi delle due squadre."
+                : "Su questa gara il nostro motore non copre i gol: la colonna del modello è la previsione della fonte, non la nostra."}
             </p>
           </section>
+        ) : null}
+
+        {/* Il margine fra la nostra lettura e il prezzo del mercato. Sta subito sotto il
+            confronto, perche' e' la stessa domanda vista piu' da vicino: li' si vede che
+            cosa dicono i due, qui di quanto si separano e quanto quella distanza regge. */}
+        {insight.allowed ? (
+          <MatchValoreSection picks={picks} operatori={odds?.bookmakers ?? 0} />
         ) : null}
 
         {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono

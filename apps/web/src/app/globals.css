@@ -1704,6 +1704,34 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   .gioc-det, .gioc-sum, .gioc-blocco { transition-duration: .01ms; animation-duration: .01ms; }
 }
 
+/* Dove ci stacchiamo dal mercato.
+   Una riga per lettura: il margine grande a destra, i cinque numeri sotto in mono con le
+   cifre tabellari, e la frase che dice se quel margine regge. Il verde compare solo dove
+   la lettura e' solida - margine positivo e affidabilita' sopra la sua soglia misurata -
+   perche' nel sistema il colore dice un verso, non decora. */
+.valore-righe { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.valore-riga {
+  border: 1px solid var(--card-stroke); border-radius: var(--r-control);
+  background: var(--card-panel); padding: 11px 13px 12px;
+}
+.valore-solida { border-color: var(--card-up); }
+.valore-testa { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.valore-nome { font: 600 14.5px/1.25 var(--font-display, sans-serif); color: var(--card-ink); }
+.valore-edge {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 17px; font-weight: 600; color: var(--card-ink-3); white-space: nowrap; flex: none;
+}
+.valore-edge i { font-style: normal; font-size: 10.5px; font-weight: 400; }
+.valore-edge.valore-su { color: var(--card-up); }
+.valore-numeri {
+  margin: 9px 0 0; display: flex; flex-wrap: wrap; gap: 4px 18px;
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+}
+.valore-numeri div { display: flex; align-items: baseline; gap: 6px; }
+.valore-numeri dt { font-size: 10.5px; color: var(--card-ink-3); }
+.valore-numeri dd { margin: 0; font-size: 12.5px; font-weight: 500; color: var(--card-ink); }
+.valore-nota { margin: 9px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
+
 .gioc-limite { margin: 10px 0 0; font-size: 13px; line-height: 1.55; color: var(--card-ink-2); }
 
 /* Pagine legali: un documento, non una vetrina. Nessun blocco pieno (la quota della
