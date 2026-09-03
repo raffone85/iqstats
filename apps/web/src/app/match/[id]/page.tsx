@@ -812,22 +812,42 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // capitolo che sotto non esiste, e un'area riservata non compare fra le destinazioni di
   // chi non puo' aprirla - il suo riquadro d'accesso resta in pagina, al posto giusto.
   const aree = {
-    giocata: played && (finishedStats !== null || incidents !== null),
+    giocata: played && (
+      (finishedStats?.headline.length ?? 0) > 0
+      || (finishedStats?.rest.length ?? 0) > 0
+      || (finishedStats?.shots.length ?? 0) > 0
+      || (incidents?.length ?? 0) > 0
+    ),
     // Le tre letture dell'area rendono `null` da sole quando non hanno niente da dire, e
     // senza il piano al loro posto c'e' il riquadro d'accesso: l'area esiste quando esiste
-    // almeno una delle quattro. Misurato il 3 settembre su una gara senza proiezioni in
-    // locale: con `insight: true` restava un'intestazione senza un solo pannello sotto.
+    // almeno una delle quattro. Ogni condizione qui ripete la guardia del componente che
+    // le corrisponde, e deve ripeterla per intero: **`forti` non nullo non basta**, perche'
+    // `MatchLettureFortiSection` si ritira anche quando la lista dentro e' vuota
+    // (`match-letture-forti.tsx:40`). Misurato il 3 settembre sulla gara 209561, dove le
+    // altre tre tacevano e restava un'intestazione senza un solo pannello sotto.
     insight: contesto !== null
       || !insight.allowed
       || dossier.principale !== null
       || dossier.conflitti.length > 0
-      || (forti !== null && proiezioni !== null && proiezioni.bersagli.length > 0),
-    mercati: insight.allowed && (marketReading !== null || picks.length > 0),
+      || (forti !== null && forti.letture.length > 0),
+    // `MatchValoreSection` tiene solo le letture che hanno un prezzo a cui confrontarsi:
+    // dei pick senza mercato non le fanno comparire.
+    mercati: insight.allowed
+      && (marketReading !== null || picks.some((p) => p.marketProbability !== null)),
     gol: insight.allowed && (proiezioni !== null || tempi !== null),
     proiezioni: motore.allowed,
-    trend: (insight.allowed && letture.length > 0)
-      || standings !== null
-      || proiezioni?.forma != null,
+    // Sei pannelli, sei guardie: l'area vive se ne parla almeno uno. `standings` non nullo
+    // non basta - la sezione si ritira quando nessuno dei due lati ha una riga.
+    trend: (insight.allowed && (
+      cappello !== null
+      || saltiCasa.length > 0 || saltiFuori.length > 0
+      || leContese.length > 0
+      || (proiezioni !== null
+        && (proiezioni.ritardi.casa.length > 0 || proiezioni.ritardi.trasferta.length > 0))
+    ))
+      || (standings !== null && (standings.home !== null || standings.away !== null))
+      || (homeForm?.length ?? 0) > 0 || (awayForm?.length ?? 0) > 0
+      || proiezioni?.forma?.casa != null || proiezioni?.forma?.trasferta != null,
     contesto: true,
     giocatori: Boolean(lineups && (lineups.home || lineups.away)) || giocatori !== null,
     arbitro: (insight.allowed && arbitroNostro !== null) || referee?.careerGames != null,
