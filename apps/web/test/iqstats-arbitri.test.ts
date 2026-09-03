@@ -224,3 +224,66 @@ test("il metro di lega, quota per lato compresa, ricontato a mano", opzioni, asy
     `dispersione ${metro.dispersioneQuotaGialliCasa}, ricontata ${Math.sqrt(varianza)}`,
   );
 });
+
+test("dentro il dossier il profilo esce dalla competizione della gara", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+
+  // Un arbitro che ha diretto in due competizioni, con la secondaria sopra soglia: e' il
+  // caso in cui la competizione con piu' gare - la scelta di prima - dava il metro di un
+  // altro torneo. Sull'archivio del 3 settembre 2026 sono 329 gare su 9.240.
+  const [caso] = await sql<Array<{
+    arbitro: string; competizione: string; stagione: string;
+  }>>`
+    with per_gara as (
+      select o.referee_id, o.competition_id, o.season_id, o.match_id
+      from football.team_match_observations o
+      where o.referee_id is not null and o.fouls is not null and o.yellow_cards is not null
+      group by 1, 2, 3, 4 having count(*) = 2
+    ),
+    per_arbitro as (
+      select referee_id, competition_id, count(*) as gare from per_gara group by 1, 2
+    ),
+    principale as (
+      select distinct on (referee_id) * from per_arbitro
+      order by referee_id, gare desc, competition_id
+    )
+    select r.source_id::text as arbitro, c.source_id::text as competizione,
+           s.source_id::text as stagione
+    from per_gara g
+    join per_arbitro a on a.referee_id = g.referee_id and a.competition_id = g.competition_id
+    join principale p on p.referee_id = g.referee_id and p.competition_id <> g.competition_id
+    join football.referees r on r.id = g.referee_id
+    join football.competitions c on c.id = g.competition_id
+    join football.seasons s on s.id = g.season_id
+    where a.gare >= 5
+    group by 1, 2, 3
+    order by count(*) desc
+    limit 1
+  `;
+  if (caso === undefined) return; // l'archivio non ha il caso: niente da provare
+
+  const contestuale = await profiloArbitro(Number(caso.arbitro), {
+    competitionSourceId: Number(caso.competizione),
+    seasonSourceId: Number(caso.stagione),
+  });
+  const generale = await profiloArbitro(Number(caso.arbitro));
+  assert.ok(contestuale !== null && generale !== null);
+  assert.equal(
+    contestuale.competitionSourceId, Number(caso.competizione),
+    "il profilo del dossier non e' quello della competizione della gara",
+  );
+  assert.notEqual(
+    contestuale.competitionSourceId, generale.competitionSourceId,
+    "il profilo del dossier ha ripreso la competizione principale dell'arbitro",
+  );
+
+  // Senza gare nostre in quella competizione non si ripiega su un altro torneo: si tace.
+  assert.equal(
+    await profiloArbitro(Number(caso.arbitro), {
+      competitionSourceId: 999_999, seasonSourceId: Number(caso.stagione),
+    }),
+    null,
+    "senza gare in quella competizione il profilo deve mancare, non venire da altrove",
+  );
+});

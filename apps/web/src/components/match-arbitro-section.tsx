@@ -199,11 +199,13 @@ export function MatchArbitroSection({
       {scheda ?? null}
 
       <p className="dossier-src">
-        Tutto su <b>{profilo.gare} gare</b> dirette in {profilo.competizione}, di cui abbiamo
+        Tutto su <b>{profilo.gare} gare</b> dirette in {profilo.competizione}
+        {profilo.finestra === "stagione" ? " in questa stagione" : ""}, di cui abbiamo
         entrambe le squadre: con una riga sola falli e cartellini della gara sarebbero
         dimezzati senza che si veda. I numeri sono calcolati sulle <b>nostre</b> osservazioni,
         non sulle medie di carriera che la fonte pubblica, e il metro &egrave; la media dei
-        direttori della stessa competizione con almeno cinque gare.
+        direttori della stessa competizione
+        {profilo.finestra === "stagione" ? " in questa stagione" : ""} con almeno cinque gare.
       </p>
       <p className="dossier-src">
         <b>Non &egrave; un voto.</b> Un arbitro che fischia molto pu&ograve; aver avuto

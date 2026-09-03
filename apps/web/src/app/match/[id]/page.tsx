@@ -635,9 +635,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // Il profilo del designato dalle **nostre** osservazioni, non dalle medie di carriera
   // che la fonte pubblica: e' la regola del piano, e qui vale doppio perche' questi stessi
   // numeri sono gia' fra gli ingressi del motore.
+  // **La competizione e la stagione del profilo sono quelle di questa gara**, non quelle in
+  // cui l'arbitro ha diretto di piu': senza, il pannello lo confronterebbe con i colleghi di
+  // un altro torneo. Misurato sull'archivio locale il 3 settembre 2026: 329 gare su 9.240
+  // sono dirette fuori dalla competizione principale di chi le fischia, e 95 arbitri su 685
+  // ne hanno piu' d'una. Senza competizione o senza stagione non c'e' profilo: le medie di
+  // un'altra competizione non sono un ripiego.
+  const contestoArbitro = detail.leagueId === null || detail.seasonId === null ? null
+    : { competitionSourceId: detail.leagueId, seasonSourceId: detail.seasonId };
   const [arbitroNostro, arbitroGare] = detail.refereeId === null
     ? [null, [] as const]
-    : await Promise.all([profiloArbitro(detail.refereeId), gareDirette(detail.refereeId)]);
+    : await Promise.all([
+      contestoArbitro === null ? null : profiloArbitro(detail.refereeId, contestoArbitro),
+      gareDirette(detail.refereeId),
+    ]);
   // La competizione e la stagione **di questa gara**, prese dalla gara piu' recente che
   // l'arbitro ha diretto qui: il confronto che serve al lettore del dossier e' con le altre
   // gare dello stesso torneo, non con tutta la sua storia.
@@ -1391,9 +1402,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <p className="dossier-src">
               La carriera è il totale dichiarato dalla fonte su tutte le competizioni che
               segue: dice da quanto quest&apos;arbitro dirige, <b>non</b> come fischia questa
-              gara, e <b>non entra nella proiezione</b>. Il metro della competizione, il
-              campione e lo sbilancio fra i due lati stanno qui sopra, calcolati sulle nostre
-              osservazioni.
+              gara, e <b>non entra nella proiezione</b>.{" "}
+              {arbitroNostro === null
+                ? "Di gare sue in questa competizione non ne abbiamo osservate, quindi qui "
+                  + "sopra non c'è un metro con cui confrontarla: le medie di un altro torneo "
+                  + "direbbero un'altra cosa."
+                : "Il metro della competizione, il campione e lo sbilancio fra i due lati "
+                  + "stanno qui sopra, calcolati sulle nostre osservazioni."}
             </p>
           </section>
         ) : null}

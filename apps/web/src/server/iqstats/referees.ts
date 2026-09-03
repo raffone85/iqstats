@@ -19,6 +19,9 @@ import { connessione } from "./lettura.ts";
 /** Sotto questo campione un arbitro non entra nel metro: poche gare non fanno una tendenza. */
 const GARE_MINIME = 5;
 
+/** Sotto questi colleghi non c'e' una distribuzione: nessun metro, nessuna posizione. */
+const COLLEGHI_MINIMI = 3;
+
 /**
  * Le colonne su cui si puo' ordinare, scritte una per una.
  *
@@ -56,11 +59,28 @@ export interface RigaStorico {
   readonly rossi: number;
 }
 
+/**
+ * La gara che si sta leggendo, con gli identificativi della fonte.
+ *
+ * Serve al dossier: li' la domanda e' «come fischia **in questo torneo**», e la risposta non
+ * puo' arrivare dalla competizione in cui l'arbitro ha diretto di piu'.
+ */
+export interface ContestoDiGara {
+  readonly competitionSourceId: number;
+  readonly seasonSourceId: number;
+}
+
 export interface ProfiloArbitro {
   readonly sourceId: number;
   readonly nome: string;
   readonly paese: string | null;
   readonly competizione: string;
+  /**
+   * Da quali gare escono medie, metro e posizioni: la stagione di questa gara oppure tutta
+   * la competizione. Senza contesto e' sempre `competizione`, e la competizione e' quella
+   * principale dell'arbitro.
+   */
+  readonly finestra: "stagione" | "competizione";
   readonly competitionSourceId: number | null;
   readonly gare: number;
   readonly media: MediaDiGara;
@@ -111,7 +131,7 @@ export interface CompetizioneConArbitri {
  * ci sono tutte e due le squadre.
  */
 const PER_GARA = `
-  select o.referee_id, o.competition_id, o.match_id,
+  select o.referee_id, o.competition_id, o.season_id, o.match_id,
          min(o.kickoff_at) as quando,
          sum(o.fouls) as falli,
          sum(o.yellow_cards) as gialli,
@@ -122,7 +142,7 @@ const PER_GARA = `
          sum(o.yellow_cards) filter (where o.side = 'away') as gialli_trasferta
   from football.team_match_observations o
   where o.referee_id is not null and o.fouls is not null and o.yellow_cards is not null
-  group by 1, 2, 3
+  group by 1, 2, 3, 4
   having count(*) = 2
 `;
 
@@ -162,23 +182,86 @@ function numero(valore: string | null): number {
   return valore === null ? 0 : Number(valore);
 }
 
-/** Il profilo di un arbitro, o `null` se non lo conosciamo o non ha gare complete. */
-export async function profiloArbitro(sourceId: number): Promise<ProfiloArbitro | null> {
+/**
+ * La stagione della gara, o tutta la competizione quando la stagione non regge.
+ *
+ * Due condizioni, e servono tutte e due: il designato deve avere il campione minimo, e in
+ * quella stagione devono esserci colleghi sopra soglia. Senza colleghi il metro sarebbe una
+ * media di nessuno, e la riga in pagina direbbe «contro 0,00 dei colleghi».
+ */
+async function finestraDelProfilo(
+  sql: NonNullable<ReturnType<typeof connessione>>,
+  sourceId: number,
+  contesto: ContestoDiGara,
+): Promise<"stagione" | "competizione"> {
+  const righe = await sql<Array<{ mie: string; colleghi: string }>>`
+    with per_gara as (${sql.unsafe(PER_GARA)}),
+    in_stagione as (
+      select referee_id, count(*) as gare from per_gara
+      where competition_id = (select id from football.competitions
+                               where source_id = ${contesto.competitionSourceId}::bigint)
+        and season_id = (select id from football.seasons
+                          where source_id = ${contesto.seasonSourceId}::bigint)
+      group by 1
+    )
+    select coalesce((select gare from in_stagione
+                      where referee_id = (select id from football.referees
+                                           where source_id = ${sourceId}::bigint)), 0)::text
+             as mie,
+           (select count(*) from in_stagione where gare >= ${GARE_MINIME})::text as colleghi
+  `;
+  const riga = righe[0];
+  if (riga === undefined) return "competizione";
+  return Number(riga.mie) >= GARE_MINIME && Number(riga.colleghi) >= COLLEGHI_MINIMI
+    ? "stagione" : "competizione";
+}
+
+/**
+ * Il profilo di un arbitro, o `null` se non lo conosciamo o non ha gare complete.
+ *
+ * **Con un contesto le gare sono solo quelle di quella competizione**, e la finestra e' la
+ * sua stagione quando regge il campione. Se l'arbitro non ha nostre gare in quel torneo la
+ * risposta e' `null`: le medie di un'altra competizione non sono un ripiego, sono un'altra
+ * domanda. Senza contesto - la scheda dell'arbitro - resta la competizione in cui ha diretto
+ * di piu', che li' e' quella giusta.
+ */
+export async function profiloArbitro(
+  sourceId: number,
+  contesto?: ContestoDiGara,
+): Promise<ProfiloArbitro | null> {
   const sql = connessione();
   if (sql === null) return null;
 
   try {
+    // **Numero e metro devono uscire dalle stesse gare.** La stagione vale come finestra solo
+    // se il designato ha il campione minimo e se ha colleghi con cui confrontarsi: altrimenti
+    // si scende a tutta la competizione, mai a un'altra.
+    const finestra = contesto === undefined ? "competizione" : await finestraDelProfilo(
+      sql, sourceId, contesto,
+    );
+    const scelte = contesto === undefined ? sql`select * from per_gara` : sql`
+      select * from per_gara
+      where competition_id = (select id from football.competitions
+                               where source_id = ${contesto.competitionSourceId}::bigint)
+      ${finestra === "stagione"
+        ? sql`and season_id = (select id from football.seasons
+                                where source_id = ${contesto.seasonSourceId}::bigint)`
+        : sql``}
+    `;
+
     const righe = await sql<RigaProfilo[]>`
       with per_gara as (${sql.unsafe(PER_GARA)}),
+      scelte as (${scelte}),
       per_arbitro as (
         select referee_id, competition_id, count(*) as gare,
                avg(falli) as falli, avg(gialli) as gialli, avg(rossi) as rossi,
                avg(falli_casa) as falli_casa, avg(falli_trasferta) as falli_trasferta,
                avg(gialli_casa) as gialli_casa, avg(gialli_trasferta) as gialli_trasferta
-        from per_gara group by 1, 2
+        from scelte group by 1, 2
       ),
-      -- La competizione dell'arbitro e' quella in cui ha diretto di piu': 586 arbitri su
-      -- 681 ne hanno una sola, e per gli altri il metro giusto e' quella principale.
+      -- Senza contesto la competizione dell'arbitro e' quella in cui ha diretto di piu':
+      -- 586 arbitri su 681 ne hanno una sola. Con un contesto la riga e' gia' una sola,
+      -- perche' la CTE scelte tiene solo la competizione della gara.
       principale as (
         select distinct on (referee_id) *
         from per_arbitro order by referee_id, gare desc, competition_id
@@ -228,13 +311,15 @@ export async function profiloArbitro(sourceId: number): Promise<ProfiloArbitro |
 
     const colleghi = riga.colleghi === null ? 0 : Number(riga.colleghi);
     const posizione = (sotto: string | null): PosizioneFraColleghi | null =>
-      colleghi < 3 || sotto === null ? null : { quota: Number(sotto) / colleghi, colleghi };
+      colleghi < COLLEGHI_MINIMI || sotto === null
+        ? null : { quota: Number(sotto) / colleghi, colleghi };
 
     return {
       sourceId,
       nome: riga.name,
       paese: riga.country_name,
       competizione: riga.competizione,
+      finestra,
       competitionSourceId: riga.competition_source_id === null
         ? null : Number(riga.competition_source_id),
       gare: Number(riga.gare),
