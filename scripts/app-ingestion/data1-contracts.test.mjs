@@ -181,6 +181,50 @@ test("classifica preserva metriche mancanti come null", () => {
   assert.equal(standing.snapshot.rows[1].form, null);
 });
 
+test("l'intervallo entra intero, e quello maggiore del finale si dichiara assente", () => {
+  const page = normalizeMatchPage(
+    {
+      count: 4,
+      results: [
+        // coppia buona: entra com'e'
+        { id: 501, league_id: 101, season_id: 201, home_team_id: 401, away_team_id: 402,
+          home_team: "Home A", away_team: "Away A", event_date: "2026-08-09T18:00:00Z",
+          status: "finished", home_score: 2, away_score: 1, home_score_ht: 1, away_score_ht: 1 },
+        // un gol non si toglie: 2-0 all'intervallo su un 1-1 finale e' rotto
+        { id: 502, league_id: 101, season_id: 201, home_team_id: 401, away_team_id: 402,
+          home_team: "Home A", away_team: "Away A", event_date: "2026-08-09T18:00:00Z",
+          status: "finished", home_score: 1, away_score: 1, home_score_ht: 2, away_score_ht: 0 },
+        // mezza coppia: la tavola le vuole nulle insieme o piene insieme
+        { id: 503, league_id: 101, season_id: 201, home_team_id: 401, away_team_id: 402,
+          home_team: "Home A", away_team: "Away A", event_date: "2026-08-09T18:00:00Z",
+          status: "finished", home_score: 3, away_score: 0, home_score_ht: 1, away_score_ht: null },
+        // senza finale non c'e' niente con cui confrontare l'intervallo
+        { id: 504, league_id: 101, season_id: 201, home_team_id: 401, away_team_id: 402,
+          home_team: "Home A", away_team: "Away A", event_date: "2026-08-09T18:00:00Z",
+          status: "scheduled", home_score: null, away_score: null, home_score_ht: 0, away_score_ht: 0 },
+      ],
+    },
+    observedAt,
+  );
+  assert.equal(page.matches[0].homeScoreHalftime, 1);
+  assert.equal(page.matches[0].awayScoreHalftime, 1);
+  for (const indice of [1, 2, 3]) {
+    assert.equal(page.matches[indice].homeScoreHalftime, null);
+    assert.equal(page.matches[indice].awayScoreHalftime, null);
+  }
+});
+
+test("un intervallo diverso cambia il checksum, altrimenti non si aggiornerebbe mai", () => {
+  const gara = (ht) => ({
+    id: 505, league_id: 101, season_id: 201, home_team_id: 401, away_team_id: 402,
+    home_team: "Home A", away_team: "Away A", event_date: "2026-08-09T18:00:00Z",
+    status: "finished", home_score: 2, away_score: 1, home_score_ht: ht, away_score_ht: 0,
+  });
+  const uno = normalizeMatchPage({ count: 1, results: [gara(1)] }, observedAt).matches[0];
+  const due = normalizeMatchPage({ count: 1, results: [gara(2)] }, observedAt).matches[0];
+  assert.notEqual(uno.checksum, due.checksum);
+});
+
 test("checksum non dipende dall'ordine delle chiavi", () => {
   assert.equal(contentChecksum({ a: 1, b: { c: 2 } }), contentChecksum({ b: { c: 2 }, a: 1 }));
 });
