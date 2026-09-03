@@ -563,6 +563,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .dossier-capitoli { position: sticky; top: 0; z-index: 20;
   background: var(--card-ground); border-bottom: 1px solid var(--card-stroke);
   overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+/* **Le due barre si impilano, non si sovrappongono.** Sopra i 640 px `.product-header` e'
+   sticky a `top: 0` ed e' alta 68 px piu' il filetto: senza questo scarto la barra dei
+   capitoli le finiva sotto. A 640 px e meno la testata torna `static` (riga 263) e la barra
+   dei capitoli e' l'unica fissa, quindi li' lo scarto non serve e non si applica. */
+@media (min-width: 641px) { .dossier-capitoli { top: 69px; } }
 .dossier-capitoli::-webkit-scrollbar { display: none; }
 .dossier-capitoli ul { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
 /* Il minimo tattile del design system e' 44 px, e vale anche per una voce d'indice. */
@@ -581,6 +586,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    finisce coperto da chi lo indica. */
 .dossier-capitolo h2 { scroll-margin-top: 56px; margin: 0; font-family: var(--font-display);
   font-size: clamp(21px, 3.4vw, 27px); line-height: 1.2; color: var(--card-ink); }
+/* Sopra i 640 px le barre fisse sono due, quindi l'ancora deve fermarsi piu' in basso:
+   68 px di testata, 45 di barra dei capitoli, e un respiro. */
+@media (min-width: 641px) { .dossier-capitolo h2 { scroll-margin-top: 124px; } }
 .dossier-capitolo p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-3); }
 
 /* line-height 1.35 e non 1: la classe trasforma in maiuscolo, e un maiuscolo accentato

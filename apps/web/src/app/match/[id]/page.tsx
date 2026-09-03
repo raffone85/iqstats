@@ -49,23 +49,37 @@ import {
 import { TrendRecente } from "@/components/trend-recente";
 
 /**
- * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
+ * Le aree del dossier, nell'ordine in cui si incontrano scorrendo.
  *
- * Quattro ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza -
- * e due entrano con il loro contenuto: «Come si affrontano» quando i due lati si separano,
- * «Analisi finale» quando c'e' qualcosa da rileggere. L'indice non promette mai un capitolo
- * che non si trova.
+ * **Un'area e' una domanda dell'utente, non un elenco di funzioni.** «Chi puo' segnare» e
+ * «chi rischia il cartellino» non sono due aree: sono due moduli dentro Giocatori. Una
+ * funzione nuova entra nell'area che risponde alla sua domanda, e diventa un'area nuova solo
+ * se porta una domanda che nessuna delle nove pone gia'.
+ *
+ * Ogni area entra nell'indice **solo se ha contenuto visibile su questa gara**: l'indice non
+ * promette mai un capitolo che non si trova, e non promette nemmeno un capitolo che il piano
+ * dell'utente non gli fa vedere.
  */
-function capitoliDi(conAffronto: boolean, conAnalisi: boolean):
-  readonly { id: string; nome: string }[] {
-  return [
-    { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
-    ...(conAffronto ? [{ id: "cap-affronto", nome: "Come si affrontano" }] : []),
-    { id: "cap-gol", nome: "Gol" },
-    { id: "cap-gioco", nome: "Gioco" },
-    { id: "cap-contesto", nome: "Contesto" },
-    ...(conAnalisi ? [{ id: "cap-analisi", nome: "Analisi finale" }] : []),
+type AreeDelDossier = Readonly<Record<
+  "giocata" | "insight" | "mercati" | "gol" | "proiezioni" | "trend" | "contesto"
+  | "giocatori" | "arbitro" | "precedenti",
+  boolean
+>>;
+
+function capitoliDi(aree: AreeDelDossier): readonly { id: string; nome: string }[] {
+  const tutte = [
+    { id: "cap-giocata", nome: "Gara giocata", c: aree.giocata },
+    { id: "cap-insight", nome: "Insight", c: aree.insight },
+    { id: "cap-mercati", nome: "Mercati", c: aree.mercati },
+    { id: "cap-gol", nome: "Gol", c: aree.gol },
+    { id: "cap-proiezioni", nome: "Proiezioni", c: aree.proiezioni },
+    { id: "cap-trend", nome: "Trend", c: aree.trend },
+    { id: "cap-contesto", nome: "Contesto", c: aree.contesto },
+    { id: "cap-giocatori", nome: "Giocatori", c: aree.giocatori },
+    { id: "cap-arbitro", nome: "Arbitro", c: aree.arbitro },
+    { id: "cap-precedenti", nome: "Precedenti", c: aree.precedenti },
   ];
+  return tutte.filter((a) => a.c).map(({ id, nome }) => ({ id, nome }));
 }
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
@@ -793,6 +807,33 @@ export default async function MatchPage({ params }: MatchPageProps) {
     </>
   );
 
+  // **Quali aree hanno davvero qualcosa da mostrare su questa gara.** Serve una volta sola,
+  // e la usano sia l'indice sia le intestazioni: cosi' la barra non puo' promettere un
+  // capitolo che sotto non esiste, e un'area riservata non compare fra le destinazioni di
+  // chi non puo' aprirla - il suo riquadro d'accesso resta in pagina, al posto giusto.
+  const aree = {
+    giocata: played && (finishedStats !== null || incidents !== null),
+    // Le tre letture dell'area rendono `null` da sole quando non hanno niente da dire, e
+    // senza il piano al loro posto c'e' il riquadro d'accesso: l'area esiste quando esiste
+    // almeno una delle quattro. Misurato il 3 settembre su una gara senza proiezioni in
+    // locale: con `insight: true` restava un'intestazione senza un solo pannello sotto.
+    insight: contesto !== null
+      || !insight.allowed
+      || dossier.principale !== null
+      || dossier.conflitti.length > 0
+      || (forti !== null && proiezioni !== null && proiezioni.bersagli.length > 0),
+    mercati: insight.allowed && (marketReading !== null || picks.length > 0),
+    gol: insight.allowed && (proiezioni !== null || tempi !== null),
+    proiezioni: motore.allowed,
+    trend: (insight.allowed && letture.length > 0)
+      || standings !== null
+      || proiezioni?.forma != null,
+    contesto: true,
+    giocatori: Boolean(lineups && (lineups.home || lineups.away)) || giocatori !== null,
+    arbitro: (insight.allowed && arbitroNostro !== null) || referee?.careerGames != null,
+    precedenti: Boolean(h2h && h2h.totalMatches) || (insight.allowed && analisi !== null),
+  };
+
   return (
     <ProductShell>
       <div className="oggi-backdrop" aria-hidden="true" />
@@ -879,15 +920,36 @@ export default async function MatchPage({ params }: MatchPageProps) {
         {/* I due capitoli condizionati seguono il diritto, non solo il dato: senza il piano
             Insight quelle sezioni non si disegnano, e un indice che punta a un'ancora che
             non esiste manda chi tocca in fondo alla pagina, dove non c'e' niente. */}
-        <DossierCapitoli
-          capitoli={capitoliDi(insight.allowed && letture.length > 0, insight.allowed && analisi !== null)}
-        />
+        <DossierCapitoli capitoli={capitoliDi(aree)} />
 
-        <DossierCapitolo
-          id="cap-colpo-occhio"
-          nome="Il colpo d'occhio"
-          descrizione="Chi e' favorito, e quali letture reggono davvero."
-        />
+        {/* **A gara finita l'ordine cambia in cima, non ovunque.** Quello che si cerca non e'
+            piu' la previsione ma il tabellino, e subito dopo se quella previsione ha tenuto.
+            Le due aree esistono solo qui: su una gara da giocare i due componenti rendono
+            `null` da soli, e non lasciano un capitolo vuoto. */}
+        {aree.giocata ? (
+          <>
+            <DossierCapitolo
+              id="cap-giocata"
+              nome="La gara giocata"
+              descrizione="Il tabellino, la mappa dei tiri, la cronologia, e il conto di quello che avevamo detto."
+            />
+            <MatchFinishedSection
+              stats={finishedStats}
+              incidents={incidents}
+              homeTeam={detail.homeTeam}
+              awayTeam={detail.awayTeam}
+            />
+            {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
+          </>
+        ) : null}
+
+        {aree.insight ? (
+          <DossierCapitolo
+            id="cap-insight"
+            nome="Insight"
+            descrizione="Che cosa vede IQstatS in questa gara, e quanto quella lettura regge."
+          />
+        ) : null}
 
         {/* Il quadro della gara: una riga, tre numeri, una riserva. Sostituisce «In breve»,
             «Verdetto» e «La lettura IQstatS», che dicevano cose sovrapposte in 2.009 px
@@ -913,7 +975,33 @@ export default async function MatchPage({ params }: MatchPageProps) {
               "L’analisi finale",
             ]}
           />
-        ) : marketReading ? (
+        ) : null}
+
+        {/* La sintesi: quale lettura regge di piu' e quante altre la sostengono. Sta prima
+            del mercato perche' risponde alla domanda che viene prima: che cosa dice questa
+            gara. Il confronto col prezzo, che e' un'altra domanda, ha la sua area sotto. */}
+        {insight.allowed ? <MatchIntelligenceSection dossier={dossier} /> : null}
+
+        {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
+            gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
+            a mente. Ordinate per quanto reggono, non per percentuale. */}
+        {!insight.allowed || forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
+          <MatchLettureFortiSection
+            letture={forti}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        )}
+
+        {aree.mercati ? (
+          <DossierCapitolo
+            id="cap-mercati"
+            nome="Mercati"
+            descrizione="La nostra probabilita' contro il prezzo: quota, movimento, margine e quanto quel margine regge."
+          />
+        ) : null}
+
+        {insight.allowed && marketReading ? (
           <section className="dossier-panel" aria-labelledby="market-title">
             <p className="dossier-kick">Modello e mercato</p>
             <h2 id="market-title" className="sr-only-heading">Confronto con il mercato</h2>
@@ -948,58 +1036,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         ) : null}
 
-        {/* La sintesi: quale lettura regge di piu' e quante altre la sostengono. Sta prima
-            del margine perche' risponde alla domanda che viene prima: che cosa dice questa
-            gara. Il valore, che e' un'altra domanda, sta subito sotto. */}
-        {insight.allowed ? <MatchIntelligenceSection dossier={dossier} /> : null}
-
-        {/* Il margine fra la nostra lettura e il prezzo del mercato. Sta subito sotto il
-            confronto, perche' e' la stessa domanda vista piu' da vicino: li' si vede che
+        {/* Il margine fra la nostra lettura e il prezzo. Sta dentro Mercati e subito sotto il
+            confronto, perche' e' la stessa domanda vista piu' da vicino: sopra si vede che
             cosa dicono i due, qui di quanto si separano e quanto quella distanza regge. */}
         {insight.allowed ? (
           <MatchValoreSection picks={picks} operatori={odds?.bookmakers ?? 0} />
         ) : null}
 
-        {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
-            gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
-            a mente. Ordinate per quanto reggono, non per percentuale. */}
-        {!insight.allowed || forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
-          <MatchLettureFortiSection
-            letture={forti}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
+        {aree.gol ? (
+          <DossierCapitolo
+            id="cap-gol"
+            nome="Gol"
+            descrizione="Quanti se ne attendono, chi li segna, se segnano entrambe, e come si dividono fra primo e secondo tempo."
           />
-        )}
-
-        {insight.allowed && letture.length > 0 ? (
-          <>
-            <DossierCapitolo
-              id="cap-affronto"
-              nome="Come si affrontano"
-              descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
-            />
-            <ComeSiAffrontano cappello={cappello} />
-            <TrendRecente
-              casa={saltiCasa}
-              fuori={saltiFuori}
-              nomeCasa={detail.homeTeam}
-              nomeFuori={detail.awayTeam}
-              gareCasa={trendCasa?.gare ?? 0}
-              gareFuori={trendFuori?.gare ?? 0}
-            />
-            <ConteseSection
-              contese={leContese}
-              nomeCasa={detail.homeTeam}
-              nomeFuori={detail.awayTeam}
-            />
-          </>
         ) : null}
-
-        <DossierCapitolo
-          id="cap-gol"
-          nome="I gol"
-          descrizione="Quanti se ne attendono, chi li segna e se segnano entrambe."
-        />
 
         {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
         {!insight.allowed ? null : proiezioni?.gol ? (
@@ -1027,13 +1077,18 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         )}
 
+        {/* Primo e secondo tempo stanno **dentro** Gol e non in un'area propria: sono gli
+            stessi gol, visti nella loro dimensione temporale. Un'area per ogni taglio dello
+            stesso dato moltiplicherebbe i capitoli senza aggiungere una domanda. */}
         {insight.allowed && tempi !== null ? <MatchTempiSection tempi={tempi} /> : null}
 
-        <DossierCapitolo
-          id="cap-gioco"
-          nome="Il gioco"
-          descrizione="Tiri, falli, corner, cartellini: una card per famiglia, con la sua linea."
-        />
+        {aree.proiezioni ? (
+          <DossierCapitolo
+            id="cap-proiezioni"
+            nome="Proiezioni"
+            descrizione="Tiri, tiri in porta, falli, corner, cartellini, fuorigioco, parate: una card per famiglia, con intervallo e linea."
+          />
+        ) : null}
 
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
         {!motore.allowed ? (
@@ -1082,17 +1137,38 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         )}
 
-        {insight.allowed && ritmo !== null ? (
-          <MatchRitmoSection ritmo={ritmo} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} />
+        {aree.trend ? (
+          <DossierCapitolo
+            id="cap-trend"
+            nome="Trend"
+            descrizione="Come stanno arrivando: quello che una produce contro quello che l'altra concede, le ultime gare, la classifica e la forma."
+          />
         ) : null}
 
-        <DossierCapitolo
-          id="cap-contesto"
-          nome="Il contesto"
-          descrizione="Classifica, forma, arbitro, formazioni e precedenti."
-        />
+        {insight.allowed && letture.length > 0 ? (
+          <>
+            <ComeSiAffrontano cappello={cappello} />
+            <TrendRecente
+              casa={saltiCasa}
+              fuori={saltiFuori}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
+              gareCasa={trendCasa?.gare ?? 0}
+              gareFuori={trendFuori?.gare ?? 0}
+            />
+            <ConteseSection
+              contese={leContese}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
+            />
+          </>
+        ) : null}
 
-        {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
+        {/* **Classifica e forma, adiacenti dentro la stessa area.** Rispondono alla stessa
+            domanda con due unita' di misura: la striscia dei risultati e le reti fatte e
+            subite contro il metro della competizione. I due componenti restano distinti
+            perche' `MatchFormaSection` vive anche su `/expected`, dove quella striscia non
+            c'e': qui li tiene insieme l'area, non una fusione che romperebbe l'altra pagina. */}
         <MatchStandingsSection
           standings={standings}
           homeTeam={detail.homeTeam}
@@ -1101,9 +1177,6 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayForm={awayForm}
         />
 
-        {/* Quanto pesano quei risultati: reti fatte e subite contro il metro della
-            competizione, dalle nostre osservazioni. Sta subito sotto la striscia perche'
-            risponde alla stessa domanda con un'altra unita' di misura. */}
         {proiezioni?.forma ? (
           <MatchFormaSection
             casa={proiezioni.forma.casa}
@@ -1113,15 +1186,137 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        {/* Chi rischia il cartellino, chi puo' segnare. Sta prima dell'arbitro perche' e'
-            una lettura sui giocatori attesi in campo, e l'arbitro e' il contesto in cui
-            quei giocatori giocheranno. */}
+        {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
+            contate in un altro modo. Chiude Trend, non apre un'area propria. */}
+        {insight.allowed && proiezioni ? (
+          <MatchRitardiSection
+            casa={proiezioni.ritardi.casa}
+            trasferta={proiezioni.ritardi.trasferta}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : null}
+
+        {aree.contesto ? (
+          <DossierCapitolo
+            id="cap-contesto"
+            nome="Contesto"
+            descrizione="Che tipo di gara aspettarsi: il ritmo con cui le due squadre ci arrivano, e la cornice in cui si gioca."
+          />
+        ) : null}
+
+        {insight.allowed && ritmo !== null ? (
+          <MatchRitmoSection ritmo={ritmo} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} />
+        ) : null}
+
+        {/* Il contorno: dove si gioca, con che tempo, dopo quanto viaggio. Sta qui e non piu'
+            in fondo alla pagina: e' informazione che serve **prima** della gara, e prima
+            della gara va letta. L'arbitro non e' piu' in questo riquadro - ha la sua area. */}
+        <section className="dossier-panel" aria-labelledby="contorno-title">
+          <p className="dossier-kick">La cornice</p>
+          <h2 id="contorno-title" className="sr-only-heading">Stadio e condizioni</h2>
+          <div className="dossier-facts">
+            <div className="dossier-fact">
+              <dt>Stadio</dt>
+              <dd>{venue ? venue.name : "Non disponibile"}</dd>
+            </div>
+            {venue ? (
+              <div className="dossier-fact">
+                <dt>Città</dt>
+                <dd>{[venue.city, venue.country].filter(Boolean).join(", ") || "n/d"}{venue.capacity ? ` · ${venue.capacity.toLocaleString("it-IT")} posti` : ""}</dd>
+              </div>
+            ) : null}
+            {weatherLabel ? (
+              <div className="dossier-fact">
+                <dt>Tempo previsto</dt>
+                <dd>{weatherLabel}</dd>
+              </div>
+            ) : null}
+            {detail.travelDistanceKm !== null ? (
+              <div className="dossier-fact">
+                <dt>Viaggio degli ospiti</dt>
+                <dd>{detail.travelDistanceKm.toLocaleString("it-IT")} km</dd>
+              </div>
+            ) : null}
+            {detail.isLocalDerby || detail.isNeutralGround ? (
+              <div className="dossier-fact">
+                <dt>Cornice</dt>
+                <dd>
+                  {[detail.isLocalDerby ? "derby cittadino" : null, detail.isNeutralGround ? "campo neutro" : null]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </dd>
+              </div>
+            ) : null}
+          </div>
+        </section>
+
+        {aree.giocatori ? (
+          <DossierCapitolo
+            id="cap-giocatori"
+            nome="Giocatori"
+            descrizione="Chi scende in campo, e che cosa ci si aspetta da chi ci scende."
+          />
+        ) : null}
+
+        {/* **La formazione prima delle letture che la usano.** Fino al 3 settembre 2026 gli
+            undici comparivano cinque blocchi dopo la sezione che dichiarava «formazione
+            confermata»: si leggeva il giudizio prima del fatto su cui poggia. */}
+        {lineups && (lineups.home || lineups.away) ? (
+          <section className="dossier-panel" aria-labelledby="lineups-title">
+            <p className="dossier-kick">Chi gioca</p>
+            <h2 id="lineups-title" className="sr-only-heading">Formazioni</h2>
+            <p className="dossier-verdict-lead">
+              {lineups.confirmed
+                ? "Formazioni ufficiali: sono gli undici scesi in campo."
+                : "Formazioni previste, non ancora ufficiali: possono cambiare fino al fischio d'inizio."}
+            </p>
+            {/* Quando un dato cambia da un momento all'altro, l'ora dice quanto vale. */}
+            {lineupsUpdatedAt ? (
+              <p className="dossier-src">
+                {lineups.confirmed ? "Ufficiali dalle " : "Ultimo aggiornamento delle "}
+                {lineupsUpdatedAt}
+                {lineups.confirmed ? "." : ", rilette ogni dieci minuti fino all'ufficialità."}
+              </p>
+            ) : null}
+            <div className="bench-grid">
+              <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
+              <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />
+            </div>
+            {/* Le due panchine stanno dentro Giocatori, chiuse: sono il contorno di chi
+                gioca, non una domanda a se'. */}
+            {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (
+              <details className="dossier-spiega">
+                <summary>Le due panchine</summary>
+                <div className="bench-grid">
+                  <Bench allenatore={homeCoach} teamName={detail.homeTeam} />
+                  <Bench allenatore={awayCoach} teamName={detail.awayTeam} />
+                </div>
+                <p className="dossier-src">
+                  Medie della gestione di ciascun allenatore, non della sola stagione in corso: il
+                  numero di gare è scritto accanto.
+                </p>
+              </details>
+            ) : null}
+          </section>
+        ) : null}
+
+        {/* Chi rischia il cartellino, chi puo' segnare: la lettura sui giocatori attesi, che
+            ora arriva dopo gli undici da cui dipende. */}
         {!motore.allowed || giocatori === null ? null : (
           <MatchGiocatoriSection
             lettura={giocatori}
             formazioneConfermata={lineups?.confirmed ?? false}
           />
         )}
+
+        {aree.arbitro ? (
+          <DossierCapitolo
+            id="cap-arbitro"
+            nome="Arbitro"
+            descrizione="Come fischia, contro il metro della sua lega, e quanto pesa gia' dentro le proiezioni."
+          />
+        ) : null}
 
         {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
             proiezione: 16 ingressi su 85 nel modello dei gialli. */}
@@ -1162,88 +1357,21 @@ export default async function MatchPage({ params }: MatchPageProps) {
             l'unica cosa che risponde a quella domanda, e li' non c'e' un capitolo che lo
             faccia. */}
 
-        {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
-            contate in un altro modo. */}
-        {insight.allowed && proiezioni ? (
-          <MatchRitardiSection
-            casa={proiezioni.ritardi.casa}
-            trasferta={proiezioni.ritardi.trasferta}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
-        ) : null}
-
-        {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
-
-        {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
-        <MatchFinishedSection
-          stats={finishedStats}
-          incidents={incidents}
-          homeTeam={detail.homeTeam}
-          awayTeam={detail.awayTeam}
-        />
-
-        {/* Chi gioca: previsto o confermato, e la differenza si dice */}
-        {lineups && (lineups.home || lineups.away) ? (
-          <section className="dossier-panel" aria-labelledby="lineups-title">
-            <p className="dossier-kick">Chi gioca</p>
-            <h2 id="lineups-title" className="sr-only-heading">Formazioni</h2>
-            <p className="dossier-verdict-lead">
-              {lineups.confirmed
-                ? "Formazioni ufficiali: sono gli undici scesi in campo."
-                : "Formazioni previste, non ancora ufficiali: possono cambiare fino al fischio d'inizio."}
-            </p>
-            {/* Quando un dato cambia da un momento all'altro, l'ora dice quanto vale. */}
-            {lineupsUpdatedAt ? (
-              <p className="dossier-src">
-                {lineups.confirmed ? "Ufficiali dalle " : "Ultimo aggiornamento delle "}
-                {lineupsUpdatedAt}
-                {lineups.confirmed ? "." : ", rilette ogni dieci minuti fino all'ufficialità."}
-              </p>
-            ) : null}
-            <div className="bench-grid">
-              <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
-              <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />
-            </div>
-          </section>
-        ) : null}
-
-        {/* Le due panchine */}
-        {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (
-          <section className="dossier-panel" aria-labelledby="bench-title">
-            <p className="dossier-kick">Le due panchine</p>
-            <h2 id="bench-title" className="sr-only-heading">Gli allenatori</h2>
-            <div className="bench-grid">
-              <Bench allenatore={homeCoach} teamName={detail.homeTeam} />
-              <Bench allenatore={awayCoach} teamName={detail.awayTeam} />
-            </div>
-            <p className="dossier-src">
-              Medie della gestione di ciascun allenatore, non della sola stagione in corso: il
-              numero di gare è scritto accanto.
-            </p>
-          </section>
-        ) : null}
-
-        {/* Il contorno: chi arbitra, dove si gioca, con che tempo, dopo quanto viaggio */}
-        <section className="dossier-panel" aria-labelledby="ref-venue-title">
-          <p className="dossier-kick">Il contorno</p>
-          <h2 id="ref-venue-title" className="sr-only-heading">Arbitro, stadio e condizioni</h2>
-          <div className="dossier-facts">
-            <div className="dossier-fact">
-              <dt>Arbitro</dt>
-              <dd>{referee ? referee.name : "Non designato / non disponibile"}</dd>
-            </div>
-            {/* **Qui NON ci sono le medie dell'arbitro**, e non è una dimenticanza.
-                Misurato il 27 agosto: gli aggregati della fonte filtrati per competizione
-                sono gli stessi delle nostre osservazioni dove abbiamo il campione — in
-                Premier, su cinque gare, stesso numero di gare in quattro casi su cinque e
-                scarto massimo 0,24 gialli — e sono una gara sola dove non ce l'abbiamo:
-                nelle coppe la mediana è 1-2 gare per arbitro. Ridondanti dove reggono,
-                rumore dove sarebbero l'unica cosa. Restano nella sezione dedicata, che
-                dichiara campione e metro. La carriera invece la sa solo la fonte. */}
-            {referee?.careerGames != null ? (
+        {/* **La carriera sta qui, non piu' in fondo alla pagina.** E' l'unica cosa che sa
+            solo la fonte, e va letta accanto ai nostri numeri, non in un riquadro separato
+            a migliaia di pixel di distanza. Le medie di lega e il campione restano sopra:
+            questo dice da quanto dirige, non come fischia. */}
+        {referee?.careerGames != null ? (
+          <section className="dossier-panel" aria-labelledby="ref-career-title">
+            <p className="dossier-kick">La carriera</p>
+            <h2 id="ref-career-title" className="sr-only-heading">Carriera dell&apos;arbitro</h2>
+            <div className="dossier-facts">
               <div className="dossier-fact">
-                <dt>Carriera dell&apos;arbitro</dt>
+                <dt>Arbitro</dt>
+                <dd>{referee.name}</dd>
+              </div>
+              <div className="dossier-fact">
+                <dt>Gare dirette</dt>
                 <dd>
                   {referee.careerGames.toLocaleString("it-IT")} gare
                   {referee.careerYellowCards != null
@@ -1254,85 +1382,57 @@ export default async function MatchPage({ params }: MatchPageProps) {
                     : ""}
                 </dd>
               </div>
-            ) : null}
-            <div className="dossier-fact">
-              <dt>Stadio</dt>
-              <dd>{venue ? venue.name : "Non disponibile"}</dd>
             </div>
-            {venue ? (
-              <div className="dossier-fact">
-                <dt>Città</dt>
-                <dd>{[venue.city, venue.country].filter(Boolean).join(", ") || "n/d"}{venue.capacity ? ` · ${venue.capacity.toLocaleString("it-IT")} posti` : ""}</dd>
-              </div>
-            ) : null}
-            {weatherLabel ? (
-              <div className="dossier-fact">
-                <dt>Tempo previsto</dt>
-                <dd>{weatherLabel}</dd>
-              </div>
-            ) : null}
-            {detail.travelDistanceKm !== null ? (
-              <div className="dossier-fact">
-                <dt>Viaggio degli ospiti</dt>
-                <dd>{detail.travelDistanceKm.toLocaleString("it-IT")} km</dd>
-              </div>
-            ) : null}
-            {detail.isLocalDerby || detail.isNeutralGround ? (
-              <div className="dossier-fact">
-                <dt>Cornice</dt>
-                <dd>
-                  {[detail.isLocalDerby ? "derby cittadino" : null, detail.isNeutralGround ? "campo neutro" : null]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </dd>
-              </div>
-            ) : null}
-          </div>
-          {referee?.careerGames != null ? (
             <p className="dossier-src">
               La carriera è il totale dichiarato dalla fonte su tutte le competizioni che
               segue: dice da quanto quest&apos;arbitro dirige, <b>non</b> come fischia questa
               gara, e <b>non entra nella proiezione</b>. Il metro della competizione, il
-              campione e lo sbilancio fra i due lati stanno più sopra, nella sezione
-              dedicata, calcolati sulle nostre osservazioni.
+              campione e lo sbilancio fra i due lati stanno qui sopra, calcolati sulle nostre
+              osservazioni.
             </p>
-          ) : null}
-        </section>
+          </section>
+        ) : null}
 
-        {/* Testa a testa */}
+        {aree.precedenti ? (
+          <DossierCapitolo
+            id="cap-precedenti"
+            nome="Precedenti"
+            descrizione="Il testa a testa, il conto di quello che avevamo detto, e i limiti di tutto il resto."
+          />
+        ) : null}
+
+        {/* **Il testa a testa e' materiale di supporto, e sta chiuso.** Chi lo cerca lo apre;
+            chi legge la gara non attraversa quattro numeri che non entrano in nessuna delle
+            letture sopra. Il pannello resta, con il suo campione dichiarato in chiaro. */}
         {h2h && h2h.totalMatches ? (
           <section className="dossier-panel" aria-labelledby="h2h-title">
             <p className="dossier-kick">Testa a testa</p>
             <h2 id="h2h-title" className="sr-only-heading">Precedenti</h2>
-            <div className="dossier-h2h">
-              <div className="dossier-h2h-stat"><strong>{h2h.homeWins ?? 0}</strong><span>Vittorie {detail.homeTeam}</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.draws ?? 0}</strong><span>Pareggi</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.awayWins ?? 0}</strong><span>Vittorie {detail.awayTeam}</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.avgTotalGoals != null ? h2h.avgTotalGoals.toFixed(1) : "n/d"}</strong><span>Gol medi</span></div>
-            </div>
-            {h2h.recent.length > 0 ? (
-              <ul className="dossier-recent">
-                {h2h.recent.slice(0, 5).map((m, i) => (
-                  <li key={`${m.date ?? "d"}-${i}`}>
-                    <span>{m.home ?? "—"} <b>{m.score ?? ""}</b> {m.away ?? "—"}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
             <p className="dossier-src">Su {h2h.totalMatches} precedenti registrati dalla fonte.</p>
+            <details className="dossier-spiega">
+              <summary>I precedenti fra queste due squadre</summary>
+              <div className="dossier-h2h">
+                <div className="dossier-h2h-stat"><strong>{h2h.homeWins ?? 0}</strong><span>Vittorie {detail.homeTeam}</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.draws ?? 0}</strong><span>Pareggi</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.awayWins ?? 0}</strong><span>Vittorie {detail.awayTeam}</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.avgTotalGoals != null ? h2h.avgTotalGoals.toFixed(1) : "n/d"}</strong><span>Gol medi</span></div>
+              </div>
+              {h2h.recent.length > 0 ? (
+                <ul className="dossier-recent">
+                  {h2h.recent.slice(0, 5).map((m, i) => (
+                    <li key={`${m.date ?? "d"}-${i}`}>
+                      <span>{m.home ?? "—"} <b>{m.score ?? ""}</b> {m.away ?? "—"}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </details>
           </section>
         ) : null}
 
-        {!insight.allowed || analisi === null ? null : (
-          <>
-            <DossierCapitolo
-              id="cap-analisi"
-              nome="Analisi finale"
-              descrizione="Quello che il dossier dice e quello che non dice, con il rimando ai numeri."
-            />
-            <AnalisiFinale analisi={analisi} />
-          </>
-        )}
+        {/* L'analisi finale chiude Precedenti invece di aprire un capitolo suo: e' la
+            rilettura di tutto quello che sta sopra, non una decima domanda. */}
+        {!insight.allowed || analisi === null ? null : <AnalisiFinale analisi={analisi} />}
 
         <p className="dossier-note">
           Dati letti soltanto lato server. Le probabilità sono letture di un modello statistico, mai certezze; nessun consiglio finanziario.
