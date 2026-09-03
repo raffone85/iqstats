@@ -8,9 +8,12 @@ scritto**. Ogni innesto e' `on conflict do nothing`: dove una riga esiste, vince
 la sua, con il suo nome vero.
 
 **L'unica eccezione, e resta dentro la stessa regola:** il punteggio all'intervallo.
-Le colonne esistono nello schema dal 9 agosto ma nessuno le ha mai scritte, quindi
-sono nulle su tutte le righe e `do nothing` le lascerebbe nulle per sempre. Si
-aggiornano **solo dove sono nulle**: dove qualcuno le ha gia' scritte, vince la sua.
+`do nothing` non tocca lo storico, quindi un valore sbagliato resterebbe sbagliato
+per sempre, e la fonte lo corregge dopo la nostra raccolta. Si aggiorna **solo dove
+la riga porta la firma del motore** - il `content_checksum` che scrive questo file -
+percio' non si sovrascrive mai niente di quello che ha scritto un altro percorso.
+Misurato il 3 settembre 2026: la regola precedente, il solo `is null`, avrebbe
+corretto 0 righe su 184 sbagliate.
 
 Tre guardie, tutte gia' presenti nello schema e nessuna inventata qui:
 
@@ -121,16 +124,21 @@ join football.teams ospite on ospite.source_id = g.away_team_source_id
 left join football.referees arbitro on arbitro.source_id = g.referee_source_id
 on conflict (source_id) do nothing;
 
--- Le gare gia' presenti: `do nothing` non le ha toccate, e il punteggio
--- all'intervallo e' rimasto nullo. Si riempie solo dove e' nullo e solo dove il
--- riferimento porta la coppia intera, che e' quello che il vincolo della tavola
--- chiede: `(home_score_halftime is null) = (away_score_halftime is null)`.
+-- Le gare gia' presenti: `do nothing` non le ha toccate. Si aggiorna solo dove la
+-- riga porta la firma del motore, cosi' la scrittura di un altro percorso non viene
+-- mai calpestata, e solo dove il riferimento porta la coppia intera - il vincolo
+-- della tavola chiede `(home_score_halftime is null) = (away_score_halftime is null)`.
+-- Un intervallo che non regge arriva vuoto dalla guardia di
+-- `export_reference_local.py`, e le due condizioni su `g` lo lasciano fuori: qui non
+-- si azzera mai un valore gia' scritto.
 update football.matches m
 set home_score_halftime = g.home_score_halftime,
     away_score_halftime = g.away_score_halftime
 from s_gare g
 where m.source_id = g.source_id
-  and m.home_score_halftime is null
+  and m.content_checksum = md5('motore:gara:' || m.source_id)
+  and (m.home_score_halftime, m.away_score_halftime)
+      is distinct from (g.home_score_halftime, g.away_score_halftime)
   and g.home_score_halftime is not null
   and g.away_score_halftime is not null;
 """
