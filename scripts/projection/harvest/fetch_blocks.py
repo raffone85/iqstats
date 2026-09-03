@@ -10,6 +10,12 @@ La raccolta e' riprendibile, idempotente e resistente alle interruzioni: ogni es
 finisce subito in un giornale ad aggiunta, e un rilancio salta cio' che e' gia' stato
 acquisito e validato.
 
+Per rinfrescare c'e' `--force`, che riacquisisce anche cio' che il giornale dichiara
+gia' preso: la fonte corregge i dati dopo la raccolta, e senza questo l'unico modo
+era spostare la cartella. **I payload sul disco vengono sovrascritti e non sono in
+nessun backup** (`.gitignore`): prima si copia la cartella, e con `--dry-run` si vede
+quante gare verrebbero richieste senza chiederne nessuna.
+
 Una risposta fallita non e' mai un dato mancante e non e' mai uno zero: resta un esito
 con il suo stato e il suo motivo.
 
@@ -19,6 +25,7 @@ Uso:
     .venv/Scripts/python.exe scripts/projection/harvest/fetch_blocks.py --block incidents
     .venv/Scripts/python.exe scripts/projection/harvest/fetch_blocks.py --block all
     .venv/Scripts/python.exe scripts/projection/harvest/fetch_blocks.py --block incidents --limit 5
+    .venv/Scripts/python.exe scripts/projection/harvest/fetch_blocks.py --block match-detail --force --dry-run
 """
 
 import argparse
@@ -190,15 +197,17 @@ def acquisisci(url, token):
     return "errore", None, "tentativi esauriti", TENTATIVI_MASSIMI
 
 
-def raccogli(blocco, token, base, gare, limite, ritmo, prova):
+def raccogli(blocco, token, base, gare, limite, ritmo, prova, forza=False):
     modello = BLOCCHI[blocco]
     esiti = carica_giornale(blocco)
     os.makedirs(os.path.join(DATA_DIR, blocco), exist_ok=True)
 
+    # Con --force nulla conta come gia' acquisito: e' l'unico modo di rinfrescare
+    # un archivio che la fonte ha corretto dopo la raccolta.
     residue = [
         (event_id, league_id)
         for event_id, league_id in gare
-        if not gia_acquisito(blocco, esiti, event_id, league_id)
+        if forza or not gia_acquisito(blocco, esiti, event_id, league_id)
     ]
     gia = len(gare) - len(residue)
     da_fare = residue[:limite] if limite else residue
@@ -206,6 +215,9 @@ def raccogli(blocco, token, base, gare, limite, ritmo, prova):
     print("blocco " + blocco + ": " + str(len(gare)) + " gare, "
           + str(gia) + " gia' acquisite, " + str(len(residue)) + " residue, "
           + str(len(da_fare)) + " in questa esecuzione")
+    if forza and da_fare:
+        print("  --force: i payload gia' sul disco vengono sovrascritti, e "
+              + os.path.join(DATA_DIR, blocco) + " non e' in nessun backup")
     if prova or not da_fare:
         return {"blocco": blocco, "da_acquisire": len(da_fare), "eseguite": 0}
 
@@ -277,6 +289,9 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="acquisisci solo N gare")
     parser.add_argument("--rate", type=float, default=RICHIESTE_AL_SECONDO)
     parser.add_argument("--dry-run", action="store_true", help="conta soltanto, non chiede nulla")
+    parser.add_argument("--force", action="store_true",
+                        help="riacquisisci anche cio' che il giornale dichiara gia' preso, "
+                             "sovrascrivendo i payload sul disco")
     argomenti = parser.parse_args()
 
     token, base = leggi_configurazione()
@@ -292,7 +307,7 @@ def main():
 
     for blocco in blocchi:
         riepilogo = raccogli(blocco, token, base, gare, argomenti.limit,
-                             argomenti.rate, argomenti.dry_run)
+                             argomenti.rate, argomenti.dry_run, argomenti.force)
         print("riepilogo " + blocco + ": " + json.dumps(riepilogo, ensure_ascii=False))
     return 0
 
