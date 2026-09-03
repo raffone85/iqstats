@@ -1958,3 +1958,12 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   letter-spacing: .1em; text-transform: uppercase; color: var(--card-ink-3);
 }
 .insight-riserva { margin: 12px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }
+/* **Le letture dell'Insight su telefono.** La riga nasce a tre colonne - etichetta, barra,
+   percentuale - e sotto i 640 px la prima si riduce a 84 px: misurato a 375 px, l'etichetta
+   incolonnava una parola per riga e la riga diventava alta 160 px. Qui l'etichetta prende
+   tutta la larghezza e barra e percentuale scendono sotto, sulla stessa riga. Vale solo
+   dentro l'Insight, dove queste righe sono la lettura principale della pagina. */
+@media (max-width: 640px) {
+  .insight-panel .dossier-1x2-row { grid-template-columns: 1fr auto; gap: 6px 10px; }
+  .insight-panel .dossier-1x2-label { grid-column: 1 / -1; }
+}
