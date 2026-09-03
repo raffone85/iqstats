@@ -23,7 +23,7 @@ import {
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
-import { MatchLettureFortiSection } from "@/components/match-letture-forti";
+import { MatchInsightSection, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
@@ -31,7 +31,6 @@ import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
-import { ContestoGara } from "@/components/contesto-gara";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
@@ -103,7 +102,6 @@ import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
 import { MatchValoreSection } from "@/components/match-valore-section";
 import { matchIntelligence } from "@/server/iqstats/match-intelligence";
-import { MatchIntelligenceSection } from "@/components/match-intelligence-section";
 import { tempiDellaGara } from "@/server/iqstats/tempi";
 import { MatchTempiSection } from "@/components/match-tempi-section";
 import { ritmoDellaGara } from "@/server/iqstats/ritmo";
@@ -818,18 +816,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
       || (finishedStats?.shots.length ?? 0) > 0
       || (incidents?.length ?? 0) > 0
     ),
-    // Le tre letture dell'area rendono `null` da sole quando non hanno niente da dire, e
-    // senza il piano al loro posto c'e' il riquadro d'accesso: l'area esiste quando esiste
-    // almeno una delle quattro. Ogni condizione qui ripete la guardia del componente che
-    // le corrisponde, e deve ripeterla per intero: **`forti` non nullo non basta**, perche'
-    // `MatchLettureFortiSection` si ritira anche quando la lista dentro e' vuota
-    // (`match-letture-forti.tsx:40`). Misurato il 3 settembre sulla gara 209561, dove le
-    // altre tre tacevano e restava un'intestazione senza un solo pannello sotto.
-    insight: contesto !== null
-      || !insight.allowed
-      || dossier.principale !== null
-      || dossier.conflitti.length > 0
-      || (forti !== null && forti.letture.length > 0),
+    // **La condizione e la guardia del componente sono la stessa frase, scritta una volta
+    // sola.** Quando erano due, divergevano: il 3 settembre l'area Insight compariva vuota
+    // sulla gara 209561. Senza il piano l'area esiste lo stesso, perche' al posto suo c'e'
+    // il riquadro che dice che cosa ci sarebbe dentro.
+    insight: !insight.allowed || insightHaContenuto({ contesto, dossier, forti }),
     // `MatchValoreSection` tiene solo le letture che hanno un prezzo a cui confrontarsi:
     // dei pick senza mercato non le fanno comparire.
     mercati: insight.allowed
@@ -971,14 +962,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        {/* Il quadro della gara: una riga, tre numeri, una riserva. Sostituisce «In breve»,
-            «Verdetto» e «La lettura IQstatS», che dicevano cose sovrapposte in 2.009 px
-            prima del primo capitolo. Le famiglie e il loro ordine sono quelli che
-            `lettureForti` sceglie gia', e il metro di ogni atteso e' la somma delle due
-            medie di lega dei due lati. */}
-        <ContestoGara contesto={contesto} />
+        {/* **Un blocco solo, e dominante.** Verdetto, segnale principale con la sua forza,
+            secondo segnale, valore, affidabilita', campione, conflitti e letture che
+            reggono: erano quattro pannelli di pari rango - il quadro della gara, che cosa
+            dice la gara, dove il modello dice qualcosa, la sintesi del valore - e chi
+            apriva la pagina non sapeva quale fosse la risposta. Nessun numero e' nuovo:
+            arrivano tutti da `contestoDiGara`, `matchIntelligence` e `lettureForti`. */}
+        {insight.allowed ? (
+          <MatchInsightSection
+            contesto={contesto}
+            dossier={dossier}
+            forti={forti}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : null}
 
-        {/* Modello e mercato affiancati: nessun operatore nominato, nessun collegamento fuori */}
+        {/* Senza il piano non restano pannelli vuoti: al posto dell'intera area c'e' il
+            riquadro che dice che cosa ci sarebbe dentro. */}
         {!insight.allowed ? (
           <SezioneRiservata
             piano="Insight"
@@ -996,22 +997,6 @@ export default async function MatchPage({ params }: MatchPageProps) {
             ]}
           />
         ) : null}
-
-        {/* La sintesi: quale lettura regge di piu' e quante altre la sostengono. Sta prima
-            del mercato perche' risponde alla domanda che viene prima: che cosa dice questa
-            gara. Il confronto col prezzo, che e' un'altra domanda, ha la sua area sotto. */}
-        {insight.allowed ? <MatchIntelligenceSection dossier={dossier} /> : null}
-
-        {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
-            gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
-            a mente. Ordinate per quanto reggono, non per percentuale. */}
-        {!insight.allowed || forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
-          <MatchLettureFortiSection
-            letture={forti}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
-        )}
 
         {aree.mercati ? (
           <DossierCapitolo

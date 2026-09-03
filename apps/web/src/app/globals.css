@@ -1897,3 +1897,64 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .account-elimina-form button { min-height: var(--h-action); border: 1px solid var(--card-down); border-radius: var(--r-control); background: var(--card-down); color: white; font-size: 14px; font-weight: 750; cursor: pointer; }
 .account-elimina-form button:hover { background: var(--card-brand-strong); border-color: var(--card-brand-strong); }
 .account-errore { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--card-down); border-radius: var(--r-control); color: var(--card-down); font-size: 14px; line-height: 1.5; }
+
+/* **L'area Insight: un blocco solo, e dominante.** Erano quattro pannelli di pari rango -
+   il quadro della gara, che cosa dice la gara, dove il modello dice qualcosa, la sintesi
+   del valore - e chi apriva la pagina non sapeva quale fosse la risposta.
+   La differenza la fanno **gerarchia tipografica e spazio**, non una veste nuova: nessun
+   colore fuori dalla tavolozza, nessun raggio fuori dai tre token, nessuna ombra. Il verdetto
+   e' l'unica riga in display grande della pagina dopo la testata; il segnale principale
+   porta l'unico numero grande; tutto il resto scende di scala. */
+.insight-panel { padding-bottom: 18px; }
+.insight-verdetto {
+  margin: 6px 0 0; font-family: var(--font-display); font-size: clamp(20px, 4.2vw, 26px);
+  line-height: 1.22; color: var(--card-ink);
+}
+.insight-favorito { margin: 6px 0 0; font-size: 13.5px; color: var(--card-ink-2); }
+/* Il segnale principale e' il solo blocco con la superficie tenue: e' la risposta, e si
+   distingue dai fratelli per fondo e spazio, non per un bordo piu' acceso. */
+.insight-segnale {
+  margin: 16px 0 0; padding: 13px 14px 14px; border: 1px solid var(--card-stroke);
+  border-left-width: 3px; border-radius: var(--r-control); background: var(--card-panel-2);
+}
+.insight-secondario {
+  margin: 8px 0 0; padding: 10px 13px 11px; border: 1px solid var(--card-stroke);
+  border-left-width: 3px; border-radius: var(--r-control); background: var(--card-panel);
+}
+.insight-rango {
+  margin: 0 0 5px; font-family: var(--font-mono, monospace); font-size: 10px;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--card-ink-3);
+}
+.insight-testa { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.insight-titolo { font: 600 16.5px/1.25 var(--font-display, sans-serif); color: var(--card-ink); }
+.insight-titolo-2 { font: 600 14px/1.25 var(--font-display, sans-serif); color: var(--card-ink); }
+.insight-prob {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 26px; font-weight: 600; color: var(--card-ink); flex: none; line-height: 1;
+}
+.insight-prob-2 {
+  font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums;
+  font-size: 17px; font-weight: 600; color: var(--card-ink-2); flex: none;
+}
+.insight-conv { margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--card-ink-2); }
+.insight-fonti {
+  list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px;
+  font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3);
+}
+.insight-fonti b { font-weight: 600; color: var(--card-ink-2); }
+.insight-fonti .intel-pro b { color: var(--card-up); }
+.insight-fonti .intel-contro b { color: var(--card-down); }
+.insight-perche { margin: 9px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
+.insight-valore {
+  margin: 12px 0 0; padding: 10px 12px; border-radius: var(--r-inset);
+  background: var(--card-panel-2); border: 1px solid var(--card-stroke);
+  font-size: 12.5px; line-height: 1.55; color: var(--card-ink-2);
+}
+.insight-valore b { color: var(--card-ink); }
+.insight-rimando { color: var(--card-ink-3); }
+/* Le due intestazioni interne: dicono dove finisce la risposta e dove comincia il perche'. */
+.insight-sotto {
+  margin: 18px 0 8px; font-family: var(--font-mono, monospace); font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--card-ink-3);
+}
+.insight-riserva { margin: 12px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--card-ink-3); }
