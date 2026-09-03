@@ -433,9 +433,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .installa-rinuncia { min-height: var(--h-control); padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: transparent; color: var(--card-ink-2); font-size: 14px; font-weight: 650; touch-action: manipulation; transition: border-color 180ms ease, color 180ms ease; }
 .installa-rinuncia:hover { border-color: var(--card-ink-3); color: var(--card-ink); }
 
-/* Bottom nav mobile — 5 voci, identità Cardinale */
+/* Bottom nav mobile — 5 voci su una riga sola, identità carta e campo.
+   **Questa regola vince su quella della cornice**, che sta piu' in alto e ha un selettore
+   meno specifico: il 3 settembre 2026 la barra e' tornata a cinque colonne qui e li', e
+   cambiarne una sola non si vedeva in pagina. Il commento diceva «5 voci» mentre la griglia
+   ne teneva tre per riga: erano sei da quando «Cerca» era entrata in barra. */
 @media (max-width: 640px) {
-  .product-shell .product-mobile-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
+  .product-shell .product-mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
   .product-shell .product-mobile-nav a { color: var(--card-ink-3); font-size: 11px; font-weight: 700; }
   .product-shell .product-mobile-nav a[aria-current="page"] { background: var(--card-brand-pale); color: var(--card-brand-strong); }
 }
