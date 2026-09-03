@@ -11,7 +11,12 @@ import { createSupabaseServerClient } from "@/server/supabase/server";
  *  barra arriva a cinque voci, che è il tetto dichiarato dall'architettura informativa. */
 type ProductSection =
   | "home"
-  | "matches"
+  /** Il dossier di una gara **non appartiene a nessuna voce**, ed e' il valore predefinito
+   *  della cornice. Ci si arriva da cinque sezioni diverse - Oggi, Pronostici, Partite,
+   *  Squadre, Arbitri - e accendere una voce fissa direbbe il falso quattro volte su cinque.
+   *  Fino al 3 settembre 2026 il valore si chiamava `matches` e puntava a «Partite», che
+   *  nella barra non c'e' piu': non accendeva nulla per coincidenza, non per intenzione. */
+  | "match"
   | "predictions"
   | "expected"
   | "teams"
@@ -58,7 +63,7 @@ function initialOf(email: string) {
   return first === "" ? "?" : first.toUpperCase();
 }
 
-export async function ProductShell({ children, activeSection = "matches" }: ProductShellProps) {
+export async function ProductShell({ children, activeSection = "match" }: ProductShellProps) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.getClaims();
   const claims = error ? null : data?.claims;

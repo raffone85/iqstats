@@ -196,7 +196,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
     .format(new Date(`${activeDate}T12:00:00Z`));
 
   return (
-    <ProductShell activeSection="matches">
+    <ProductShell activeSection="home">
       <div className="oggi-backdrop" aria-hidden="true" />
       <section className="partite" aria-labelledby="partite-title">
         <div className="oggi-eyebrow">
