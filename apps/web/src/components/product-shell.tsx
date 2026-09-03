@@ -30,17 +30,25 @@ type ProductShellProps = Readonly<{
 }>;
 
 /**
- * Solo le pagine che esistono davvero. Le entità confermate il 23 agosto — Arbitri,
- * Squadre, Giocatori, Expected — stanno sulle tessere della dashboard ed entrano qui una
- * alla volta, quando la loro pagina c'è: Arbitri è entrata lo stesso giorno. Il tetto
- * resta cinque destinazioni, come vuole l'architettura informativa su mobile.
+ * Cinque destinazioni, e il tetto torna quello dichiarato.
+ *
+ * **Erano sei, contro il tetto di cinque scritto qui sopra dal 24 agosto.** Su telefono
+ * diventavano sei bersagli su due righe, e la barra copriva il fondo della pagina.
+ *
+ * Due cambi, il 3 settembre 2026. **«Cerca» esce**: cercare e' un'azione, non un posto dove
+ * si va, e ora sta nella testata di ogni pagina - la route `/cerca` non cambia.
+ * **«Pronostici» entra**: era una pagina intera raggiungibile solo dalle tessere della home,
+ * quindi chi arrivava da un dossier condiviso non sapeva che esistesse.
+ *
+ * **«Partite» esce dalla barra ma non dall'app**: `/` e' la porta del giorno - porta la gara
+ * in evidenza e il calendario - e da li' e dal dossier si arriva all'elenco completo, che
+ * resta a `/partite` con i suoi filtri.
  */
 const PRIMARY_NAV: ReadonlyArray<{ section: ProductSection; href: string; label: string; short: string }> = [
-  { section: "home", href: "/", label: "Home", short: "Home" },
-  { section: "matches", href: "/partite", label: "Partite", short: "Partite" },
-  { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
+  { section: "home", href: "/", label: "Oggi", short: "Oggi" },
+  { section: "predictions", href: "/pronostici", label: "Pronostici", short: "Pronostici" },
   { section: "teams", href: "/squadre", label: "Squadre", short: "Squadre" },
-  { section: "search", href: "/cerca", label: "Cerca", short: "Cerca" },
+  { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
   { section: "method", href: "/metodo", label: "Metodo", short: "Metodo" },
 ];
 
@@ -84,6 +92,23 @@ export async function ProductShell({ children, activeSection = "matches" }: Prod
             ))}
           </nav>
           <div className="product-header-right">
+            {/* **Cercare e' un'azione, non una destinazione.** Sta nella testata di ogni
+                pagina e non nella barra, dove occupava uno dei cinque posti riservati alle
+                sezioni di contenuto. Porta a `/cerca`, che non cambia: nessuna esperienza
+                di ricerca nuova. L'etichetta sparisce sotto i 640 px e resta la lente, che
+                porta con se' il nome accessibile. */}
+            <Link
+              className="product-cerca"
+              href="/cerca"
+              aria-label="Cerca"
+              aria-current={activeSection === "search" ? "page" : undefined}
+            >
+              <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true" focusable="false">
+                <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+              <span className="product-cerca-testo">Cerca</span>
+            </Link>
             <nav className="product-subnav" aria-label="Sezioni secondarie">
               <Link href="/account" aria-current={activeSection === "account" ? "page" : undefined}>
                 Profilo

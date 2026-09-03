@@ -263,13 +263,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   .product-header { position: static; }
   .product-header-inner { width: min(100% - 32px, 1180px); min-height: 62px; grid-template-columns: 1fr; }
   .product-nav { display: none; }
-  /* Con «Cerca» le destinazioni sono sei: due righe da tre, e il contenuto lascia sotto
-     lo spazio della barra piu' alta. Con quattro colonne la sesta voce finiva su una riga
-     propria e la barra copriva il fondo della pagina. */
-  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 136px; }
+  /* Le destinazioni sono cinque e stanno su una riga sola, quindi il contenuto lascia
+     sotto lo spazio di una barra bassa invece che di due righe: dal 3 settembre 2026
+     «Cerca» e' un'azione nella testata e «Partite» si raggiunge da Oggi. */
+  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 92px; }
   .email-access-secondary-actions { grid-template-columns: minmax(0, 1fr); }
-  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 64px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 8px 16px env(safe-area-inset-bottom); }
-  .product-mobile-nav a { display: grid; min-width: 0; min-height: 44px; place-items: center; border-radius: var(--r-inset); color: var(--product-muted); font-size: 14px; font-weight: 800; transition: background-color 180ms ease, color 180ms ease; }
+  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 56px; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 6px 6px env(safe-area-inset-bottom); }
+  .product-mobile-nav a { display: grid; min-width: 0; min-height: 44px; place-items: center; padding: 0 2px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 12px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; transition: background-color 180ms ease, color 180ms ease; }
   .product-mobile-nav a[aria-current="page"] { background: var(--product-surface-soft); color: var(--product-primary-deep); }
   .page-intro h1, .data-state h1 { font-size: clamp(2rem, 9.5vw, 2.8rem); }
   .page-intro h1 { max-inline-size: 13ch; }
@@ -364,6 +364,21 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .product-shell .product-signin:hover, .product-shell .product-signin[aria-current="page"] { background: var(--card-brand); color: var(--card-on-brand); }
 
 @media (max-width: 1024px) { .product-subnav { display: none; } }
+/* **L'azione di ricerca nella testata.** Non e' nella subnav, che sotto i 1024 px sparisce:
+   cercare serve soprattutto su telefono, dove la barra in basso non ha piu' quella voce.
+   Stessa altezza tattile di ogni altro controllo, filetto e raggio dai token. Sotto i
+   640 px resta la sola lente, che porta con se' il nome accessibile. */
+.product-shell .product-cerca {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px;
+  justify-content: center; padding: 0 12px; border: 1px solid var(--card-stroke);
+  border-radius: var(--r-control); color: var(--card-ink-2); font-size: 13px; font-weight: 600;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+.product-shell .product-cerca:hover,
+.product-shell .product-cerca[aria-current="page"] {
+  border-color: var(--card-brand); color: var(--card-brand-strong);
+}
+@media (max-width: 640px) { .product-cerca-testo { display: none; } }
 
 /* La riga che dichiara l'aggiornamento automatico. Vive accanto ai punteggi che si muovono,
    e usa lo stesso filetto di richiamo delle note di copertura: dice una regola della pagina,
