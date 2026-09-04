@@ -37,6 +37,7 @@ import { analisiFinale } from "@/server/iqstats/analisi-finale";
 import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
+import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
 } from "@/server/iqstats/lati";
@@ -582,6 +583,13 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
+
+  // **La stessa domanda, guardata nel tempo.** Come si affrontano dice che cosa producono;
+  // questo dice quando lo producono. Dal nostro livello dati, nessuna chiamata nuova alla
+  // fonte: i due tempi delle gare gia' archiviate.
+  const ritmoTempi = detail.homeTeamId === null || detail.awayTeamId === null
+    ? null
+    : await ritmoDeiTempi(detail.homeTeamId, detail.awayTeamId, detail.kickoff);
 
   // La sintesi nasce solo da ciò che è già stato letto: nessun dato nuovo, nessuna frase
   // scritta a mano. Se non c'è niente da dire, il blocco non compare.
@@ -1165,9 +1173,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
+        {/* Il ritmo per tempo non dipende dalla stagione in corso: guarda indietro
+            quattrocento gare, quindi c'e' anche a settembre, quando le medie di lato non
+            hanno ancora il campione e il resto del capitolo tace. Per questo il pannello
+            sta fuori dalla condizione delle letture e decide da se'. */}
+        {insight.allowed ? (
+          <ComeSiAffrontano cappello={cappello} ritmoTempi={ritmoTempi} />
+        ) : null}
+
         {insight.allowed && letture.length > 0 ? (
           <>
-            <ComeSiAffrontano cappello={cappello} />
             <TrendRecente
               casa={saltiCasa}
               fuori={saltiFuori}

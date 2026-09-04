@@ -1,4 +1,5 @@
 import type { Cappello, Tratto } from "@/server/iqstats/affronto";
+import type { RitmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
 
 /**
  * Il capitolo «Come si affrontano»: un titolo e le righe che lo reggono, tutte uguali.
@@ -54,36 +55,104 @@ function Prova({ t, faseDelTitolo }: {
   );
 }
 
-export function ComeSiAffrontano({ cappello }: { readonly cappello: Cappello | null }) {
-  if (cappello === null) return null;
+/** La quota scritta come si legge: 45% e non 0,4520. */
+function quota(parte: number): string {
+  return `${Math.round(parte * 100)}%`;
+}
+
+/** Due decimali per i gol attesi, uno per i conteggi: non si scrive 11,00 tiri. */
+function cifra(valore: number, chiave: string): string {
+  return valore.toFixed(chiave === "xg" ? 2 : 1).replace(".", ",");
+}
+
+/**
+ * **Il ritmo fra i due tempi**, dentro lo stesso capitolo e nella stessa forma delle
+ * altre prove: la domanda e' sempre come si affrontano, guardata nel tempo invece
+ * che metrica per metrica.
+ *
+ * **La barra e' la quota, non un merito.** Riempie quanto pesa il primo tempo, e il
+ * resto e' la ripresa: e' un taglio, non una classifica, quindi non c'e' un verso
+ * buono. Le due cifre stanno scritte sopra, quindi niente vive solo nel colore.
+ */
+function Tempi({ ritmo }: { readonly ritmo: RitmoDeiTempi }) {
+  return (
+    <>
+      <p className="affronto-titolo">{ritmo.titolo}</p>
+      {ritmo.voci.map((v) => (
+        <div className="affronto-prova" key={v.chiave}>
+          <p className="affronto-prova-testa">
+            <span className="affronto-parola">{v.nome}</span>
+            <span className="affronto-prova-fonte">
+              {quota(v.quotaPrimo)} nel 1° tempo · {quota(1 - v.quotaPrimo)} nel 2°
+              {v.oltreIlRumore ? null : <> · dentro l&apos;errore</>}
+              {" · "}{v.gare} gare
+            </span>
+          </p>
+          <p className="affronto-cifre">
+            <span>1° tempo <b>{cifra(v.primo, v.chiave)}</b></span>
+            <span>2° tempo <b>{cifra(v.secondo, v.chiave)}</b></span>
+          </p>
+          <div className="dossier-bar" aria-hidden="true">
+            <i style={{ width: quota(v.quotaPrimo) }} />
+          </div>
+        </div>
+      ))}
+      <p className="affronto-nota">
+        Quote misurate gara per gara sulle partite già giocate di queste due squadre, dalle
+        statistiche archiviate della fonte: sono gare avvenute, non una previsione, e non
+        entrano in nessun mercato. Dove lo scarto dalla metà non supera l&apos;errore della
+        sua media la riga lo dichiara, perché lì non si distingue da un&apos;oscillazione.
+        {ritmo.escluse.length === 0 ? null : (
+          <> Fuori per campione insufficiente: {ritmo.escluse.join(", ")}.</>
+        )}{" "}
+        Il possesso non compare: per tempo è la percentuale fra le due squadre di quel
+        tempo, non una quantità che si divide fra primo e secondo.
+      </p>
+    </>
+  );
+}
+
+export function ComeSiAffrontano({ cappello, ritmoTempi = null }: {
+  readonly cappello: Cappello | null;
+  readonly ritmoTempi?: RitmoDeiTempi | null;
+}) {
+  // **I due contenuti si reggono da soli.** Il confronto per metrica vuole il campione
+  // della stagione in corso; il ritmo per tempo guarda indietro e c'e' anche prima. Il
+  // pannello compare se ne ha almeno uno, e non promette l'altro.
+  if (cappello === null && ritmoTempi === null) return null;
   return (
     <section className="dossier-panel" aria-labelledby="affronto-title">
       <p className="dossier-kick">Come si affrontano</p>
       <h2 id="affronto-title" className="sr-only-heading">
         Quello che una squadra fa dal suo lato contro quello che fanno gli avversari dell&apos;altra
       </h2>
-      <p className="affronto-titolo">
-        {cappello.titolo}
-        {cappello.fase === null ? null : <span> {cappello.fase}</span>}
-      </p>
-      {cappello.tratti.map((t) => (
-        <Prova key={t.chiave} t={t} faseDelTitolo={cappello.fase === null ? null : cappello.fase.replace("quando attacca ", "")} />
-      ))}
-      {cappello.mute === null ? null : <p className="affronto-mute">{cappello.mute}</p>}
-      {/* **La tabella completa, nella stessa forma.** Era la sezione «Il contesto»: faceva
-          lo stesso confronto con un'altra finestra, e per lo stesso fatto scriveva 18,4
-          dove qui c'era 18,9. Ora la finestra e' una sola e i numeri sono questi. */}
-      {cappello.tutte.length === 0 ? null : (
-        <details className="affronto-tutte">
-          <summary>
-            Tutte le metriche, dai due lati ({cappello.tutte.length} confronti)
-          </summary>
-          {cappello.tutte.map((t) => (
-            <Prova key={t.chiave} t={t} faseDelTitolo={null} />
+      {cappello === null ? null : (
+        <>
+          <p className="affronto-titolo">
+            {cappello.titolo}
+            {cappello.fase === null ? null : <span> {cappello.fase}</span>}
+          </p>
+          {cappello.tratti.map((t) => (
+            <Prova key={t.chiave} t={t} faseDelTitolo={cappello.fase === null ? null : cappello.fase.replace("quando attacca ", "")} />
           ))}
-        </details>
+          {cappello.mute === null ? null : <p className="affronto-mute">{cappello.mute}</p>}
+          {/* **La tabella completa, nella stessa forma.** Era la sezione «Il contesto»: faceva
+              lo stesso confronto con un'altra finestra, e per lo stesso fatto scriveva 18,4
+              dove qui c'era 18,9. Ora la finestra e' una sola e i numeri sono questi. */}
+          {cappello.tutte.length === 0 ? null : (
+            <details className="affronto-tutte">
+              <summary>
+                Tutte le metriche, dai due lati ({cappello.tutte.length} confronti)
+              </summary>
+              {cappello.tutte.map((t) => (
+                <Prova key={t.chiave} t={t} faseDelTitolo={null} />
+              ))}
+            </details>
+          )}
+          <p className="affronto-nota">{cappello.nota}</p>
+        </>
       )}
-      <p className="affronto-nota">{cappello.nota}</p>
+      {ritmoTempi === null ? null : <Tempi ritmo={ritmoTempi} />}
     </section>
   );
 }
