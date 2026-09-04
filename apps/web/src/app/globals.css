@@ -1,24 +1,26 @@
 @import "tailwindcss";
 
-/* Palette della dashboard, riportata su "carta e campo": stessi nomi, valori del
-   sistema unico. Il verde e il mattone dicono il verso di un dato, non decorano. */
+/* Palette della dashboard, riportata su "campo e calce": stessi nomi, valori del
+   sistema unico. Il blu e l'arancio dicono il verso di un dato, non decorano; il
+   verde e del marchio e non dice mai se un numero sta sopra o sotto. */
 :root {
-  --ink: #1C1A17;
-  --ink-soft: #4A443D;
-  --muted: #6A645C;
-  --canvas: #F7F6F3;
+  --ink: #14181A;
+  --ink-soft: #414B4E;
+  --muted: #5E686B;
+  --canvas: #F6F7F5;
   --surface: #FFFFFF;
-  --surface-soft: #FBFAF7;
-  --line: #E3DED4;
-  --line-strong: #D6CEC0;
-  --brand: #6E1522;
-  --brand-deep: #4E0E18;
-  --brand-pale: #F6EDEE;
-  --amber: #A6321F;
-  --amber-pale: #FBEDE9;
-  --green: #0F6B4F;
-  --green-pale: #E7F1EC;
-  --slate-pale: #F0EDE6;
+  --surface-soft: #FAFBFA;
+  --line: #E2E6E2;
+  --line-strong: #CBD2CB;
+  --brand: #0B4F35;
+  --brand-deep: #05301F;
+  --brand-pale: #E9F1EC;
+  --brand-soft: #A9C3B5;
+  --amber: #A63709;
+  --amber-pale: #FBEDE6;
+  --green: #1D4ED8;
+  --green-pale: #E9EEFC;
+  --slate-pale: #EFF1EF;
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
@@ -32,7 +34,7 @@ html { min-width: 320px; scroll-behavior: smooth; background: var(--canvas); }
 body { min-height: 100vh; margin: 0; background: var(--canvas); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.5; }
 a { color: inherit; text-decoration: none; }
 button, a { font: inherit; }
-a:focus-visible, button:focus-visible { outline: 3px solid rgba(110,21,34,.42); outline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 3px solid rgba(11,79,53,.42); outline-offset: 3px; }
 h1, h2, h3, p { margin-top: 0; }
 
 .skip-link { position: fixed; z-index: 20; left: 16px; top: -60px; padding: 10px 14px; border-radius: 8px; background: var(--brand-deep); color: white; font-weight: 700; transition: top 180ms ease; }
@@ -41,9 +43,12 @@ h1, h2, h3, p { margin-top: 0; }
 .loading-screen { display: grid; min-height: 100vh; align-content: center; justify-items: start; gap: 22px; padding: clamp(24px, 6vw, 96px); background: var(--brand-deep); color: white; }
 .loading-mark { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 14px; background: white; color: var(--brand-deep); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 16px; font-weight: 900; letter-spacing: -.1em; }
 .loading-screen h1 { margin-bottom: 9px; font-size: clamp(34px, 5vw, 64px); letter-spacing: -.07em; line-height: .98; }
-.loading-screen p:last-child { margin-bottom: 0; color: #E8D8DA; }
+/* Sullo schermo di attesa l'occhiello ereditava il colore del marchio sopra il verde
+   profondo: 1,51 di contrasto, illeggibile. Prende il chiaro tenue del sistema, 7,70. */
+.loading-screen .eyebrow { color: var(--brand-soft); }
+.loading-screen p:last-child { margin-bottom: 0; color: #D7E4DC; }
 .loading-bars { display: flex; gap: 6px; margin-top: 8px; }
-.loading-bars i { display: block; width: 32px; height: 4px; border-radius: 99px; background: #C8A9AE; animation: loadingPulse 1.1s ease-in-out infinite; }
+.loading-bars i { display: block; width: 32px; height: 4px; border-radius: 99px; background: #A9C3B5; animation: loadingPulse 1.1s ease-in-out infinite; }
 .loading-bars i:nth-child(2) { animation-delay: .12s; }.loading-bars i:nth-child(3) { animation-delay: .24s; }
 @keyframes loadingPulse { 50% { opacity: .25; transform: scaleX(.65); } }
 
@@ -63,8 +68,8 @@ h1, h2, h3, p { margin-top: 0; }
 .method-boundaries .eyebrow { color: var(--line); }
 .method-boundaries h2 { max-width: 640px; margin-bottom: 26px; font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -.065em; line-height: 1.02; }
 .method-boundaries ul { display: grid; gap: 0; max-width: 900px; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.2); }
-.method-boundaries li { position: relative; padding: 17px 0 17px 24px; border-bottom: 1px solid rgba(255,255,255,.2); color: #E8D8DA; line-height: 1.6; }
-.method-boundaries li::before { position: absolute; top: 28px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: #E08A6B; content: ""; }
+.method-boundaries li { position: relative; padding: 17px 0 17px 24px; border-bottom: 1px solid rgba(255,255,255,.2); color: #D7E4DC; line-height: 1.6; }
+.method-boundaries li::before { position: absolute; top: 28px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: #D98A5F; content: ""; }
 .method-cta-panel { display: grid; justify-items: start; }
 .method-cta-panel .button-link { margin-top: 8px; }
 
@@ -76,18 +81,18 @@ h1, h2, h3, p { margin-top: 0; }
 
 /* IQstatS product shell — UX-0 / UX-1 */
 :root {
-  --product-background: #F7F6F3;
+  --product-background: #F6F7F5;
   --product-surface: #FFFFFF;
-  --product-surface-soft: #FBFAF7;
-  --product-text: #1C1A17;
-  --product-muted: #6A645C;
-  --product-border: #E3DED4;
-  --product-primary: #6E1522;
-  --product-primary-deep: #4E0E18;
-  --product-action: #6E1522;
-  --product-action-hover: #56101B;
-  --product-accent: #A6321F;
-  --product-alert: #A6321F;
+  --product-surface-soft: #FAFBFA;
+  --product-text: #14181A;
+  --product-muted: #5E686B;
+  --product-border: #E2E6E2;
+  --product-primary: #0B4F35;
+  --product-primary-deep: #05301F;
+  --product-action: #0B4F35;
+  --product-action-hover: #073B27;
+  --product-accent: #A63709;
+  --product-alert: #A63709;
   --product-radius: 14px;
   /* Il ritmo della porta d'ingresso, esteso a tutto il prodotto: riquadri con raggio
      ampio, azione dominante alta, spaziature generose. Tre gradini e non uno di più —
@@ -240,13 +245,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .billing-feedback { margin: 20px 0 0; padding: 13px 14px; border: 1px solid var(--product-border); border-radius: var(--r-control); background: var(--product-surface-soft); color: var(--product-text); font-size: 14px; line-height: 1.55; }
 .billing-feedback h2 { margin-bottom: 6px; color: inherit; font-size: 17px; letter-spacing: -.025em; }
 .billing-feedback p { margin-bottom: 0; }
-.billing-feedback-error { border-color: #E7C6BC; background: var(--amber-pale); color: var(--product-alert); }
-.billing-feedback-success { border-color: var(--green); background: var(--green-pale); color: #0B4E3A; }
+.billing-feedback-error { border-color: #F3D4C2; background: var(--amber-pale); color: var(--product-alert); }
+.billing-feedback-success { border-color: var(--ink); background: var(--surface-soft); color: var(--ink); }
 .billing-feedback-neutral { border-color: var(--line-strong); background: var(--surface-soft); color: var(--ink-soft); }
 .billing-catalog > .billing-feedback { margin-bottom: 20px; }
 .billing-method-panel { margin-top: 36px; }
 
-/* Il tema è unico e chiaro: "carta e campo". Il vecchio ribaltamento su
+/* Il tema è unico e chiaro: "campo e calce". Il vecchio ribaltamento su
    prefers-color-scheme rendeva illeggibile la cornice — testo chiaro su fondo
    chiaro — perché i componenti dell'identità non lo seguivano. Rimosso. */
 
@@ -299,33 +304,37 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 
 /* ============================================================
-   Fase 0 — Identità "Il Cardinale" sullo chrome dello shell.
+   Fase 0 — Identita' del sistema sullo chrome dello shell.
    Additivo: token --card-* + override chrome. Non modifica il
    corpo (chiaro) delle pagine esistenti. Reskin pagine: fasi 2-4.
    ============================================================ */
 .product-shell {
-  /* Carta e campo. Il bordeaux è la firma; verde e mattone dicono il verso di un
-     numero e non compaiono mai come decorazione. Contrasti verificati su carta:
-     ink 16,07 · ink-2 8,89 · ink-3 5,41 · brand-strong 13,08 · up 6,00 · down 6,27. */
-  --card-ground: #F7F6F3; --card-panel: #FFFFFF; --card-panel-2: #FBFAF7;
-  --card-oxblood: #6E1522; --card-oxblood-2: #8A1C2B; --card-oxblood-deep: #4E0E18;
-  --card-brand: #6E1522; --card-brand-strong: #56101B; --card-brand-soft: #C8A9AE;
-  --card-brand-pale: #F6EDEE;
-  --card-ink: #1C1A17; --card-ink-2: #4A443D; --card-ink-3: #6A645C;
-  --card-on-brand: #FBF7F3;
-  --card-up: #0F6B4F; --card-up-pale: #E7F1EC;
-  --card-down: #A6321F; --card-down-pale: #FBEDE9;
-  --card-stroke: #E3DED4;
-  /* Le sette famiglie statistiche del dossier, 23 agosto 2026. Sono l'unica eccezione
-     alla regola «il colore dichiara un verso»: qui il colore dichiara un'identita', e
-     l'identita' e' scritta accanto nella testata, quindi nessuna informazione vive solo
-     nel colore. Nessuna tinta entra negli intervalli del verde (162°) e del mattone (8°),
-     che dicono sopra e sotto. Contrasti del testo #FBF7F3 sopra la fascia, misurati:
-     tiri 10,99 · tiri in porta 6,71 · falli 9,00 · corner 7,47 · gialli 5,87 ·
-     parate 8,66 · fuorigioco 10,01. */
-  --fam-tiri: #6E1522; --fam-tiri-porta: #7A4E1D; --fam-falli: #3E3A8C;
-  --fam-corner: #1F5673; --fam-gialli: #7A5C00; --fam-parate: #5B3A6E;
-  --fam-fuorigioco: #403E3A;
+  /* Campo e calce, 4 settembre 2026. Il verde del campo è la firma; blu e arancio
+     dicono il verso di un numero e non compaiono mai come decorazione. Il verde non
+     dice piu' un verso: una vittoria, una gara in corso e un'operazione riuscita si
+     distinguono per quanto sono piene. Contrasti verificati su carta #F6F7F5:
+     ink 16,63 · ink-2 8,35 · ink-3 5,33 · brand 8,95 · brand-strong 11,74 ·
+     up 6,24 · down 6,16. */
+  --card-ground: #F6F7F5; --card-panel: #FFFFFF; --card-panel-2: #FAFBFA;
+  --card-verde: #0B4F35; --card-verde-2: #106845; --card-verde-deep: #05301F;
+  --card-brand: #0B4F35; --card-brand-strong: #073B27; --card-brand-soft: #A9C3B5;
+  --card-brand-pale: #E9F1EC;
+  --card-ink: #14181A; --card-ink-2: #414B4E; --card-ink-3: #5E686B;
+  --card-on-brand: #F4F8F5;
+  --card-up: #1D4ED8; --card-up-pale: #E9EEFC;
+  --card-down: #A63709; --card-down-pale: #FBEDE6;
+  --card-stroke: #E2E6E2;
+  /* Le sette famiglie statistiche del dossier, ridistribuite il 4 settembre 2026 quando
+     il verso e' passato a blu e arancio. Sono l'unica eccezione alla regola «il colore
+     dichiara un verso»: qui il colore dichiara un'identita', scritta accanto nella
+     testata, quindi nessuna informazione vive solo nel colore. Distanze di tinta
+     misurate dal blu (224°) e dall'arancio (17°), minimo 28°: tiri 328° · tiri in porta
+     284° · falli 258° · corner 196° · parate 100° · gialli 47° · fuorigioco grigio.
+     Contrasti del testo #F4F8F5 sopra la fascia: tiri 7,90 · tiri in porta 8,57 ·
+     falli 10,76 · corner 5,50 · parate 5,61 · gialli 5,71 · fuorigioco 9,29. */
+  --fam-tiri: #8C215A; --fam-tiri-porta: #70218C; --fam-falli: #41218C;
+  --fam-corner: #206C88; --fam-gialli: #74601B; --fam-parate: #37701A;
+  --fam-fuorigioco: #3E4441;
   --font-display: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -345,7 +354,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* Header / wordmark */
 .product-shell .product-header { border-bottom: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 92%, white); backdrop-filter: blur(12px); }
 .product-shell .product-wordmark { color: var(--card-ink); }
-.product-shell .product-mark { border: 1px solid var(--card-oxblood-deep); background: var(--card-oxblood-deep); color: var(--card-on-brand); font-family: var(--font-display); }
+.product-shell .product-mark { border: 1px solid var(--card-verde-deep); background: var(--card-verde-deep); color: var(--card-on-brand); font-family: var(--font-display); }
 .product-shell .product-wordmark strong { color: var(--card-brand-strong); font-family: var(--font-display); font-size: 20px; letter-spacing: .005em; }
 .product-shell .product-wordmark small { color: var(--card-ink-3); }
 
@@ -382,12 +391,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 /* La riga che dichiara l'aggiornamento automatico. Vive accanto ai punteggi che si muovono,
    e usa lo stesso filetto di richiamo delle note di copertura: dice una regola della pagina,
-   non un valore, quindi niente verde e niente mattone. */
+   non un valore, quindi niente blu e niente arancio. */
 .aggiornamento-live { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--card-brand); border-radius: 0 var(--r-inset) var(--r-inset) 0; background: var(--card-panel-2); color: var(--card-ink-2); font-size: 13px; line-height: 1.55; max-width: 74ch; }
 .aggiornamento-live b { color: var(--card-ink); }
 
 /* Avvertenze in coda a ogni pagina di prodotto. Testo di servizio, non un allarme: niente
-   verde e niente mattone, che qui significano un verso. Il filetto la separa dal contenuto
+   verde e niente arancio, che qui significano un verso. Il filetto la separa dal contenuto
    senza chiuderla in un riquadro, perché non è un capitolo ma la cornice di tutti. */
 .product-avvertenze { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 34px; border-top: 1px solid var(--card-stroke); }
 .product-avvertenze p { max-width: 78ch; margin: 0 0 8px; color: var(--card-ink-3); font-size: 12.5px; line-height: 1.6; }
@@ -433,7 +442,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .installa-rinuncia { min-height: var(--h-control); padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: transparent; color: var(--card-ink-2); font-size: 14px; font-weight: 650; touch-action: manipulation; transition: border-color 180ms ease, color 180ms ease; }
 .installa-rinuncia:hover { border-color: var(--card-ink-3); color: var(--card-ink); }
 
-/* Bottom nav mobile — 5 voci su una riga sola, identità carta e campo.
+/* Bottom nav mobile — 5 voci su una riga sola, identità campo e calce.
    **Questa regola vince su quella della cornice**, che sta piu' in alto e ha un selettore
    meno specifico: il 3 settembre 2026 la barra e' tornata a cinque colonne qui e li', e
    cambiarne una sola non si vedeva in pagina. Il commento diceva «5 voci» mentre la griglia
@@ -445,7 +454,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 
 /* ============================================================
-   Oggi — dashboard in identità "Il Cardinale" (mondo scuro caldo).
+   Oggi — dashboard in identita' del sistema.
    Fondale full-viewport dietro lo shell; contenuto su token --card-*.
    ============================================================ */
 .oggi-backdrop { position: fixed; inset: 0; z-index: -1; background: var(--card-ground); }
@@ -462,20 +471,20 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi-src { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 
 /* Hero gara del giorno */
-/* La hero è l'unico blocco a forte contrasto del sistema: bordeaux pieno sotto la
+/* La hero è l'unico blocco a forte contrasto del sistema: verde pieno sotto la
    foto dello stadio. Il resto della pagina resta carta. */
-/* Il bordeaux pieno sta sotto tutto: foto dello stadio e sfumature si dipingono sopra,
+/* Il verde pieno sta sotto tutto: foto dello stadio e sfumature si dipingono sopra,
    ma se non arrivano il testo chiaro resta su fondo scuro invece di sparire sulla carta. */
-.oggi-hero { position: relative; border-radius: var(--r-panel); overflow: hidden; border: 1px solid var(--card-oxblood-deep); background: var(--card-oxblood-deep); isolation: isolate; }
+.oggi-hero { position: relative; border-radius: var(--r-panel); overflow: hidden; border: 1px solid var(--card-verde-deep); background: var(--card-verde-deep); isolation: isolate; }
 /* Fondo della hero. La foto del campo esiste solo per una parte degli stadi: quando manca,
    il riquadro deve reggere da solo invece di restare un rettangolo pieno. Qui il fondo è il
    campo visto dall'alto — cerchio di centro e linea mediana — disegnato con due pseudo-elementi:
    nessuna immagine da scaricare, nessun dato simulato. */
 .oggi-hero-stadium { position: absolute; inset: 0; z-index: -3; transform: scale(1.08);
-  background: linear-gradient(168deg, var(--card-oxblood) 0%, var(--card-oxblood-deep) 58%, #2E080F 100%);
+  background: linear-gradient(168deg, var(--card-verde) 0%, var(--card-verde-deep) 58%, #032117 100%);
   animation: oggiKenburns 26s ease-in-out infinite alternate; }
-.oggi-hero-stadium::before { content: ""; position: absolute; top: 50%; right: -6%; width: 42%; aspect-ratio: 1; transform: translateY(-50%); border: 1.5px solid rgba(251, 247, 243, .18); border-radius: 50%; }
-.oggi-hero-stadium::after { content: ""; position: absolute; top: 0; bottom: 0; right: 15%; border-left: 1.5px solid rgba(251, 247, 243, .14); }
+.oggi-hero-stadium::before { content: ""; position: absolute; top: 50%; right: -6%; width: 42%; aspect-ratio: 1; transform: translateY(-50%); border: 1.5px solid rgba(244, 248, 245, .18); border-radius: 50%; }
+.oggi-hero-stadium::after { content: ""; position: absolute; top: 0; bottom: 0; right: 15%; border-left: 1.5px solid rgba(244, 248, 245, .14); }
 /* Foto stadio reale (venue) quando disponibile; sotto scrim per leggibilità. */
 .oggi-hero-venue { position: absolute; inset: 0; z-index: -2; transform: scale(1.08);
   background-size: cover; background-position: center;
@@ -484,18 +493,18 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    bianco e il testo chiaro ci sparisce sopra. Più denso in alto e in basso, dove il testo sta. */
 .oggi-hero-scrim { position: absolute; inset: 0; z-index: -2;
   background: linear-gradient(180deg,
-    rgba(46,8,15,.86) 0%,
-    rgba(46,8,15,.48) 24%,
-    rgba(46,8,15,.36) 50%,
-    rgba(46,8,15,.82) 76%,
-    rgba(46,8,15,.94) 100%); }
+    rgba(3,33,23,.86) 0%,
+    rgba(3,33,23,.48) 24%,
+    rgba(3,33,23,.36) 50%,
+    rgba(3,33,23,.82) 76%,
+    rgba(3,33,23,.94) 100%); }
 /* Il bagliore dorato non ha più un colore a cui appartenere: rimosso con la sua animazione. */
 .oggi-hero-glow { display: none; }
 @keyframes oggiKenburns { from { transform: scale(1.08) translateY(0); } to { transform: scale(1.16) translateY(-2%); } }
 
 /* Dentro la hero i token del testo si invertono: i figli restano invariati. */
 .oggi-hero-body { position: relative; padding: clamp(20px, 4vw, 28px); min-height: 320px; display: flex; flex-direction: column;
-  --card-ink: #FBF7F3; --card-ink-2: #E8D8DA; --card-ink-3: #CDB2B6; --card-brand-strong: #F2DADF; }
+  --card-ink: #F4F8F5; --card-ink-2: #D7E4DC; --card-ink-3: #AFC7BA; --card-brand-strong: #DCEBE2; }
 .oggi-hero-comp { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0; font-family: var(--font-display); font-style: italic; color: var(--card-brand-strong); font-size: 14px; }
 .oggi-hero-comp .league-id-name { font-style: normal; font-weight: 600; }
 .oggi-hero-comp .league-id-code { color: var(--card-brand-strong); }
@@ -503,7 +512,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* L'arbitro nel banner: nome, e le due medie che il lettore cerca prima di aprire il
    dossier. La provenienza sta sotto, sempre, perche' «5,72 gialli» detto senza dire su
    quante gare e' la stessa cosa che non dirlo. Nessuna foto: la fonte non ce l'ha. */
-.oggi-hero-ref { color: var(--card-ink-2); margin: 14px 0 0; padding: 11px 13px; border-radius: var(--r-inset); background: rgba(43,8,14,.78); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.oggi-hero-ref { color: var(--card-ink-2); margin: 14px 0 0; padding: 11px 13px; border-radius: var(--r-inset); background: rgba(4,38,26,.78); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
 .oggi-hero-ref-who { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; font-family: var(--font-display); font-size: 15px; color: var(--card-ink); overflow-wrap: anywhere; }
 .oggi-hero-ref-tag { flex-shrink: 0; font: 700 10px/1 var(--font-inter, sans-serif); letter-spacing: .14em; text-transform: uppercase; color: var(--card-ink-2); }
 .oggi-hero-ref-num { font-family: var(--font-mono, monospace); font-size: 13.5px; color: var(--card-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -514,23 +523,23 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi-hero-teams { margin: auto 0 0; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .oggi-team { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .oggi-team-away { flex-direction: row; }
-.oggi-crest { position: relative; overflow: hidden; display: grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; border-radius: var(--r-inset); background: rgba(255,255,255,.94); color: var(--card-oxblood-deep); font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+.oggi-crest { position: relative; overflow: hidden; display: grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; border-radius: var(--r-inset); background: rgba(255,255,255,.94); color: var(--card-verde-deep); font-family: var(--font-display); font-size: 17px; font-weight: 700; }
 .oggi-crest-mono { font: inherit; color: inherit; }
 .oggi-crest-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 3px; background: rgba(255,255,255,.94); }
-.oggi-crest-sm { position: relative; overflow: hidden; display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 6px; background: rgba(255,255,255,.9); color: var(--card-oxblood-deep); font-family: var(--font-display); font-size: 10px; font-weight: 700; }
+.oggi-crest-sm { position: relative; overflow: hidden; display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 6px; background: rgba(255,255,255,.9); color: var(--card-verde-deep); font-family: var(--font-display); font-size: 10px; font-weight: 700; }
 .oggi-card-crests { display: flex; gap: 6px; }
-.oggi-team-name { font-family: var(--font-display); font-size: clamp(24px, 4.2vw, 38px); font-weight: 600; color: var(--card-ink); line-height: 1; text-shadow: 0 2px 18px rgba(46,8,15,.55); overflow-wrap: anywhere; }
+.oggi-team-name { font-family: var(--font-display); font-size: clamp(24px, 4.2vw, 38px); font-weight: 600; color: var(--card-ink); line-height: 1; text-shadow: 0 2px 18px rgba(3,33,23,.55); overflow-wrap: anywhere; }
 .oggi-vs { font-family: var(--font-display); font-style: italic; color: var(--card-brand-strong); font-size: 19px; }
 .oggi-hero-verdict { margin: 16px 0 0; max-width: 640px; font-family: var(--font-display); font-size: clamp(15px, 2vw, 18px); line-height: 1.5; color: var(--card-ink); }
 .oggi-lead { color: var(--card-brand-strong); font-style: italic; }
 .oggi-hero-foot { margin-top: 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-/* Il chip compare sia sulla hero bordeaux sia su carta: si accorda al testo del
+/* Il chip compare sia sulla hero verde sia su carta: si accorda al testo del
    contesto invece di fissare i propri colori. */
 .oggi-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px; border-radius: 22px; border: 1px solid color-mix(in srgb, var(--card-ink) 30%, transparent); background: color-mix(in srgb, var(--card-ink) 8%, transparent); color: var(--card-ink); font-size: 13px; font-weight: 600; }
 .oggi-prov { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
-/* Sulla hero bordeaux l'azione principale si inverte: carta su bordeaux, non
-   bordeaux su bordeaux, altrimenti il pulsante sparisce nel fondo. */
-.oggi-cta { margin-left: auto; display: inline-flex; align-items: center; min-height: var(--h-action); padding: 11px 20px; border-radius: var(--r-control); background: var(--card-on-brand); color: var(--card-oxblood-deep); font-weight: 700; font-size: 14px; transition: background-color 180ms ease; }
+/* Sulla hero verde l'azione principale si inverte: carta su verde, non
+   verde del campo su verde del campo, altrimenti il pulsante sparisce nel fondo. */
+.oggi-cta { margin-left: auto; display: inline-flex; align-items: center; min-height: var(--h-action); padding: 11px 20px; border-radius: var(--r-control); background: var(--card-on-brand); color: var(--card-verde-deep); font-weight: 700; font-size: 14px; transition: background-color 180ms ease; }
 .oggi-cta:hover { background: #FFFFFF; }
 
 /* Migliori segnali */
@@ -540,7 +549,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi-count { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); }
 .oggi-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .oggi-card { position: relative; display: grid; gap: 4px; border-radius: var(--r-control); padding: 20px; overflow: hidden; background: var(--card-panel-2); border: 1px solid var(--card-stroke); transition: border-color 200ms ease, transform 200ms ease; }
-.oggi-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--card-oxblood-2), var(--card-brand)); opacity: .85; }
+.oggi-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--card-verde-2), var(--card-brand)); opacity: .85; }
 .oggi-card:hover { border-color: var(--card-stroke); transform: translateY(-2px); }
 .oggi-card-comp { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 .oggi-card-comp .league-id-name { font-family: var(--font-display); font-size: 12.5px; color: var(--card-ink-2); }
@@ -549,7 +558,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .oggi-card-match em { color: var(--card-ink-3); font-style: normal; }
 .oggi-card-verdict { margin: 8px 0 0; font-size: 13.5px; color: var(--card-ink-2); }
 .oggi-card-verdict b { color: var(--card-brand-strong); font-weight: 600; }
-.oggi-meter { display: block; height: 5px; border-radius: 3px; background: #E9E4DA; margin: 12px 0 8px; overflow: hidden; }
+.oggi-meter { display: block; height: 5px; border-radius: 3px; background: #E7EAE7; margin: 12px 0 8px; overflow: hidden; }
 .oggi-meter i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--card-brand-soft), var(--card-brand-strong)); }
 .oggi-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 .oggi-note { margin: 16px 0 0; font-family: var(--font-display); font-style: italic; font-size: 12.5px; color: var(--card-ink-3); }
@@ -565,7 +574,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 
 /* ============================================================
-   Dossier /match/[id] — "verdetto prima", identità Cardinale.
+   Dossier /match/[id] — "verdetto prima", identita' del sistema.
    Riusa .oggi-hero* per la testata con sfondo stadio.
    ============================================================ */
 .dossier { color: var(--card-ink); }
@@ -594,7 +603,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   white-space: nowrap; text-decoration: none; border-bottom: 2px solid transparent;
   font: 600 13px/1 var(--font-inter, sans-serif); color: var(--card-ink-3); }
 .dossier-capitoli a:hover { color: var(--card-ink-2); }
-/* Il capitolo corrente porta il bordeaux del prodotto, che qui non dichiara un verso ma
+/* Il capitolo corrente porta il verde del campo del prodotto, che qui non dichiara un verso ma
    un'identita': quale dei sei si sta leggendo. Il testo cambia peso oltre al colore, cosi'
    l'informazione non vive solo nel colore. */
 .dossier-capitoli a.is-corrente { color: var(--card-brand-strong); border-bottom-color: var(--card-brand); font-weight: 700; }
@@ -621,9 +630,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .dossier-1x2-row { display: grid; grid-template-columns: minmax(84px, 1.1fr) 2fr auto; align-items: center; gap: 12px; }
 .dossier-1x2-label { font-size: 14px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 .dossier-1x2-row.is-pick .dossier-1x2-label { color: var(--card-brand-strong); font-weight: 600; }
-.dossier-bar { height: 6px; border-radius: 3px; background: #E9E4DA; overflow: hidden; }
+.dossier-bar { height: 6px; border-radius: 3px; background: #E7EAE7; overflow: hidden; }
 .dossier-bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--card-brand-soft), var(--card-brand-strong)); }
-.dossier-1x2-row.is-pick .dossier-bar i { background: linear-gradient(90deg, var(--card-oxblood-2), var(--card-brand-strong)); }
+.dossier-1x2-row.is-pick .dossier-bar i { background: linear-gradient(90deg, var(--card-verde-2), var(--card-brand-strong)); }
 .dossier-1x2-val { min-width: 40px; text-align: right; font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
 .dossier-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 .dossier-src { margin: 14px 0 0; font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-ink-3); line-height: 1.5; }
@@ -650,8 +659,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .standing-figures .standing-down { color: var(--card-down); }
 .standing-form { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; margin: 14px 0 0; padding: 0; }
 .standing-chip { display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel); font-family: var(--font-display); font-size: 12.5px; font-weight: 700; color: var(--card-ink); }
-.standing-chip.is-V { border-color: var(--card-up); background: var(--card-up); color: #FFFFFF; }
-.standing-chip.is-P { border-color: var(--card-down); background: var(--card-down); color: #FFFFFF; }
+.standing-chip.is-V { border-color: var(--card-ink); background: var(--card-ink); color: var(--card-panel); }
+.standing-chip.is-P { background: var(--card-panel-2); color: var(--card-ink-3); }
 .standing-last { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--card-ink-3); }
 .standing-empty { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
 
@@ -662,7 +671,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 @media (max-width: 640px) { .dossier-h2h { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* La gara giocata: due colonne di numeri, la mappa dei tiri e la cronologia.
-   La barra divide casa e ospiti e non esprime un merito: per questo usa il bordeaux e il
+   La barra divide casa e ospiti e non esprime un merito: per questo usa il verde del campo e il
    filetto, non il verde — qui il verde significherebbe «sopra il riferimento». */
 .gamestat-heads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; font-family: var(--font-display); font-size: 12.5px; font-weight: 700; color: var(--card-ink-2); }
 .gamestat-heads span:last-child { text-align: right; }
@@ -773,7 +782,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 
 /* ============================================================
-   Partite — oggi-per-prima + calendario, identità Cardinale.
+   Partite — oggi-per-prima + calendario, identita' del sistema.
    ============================================================ */
 .partite { color: var(--card-ink); }
 .partite-title { margin: 0 0 18px; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--card-ink); text-transform: capitalize; letter-spacing: -.02em; }
@@ -827,12 +836,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .partite-score { font-family: var(--font-mono, monospace); font-size: 15px; font-weight: 700; color: var(--card-brand-strong); text-align: center; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .partite-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .partite-badge.tone-next { background: var(--card-brand-pale); color: var(--card-brand-strong); border: 1px solid var(--card-brand-soft); }
-.partite-badge.tone-live { background: var(--card-up-pale); color: var(--card-up); border: 1px solid var(--card-up); }
+.partite-badge.tone-live { background: var(--card-ink); color: var(--card-panel); border: 1px solid var(--card-ink); }
 .partite-badge.tone-done { background: var(--card-panel-2); color: var(--card-ink-3); border: 1px solid var(--card-stroke); }
 .partite-badge.tone-warn { background: var(--card-down-pale); color: var(--card-down); border: 1px solid var(--card-down); }
 
 /* ============================================================
-   Squadre /squadre/[teamId] — scheda squadra, identità Cardinale.
+   Squadre /squadre/[teamId] — scheda squadra, identita' del sistema.
    Riusa .oggi-hero* per la testata e .dossier-panel per i blocchi.
    Mobile-first: nessun overflow orizzontale, target ≥44px.
    ============================================================ */
@@ -868,9 +877,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .squad-metric-gap { font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-brand-strong); white-space: nowrap; }
 .squad-metric-row { display: grid; grid-template-columns: 68px minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 6px; }
 .squad-metric-side { font-size: 12px; color: var(--card-ink-3); }
-.squad-metric-bar { display: block; height: 8px; border-radius: 4px; background: #E9E4DA; overflow: hidden; }
+.squad-metric-bar { display: block; height: 8px; border-radius: 4px; background: #E7EAE7; overflow: hidden; }
 .squad-metric-bar i { display: block; height: 100%; border-radius: 4px; transition: width 220ms ease; }
-.squad-metric-bar i.is-home { background: linear-gradient(90deg, var(--card-oxblood-2), var(--card-brand-strong)); }
+.squad-metric-bar i.is-home { background: linear-gradient(90deg, var(--card-verde-2), var(--card-brand-strong)); }
 .squad-metric-bar i.is-away { background: linear-gradient(90deg, var(--card-brand-soft), var(--card-ink-2)); }
 .squad-metric-value { min-width: 96px; text-align: right; font-family: var(--font-mono, monospace); font-size: 13.5px; color: var(--card-ink); font-variant-numeric: tabular-nums; }
 .squad-metric-value em { display: block; font-style: normal; font-size: 10.5px; color: var(--card-ink-3); }
@@ -890,7 +899,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .squad-player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .squad-player { display: grid; gap: 10px; padding: 12px 13px; border-radius: var(--r-control); background: var(--card-panel-2); border: 1px solid var(--card-stroke); }
 .squad-player-id { display: flex; align-items: center; gap: 11px; min-width: 0; }
-.squad-player-photo { position: relative; overflow: hidden; display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card-panel); color: var(--card-oxblood-deep); font-family: var(--font-display); font-size: 13px; font-weight: 700; }
+.squad-player-photo { position: relative; overflow: hidden; display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card-panel); color: var(--card-verde-deep); font-family: var(--font-display); font-size: 13px; font-weight: 700; }
 .squad-player-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .squad-player-name { min-width: 0; display: grid; gap: 2px; }
 .squad-player-name b { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--card-ink); overflow-wrap: anywhere; }
@@ -916,7 +925,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .squad-coach-name em { font-style: normal; font-size: 14px; color: var(--card-ink-2); }
 .squad-method { margin: 0; padding-left: 19px; display: grid; gap: 9px; color: var(--card-ink-2); font-size: 13.5px; line-height: 1.6; max-width: 74ch; }
 .squad-method li::marker { color: var(--card-brand); }
-.squad-skeleton-bar { display: block; height: 12px; margin-top: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--card-panel-2), #EFEAE1, var(--card-panel-2)); background-size: 200% 100%; animation: squadShimmer 1.4s ease-in-out infinite; }
+.squad-skeleton-bar { display: block; height: 12px; margin-top: 10px; border-radius: 6px; background: linear-gradient(90deg, var(--card-panel-2), #EDEFEC, var(--card-panel-2)); background-size: 200% 100%; animation: squadShimmer 1.4s ease-in-out infinite; }
 .squad-skeleton-bar:nth-of-type(2) { width: 82%; }
 .squad-skeleton-bar:nth-of-type(3) { width: 64%; }
 @keyframes squadShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
@@ -933,11 +942,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 
 /* ── La porta d'ingresso ────────────────────────────────────────────────────
-   Riquadro chiaro al centro di un campo bordeaux: un blocco solo, gerarchia
+   Riquadro chiaro al centro di un campo verde del campo: un blocco solo, gerarchia
    verticale netta, un'azione che domina. La forza viene dallo stacco e dallo
    spazio, non da ombre o bagliori — la carta non ha ombre, ha filetti. */
 .gate { display: grid; justify-items: center; gap: 18px; padding: clamp(26px, 6vw, 60px) clamp(14px, 4vw, 40px); border-radius: 20px;
-  background: linear-gradient(168deg, var(--card-brand) 0%, var(--card-oxblood-deep) 62%, #2E080F 100%); }
+  background: linear-gradient(168deg, var(--card-brand) 0%, var(--card-verde-deep) 62%, #032117 100%); }
 .gate-card { width: min(520px, 100%); padding: clamp(26px, 5vw, 40px) clamp(20px, 4vw, 34px); border-radius: 20px; border: 1px solid var(--card-stroke); background: var(--card-panel); text-align: center; }
 .gate-mark { display: grid; place-items: center; width: 78px; height: 78px; margin: 0 auto 18px; border-radius: 50%; background: var(--card-brand); color: var(--card-on-brand); }
 .gate-title { margin: 0; font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 2.5rem); font-weight: 700; letter-spacing: -.03em; color: var(--card-ink); }
@@ -1023,7 +1032,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .bench-card { min-width: 0; padding: 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); }
 .bench-team { margin: 0 0 10px; font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-brand); }
 .bench-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.bench-photo { position: relative; overflow: hidden; display: grid; place-items: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; background: var(--card-panel); color: var(--card-oxblood-deep); font-family: var(--font-display); font-size: 15px; font-weight: 700; }
+.bench-photo { position: relative; overflow: hidden; display: grid; place-items: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; background: var(--card-panel); color: var(--card-verde-deep); font-family: var(--font-display); font-size: 15px; font-weight: 700; }
 .bench-photo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .bench-name { min-width: 0; display: grid; gap: 3px; }
 .bench-name strong { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--card-ink); overflow-wrap: break-word; }
@@ -1090,10 +1099,10 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .referee-axes { display: flex; flex-wrap: wrap; gap: 8px; }
 .referee-axis { display: inline-flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: var(--r-inset); border: 1px solid var(--card-stroke); background: var(--card-panel-2); font-size: 13px; font-weight: 600; color: var(--card-ink); }
 .referee-axis em { font-style: normal; font-family: var(--font-mono, monospace); font-size: 10.5px; font-weight: 400; color: var(--card-ink-3); }
-/* Severo o permissivo non e' un merito, e' un carattere: verde e mattone qui direbbero
+/* Severo o permissivo non e' un merito, e' un carattere: blu e arancio qui direbbero
    un verso che non esiste, e per giunta li dicevano al contrario - il verde stava sopra
    chi fischia MENO della media. Si usa la stessa convenzione del banner del dossier:
-   bordeaux per chi fischia stretto, inchiostro tenue per chi lascia correre. */
+   verde del campo per chi fischia stretto, inchiostro tenue per chi lascia correre. */
 .referee-axis.is-lenient { border-color: var(--card-stroke); color: var(--card-ink-3); }
 .referee-axis.is-strict { border-color: var(--card-brand-soft); color: var(--card-brand-strong); }
 .referee-axis.is-inline { border-color: var(--card-stroke); color: var(--card-ink-2); }
@@ -1171,8 +1180,8 @@ a.home-tile:focus-visible { outline: 2px solid var(--card-brand-strong); outline
    I token del testo sono invertiti nello scope, così i figli restano invariati. */
 /* Il colore pieno sta sotto il gradiente: se il gradiente non venisse dipinto, il testo
    chiaro resterebbe comunque su fondo scuro invece di sparire sulla carta. */
-.home-tile-feature { min-height: 196px; border-color: var(--card-oxblood-deep); background-color: var(--card-oxblood-deep); background-image: linear-gradient(163deg, var(--card-oxblood) 0%, var(--card-oxblood-deep) 66%, #2E080F 100%);
-  --card-ink: #FBF7F3; --card-ink-2: #E8D8DA; --card-ink-3: #CDB2B6; --card-brand: #F2DADF; --card-brand-strong: #F2DADF; --card-stroke: rgba(251, 247, 243, .26); }
+.home-tile-feature { min-height: 196px; border-color: var(--card-verde-deep); background-color: var(--card-verde-deep); background-image: linear-gradient(163deg, var(--card-verde) 0%, var(--card-verde-deep) 66%, #032117 100%);
+  --card-ink: #F4F8F5; --card-ink-2: #D7E4DC; --card-ink-3: #AFC7BA; --card-brand: #DCEBE2; --card-brand-strong: #DCEBE2; --card-stroke: rgba(244, 248, 245, .26); }
 a.home-tile-feature:hover { border-color: var(--card-brand-soft); }
 
 .home-feature { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
@@ -1223,17 +1232,17 @@ a.home-tile-feature:hover { border-color: var(--card-brand-soft); }
 .home-grid > :nth-child(8) { animation-delay: 550ms; }
 .home-grid > :nth-child(9) { animation-delay: 610ms; }
 
-/* Il sollevamento è di due pixel: si sente, non si vede. L'ombra è tinta di bordeaux
+/* Il sollevamento è di due pixel: si sente, non si vede. L'ombra è tinta di verde del campo
    come vuole il master, mai nera sulla carta. */
 .home-tile { transition: border-color 200ms ease, transform 200ms cubic-bezier(.16, 1, .3, 1), box-shadow 200ms ease; }
-a.home-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px rgba(110, 21, 34, .38); }
+a.home-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px rgba(11, 79, 53, .38); }
 a.home-tile:active { transform: translateY(0); }
 
 /* L'alone segue il lato da cui arrivi: due sorgenti fisse, una per lato, accese dal
    passaggio. Senza puntatore (tastiera, tocco) si accende quella centrale col focus. */
 .home-tile-feature::before {
   content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
-  background: radial-gradient(120% 90% at 18% 0%, rgba(242, 218, 223, .20), transparent 62%);
+  background: radial-gradient(120% 90% at 18% 0%, rgba(220, 235, 226, .20), transparent 62%);
   opacity: 0; transition: opacity 260ms ease; pointer-events: none;
 }
 a.home-tile-feature:hover::before, a.home-tile-feature:focus-visible::before { opacity: 1; }
@@ -1322,7 +1331,7 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
    una `<table>` vera, con le sue intestazioni - quindi chi usa uno screen reader trova le
    colonne anche dove non si vedono, e non c'e' un secondo markup da tenere allineato.
 
-   Le cifre sono mono tabellari perche' vanno confrontate in colonna; verde e mattone
+   Le cifre sono mono tabellari perche' vanno confrontate in colonna; blu e arancio
    compaiono solo nel piede del confronto, dove dicono un verso: sopra o sotto la sua media.
    ============================================================ */
 .ref-carriera { margin: 0 0 14px; font-size: 13.5px; line-height: 1.55; color: var(--card-ink-2); }
@@ -1403,7 +1412,7 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 }
 
 /* Il metro: severo, in linea o permissivo rispetto alla propria lega. Nessuna tinta: in
-   questo prodotto verde e mattone dicono «sopra» e «sotto» un riferimento, e qui sopra il
+   questo prodotto blu e arancio dicono «sopra» e «sotto» un riferimento, e qui sopra il
    metro significa severo. Chi guarda in fretta leggerebbe il verde come «bravo», che non
    e' quello che il numero dice. La parola porta il suo peso da sola, con la cifra accanto. */
 .ref-metro { display: block; margin-top: 4px; }
@@ -1412,12 +1421,12 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .ref-metro-voce.is-permissivo { border-color: var(--card-stroke); color: var(--card-ink-3); }
 .ref-metro .ref-campione { margin-top: 3px; }
 /* Nella hero il pillolo vive su fondo scuro: prende i token gia' invertiti del blocco. */
-.oggi-hero-ref .ref-metro-voce { background: rgba(251,247,243,.14); border-color: rgba(251,247,243,.34); color: var(--card-ink); }
+.oggi-hero-ref .ref-metro-voce { background: rgba(244,248,245,.14); border-color: rgba(244,248,245,.34); color: var(--card-ink); }
 .oggi-hero-ref-link { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 /* Il riquadro intero e' il bersaglio: sul telefono il minimo tattile e' 44 px e un link
    inline ne misura 19. Il fondo si schiarisce appena al tocco, senza spostare niente. */
 a.oggi-hero-ref { text-decoration: none; transition: background-color 160ms ease; }
-a.oggi-hero-ref:hover { background: rgba(43,8,14,.88); }
+a.oggi-hero-ref:hover { background: rgba(4,38,26,.88); }
 a.oggi-hero-ref:hover .oggi-hero-ref-link { text-decoration-thickness: 2px; }
 a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offset: 3px; }
 
@@ -1530,7 +1539,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .analisi-titoletto { margin: 22px 0 0; font: 700 11px/1 var(--font-inter, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--card-ink-3); }
 
 /* «Come stanno arrivando»: i salti delle ultime gare rispetto alle medie di lato.
-   Verde e mattone dicono il verso rispetto alla media della squadra, come ovunque. */
+   Verde e arancio dicono il verso rispetto alla media della squadra, come ovunque. */
 .trend-due { display: grid; gap: 18px; margin-top: 12px; }
 @media (min-width: 720px) { .trend-due { grid-template-columns: 1fr 1fr; gap: 24px; } }
 .trend-nome { margin: 0 0 6px; font-family: var(--font-display); font-size: 15px; color: var(--card-ink); }
@@ -1541,7 +1550,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .trend-vuoto { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--card-ink-3); }
 
 /* «Chi lo vince, gara per gara»: due quote affiancate, ciascuna dal suo lato.
-   Il rilievo va a chi sta avanti, e non e' verde ne' mattone: non c'e' un verso
+   Il rilievo va a chi sta avanti, e non e' verde ne' arancio: non c'e' un verso
    rispetto a un riferimento, c'e' un confronto fra due squadre. */
 .contese-legenda { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--card-ink-2); }
 .contese-elenco { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 14px; }
@@ -1556,7 +1565,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .contesa-lato.is-avanti span { color: var(--card-ink-2); }
 
 /* «Come e' andata»: previsione dichiarata prima, contro il risultato.
-   Verde e mattone qui dicono un verso vero - dentro o fuori l'intervallo. */
+   Verde e arancio qui dicono un verso vero - dentro o fuori l'intervallo. */
 .verifica-conto { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--card-ink-2); }
 .verifica-gruppo { margin-top: 8px; }
 .verifica-famiglia { cursor: pointer; min-height: 44px; padding: 0 2px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0; font-family: var(--font-display); font-size: 14px; color: var(--card-ink); }
@@ -1732,7 +1741,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 }
 
 /* Il dossier: segnale principale, secondo, conflitto. Il bordo dice la categoria, e il
-   colore lo usa solo dove significa un verso: verde la convergenza forte, mattone il
+   colore lo usa solo dove significa un verso: verde la convergenza forte, arancio il
    conflitto, filetto tutto il resto. */
 .intel-blocchi { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
 .intel-blocco {
@@ -1903,7 +1912,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .riservata-elenco li { position: relative; padding-left: 16px; color: var(--card-ink-2); font-size: 14px; line-height: 1.5; }
 .riservata-elenco li::before { position: absolute; left: 0; color: var(--card-ink-3); content: "-"; }
 .riservata .button-link { margin-top: 14px; }
-/* Elimina account: l'unica azione della pagina che non si puo' disfare. Il mattone
+/* Elimina account: l'unica azione della pagina che non si puo' disfare. Il arancio
    dichiara il verso, come ovunque nel sistema; il campo obbligato a contenere il proprio
    indirizzo e' il freno, non un avviso che si chiude senza leggerlo. */
 .account-elimina { border-color: var(--card-down); }
@@ -1997,7 +2006,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   text-decoration: none; border: 1px solid var(--card-stroke); border-radius: 8px;
   font: 600 13px/1 var(--font-inter, sans-serif); color: var(--card-ink-3); }
 .finestra-stagione a:hover { color: var(--card-ink-2); border-color: var(--card-ink-3); }
-/* La voce scelta cambia peso e sfondo oltre al colore: chi non distingue il bordeaux
+/* La voce scelta cambia peso e sfondo oltre al colore: chi non distingue il verde del campo
    la riconosce lo stesso. */
 .finestra-stagione a[aria-current] { color: var(--card-brand-strong);
   border-color: var(--card-brand); background: var(--card-brand-soft, transparent);
