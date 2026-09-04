@@ -1,3 +1,4 @@
+import { affidabilita } from "@/lib/affidabilita";
 import type { Cappello, Tratto } from "@/server/iqstats/affronto";
 import type { RitmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
 
@@ -36,6 +37,7 @@ function Prova({ t, faseDelTitolo }: {
           {t.lettura}
           {fase === null ? null : <> · quando attacca {fase}</>}
           {" · "}{t.campione} gare
+          {affidabilita(t.campione) === null ? null : <> · {affidabilita(t.campione)}</>}
         </span>
       </p>
       <p className="affronto-cifre">
@@ -87,6 +89,7 @@ function Tempi({ ritmo }: { readonly ritmo: RitmoDeiTempi }) {
               {v.metro === null ? null : <> · media della lega {quota(v.metro)}</>}
               {v.oltreIlRumore ? null : <> · dentro l&apos;errore</>}
               {" · "}{v.gare} gare
+              {affidabilita(v.gare) === null ? null : <> · {affidabilita(v.gare)}</>}
             </span>
           </p>
           <p className="affronto-cifre">

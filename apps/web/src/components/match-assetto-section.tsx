@@ -1,3 +1,4 @@
+import { affidabilita } from "@/lib/affidabilita";
 import type { Assetto, QuandoSpingono } from "@/server/iqstats/assetto";
 
 /**
@@ -46,8 +47,16 @@ export function MatchAssettoSection({ assetto, fasce }: {
       </h2>
 
       <div className="gamestat-heads">
-        <span>{teste.nomeCasa} · {teste.gareCasa} gare</span>
-        <span>{teste.nomeTrasferta} · {teste.gareTrasferta} gare</span>
+        <span>
+          {teste.nomeCasa} · {teste.gareCasa} gare
+          {affidabilita(teste.gareCasa) === null ? null : ` · ${affidabilita(teste.gareCasa)}`}
+        </span>
+        <span>
+          {teste.nomeTrasferta} · {teste.gareTrasferta} gare
+          {affidabilita(teste.gareTrasferta) === null
+            ? null
+            : ` · ${affidabilita(teste.gareTrasferta)}`}
+        </span>
       </div>
       {assetto === null ? null : <Righe righe={assetto.righe} />}
 

@@ -41,6 +41,7 @@
     "test:contese": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-contese.test.ts",
     "test:trend": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-trend.test.ts",
     "test:lati": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-lati.test.ts",
+    "test:affidabilita": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/affidabilita.test.ts",
     "test:ritmo-tempi": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-ritmo-tempi.test.ts",
     "test:ultime-cinque": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-ultime-cinque.test.ts",
     "test:assetto": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-assetto.test.ts",

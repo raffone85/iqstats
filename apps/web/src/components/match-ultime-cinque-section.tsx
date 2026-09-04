@@ -1,3 +1,4 @@
+import { affidabilita } from "@/lib/affidabilita";
 import type { ComeSiPresentano, SerieDiLato } from "@/server/iqstats/ultime-cinque";
 
 /**
@@ -58,8 +59,14 @@ export function MatchUltimeCinqueSection({ confronto, homeTeam, awayTeam }: {
       </h2>
 
       <div className="gamestat-heads">
-        <span>{homeTeam} · {gareCasa} in casa</span>
-        <span>{awayTeam} · {gareFuori} fuori</span>
+        <span>
+          {homeTeam} · {gareCasa} in casa
+          {affidabilita(gareCasa) === null ? null : ` · ${affidabilita(gareCasa)}`}
+        </span>
+        <span>
+          {awayTeam} · {gareFuori} fuori
+          {affidabilita(gareFuori) === null ? null : ` · ${affidabilita(gareFuori)}`}
+        </span>
       </div>
       <div className="gamestat-table">
         {confronto.differenze.map((d) => (
