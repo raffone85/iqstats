@@ -44,6 +44,7 @@
     "test:ritmo-tempi": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-ritmo-tempi.test.ts",
     "test:ultime-cinque": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-ultime-cinque.test.ts",
     "test:assetto": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-assetto.test.ts",
+    "test:indisponibili": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-indisponibili.test.ts",
     "test:team-stats": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-team-stats.test.ts",
     "test:arbitro-scheda": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-arbitro-scheda.test.ts",
     "test:arbitri": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-arbitri.test.ts",

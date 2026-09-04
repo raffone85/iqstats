@@ -264,8 +264,19 @@ function Eleven({ side, teamName, confirmed }: { side: TeamLineup | null; teamNa
           </li>
         ))}
       </ol>
+      {/* **Chi non c'e', con il motivo dove la fonte lo dice.** Lo stato e il motivo
+          arrivano da `unavailable_players`, che la fonte marca `beta`: si mostra quello
+          che manda, tradotto, e non si completa a mano quello che non manda. Non entra in
+          nessun numero della pagina: e' informazione, non un fattore del modello. */}
       {side.unavailable.length > 0 ? (
-        <p className="bench-sample">Indisponibili: {side.unavailable.join(", ")}</p>
+        <p className="bench-sample">
+          Indisponibili: {side.unavailable.map((g, i) => (
+            <span key={g.nome}>
+              {i > 0 ? ", " : ""}{g.nome}
+              {" "}({g.motivo === null ? g.stato : `${g.stato}, ${g.motivo}`})
+            </span>
+          ))}
+        </p>
       ) : null}
     </div>
   );
@@ -1348,6 +1359,18 @@ export default async function MatchPage({ params }: MatchPageProps) {
               <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
               <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />
             </div>
+            {/* La lista degli indisponibili la fonte la marca beta, e lo dichiariamo invece
+                di presentarla come un dato consolidato. Non entra in nessun numero. */}
+            {lineups.beta
+              && ((lineups.home?.unavailable.length ?? 0) > 0
+                || (lineups.away?.unavailable.length ?? 0) > 0) ? (
+              <p className="dossier-src">
+                L&apos;elenco degli indisponibili arriva da una parte della fonte dichiarata{" "}
+                <b>in prova</b>: può essere incompleto o non aggiornato, e per questo non
+                entra in nessuna stima di questa pagina. Chi manca senza comparire qui non è
+                detto che ci sia.
+              </p>
+            ) : null}
             {/* Le due panchine stanno dentro Giocatori, chiuse: sono il contorno di chi
                 gioca, non una domanda a se'. */}
             {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (

@@ -5,6 +5,8 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 
+import { motivoInItaliano, type Indisponibile } from "./indisponibili.ts";
+
 import { ProviderClient } from "./provider-client.ts";
 
 const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
@@ -26,11 +28,13 @@ export interface TeamLineup {
   readonly confidence: number | null;
   readonly starters: readonly LineupPlayer[];
   readonly benchCount: number;
-  readonly unavailable: readonly string[];
+  readonly unavailable: readonly Indisponibile[];
 }
 
 export interface MatchLineups {
   readonly confirmed: boolean;
+  /** La fonte marca questo endpoint come beta: su 30 gare provate, 30 volte su 30. */
+  readonly beta: boolean;
   readonly home: TeamLineup | null;
   readonly away: TeamLineup | null;
   readonly updatedAt: string | null;
@@ -77,12 +81,15 @@ function normalizeSide(row: unknown, unavailableRow: unknown): TeamLineup | null
 
   const unavailableList = Array.isArray(unavailableRow) ? unavailableRow : [];
   const unavailable = unavailableList
-    .map((row) => {
-      if (typeof row === "string") return row;
+    .map((row): Indisponibile | null => {
+      if (typeof row === "string") return { nome: row, stato: "altro", motivo: null };
       const p = normalizePlayer(row);
-      return p?.name ?? null;
+      if (p === null) return null;
+      const r = row as Record<string, unknown>;
+      const letto = motivoInItaliano(asString(r.status), asString(r.reason));
+      return { nome: p.name, stato: letto.stato, motivo: letto.motivo };
     })
-    .filter((name): name is string => name !== null);
+    .filter((v): v is Indisponibile => v !== null);
 
   return {
     teamId: asNumber(r.team_id),
@@ -130,6 +137,7 @@ async function loadLineups(eventId: number): Promise<MatchLineups | null> {
 
   return {
     confirmed: asString(root.lineup_status) === "confirmed",
+    beta: root.beta === true,
     home,
     away,
     updatedAt: asString(root.updated_at),
