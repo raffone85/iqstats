@@ -16,8 +16,11 @@ fra virgolette identificano un elemento, non sono materiale da riusare.
 ## 1. Che cosa non ho potuto vedere, e perché
 
 - **Le otto schede degli Expected**: `?view=gol` e sorelle rispondono «Serve il piano PRO».
-  L'unica vista libera è `view=centro`, che su due gare di ieri provate dice «Referto
-  dettagliato non ancora disponibile per questa partita».
+  L'unica vista libera è `view=centro`, il **centro partita**, che è gratuito e pieno — ma
+  **solo per le gare già consolidate**: su quattro gare di ieri provate una per una (La
+  Liga, Swiss Super League, Scottish Premiership, Saudi Pro League) dice sempre «Referto
+  dettagliato non ancora disponibile per questa partita», mentre sulle gare del 31 agosto
+  c'è tutto. Il referto arriva con qualche giorno di ritardo. Vedi il capitolo 4-bis.
 - **La Verifica** di una gara finita: chiede un token, e il conto era a zero — «Il prossimo
   token gratis arriva tra 1g 00:11:23».
 - **La schedina generata**: il Generatore chiede 1 token e ne restava 1. **Non l'ho speso**:
@@ -127,6 +130,55 @@ marginali».
 va costruita **dagli stessi numeri mostrati**, con una prova che lo sorvegli. È quello che
 già facciamo in «Come si presentano», dove il confronto in parole nasce dalle cifre della
 tabella e un test lo controlla.
+
+---
+
+## 4-bis. Il centro partita di una gara conclusa — la sezione gratuita più ricca
+
+`view=centro` su una gara consolidata (Lecce-Roma, 31 agosto, 0-4) apre un referto completo,
+**senza token e senza abbonamento**. È la parte del prodotto con più dato per pixel.
+
+**Testata**: punteggio, stato «FINALE · 2ª» con la giornata, i marcatori con il minuto, e
+**l'arbitro nominato** («Arbitro: D. Chiffi»).
+
+**Tre schede: Eventi · Formazioni · Statistiche.**
+
+**Eventi** è una cronologia con il tipo di azione, non solo il fatto: «Tiro di destro 0-1
+4'», «Fallo di mano 9'», «Tiro di sinistro 0-3 25'», le sostituzioni con chi esce e chi
+entra, e uno stacco esplicito per il secondo tempo.
+
+**Formazioni**: il modulo di ciascuna squadra (Roma 3-4-2-1, Lecce 3-5-2), gli undici con il
+**voto per giocatore** (Dybala 8.3, Svilar 6.9, Falcone 5.9) e le panchine con il conteggio
+dei convocati.
+
+**Statistiche**: **38 voci in cinque famiglie**, ognuna come confronto diretto — valore di
+casa a sinistra, nome al centro, valore di trasferta a destra.
+
+| Famiglia | Voci |
+| --- | --- |
+| Tiri e attacco (13) | tiri totali, in porta, fuori, in area, fuori area, conclusioni, grandi occasioni create, grandi occasioni fallite, legni colpiti, azioni offensive, azioni pericolose, corner, fuorigioco |
+| Possesso e passaggi (17) | possesso, passaggi, riusciti e percentuale, lanci lunghi con riusciti e percentuale, passaggi chiave, cross totali e riusciti, tentativi di dribbling con riusciti e percentuale, colpi di testa riusciti, rimesse laterali, calci piazzati, rinvii dal fondo |
+| Difesa (5) | contrasti, intercetti, duelli vinti, parate, palloni salvati |
+| Disciplina (3) | falli, cartellini gialli, sostituzioni |
+| Altro (2) | assist, gol |
+
+**Tre cose da notare per noi:**
+
+1. **Le percentuali stanno accanto ai valori assoluti**, non al posto loro: «7 lanci lunghi
+   riusciti su 44, il 16%» contro «19 su 38, il 50%». Chi legge vede insieme il volume e la
+   resa.
+2. Compaiono **azioni offensive e azioni pericolose** (80 contro 136, 31 contro 62), che nel
+   nostro archivio sono `attack` e `dangerous_attack` e che abbiamo escluso perché coperte
+   solo su 2.140 gare di 10.977. Loro le mostrano sul referto della singola gara, dove il
+   problema di copertura non si pone: è un dato osservato di quella partita, non una media.
+   **Questa distinzione è utile**: escluderle dalle medie resta giusto, mostrarle nel referto
+   di una gara conclusa sarebbe un'altra cosa.
+3. Ci sono voci che noi non abbiamo mai mostrato e che costano poco: **legni colpiti**,
+   **grandi occasioni fallite**, **palloni salvati**, **rimesse laterali**, **rinvii dal
+   fondo**.
+
+E una nota di prodotto: il referto è **gratuito**, gli Expected no. La gara conclusa è
+l'esca; la gara da giocare è il prodotto a pagamento.
 
 ---
 
