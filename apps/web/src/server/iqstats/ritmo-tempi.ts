@@ -141,15 +141,16 @@ export function letturaDeiTempi(voci: readonly QuotaDiTempo[]): RitmoDeiTempi | 
  * Il campione e' l'unione delle loro gare: una partita fra le due conta una volta,
  * perche' si conta la gara e non la squadra.
  *
- * `seasonSourceId` restringe alla stagione di quella competizione; `null` guarda
- * tutto l'archivio. Il metro segue la stessa finestra: campione e metro parlano
- * sempre dello stesso periodo, altrimenti il confronto misura il calendario.
+ * `stagioni` sono gli `source_id` delle stagioni da guardare, scelti dalla finestra:
+ * una sola per la stagione in corso o per quella prima, tutte per l'archivio. Il metro
+ * segue la stessa finestra: campione e metro parlano sempre dello stesso periodo,
+ * altrimenti il confronto misura il calendario.
  */
 export async function ritmoDeiTempi(
   casaSourceId: number,
   trasfertaSourceId: number,
   competitionSourceId: number,
-  seasonSourceId: number | null,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<RitmoDeiTempi | null> {
   const sql = connessione();
@@ -207,7 +208,7 @@ export async function ritmoDeiTempi(
         select s.id
         from football.seasons s
         join lega l on l.id = s.competition_id
-        where s.source_id = ${seasonSourceId}::bigint
+        where s.source_id = any(${stagioni as number[]}::bigint[])
       ), gare as (
         select m.id
         from football.matches m
@@ -215,7 +216,7 @@ export async function ritmoDeiTempi(
         join football.teams fuori on fuori.source_id = ${trasfertaSourceId}::bigint
         where m.kickoff_at < ${quando}::timestamptz
           and (m.home_team_id in (casa.id, fuori.id) or m.away_team_id in (casa.id, fuori.id))
-          and (${seasonSourceId}::bigint is null or m.season_id in (select id from stagione))
+          and m.season_id in (select id from stagione)
         order by m.kickoff_at desc
         limit ${MAX_GARE}
       ), per_gara as (
@@ -234,7 +235,7 @@ export async function ritmoDeiTempi(
         from football.matches m
         join lega l on l.id = m.competition_id
         where m.kickoff_at < ${quando}::timestamptz
-          and (${seasonSourceId}::bigint is null or m.season_id in (select id from stagione))
+          and m.season_id in (select id from stagione)
       ), per_gara_lega as (
         select h.match_id,
                ${sql.unsafe(perGara)}

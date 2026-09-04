@@ -101,7 +101,7 @@ test("le gare sono della stagione chiesta, dal lato chiesto e prima del via", op
   assert.ok(caso !== undefined, "nessuna gara con tre precedenti per lato in stagione");
 
   const letto = await comeSiPresentano(
-    Number(caso.casa), Number(caso.fuori), Number(caso.lega), Number(caso.stagione), caso.quando,
+    Number(caso.casa), Number(caso.fuori), Number(caso.lega), [Number(caso.stagione)], caso.quando,
   );
   assert.ok(letto !== null, "nessun confronto");
   assert.equal(letto.casa.nome, caso.nome);
@@ -120,7 +120,7 @@ test("le gare sono della stagione chiesta, dal lato chiesto e prima del via", op
     join football.teams t on t.id = o.team_id
     join football.seasons s on s.id = o.season_id
     where t.source_id = ${Number(caso.casa)}::bigint
-      and s.source_id = ${Number(caso.stagione)}::bigint
+      and s.source_id = ${[Number(caso.stagione)]}::bigint
       and o.side = 'home'
       and o.kickoff_at < ${caso.quando}::timestamptz
   `;
@@ -130,7 +130,7 @@ test("le gare sono della stagione chiesta, dal lato chiesto e prima del via", op
 
 test("senza gare in questa stagione non esce un confronto inventato", opzioni, async () => {
   assert.equal(
-    await comeSiPresentano(999_999_999, 999_999_998, 999_999_997, 999_999_996,
+    await comeSiPresentano(999_999_999, 999_999_998, 999_999_997, [999_999_996],
       new Date().toISOString()),
     null,
   );

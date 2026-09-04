@@ -154,7 +154,7 @@ interface Profilo {
 async function profiloDi(
   sql: NonNullable<ReturnType<typeof connessione>>,
   teamSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<Profilo | null> {
   const righe = await sql<Record<string, string | null>[]>`
@@ -165,7 +165,7 @@ async function profiloDi(
       join football.matches m on m.id = h.match_id
       join football.seasons s on s.id = m.season_id
       where t.source_id = ${teamSourceId}::bigint
-        and s.source_id = ${seasonSourceId}::bigint
+        and s.source_id = any(${stagioni as number[]}::bigint[])
         and h.kickoff_at < ${quando}::timestamptz
       order by h.kickoff_at desc
       limit ${GARE}
@@ -197,15 +197,15 @@ async function profiloDi(
 export async function assettoDelConfronto(
   casaSourceId: number,
   trasfertaSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<Assetto | null> {
   const sql = connessione();
   if (sql === null) return null;
   try {
     const [casa, fuori] = await Promise.all([
-      profiloDi(sql, casaSourceId, seasonSourceId, quando),
-      profiloDi(sql, trasfertaSourceId, seasonSourceId, quando),
+      profiloDi(sql, casaSourceId, stagioni, quando),
+      profiloDi(sql, trasfertaSourceId, stagioni, quando),
     ]);
     if (casa === null || fuori === null) return null;
 
@@ -236,7 +236,7 @@ export async function assettoDelConfronto(
 async function fasceDi(
   sql: NonNullable<ReturnType<typeof connessione>>,
   teamSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<{ nome: string; gare: number; xg: Map<number, number> } | null> {
   const righe = await sql<Record<string, string | null>[]>`
@@ -247,7 +247,7 @@ async function fasceDi(
       join football.matches m on m.id = b.match_id
       join football.seasons s on s.id = m.season_id
       where t.source_id = ${teamSourceId}::bigint
-        and s.source_id = ${seasonSourceId}::bigint
+        and s.source_id = any(${stagioni as number[]}::bigint[])
         and b.kickoff_at < ${quando}::timestamptz
       order by b.kickoff_at desc
       limit ${GARE}
@@ -280,15 +280,15 @@ async function fasceDi(
 export async function quandoSpingono(
   casaSourceId: number,
   trasfertaSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<QuandoSpingono | null> {
   const sql = connessione();
   if (sql === null) return null;
   try {
     const [casa, fuori] = await Promise.all([
-      fasceDi(sql, casaSourceId, seasonSourceId, quando),
-      fasceDi(sql, trasfertaSourceId, seasonSourceId, quando),
+      fasceDi(sql, casaSourceId, stagioni, quando),
+      fasceDi(sql, trasfertaSourceId, stagioni, quando),
     ]);
     if (casa === null || fuori === null) return null;
 

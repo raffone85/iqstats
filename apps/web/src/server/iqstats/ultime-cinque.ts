@@ -157,7 +157,7 @@ async function latoDi(
   sql: NonNullable<ReturnType<typeof connessione>>,
   teamSourceId: number,
   competitionSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   lato: "home" | "away",
   quando: string,
 ): Promise<{ serie: SerieDiLato; medie: Map<string, number> } | null> {
@@ -176,7 +176,7 @@ async function latoDi(
     join football.seasons s on s.id = o.season_id
     where t.source_id = ${teamSourceId}::bigint
       and c.source_id = ${competitionSourceId}::bigint
-      and s.source_id = ${seasonSourceId}::bigint
+      and s.source_id = any(${stagioni as number[]}::bigint[])
       and o.side = ${lato}
       and o.kickoff_at < ${quando}::timestamptz
     order by o.kickoff_at desc
@@ -221,7 +221,7 @@ export async function comeSiPresentano(
   casaSourceId: number,
   trasfertaSourceId: number,
   competitionSourceId: number,
-  seasonSourceId: number,
+  stagioni: readonly number[],
   quando: string,
 ): Promise<ComeSiPresentano | null> {
   const sql = connessione();
@@ -229,8 +229,8 @@ export async function comeSiPresentano(
 
   try {
     const [casa, trasferta] = await Promise.all([
-      latoDi(sql, casaSourceId, competitionSourceId, seasonSourceId, "home", quando),
-      latoDi(sql, trasfertaSourceId, competitionSourceId, seasonSourceId, "away", quando),
+      latoDi(sql, casaSourceId, competitionSourceId, stagioni, "home", quando),
+      latoDi(sql, trasfertaSourceId, competitionSourceId, stagioni, "away", quando),
     ]);
     if (casa === null || trasferta === null) return null;
 

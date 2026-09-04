@@ -33,6 +33,7 @@ import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-secti
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
+import { FinestraStagione } from "@/components/finestra-stagione";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
@@ -41,6 +42,7 @@ import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
 import { assettoDelConfronto, quandoSpingono } from "@/server/iqstats/assetto";
+import { finestraDa, stagioniScelte } from "@/server/iqstats/finestra-stagione";
 import { comeSiPresentano } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
@@ -125,6 +127,7 @@ export const metadata: Metadata = {
 
 type MatchPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const kickoffFormatter = new Intl.DateTimeFormat("it-IT", {
@@ -371,8 +374,12 @@ function percheSenzaProiezione(motivo: SenzaProiezione): string {
   }
 }
 
-export default async function MatchPage({ params }: MatchPageProps) {
+export default async function MatchPage({ params, searchParams }: MatchPageProps) {
   const { id } = await params;
+  // La finestra scelta da chi legge sta nell'indirizzo: nessuno stato nel browser, e il
+  // collegamento mostra a un altro esattamente quello che si sta guardando.
+  const chiesto = (await searchParams).stagione;
+  const finestraChiesta = finestraDa(typeof chiesto === "string" ? chiesto : undefined);
 
   // Un indirizzo malformato non e' una gara con un problema: e' un indirizzo che non
   // esiste, e va detto con lo stesso 404 di una gara assente invece che con un riquadro.
@@ -599,15 +606,23 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
 
+  // **La finestra, risolta una volta sola.** Le quattro letture legate alla stagione
+  // guardano tutte lo stesso periodo: risolverla qui evita che due sezioni della stessa
+  // pagina rispondano su due archi di tempo diversi senza che si veda.
+  const finestra = detail.leagueId === null || detail.seasonId === null
+    ? null
+    : await stagioniScelte(detail.leagueId, detail.seasonId, finestraChiesta);
+  const stagioni = finestra?.stagioni ?? [];
+
   // **Assetto e fasce.** Dove stanno in campo e in che tratto producono, dalle posizioni
-  // medie e dai gol attesi minuto per minuto gia' archiviati per il motore. Stagione in
-  // corso, entrambi i lati: sono modi di giocare, non proprieta' del campo.
+  // medie e dai gol attesi minuto per minuto gia' archiviati per il motore. Entrambi i
+  // lati: sono modi di giocare, non proprieta' del campo.
   const [assetto, fasceDiGara] = detail.homeTeamId === null || detail.awayTeamId === null
-    || detail.seasonId === null
+    || stagioni.length === 0
     ? [null, null]
     : await Promise.all([
-      assettoDelConfronto(detail.homeTeamId, detail.awayTeamId, detail.seasonId, detail.kickoff),
-      quandoSpingono(detail.homeTeamId, detail.awayTeamId, detail.seasonId, detail.kickoff),
+      assettoDelConfronto(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
+      quandoSpingono(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
     ]);
 
   // **Come si presentano.** Una frase sul carattere della gara e le tre differenze piu'
@@ -615,20 +630,20 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // stagione**: niente recupero dall'anno scorso, e sotto tre gare per lato il carattere
   // non si dichiara.
   const ultimeDiLato = detail.homeTeamId === null || detail.awayTeamId === null
-    || detail.leagueId === null || detail.seasonId === null
+    || detail.leagueId === null || stagioni.length === 0
     ? null
     : await comeSiPresentano(
-      detail.homeTeamId, detail.awayTeamId, detail.leagueId, detail.seasonId, detail.kickoff,
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
     );
 
   // **La stessa domanda, guardata nel tempo.** Come si affrontano dice che cosa producono;
   // questo dice quando lo producono. Dal nostro livello dati, nessuna chiamata nuova alla
   // fonte: i due tempi delle gare gia' archiviate.
   const ritmoTempi = detail.homeTeamId === null || detail.awayTeamId === null
-    || detail.leagueId === null || detail.seasonId === null
+    || detail.leagueId === null || stagioni.length === 0
     ? null
     : await ritmoDeiTempi(
-      detail.homeTeamId, detail.awayTeamId, detail.leagueId, detail.seasonId, detail.kickoff,
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
     );
 
   // La sintesi nasce solo da ciò che è già stato letto: nessun dato nuovo, nessuna frase
@@ -1213,10 +1228,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        {/* Il ritmo per tempo non dipende dalla stagione in corso: guarda indietro
-            quattrocento gare, quindi c'e' anche a settembre, quando le medie di lato non
-            hanno ancora il campione e il resto del capitolo tace. Per questo il pannello
-            sta fuori dalla condizione delle letture e decide da se'. */}
+        {/* **Il selettore governa le quattro letture di stagione insieme**, e sta qui
+            perche' qui comincia la prima: assetto, quando spingono, come si presentano e
+            il ritmo per tempo stanno tutte dentro questo capitolo. */}
+        {insight.allowed && finestra !== null ? (
+          <FinestraStagione matchId={id} scelta={finestra} />
+        ) : null}
+
+        {/* Il pannello sta fuori dalla condizione delle letture perche' il ritmo per tempo
+            ha un campione suo - le gare della coppia, non le medie di lato - e a settembre
+            c'e' anche dove il resto del capitolo tace. */}
         {insight.allowed ? (
           <ComeSiAffrontano cappello={cappello} ritmoTempi={ritmoTempi} />
         ) : null}

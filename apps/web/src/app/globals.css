@@ -1986,3 +1986,21 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   .insight-panel .dossier-1x2-row { grid-template-columns: 1fr auto; gap: 6px 10px; }
   .insight-panel .dossier-1x2-label { grid-column: 1 / -1; }
 }
+
+/* **Il selettore della finestra di stagione.** Stessa materia delle capsule dei capitoli:
+   link, 44 px di area tattile, nessun colore che porti da solo l'informazione. Non e'
+   sticky perche' non e' navigazione: si sceglie una volta e si legge. */
+.finestra-stagione { margin: 0 0 16px; }
+.finestra-stagione ul { display: flex; flex-wrap: wrap; gap: 4px;
+  margin: 0; padding: 0; list-style: none; }
+.finestra-stagione a { display: flex; align-items: center; min-height: 44px; padding: 0 12px;
+  text-decoration: none; border: 1px solid var(--card-stroke); border-radius: 8px;
+  font: 600 13px/1 var(--font-inter, sans-serif); color: var(--card-ink-3); }
+.finestra-stagione a:hover { color: var(--card-ink-2); border-color: var(--card-ink-3); }
+/* La voce scelta cambia peso e sfondo oltre al colore: chi non distingue il bordeaux
+   la riconosce lo stesso. */
+.finestra-stagione a[aria-current] { color: var(--card-brand-strong);
+  border-color: var(--card-brand); background: var(--card-brand-soft, transparent);
+  font-weight: 700; }
+.finestra-stagione-nota { margin: 8px 0 0;
+  font: 400 12px/1.5 var(--font-inter, sans-serif); color: var(--card-ink-3); }

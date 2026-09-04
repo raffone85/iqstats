@@ -158,7 +158,7 @@ test("le quote stanno fra zero e uno e i due tempi sommano alla gara", opzioni, 
   assert.ok(caso !== undefined, "nessuna gara con campione in stagione");
 
   const ritmo = await ritmoDeiTempi(
-    Number(caso.casa), Number(caso.fuori), Number(caso.lega), Number(caso.stagione), caso.quando,
+    Number(caso.casa), Number(caso.fuori), Number(caso.lega), [Number(caso.stagione)], caso.quando,
   );
   assert.ok(ritmo !== null, "nessuna lettura");
   assert.ok(ritmo.voci.length >= 2, "una lettura si regge su almeno due voci");
@@ -186,13 +186,13 @@ test("una gara futura non entra nei numeri che la leggono", opzioni, async () =>
   // Alla vigilia di quella gara le sue righe non esistono ancora: la lettura presa un
   // istante prima non puo' contare piu' gare di quella presa un istante dopo.
   const prima = await ritmoDeiTempi(
-    Number(caso.casa), Number(caso.fuori), Number(caso.lega), Number(caso.stagione), caso.quando,
+    Number(caso.casa), Number(caso.fuori), Number(caso.lega), [Number(caso.stagione)], caso.quando,
   );
   const dopo = await ritmoDeiTempi(
     Number(caso.casa),
     Number(caso.fuori),
     Number(caso.lega),
-    Number(caso.stagione),
+    [Number(caso.stagione)],
     new Date(new Date(caso.quando).getTime() + 86_400_000).toISOString(),
   );
   assert.ok(prima !== null && dopo !== null);
@@ -203,7 +203,7 @@ test("una gara futura non entra nei numeri che la leggono", opzioni, async () =>
 
 test("una squadra che non esiste non produce una lettura inventata", opzioni, async () => {
   assert.equal(
-    await ritmoDeiTempi(999_999_999, 999_999_998, 999_999_997, null, new Date().toISOString()),
+    await ritmoDeiTempi(999_999_999, 999_999_998, 999_999_997, [999_999_996], new Date().toISOString()),
     null,
   );
 });

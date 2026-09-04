@@ -116,7 +116,7 @@ test("le misure restano nella scala del campo e le gare sono in stagione", opzio
   assert.ok(caso !== undefined, "nessuna gara con tre assetti per squadra in stagione");
 
   const assetto = await assettoDelConfronto(
-    Number(caso.casa), Number(caso.fuori), Number(caso.stagione), caso.quando,
+    Number(caso.casa), Number(caso.fuori), [Number(caso.stagione)], caso.quando,
   );
   assert.ok(assetto !== null, "nessun assetto");
   assert.ok(assetto.gareCasa >= 3 && assetto.gareTrasferta >= 3);
@@ -129,7 +129,7 @@ test("le misure restano nella scala del campo e le gare sono in stagione", opzio
   }
 
   const fasce = await quandoSpingono(
-    Number(caso.casa), Number(caso.fuori), Number(caso.stagione), caso.quando,
+    Number(caso.casa), Number(caso.fuori), [Number(caso.stagione)], caso.quando,
   );
   assert.ok(fasce !== null, "nessuna fascia");
   assert.ok(fasce.fasce.length > 0 && fasce.fasce.length <= 6);
@@ -145,11 +145,11 @@ test("le misure restano nella scala del campo e le gare sono in stagione", opzio
 
 test("senza identificativi validi non esce un assetto inventato", opzioni, async () => {
   assert.equal(
-    await assettoDelConfronto(999_999_999, 999_999_998, 999_999_997, new Date().toISOString()),
+    await assettoDelConfronto(999_999_999, 999_999_998, [999_999_997], new Date().toISOString()),
     null,
   );
   assert.equal(
-    await quandoSpingono(999_999_999, 999_999_998, 999_999_997, new Date().toISOString()),
+    await quandoSpingono(999_999_999, 999_999_998, [999_999_997], new Date().toISOString()),
     null,
   );
 });
