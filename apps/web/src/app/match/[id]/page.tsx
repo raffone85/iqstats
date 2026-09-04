@@ -28,6 +28,7 @@ import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
+import { MatchAssettoSection } from "@/components/match-assetto-section";
 import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
@@ -39,6 +40,7 @@ import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
+import { assettoDelConfronto, quandoSpingono } from "@/server/iqstats/assetto";
 import { comeSiPresentano } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
@@ -585,6 +587,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
+
+  // **Assetto e fasce.** Dove stanno in campo e in che tratto producono, dalle posizioni
+  // medie e dai gol attesi minuto per minuto gia' archiviati per il motore. Stagione in
+  // corso, entrambi i lati: sono modi di giocare, non proprieta' del campo.
+  const [assetto, fasceDiGara] = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.seasonId === null
+    ? [null, null]
+    : await Promise.all([
+      assettoDelConfronto(detail.homeTeamId, detail.awayTeamId, detail.seasonId, detail.kickoff),
+      quandoSpingono(detail.homeTeamId, detail.awayTeamId, detail.seasonId, detail.kickoff),
+    ]);
 
   // **Come si presentano.** Una frase sul carattere della gara e le tre differenze piu'
   // marcate fra il lato di casa e quello di trasferta, dalle ultime gare **di questa
@@ -1226,6 +1239,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
         />
 
         {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
+
+        {insight.allowed ? <MatchAssettoSection assetto={assetto} fasce={fasceDiGara} /> : null}
 
         {proiezioni?.forma ? (
           <MatchFormaSection
