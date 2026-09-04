@@ -12,9 +12,11 @@ import test from "node:test";
 
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import {
+  arbitroControLeSquadre,
   classificaArbitri,
   competizioniConArbitri,
   metriDiLega,
+  PRECEDENTI_PER_MEDIA,
   profiloArbitro,
 } from "../src/server/iqstats/referees.ts";
 
@@ -286,4 +288,54 @@ test("dentro il dossier il profilo esce dalla competizione della gara", opzioni,
     null,
     "senza gare in quella competizione il profilo deve mancare, non venire da altrove",
   );
+});
+
+test("i precedenti con le due squadre reggono le loro soglie", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+
+  // Una gara vera con l'arbitro e le due squadre, presa dall'archivio.
+  const [gara] = await sql<Array<{ arbitro: string; casa: string; ospite: string }>>`
+    select r.source_id::text as arbitro, casa.source_id::text as casa,
+           ospite.source_id::text as ospite
+    from football.matches m
+    join football.referees r on r.id = m.referee_id
+    join football.teams casa on casa.id = m.home_team_id
+    join football.teams ospite on ospite.id = m.away_team_id
+    where m.referee_id is not null
+    order by m.kickoff_at desc
+    limit 1
+  `;
+  assert.ok(gara !== undefined, "nessuna gara con arbitro nell'archivio");
+
+  const contro = await arbitroControLeSquadre(
+    Number(gara.arbitro), Number(gara.casa), Number(gara.ospite),
+  );
+  if (contro === null) return; // l'arbitro non ha precedenti con nessuna delle due
+
+  for (const squadra of [contro.casa, contro.trasferta]) {
+    assert.equal(
+      squadra.inCasa.gare + squadra.inTrasferta.gare, squadra.precedenti,
+      "i due lati non tornano al totale dei precedenti",
+    );
+    if (squadra.precedenti < PRECEDENTI_PER_MEDIA) {
+      assert.equal(squadra.gialli, null, "media calcolata sotto il campione minimo");
+      assert.equal(squadra.falli, null, "media calcolata sotto il campione minimo");
+    } else {
+      assert.ok(squadra.gialli !== null && squadra.gialli >= 0);
+      assert.ok(squadra.falli !== null && squadra.falli >= 0);
+    }
+    if (squadra.precedenti > 0) {
+      assert.ok(squadra.dal !== null && squadra.al !== null && squadra.dal <= squadra.al);
+    }
+  }
+  // La media di riferimento e' per lato, quindi sta sotto la media di gara del profilo.
+  assert.ok(contro.abituale.gialli > 0 && contro.abituale.lati > 0);
+  const profilo = await profiloArbitro(Number(gara.arbitro));
+  if (profilo !== null) {
+    assert.ok(
+      contro.abituale.gialli < profilo.media.gialli,
+      `per lato ${contro.abituale.gialli} non e' sotto la media di gara ${profilo.media.gialli}`,
+    );
+  }
 });

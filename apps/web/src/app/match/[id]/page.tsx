@@ -109,8 +109,8 @@ import { MatchRitmoSection } from "@/components/match-ritmo-section";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
-  gareDirette, giudizioSulMetro, medieDaMostrare, medieDelPeriodo, metriDiLega, metroPer,
-  perStagioneCompetizione, profiloArbitro,
+  arbitroControLeSquadre, gareDirette, giudizioSulMetro, medieDaMostrare, medieDelPeriodo,
+  metriDiLega, metroPer, perStagioneCompetizione, profiloArbitro,
 } from "@/server/iqstats/referees";
 
 export const metadata: Metadata = {
@@ -643,11 +643,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // un'altra competizione non sono un ripiego.
   const contestoArbitro = detail.leagueId === null || detail.seasonId === null ? null
     : { competitionSourceId: detail.leagueId, seasonSourceId: detail.seasonId };
-  const [arbitroNostro, arbitroGare] = detail.refereeId === null
-    ? [null, [] as const]
+  const [arbitroNostro, arbitroGare, arbitroControLoro] = detail.refereeId === null
+    ? [null, [] as const, null]
     : await Promise.all([
       contestoArbitro === null ? null : profiloArbitro(detail.refereeId, contestoArbitro),
       gareDirette(detail.refereeId),
+      // Quante volte ha gia' diretto queste due squadre. Nessuna chiamata nuova alla fonte:
+      // `referee_id`, `team_id` e `side` stanno gia' sulla stessa riga delle osservazioni.
+      detail.homeTeamId === null || detail.awayTeamId === null ? null
+        : arbitroControLeSquadre(detail.refereeId, detail.homeTeamId, detail.awayTeamId),
     ]);
   // La competizione e la stagione **di questa gara**, prese dalla gara piu' recente che
   // l'arbitro ha diretto qui: il confronto che serve al lettore del dossier e' con le altre
@@ -1342,6 +1346,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
             entratoNei={arbitroEntratoIn}
+            controLeSquadre={arbitroControLoro}
             scheda={arbitroGare.length === 0 ? null : (
               <ArbitroScheda
                 nome={arbitroNostro.nome}

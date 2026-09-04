@@ -2,7 +2,14 @@ import type { ReactNode } from "react";
 
 import Link from "next/link";
 
-import type { PosizioneFraColleghi, ProfiloArbitro } from "@/server/iqstats/referees";
+import {
+  PRECEDENTI_PER_CONFRONTO,
+  PRECEDENTI_PER_MEDIA,
+  type ArbitroControLeSquadre,
+  type ArbitroControSquadra,
+  type PosizioneFraColleghi,
+  type ProfiloArbitro,
+} from "@/server/iqstats/referees";
 
 /**
  * L'arbitro designato, e come pesa su questa gara.
@@ -80,8 +87,97 @@ function Voce({ nome, valore, metro, cifre, posizione, cosa }: {
   );
 }
 
+/** Gli anni coperti dai precedenti: «2024» oppure «2023-2026». */
+function arcoDeiPrecedenti(dal: string | null, al: string | null): string | null {
+  if (dal === null || al === null) return null;
+  const primo = dal.slice(0, 4);
+  const ultimo = al.slice(0, 4);
+  return primo === ultimo ? primo : `${primo}-${ultimo}`;
+}
+
+/**
+ * Come ha diretto **questa** squadra, con il campione davanti al numero.
+ *
+ * Tre gradini, e il campione decide quale: sotto quattro precedenti si dice solo quanti sono
+ * - una media su tre gare non e' una tendenza, e' un aneddoto - da quattro la media compare
+ * dichiarata come campione limitato, da otto si puo' confrontare con quanto quell'arbitro
+ * mostra di solito a una squadra.
+ */
+function ControSquadra({ nome, dati, abituale }: {
+  readonly nome: string;
+  readonly dati: ArbitroControSquadra;
+  readonly abituale: number;
+}) {
+  const arco = arcoDeiPrecedenti(dati.dal, dati.al);
+  const lati = [
+    dati.inCasa.gare > 0 ? `${dati.inCasa.gare} in casa` : null,
+    dati.inTrasferta.gare > 0 ? `${dati.inTrasferta.gare} fuori` : null,
+  ].filter((v) => v !== null).join(" · ");
+  const differenza = dati.gialli === null ? null : dati.gialli - abituale;
+
+  return (
+    <li className="engine-split">
+      <span className="engine-who">
+        {nome}
+        <span className="engine-obs">
+          {dati.precedenti === 0
+            ? "nessuna gara sua con questo arbitro"
+            : `${dati.precedenti} ${dati.precedenti === 1 ? "precedente" : "precedenti"}`
+              + (lati === "" ? "" : ` · ${lati}`) + (arco === null ? "" : ` · ${arco}`)}
+        </span>
+      </span>
+      <span className="engine-exp">
+        {dati.gialli === null ? (
+          <span className="engine-obs">
+            {dati.precedenti === 0
+              ? "niente da leggere"
+              : `sotto ${PRECEDENTI_PER_MEDIA} precedenti non se ne fa una media`}
+          </span>
+        ) : (
+          <>
+            {decimale(dati.gialli, 2)}
+            <span className="engine-obs">gialli a gara, a questa squadra</span>
+            <span className="engine-obs">
+              {dati.precedenti >= PRECEDENTI_PER_CONFRONTO && differenza !== null
+                ? `contro i ${decimale(abituale, 2)} che mostra di solito a una squadra · `
+                  + `${differenza > 0 ? "+" : ""}${decimale(differenza, 2)}`
+                : "campione limitato: è quello che è successo, non una tendenza"}
+            </span>
+          </>
+        )}
+      </span>
+    </li>
+  );
+}
+
+/**
+ * La lettura in parole, solo per le squadre che hanno il campione per reggerla.
+ *
+ * Sotto `PRECEDENTI_PER_CONFRONTO` non si scrive nessuna frase: il numero sta gia' nella
+ * riga sopra con il suo campione, e una frase discorsiva su quattro gare peserebbe piu' di
+ * quanto il dato valga.
+ */
+function frasiDeiPrecedenti(
+  dati: ArbitroControLeSquadre,
+  homeTeam: string,
+  awayTeam: string,
+): readonly string[] {
+  return [[dati.casa, homeTeam] as const, [dati.trasferta, awayTeam] as const]
+    .filter(([squadra]) =>
+      squadra.gialli !== null && squadra.precedenti >= PRECEDENTI_PER_CONFRONTO)
+    .map(([squadra, nome]) =>
+      `Nei ${squadra.precedenti} precedenti con ${nome} ha mostrato `
+      + `${decimale(squadra.gialli ?? 0, 2)} gialli a gara, contro i `
+      + `${decimale(dati.abituale.gialli, 2)} che mostra di solito a una squadra.`);
+}
+
 type Props = {
   readonly profilo: ProfiloArbitro;
+  /**
+   * I precedenti dell'arbitro con le due squadre, `null` quando non ne ha con nessuna delle
+   * due o quando il livello dati non risponde.
+   */
+  readonly controLeSquadre?: ArbitroControLeSquadre | null;
   readonly homeTeam: string;
   readonly awayTeam: string;
   /**
@@ -100,7 +196,7 @@ type Props = {
 };
 
 export function MatchArbitroSection({
-  profilo, homeTeam, awayTeam, entratoNei, scheda,
+  profilo, homeTeam, awayTeam, entratoNei, scheda, controLeSquadre = null,
 }: Props) {
   const sbilancioFalli = profilo.falliControCasa - profilo.falliControTrasferta;
   const sbilancioGialli = profilo.gialliControCasa - profilo.gialliControTrasferta;
@@ -194,7 +290,43 @@ export function MatchArbitroSection({
             </li>
           </ul>
         </li>
+
+        {/* **Un fatto storico, non una previsione.** Le gare attraversano stagioni e
+            competizioni perche' altrimenti il campione sarebbe zero, e il campione sta
+            davanti al numero, non dopo. */}
+        {controLeSquadre === null ? null : (
+          <li className="engine-row">
+            <p className="engine-metric">Come ha diretto queste due squadre</p>
+            <ul className="engine-splits">
+              <ControSquadra
+                nome={homeTeam}
+                dati={controLeSquadre.casa}
+                abituale={controLeSquadre.abituale.gialli}
+              />
+              <ControSquadra
+                nome={awayTeam}
+                dati={controLeSquadre.trasferta}
+                abituale={controLeSquadre.abituale.gialli}
+              />
+            </ul>
+          </li>
+        )}
       </ul>
+
+      {controLeSquadre === null ? null : (
+        <p className="dossier-src">
+          {frasiDeiPrecedenti(controLeSquadre, homeTeam, awayTeam).map((frase) => (
+            <span key={frase}>{frase} </span>
+          ))}
+          <b>Sono gare gi&agrave; giocate, non una previsione.</b> Un incontro fra un arbitro e una
+          squadra si ripete poche volte - in tutto il nostro archivio il massimo &egrave;
+          dodici - e con i gialli che variano di quasi due per gara, un campione cos&igrave;
+          non separa la tendenza dal caso: dice che cosa &egrave; successo, e basta. La media
+          dell&apos;arbitro con cui si confronta &egrave; quella che mostra <b>a una
+          squadra</b> su tutte le {controLeSquadre.abituale.lati} righe che gli abbiamo
+          osservato, non la sua media di gara, che vale il doppio.
+        </p>
+      )}
 
       {scheda ?? null}
 

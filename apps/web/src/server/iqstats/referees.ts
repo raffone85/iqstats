@@ -354,6 +354,158 @@ export async function profiloArbitro(
   }
 }
 
+// ---------------------------------------------------------------------------
+// L'arbitro contro queste due squadre.
+//
+// **E' un fatto storico, non una previsione.** Il campione e' quello che e': sull'archivio
+// del 3 settembre 2026, delle 9.139 coppie arbitro-squadra ne arrivano a otto precedenti
+// **venti**, 1.137 stanno fra quattro e sette e 7.982 - l'87% - ne hanno tre o meno. Quindi
+// nella stragrande maggioranza dei casi questa lettura dice quante volte si sono incontrati
+// e nient'altro, che e' esattamente cio' che i numeri permettono di dire.
+//
+// **Il confronto e' fra grandezze della stessa forma.** Una riga di
+// `team_match_observations` porta i cartellini di **una** squadra in una gara, quindi la
+// media dei precedenti si confronta con quanti gialli quell'arbitro mostra in media **a una
+// squadra**, non con la sua media di gara, che vale il doppio.
+// ---------------------------------------------------------------------------
+
+/** Da qui in su una media ha senso, e va comunque letta con il campione accanto. */
+export const PRECEDENTI_PER_MEDIA = 4;
+
+/** Da qui in su la media si puo' confrontare con l'abitudine dell'arbitro. */
+export const PRECEDENTI_PER_CONFRONTO = 8;
+
+export interface LatoDeiPrecedenti {
+  readonly gare: number;
+  /** `null` sotto il campione minimo: un conteggio non diventa una media. */
+  readonly gialli: number | null;
+}
+
+export interface ArbitroControSquadra {
+  readonly teamSourceId: number;
+  readonly precedenti: number;
+  /** Medie della squadra in quelle gare, `null` sotto `PRECEDENTI_PER_MEDIA`. */
+  readonly gialli: number | null;
+  readonly falli: number | null;
+  readonly inCasa: LatoDeiPrecedenti;
+  readonly inTrasferta: LatoDeiPrecedenti;
+  /** Gli anni dei precedenti, per dire su che arco di tempo si sta guardando. */
+  readonly dal: string | null;
+  readonly al: string | null;
+}
+
+export interface ArbitroControLeSquadre {
+  readonly casa: ArbitroControSquadra;
+  readonly trasferta: ArbitroControSquadra;
+  /** Quanto mostra in media **a una squadra**, su tutte le gare che gli abbiamo osservato. */
+  readonly abituale: { readonly gialli: number; readonly falli: number; readonly lati: number };
+}
+
+interface RigaControSquadra {
+  readonly team_source_id: string;
+  readonly precedenti: string;
+  readonly gialli: string | null;
+  readonly falli: string | null;
+  readonly gare_casa: string;
+  readonly gialli_casa: string | null;
+  readonly gare_fuori: string;
+  readonly gialli_fuori: string | null;
+  readonly dal: string | null;
+  readonly al: string | null;
+}
+
+/**
+ * I precedenti dell'arbitro con le due squadre della gara, o `null` se non ne ha nessuno.
+ *
+ * Le gare attraversano stagioni e competizioni di proposito: con questo campione restringere
+ * alla stagione lascerebbe zero. L'arco di tempo si dichiara insieme al conteggio.
+ */
+export async function arbitroControLeSquadre(
+  refereeSourceId: number,
+  casaSourceId: number,
+  trasfertaSourceId: number,
+): Promise<ArbitroControLeSquadre | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+
+  try {
+    const righe = await sql<RigaControSquadra[]>`
+      with sue as (
+        select o.team_id, o.side, o.kickoff_at, o.yellow_cards, o.fouls
+        from football.team_match_observations o
+        where o.referee_id = (select id from football.referees
+                               where source_id = ${refereeSourceId}::bigint)
+          and o.yellow_cards is not null and o.fouls is not null
+      )
+      select t.source_id::text as team_source_id,
+             count(*)::text as precedenti,
+             avg(s.yellow_cards)::text as gialli, avg(s.fouls)::text as falli,
+             count(*) filter (where s.side = 'home')::text as gare_casa,
+             avg(s.yellow_cards) filter (where s.side = 'home')::text as gialli_casa,
+             count(*) filter (where s.side = 'away')::text as gare_fuori,
+             avg(s.yellow_cards) filter (where s.side = 'away')::text as gialli_fuori,
+             min(s.kickoff_at)::text as dal, max(s.kickoff_at)::text as al
+      from sue s
+      join football.teams t on t.id = s.team_id
+      where t.source_id in (${casaSourceId}::bigint, ${trasfertaSourceId}::bigint)
+      group by 1
+    `;
+    if (righe.length === 0) return null;
+
+    const abituali = await sql<Array<{ gialli: string | null; falli: string | null; lati: string }>>`
+      select avg(o.yellow_cards)::text as gialli, avg(o.fouls)::text as falli,
+             count(*)::text as lati
+      from football.team_match_observations o
+      where o.referee_id = (select id from football.referees
+                             where source_id = ${refereeSourceId}::bigint)
+        and o.yellow_cards is not null and o.fouls is not null
+    `;
+    const abituale = abituali[0];
+    if (abituale?.gialli == null || abituale.falli == null) return null;
+
+    const lato = (gare: string, gialli: string | null): LatoDeiPrecedenti => ({
+      gare: Number(gare),
+      gialli: gialli === null || Number(gare) < PRECEDENTI_PER_MEDIA ? null : Number(gialli),
+    });
+    const perSquadra = (teamSourceId: number): ArbitroControSquadra => {
+      const r = righe.find((riga) => Number(riga.team_source_id) === teamSourceId);
+      if (r === undefined) {
+        return {
+          teamSourceId, precedenti: 0, gialli: null, falli: null,
+          inCasa: { gare: 0, gialli: null }, inTrasferta: { gare: 0, gialli: null },
+          dal: null, al: null,
+        };
+      }
+      const precedenti = Number(r.precedenti);
+      const media = (valore: string | null): number | null =>
+        valore === null || precedenti < PRECEDENTI_PER_MEDIA ? null : Number(valore);
+      return {
+        teamSourceId,
+        precedenti,
+        gialli: media(r.gialli),
+        falli: media(r.falli),
+        inCasa: lato(r.gare_casa, r.gialli_casa),
+        inTrasferta: lato(r.gare_fuori, r.gialli_fuori),
+        dal: r.dal,
+        al: r.al,
+      };
+    };
+
+    return {
+      casa: perSquadra(casaSourceId),
+      trasferta: perSquadra(trasfertaSourceId),
+      abituale: {
+        gialli: Number(abituale.gialli),
+        falli: Number(abituale.falli),
+        lati: Number(abituale.lati),
+      },
+    };
+  } catch {
+    // Un precedente che non si puo' leggere non diventa un precedente inventato.
+    return null;
+  }
+}
+
 /** Le competizioni che hanno arbitri con abbastanza gare, dalla più coperta in giù. */
 export async function competizioniConArbitri(): Promise<readonly CompetizioneConArbitri[]> {
   const sql = connessione();
