@@ -84,6 +84,7 @@ function Tempi({ ritmo }: { readonly ritmo: RitmoDeiTempi }) {
             <span className="affronto-parola">{v.nome}</span>
             <span className="affronto-prova-fonte">
               {quota(v.quotaPrimo)} nel 1° tempo · {quota(1 - v.quotaPrimo)} nel 2°
+              {v.metro === null ? null : <> · media della lega {quota(v.metro)}</>}
               {v.oltreIlRumore ? null : <> · dentro l&apos;errore</>}
               {" · "}{v.gare} gare
             </span>
@@ -100,8 +101,10 @@ function Tempi({ ritmo }: { readonly ritmo: RitmoDeiTempi }) {
       <p className="affronto-nota">
         Quote misurate gara per gara sulle partite già giocate di queste due squadre, dalle
         statistiche archiviate della fonte: sono gare avvenute, non una previsione, e non
-        entrano in nessun mercato. Dove lo scarto dalla metà non supera l&apos;errore della
-        sua media la riga lo dichiara, perché lì non si distingue da un&apos;oscillazione.
+        entrano in nessun mercato. Il metro è la media della competizione nello stesso
+        periodo, non la metà: in quasi tutte queste metriche si produce di più nella
+        ripresa, e misurare dal 50% chiamerebbe tendenza della squadra una proprietà del
+        gioco. Dove lo scarto da quella media non supera l&apos;errore la riga lo dichiara.
         {ritmo.escluse.length === 0 ? null : (
           <> Fuori per campione insufficiente: {ritmo.escluse.join(", ")}.</>
         )}{" "}

@@ -625,8 +625,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // questo dice quando lo producono. Dal nostro livello dati, nessuna chiamata nuova alla
   // fonte: i due tempi delle gare gia' archiviate.
   const ritmoTempi = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
     ? null
-    : await ritmoDeiTempi(detail.homeTeamId, detail.awayTeamId, detail.kickoff);
+    : await ritmoDeiTempi(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, detail.seasonId, detail.kickoff,
+    );
 
   // La sintesi nasce solo da ciò che è già stato letto: nessun dato nuovo, nessuna frase
   // scritta a mano. Se non c'è niente da dire, il blocco non compare.
