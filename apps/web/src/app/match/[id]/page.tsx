@@ -39,7 +39,7 @@ import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
-import { ultimeCinque } from "@/server/iqstats/ultime-cinque";
+import { comeSiPresentano } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
 } from "@/server/iqstats/lati";
@@ -586,14 +586,14 @@ export default async function MatchPage({ params }: MatchPageProps) {
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
 
-  // **Le ultime cinque, gara per gara.** «Forma, in numeri» dice quanto valgono le ultime
-  // tre, cinque e dieci contro il metro; questa dice contro chi si e' giocato e com'e'
-  // finita, con i gol attesi e i tiri accanto. Stessa competizione, stesso lato, e la
-  // stagione dichiarata gara per gara.
+  // **Come si presentano.** Una frase sul carattere della gara e le tre differenze piu'
+  // marcate fra il lato di casa e quello di trasferta, dalle ultime gare **di questa
+  // stagione**: niente recupero dall'anno scorso, e sotto tre gare per lato il carattere
+  // non si dichiara.
   const ultimeDiLato = detail.homeTeamId === null || detail.awayTeamId === null
     || detail.leagueId === null || detail.seasonId === null
     ? null
-    : await ultimeCinque(
+    : await comeSiPresentano(
       detail.homeTeamId, detail.awayTeamId, detail.leagueId, detail.seasonId, detail.kickoff,
     );
 
@@ -1225,7 +1225,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayForm={awayForm}
         />
 
-        {insight.allowed ? <MatchUltimeCinqueSection ultime={ultimeDiLato} /> : null}
+        {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
 
         {proiezioni?.forma ? (
           <MatchFormaSection
