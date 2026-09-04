@@ -29,6 +29,7 @@ import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
 import { MatchAssettoSection } from "@/components/match-assetto-section";
+import { MatchTiriSection } from "@/components/match-tiri-section";
 import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
@@ -43,6 +44,7 @@ import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
 import { assettoDelConfronto, quandoSpingono } from "@/server/iqstats/assetto";
 import { finestraDa, stagioniScelte } from "@/server/iqstats/finestra-stagione";
+import { daDoveTirano } from "@/server/iqstats/tiri-mappa";
 import { comeSiPresentano } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
@@ -624,6 +626,15 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       assettoDelConfronto(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
       quandoSpingono(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
     ]);
+
+  // **Da dove tirano.** La forma delle conclusioni, dalla mappa dei tiri gia' archiviata
+  // e gia' usata dal motore come feature. Stessa finestra delle altre letture.
+  const tiri = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || stagioni.length === 0
+    ? null
+    : await daDoveTirano(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
+    );
 
   // **Come si presentano.** Una frase sul carattere della gara e le tre differenze piu'
   // marcate fra il lato di casa e quello di trasferta, dalle ultime gare **di questa
@@ -1276,6 +1287,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
 
         {insight.allowed ? <MatchAssettoSection assetto={assetto} fasce={fasceDiGara} /> : null}
+
+        {insight.allowed ? <MatchTiriSection tiri={tiri} /> : null}
 
         {proiezioni?.forma ? (
           <MatchFormaSection
