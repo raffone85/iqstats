@@ -28,6 +28,7 @@ import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
+import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
@@ -38,6 +39,7 @@ import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
 import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
+import { ultimeCinque } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
 } from "@/server/iqstats/lati";
@@ -583,6 +585,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
+
+  // **Le ultime cinque, gara per gara.** «Forma, in numeri» dice quanto valgono le ultime
+  // tre, cinque e dieci contro il metro; questa dice contro chi si e' giocato e com'e'
+  // finita, con i gol attesi e i tiri accanto. Stessa competizione, stesso lato, e la
+  // stagione dichiarata gara per gara.
+  const ultimeDiLato = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || detail.seasonId === null
+    ? null
+    : await ultimeCinque(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, detail.seasonId, detail.kickoff,
+    );
 
   // **La stessa domanda, guardata nel tempo.** Come si affrontano dice che cosa producono;
   // questo dice quando lo producono. Dal nostro livello dati, nessuna chiamata nuova alla
@@ -1211,6 +1224,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
           homeForm={homeForm}
           awayForm={awayForm}
         />
+
+        {insight.allowed ? <MatchUltimeCinqueSection ultime={ultimeDiLato} /> : null}
 
         {proiezioni?.forma ? (
           <MatchFormaSection
