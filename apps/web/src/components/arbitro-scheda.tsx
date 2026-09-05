@@ -111,9 +111,9 @@ type Props = {
 /**
  * Severo, in linea o permissivo, con accanto il numero che lo dice e su quante gare.
  *
- * **Nessun colore.** Verde e mattone in questo prodotto significano «sopra» o «sotto» un
+ * **Nessun colore.** Blu e arancio in questo prodotto significano «sopra» o «sotto» un
  * riferimento, e qui sopra il metro vorrebbe dire severo: chi guarda in fretta leggerebbe il
- * verde come «bravo». La parola e' piu' onesta di una tinta, e il numero le sta accanto.
+ * verso come un voto. La parola e' piu' onesta di una tinta, e il numero le sta accanto.
  */
 function Metro({ riga, metro }: {
   readonly riga: RigaStagioneCompetizione;
@@ -156,6 +156,26 @@ export function ArbitroScheda({
   const daElencare = quiEOra === null ? gareDirette : gareDirette.filter(
     (g) => g.seasonId === quiEOra.seasonId && g.competizione === quiEOra.competizione,
   );
+
+  // La media delle ultime contro quella lunga: e' l'unica cosa che il blocco 3 aggiunge
+  // quando le sue gare stanno gia' nell'elenco finale, e serve a tutti e due i rami.
+  const sintesiUltime = [
+    { nome: "Falli", ora: mediaDi(valoriUltime.falli), sempre: medieLunghe.falli },
+    { nome: "Gialli", ora: mediaDi(valoriUltime.gialli), sempre: medieLunghe.gialli },
+    { nome: "Rossi", ora: mediaDi(valoriUltime.rossi), sempre: medieLunghe.rossi },
+  ] as const;
+
+  // **Le stesse gare due volte non sono due informazioni.** Misurato a 375 px sul dossier
+  // del Bundesliga 213683: la tabella delle ultime cinque e' alta 1.340 px, il 6,7% della
+  // pagina, e le sue cinque righe erano identiche alle prime cinque dell'elenco qui sotto,
+  // che ne mostra sedici con piu' colonne. Dove la sovrapposizione e' totale la tabella
+  // sparisce e resta la riga di piede, che l'elenco non sa dare.
+  const chiaveGara = (g: GaraDiretta) => `${g.quando}-${g.casa}-${g.trasferta}`;
+  const giaNellElenco = new Set(daElencare.map(chiaveGara));
+  const ultimeGiaSotto = ultime.length > 0 && ultime.every((g) => giaNellElenco.has(chiaveGara(g)));
+  // Quando le ultime sono tutte le gare che abbiamo, lo scarto e' fra un insieme e se
+  // stesso: la riga direbbe «le ultime 5 contro le 5 che abbiamo» e non aggiunge niente.
+  const scartoHaSenso = medieLunghe.partite > ultime.length;
 
   return (
     <>
@@ -287,8 +307,39 @@ export function ArbitroScheda({
       )}
 
       {/* Blocco 3. Le ultime gare contro la media lunga: il verso lo dice il colore, che qui
-          significa «sopra» o «sotto» il suo metro, come vuole il design system. */}
-      {ultime.length === 0 ? null : (
+          significa «sopra» o «sotto» il suo metro, come vuole il design system.
+          Quando quelle gare sono gia' tutte nell'elenco del blocco 4, la tabella non si
+          disegna: resterebbe la stessa cosa scritta due volte, e la sola informazione che
+          l'elenco non da' e' la media delle ultime con il suo scarto. */}
+      {ultime.length === 0 || (ultimeGiaSotto && !scartoHaSenso) ? null : ultimeGiaSotto ? (
+        <p className="ref-carriera">
+          <b>Le ultime {ultime.length}, e lo scarto sulle {gare(medieLunghe.partite)} che
+          abbiamo:</b>{" "}
+          {sintesiUltime.map((v, i) => {
+            const scarto = v.ora === null || v.sempre === null ? null : v.ora - v.sempre;
+            return (
+              <span key={v.nome}>
+                {i === 0 ? "" : " · "}
+                <span className="ref-carriera-num">{cifra(v.ora, 2)}</span>{" "}
+                {v.nome.toLowerCase()}
+                {/* Lo scarto sta fra parentesi: senza, due cifre di seguito si leggono
+                    come due valori di pari rango invece che come valore e differenza. */}
+                {scarto === null || Math.abs(scarto) < SCARTO_MUTO ? "" : (
+                  <>
+                    {" ("}
+                    <span className="ref-carriera-num">
+                      {scarto >= 0 ? "+" : "−"}{decimale(Math.abs(scarto), 2)}
+                    </span>
+                    {")"}
+                  </>
+                )}
+              </span>
+            );
+          })}
+          . Le loro righe stanno nell&apos;elenco qui sotto, con più colonne: non si ripetono
+          qui. Uno scarto sotto <b>0,05</b> non si scrive, perché non si distingue dal rumore.
+        </p>
+      ) : (
         <>
           <h3 className="ref-sub">Le ultime {ultime.length}, in tutte le competizioni</h3>
           <div className="ref-table-wrap">
@@ -340,14 +391,7 @@ export function ArbitroScheda({
                     Media delle ultime {ultime.length}, e scarto sulle{" "}
                     {gare(medieLunghe.partite)} che abbiamo
                   </th>
-                  {([
-                    { nome: "Falli", ora: mediaDi(valoriUltime.falli), sempre: medieLunghe.falli },
-                    {
-                      nome: "Gialli", ora: mediaDi(valoriUltime.gialli),
-                      sempre: medieLunghe.gialli,
-                    },
-                    { nome: "Rossi", ora: mediaDi(valoriUltime.rossi), sempre: medieLunghe.rossi },
-                  ] as const).map((v) => {
+                  {sintesiUltime.map((v) => {
                     const scarto = v.ora === null || v.sempre === null ? null : v.ora - v.sempre;
                     const verso = scarto === null || Math.abs(scarto) < SCARTO_MUTO ? ""
                       : scarto > 0 ? " is-sopra" : " is-sotto";
@@ -370,7 +414,7 @@ export function ArbitroScheda({
             </table>
           </div>
           <p className="dossier-src">
-            Il verde dice sopra la sua media, il mattone sotto: è un verso, non un
+            Il blu dice sopra la sua media, l&apos;arancio sotto: è un verso, non un
             giudizio. Cinque gare spostano poco, e uno scarto sotto <b>0,05</b> resta
             inchiostro perché non si distingue dal rumore. Il parziale del primo tempo
             non compare: nel nostro livello dati quella colonna è vuota su tutte e{" "}
