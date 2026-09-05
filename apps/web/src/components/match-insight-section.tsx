@@ -73,6 +73,37 @@ export function insightHaContenuto({ contesto, dossier, forti }: {
     || (forti !== null && forti.letture.length > 0);
 }
 
+/**
+ * Quando il verdetto non c'e', il dossier lo dichiara invece di sparire.
+ *
+ * Il 5 settembre 2026, su quattordici gare campionate una per campionato, **sei non
+ * avevano nessuna delle quattro fonti del verdetto**: niente contesto, niente segnale
+ * principale, nessun conflitto, nessuna lettura oltre la forza minima. Su quelle l'area
+ * spariva, e la prima cosa che si leggeva era «Mercati»: la pagina smetteva di dire che
+ * partita sarebbe stata, che e' l'unica cosa che deve dire per prima.
+ *
+ * Abbassare la soglia perche' un verdetto ci sia sempre era l'altra strada, ed e' scartata:
+ * e' il difetto che rimproveriamo altrove, l'indice assegnato a un arbitro con una gara
+ * diretta. Sotto soglia non si dichiara. Si dichiara che non si dichiara, e perche'.
+ */
+export function MatchSenzaVerdetto({ motivi }: { readonly motivi: readonly string[] }) {
+  return (
+    <section className="dossier-panel insight-panel" aria-labelledby="insight-title">
+      <p className="dossier-kick">Che cosa vede IQstatS</p>
+      <h2 id="insight-title" className="sr-only-heading">La lettura principale di questa gara</h2>
+      <p className="insight-verdetto">Su questa gara non abbiamo un verdetto.</p>
+      <ul className="insight-senza">
+        {motivi.map((motivo) => <li key={motivo}>{motivo}</li>)}
+      </ul>
+      <p className="dossier-src">
+        Il verdetto nasce dalle letture che superano la forza minima. Sotto quella soglia
+        non lo dichiariamo, invece di dichiararlo debole: i capitoli qui sotto restano,
+        con i numeri che abbiamo davvero.
+      </p>
+    </section>
+  );
+}
+
 /** Le fonti di un segnale, in linea: il nome della lettura e quanto dice. */
 function Fonti({ segnale }: { readonly segnale: Segnale }) {
   if (segnale.fonti.length === 0) return null;
@@ -279,7 +310,9 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
           {righe.length > IN_VISTA ? (
             <details className="dossier-spiega">
               <summary>
-                Le altre {righe.length - IN_VISTA} letture che superano la forza minima
+                {righe.length - IN_VISTA === 1
+                  ? "L'altra lettura che supera la forza minima"
+                  : `Le altre ${righe.length - IN_VISTA} letture che superano la forza minima`}
               </summary>
               <div className="dossier-1x2">
                 {righe.slice(IN_VISTA).map((lettura) => (

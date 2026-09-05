@@ -23,7 +23,7 @@ import {
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
-import { MatchInsightSection, insightHaContenuto } from "@/components/match-insight-section";
+import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
@@ -818,6 +818,28 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     avvertenze,
   });
 
+  // **Perche' il verdetto non c'e', quando non c'e'.** Ogni riga esce da un fatto gia'
+  // calcolato sopra, non da una supposizione: se qui comparisse un motivo che il dossier
+  // non ha misurato, sarebbe una scusa, non una dichiarazione di assenza.
+  const motiviSenzaVerdetto = [
+    proiezioni === null
+      ? "Il motore non ha una proiezione per questa gara, e il verdetto nasce da lì."
+      : forti === null || forti.letture.length === 0
+        ? "Il motore proietta questa gara, ma nessuna lettura supera la forza minima: "
+          + "nessun numero si scosta abbastanza da quanto succede di solito in questa lega."
+        : null,
+    basi === null && proiezioni !== null
+      ? "Questo campionato non ha una base calibrata con cui confrontare le letture: "
+        + "senza un metro non diciamo se un numero è alto o basso."
+      : null,
+    cappello === null
+      ? "Le due squadre non hanno un tratto di gioco abbastanza marcato da nominarlo."
+      : null,
+    dossier.conflitti.length === 0 && dossier.principale === null
+      ? "Nessuna lettura entra in conflitto con un'altra: non c'è nemmeno una tensione da raccontare."
+      : null,
+  ].filter((riga): riga is string => riga !== null);
+
   // **L'analisi finale, in fondo:** la rilettura in parole di quello che il dossier ha gia'
   // detto sopra, senza una cifra, con il rimando al capitolo da cui ogni frase esce. Nasce
   // dagli stessi oggetti che i capitoli mostrano, quindi non puo' divergere da loro.
@@ -909,7 +931,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     // sola.** Quando erano due, divergevano: il 3 settembre l'area Insight compariva vuota
     // sulla gara 209561. Senza il piano l'area esiste lo stesso, perche' al posto suo c'e'
     // il riquadro che dice che cosa ci sarebbe dentro.
-    insight: !insight.allowed || insightHaContenuto({ contesto, dossier, forti }),
+    // L'area esiste sempre: o porta il verdetto, o porta la riga che dice perche' non c'e'.
+    insight: true,
     // `MatchValoreSection` tiene solo le letture che hanno un prezzo a cui confrontarsi:
     // dei pick senza mercato non le fanno comparire.
     mercati: insight.allowed
@@ -1057,7 +1080,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             dice la gara, dove il modello dice qualcosa, la sintesi del valore - e chi
             apriva la pagina non sapeva quale fosse la risposta. Nessun numero e' nuovo:
             arrivano tutti da `contestoDiGara`, `matchIntelligence` e `lettureForti`. */}
-        {insight.allowed ? (
+        {!insight.allowed ? null : insightHaContenuto({ contesto, dossier, forti }) ? (
           <MatchInsightSection
             contesto={contesto}
             dossier={dossier}
@@ -1065,7 +1088,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
           />
-        ) : null}
+        ) : (
+          <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
+        )}
 
         {/* Senza il piano non restano pannelli vuoti: al posto dell'intera area c'e' il
             riquadro che dice che cosa ci sarebbe dentro. */}
