@@ -1519,6 +1519,10 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .engine-scala > summary:focus-visible, .dossier-spiega > summary:focus-visible { outline: 2px solid var(--card-brand); outline-offset: -2px; border-radius: var(--r-inset); }
 .dossier-spiega { margin-top: 14px; padding-top: 4px; border-top: 1px solid var(--card-stroke); }
 .dossier-spiega > summary { font-size: 13px; font-weight: 600; }
+/* Il segno che si apre: `display: flex` toglie il marcatore nativo, e senza il piu' questi
+   riquadri sembravano titoli morti. Stesso segno di .squad-group e .ref-elenco. */
+.engine-scala > summary::after, .dossier-spiega > summary::after { content: "+"; margin-left: auto; padding-left: 10px; font-family: var(--font-mono, monospace); font-size: 15px; }
+.engine-scala[open] > summary::after, .dossier-spiega[open] > summary::after { content: "−"; }
 
 /* Dentro le card di famiglia il nome e il numero stanno affiancati anche a 375 px: qui i
    nomi sono nomi di squadra, corti, e non c'e' il problema delle etichette lunghe di
