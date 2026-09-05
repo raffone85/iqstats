@@ -280,17 +280,27 @@ export function ArbitroScheda({
               </tbody>
             </table>
           </div>
+          {/* **La provenienza resta in pagina, la spiegazione si apre.** Il MASTER dice che
+              il monospazio e' la voce della provenienza: da dove vengono i numeri e su
+              quante gare poggiano si legge senza toccare niente. Come si leggono, invece,
+              e' sempre lo stesso testo su ogni arbitro — 535 px misurati a 375 fra i due
+              paragrafi — e sta a un tocco. */}
           <p className="dossier-src">
             Nostre osservazioni{daQuando === null ? "" : `, dal ${giorno(daQuando)}`}:{" "}
             {gare(medieLunghe.partite)} in tutto. Ogni valore è <b>a partita</b>, mai un
-            totale, e dove il campione di una metrica è più corto delle partite
-            della riga sta scritto sotto il numero. <b>Le percentuali di casa e trasferta
-            ripartiscono</b> quello che è successo fra le due squadre: 50 e 50 significa
-            che ha diviso a metà, non che ha fischiato poco. Una riga da una gara sola
-            resta una gara sola: si mostra perché aver diretto lì è un
-            fatto, e si legge sapendolo.
+            totale.
           </p>
-          <p className="dossier-src">
+          <details className="dossier-spiega">
+            <summary>Come si leggono questi numeri</summary>
+            <p className="dossier-src">
+              Dove il campione di una metrica è più corto delle partite
+              della riga sta scritto sotto il numero. <b>Le percentuali di casa e trasferta
+              ripartiscono</b> quello che è successo fra le due squadre: 50 e 50 significa
+              che ha diviso a metà, non che ha fischiato poco. Una riga da una gara sola
+              resta una gara sola: si mostra perché aver diretto lì è un
+              fatto, e si legge sapendolo.
+            </p>
+            <p className="dossier-src">
             <b>Severo, in linea o permissivo si dice rispetto alla sua lega</b>, mai in
             assoluto: fra i direttori con almeno cinque gare, chi sta nel terzo più alto
             della propria competizione va da <b>2,85 a 7,80</b> gialli a partita e chi sta nel
@@ -302,7 +312,8 @@ export function ArbitroScheda({
             quando le gare sono poche: i gialli dello stesso direttore ballano da gara a gara
             di <b>1,94</b>, quindi con poche partite l&apos;etichetta può ribaltarsi, e
             per questo il campione le sta sempre accanto.
-          </p>
+            </p>
+          </details>
         </>
       )}
 

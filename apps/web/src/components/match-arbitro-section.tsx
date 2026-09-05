@@ -339,7 +339,11 @@ export function MatchArbitroSection({
         direttori della stessa competizione
         {profilo.finestra === "stagione" ? " in questa stagione" : ""} con almeno cinque gare.
       </p>
-      <p className="dossier-src">
+      {/* La cautela sul senso dei numeri vale su ogni arbitro ed e' sempre la stessa: sta a
+          un tocco, sotto la riga che dichiara campione e metro, che invece resta in pagina. */}
+      <details className="dossier-spiega">
+        <summary>Che cosa non dicono questi numeri</summary>
+        <p className="dossier-src">
         <b>Non &egrave; un voto.</b> Un arbitro che fischia molto pu&ograve; aver avuto
         partite spigolose, e uno che ammonisce poco pu&ograve; aver diretto gare tranquille:
         qui si misura quello che &egrave; successo in campo, non come ha arbitrato. La
@@ -347,7 +351,8 @@ export function MatchArbitroSection({
         dimostrata: su {profilo.gare} gare serve poco a spostarla.{" "}
         <Link href={`/arbitri/${profilo.sourceId}`}>La scheda completa</Link> ha lo storico
         gara per gara.
-      </p>
+        </p>
+      </details>
     </section>
   );
 }
