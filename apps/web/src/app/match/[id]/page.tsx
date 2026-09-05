@@ -105,7 +105,7 @@ import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
-import { baseDiLega } from "@/server/iqstats/base-di-lega";
+import { baseDiLega, baseDiSquadra } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
@@ -798,13 +798,26 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // volte ciascuna succede in questo campionato, poi si ordina. Si calcola una volta sola:
   // le usano il quadro in cima e la sezione che le elenca, e due calcoli darebbero due
   // ordini che possono divergere.
+  // Accanto al metro del campionato sta quello delle due squadre: la stessa linea, contata
+  // sulle loro gare dal lato che giocheranno qui. Le tre letture partono insieme.
   const { candidate, senzaMisura } = candidateDiGara(proiezioni?.bersagli ?? []);
-  const basi = candidate.length === 0 || detail.leagueId === null || detail.seasonId === null
-    ? null
-    : await baseDiLega(detail.leagueId, detail.seasonId, candidate.map((c) => ({
-      target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso,
-    })));
-  const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi) : null;
+  const richiesta = (c: (typeof candidate)[number]) => ({
+    target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso,
+  });
+  const lega = detail.leagueId;
+  const stagione = detail.seasonId;
+  const idCasa = detail.homeTeamId;
+  const idFuori = detail.awayTeamId;
+  const [basi, basiCasa, basiFuori] = candidate.length === 0 || lega === null
+    ? [null, null, null]
+    : await Promise.all([
+      stagione === null ? null : baseDiLega(lega, stagione, candidate.map(richiesta)),
+      idCasa === null ? null : baseDiSquadra(lega, idCasa, "home",
+        candidate.filter((c) => c.lato !== "trasferta").map(richiesta)),
+      idFuori === null ? null : baseDiSquadra(lega, idFuori, "away",
+        candidate.filter((c) => c.lato !== "casa").map(richiesta)),
+    ]);
+  const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi, basiCasa, basiFuori) : null;
   const contesto = contestoDiGara({
     bersagli: proiezioni?.bersagli ?? [],
     forti,

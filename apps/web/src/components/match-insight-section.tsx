@@ -125,12 +125,23 @@ function Fonti({ segnale }: { readonly segnale: Segnale }) {
  * Una riga di lettura forte: il verso con la sua soglia, quanto succede di solito in questa
  * lega, l'affidabilita' del bersaglio e la probabilita'. La barra e' la stessa del dossier.
  */
-function Lettura({ lettura, nome, massima }: {
+function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
   readonly lettura: LetturaForte;
   readonly nome: string;
   readonly massima: number;
+  readonly homeTeam: string;
+  readonly awayTeam: string;
 }) {
   const famiglia = FAMIGLIE[lettura.bersaglio];
+  // Su una linea di lato la squadra e' gia' nominata a sinistra; su una di totale sono due,
+  // e senza il nome non si saprebbe di chi e' quale numero. Il campione resta scritto.
+  const squadre = lettura.squadre.length === 0 ? "" : lettura.lato === "totale"
+    ? " · " + lettura.squadre
+      .map((s) => `${s.lato === "casa" ? homeTeam : awayTeam} ${Math.round(s.quota)}% su ${s.gare}`)
+      .join(", ")
+    : lettura.squadre
+      .map((s) => ` · questa squadra il ${Math.round(s.quota)}% su ${s.gare} gare`)
+      .join("");
   return (
     <div
       className="dossier-1x2-row"
@@ -143,6 +154,7 @@ function Lettura({ lettura, nome, massima }: {
           {lettura.base === null
             ? " · non sappiamo quanto sia normale in questa lega"
             : ` · in questa lega succede il ${Math.round(lettura.base)}% delle volte`}
+          {squadre}
           {" · affidabilità "}{lettura.affidabilita}/100
         </em>
       </span>
@@ -304,6 +316,8 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
                 lettura={lettura}
                 nome={chi(lettura)}
                 massima={massima}
+                homeTeam={homeTeam}
+                awayTeam={awayTeam}
               />
             ))}
           </div>
@@ -321,6 +335,8 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
                     lettura={lettura}
                     nome={chi(lettura)}
                     massima={massima}
+                    homeTeam={homeTeam}
+                    awayTeam={awayTeam}
                   />
                 ))}
               </div>
@@ -343,6 +359,13 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
             {" "}Restano fuori{" "}
             {forti.senzaMisura.map((t) => FAMIGLIE[t]?.nome ?? t).join(", ")}: non sappiamo
             quanto reggono.
+          </>
+        ) : null}
+        {righe.some((r) => r.squadre.length > 0) ? (
+          <>
+            {" "}Le percentuali di squadra contano tutte le stagioni archiviate di questa
+            competizione, dal lato che quella squadra gioca qui: una finestra più larga di
+            quella della lega, che è la stagione in corso.
           </>
         ) : null}
         {" "}Niente qui è un consiglio di gioco: sono frequenze misurate e probabilità del

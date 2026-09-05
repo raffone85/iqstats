@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { baseDiLega, chiaveDi } from "../src/server/iqstats/base-di-lega.ts";
+import { baseDiLega, baseDiSquadra, chiaveDi } from "../src/server/iqstats/base-di-lega.ts";
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import { ordinaLetture, chiaveDiLinea } from "../src/server/iqstats/projection/letture-forti.ts";
 import type { LetturaForte } from "../src/server/iqstats/projection/letture-forti.ts";
@@ -19,7 +19,7 @@ function linea(
   return {
     bersaglio, lato: "totale", soglia, verso, probabilita,
     decisione: Math.abs(probabilita - 0.5),
-    base: null, gareDiBase: null, affidabilita: 100, righeDiProva: 2000,
+    base: null, gareDiBase: null, squadre: [], affidabilita: 100, righeDiProva: 2000,
     sorpresa: 0, forza: 0,
   };
 }
@@ -123,4 +123,82 @@ test("sotto le trenta gare la base non si dichiara", opzioni, async () => {
   const mappa = await baseDiLega(Number(t.comp), Number(t.stag), [richiesta]);
   assert.ok(mappa !== null);
   assert.equal(mappa.get(chiaveDi(richiesta)), undefined, `${t.gare} gare non fanno una base`);
+});
+
+test("la base di squadra conta le sue gare da quel lato, ricontata a mano", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+  // La squadra con piu' gare in casa: si sceglie dai dati, non si scrive a mano.
+  const scelte = await sql<{ squadra: string; comp: string; gare: string }[]>`
+    select t.source_id::text as squadra, c.source_id::text as comp, count(*)::text as gare
+    from football.team_match_observations o
+    join football.teams t on t.id = o.team_id
+    join football.competitions c on c.id = o.competition_id
+    where o.side = 'home' and o.corner_kicks is not null
+    group by 1, 2
+    order by count(*) desc
+    limit 1
+  `;
+  const q = scelte[0];
+  assert.ok(q !== undefined, "nessuna squadra con i corner");
+
+  // Le due semantiche in una prova sola: il valore proprio e il totale di gara.
+  const propria = { target: "corner_kicks", lato: "casa" as const, soglia: 4.5, verso: "Over" as const };
+  const totale = { target: "corner_kicks", lato: "totale" as const, soglia: 9.5, verso: "Over" as const };
+  const mappa = await baseDiSquadra(Number(q.comp), Number(q.squadra), "home", [propria, totale]);
+  assert.ok(mappa !== null, "nessuna base di squadra");
+
+  const riconto = await sql<{ qp: string; np: string; qt: string; nt: string }[]>`
+    with sq as (select id from football.teams where source_id = ${Number(q.squadra)}::bigint limit 1),
+    mie as (
+      select o.match_id from football.team_match_observations o
+      join football.competitions c on c.id = o.competition_id
+      where c.source_id = ${Number(q.comp)}::bigint
+        and o.team_id = (select id from sq) and o.side = 'home'
+    ),
+    g as (
+      select o.match_id,
+             max(o.corner_kicks) filter (where o.side = 'home') as vp,
+             sum(o.corner_kicks) as vt
+      from football.team_match_observations o
+      where o.match_id in (select match_id from mie)
+      group by 1 having count(*) = 2
+    )
+    select (100 * avg((vp > 4.5)::int) filter (where vp is not null))::text as qp,
+           (count(*) filter (where vp is not null))::text as np,
+           (100 * avg((vt > 9.5)::int) filter (where vt is not null))::text as qt,
+           (count(*) filter (where vt is not null))::text as nt
+    from g
+  `;
+  const r = riconto[0];
+  assert.ok(r !== undefined, "il riconto non ha risposto");
+  const p = mappa.get(chiaveDi(propria));
+  const t = mappa.get(chiaveDi(totale));
+  assert.ok(p !== undefined && t !== undefined, `${q.gare} gare in casa e nessuna base`);
+  assert.ok(Math.abs(p.quota - Number(r.qp)) < 1e-9, "la quota propria non torna");
+  assert.equal(p.gare, Number(r.np), "il campione proprio non torna");
+  assert.ok(Math.abs(t.quota - Number(r.qt)) < 1e-9, "la quota di totale non torna");
+  assert.equal(t.gare, Number(r.nt), "il campione del totale non torna");
+});
+
+test("sotto le quindici gare la base di squadra non si dichiara", opzioni, async () => {
+  const sql = connessione();
+  assert.ok(sql !== null, "nessuna connessione");
+  const povere = await sql<{ squadra: string; comp: string; gare: string }[]>`
+    select t.source_id::text as squadra, c.source_id::text as comp, count(*)::text as gare
+    from football.team_match_observations o
+    join football.teams t on t.id = o.team_id
+    join football.competitions c on c.id = o.competition_id
+    where o.side = 'home'
+    group by 1, 2
+    having count(*) between 3 and 12
+    order by count(*) desc
+    limit 1
+  `;
+  const q = povere[0];
+  if (q === undefined) assert.fail("nessuna squadra sotto le quindici gare: la soglia non e' piu' esercitata");
+  const richiesta = { target: "corner_kicks", lato: "casa" as const, soglia: 4.5, verso: "Over" as const };
+  const mappa = await baseDiSquadra(Number(q.comp), Number(q.squadra), "home", [richiesta]);
+  assert.ok(mappa !== null);
+  assert.equal(mappa.get(chiaveDi(richiesta)), undefined, `${q.gare} gare non fanno una base`);
 });
