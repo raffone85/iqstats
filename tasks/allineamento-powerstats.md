@@ -170,7 +170,20 @@ piede; i termini invece sono una pagina sul loro dominio.
 ## Blocco 5 — i dati che loro non hanno
 
 20. **Scontri comuni**: le due squadre contro gli stessi avversari.
-21. **Frequenza storica della linea** per squadra, accanto alla base di lega.
+21. ~~**Frequenza storica della linea** per squadra, accanto alla base di lega.~~ —
+    **fatto il 5 settembre 2026.** `baseDiSquadra` in `base-di-lega.ts`: stessa competizione,
+    tutte le stagioni archiviate, gare della squadra **dal lato che giochera' in questa gara**,
+    `having count(*) = 2`. Le linee di lato portano una squadra, quelle di totale entrambe
+    col nome accanto.
+    **Il minimo e' quindici e non trenta, ed e' misurato:** per squadra, competizione e lato
+    la mediana e' **19 gare** e solo **25-27 coppie su 623 (4%)** arrivano a trenta; a quindici
+    ne passa il **78%**, la stessa copertura che darebbe mescolare i due lati con il minimo di
+    trenta, senza pero' mescolarli.
+    *Misurato in pagina:* NEC Nijmegen-Feyenoord (210836) «lega 88% · NEC 78% su 18, Feyenoord
+    79% su 19»; Aberdeen-Kilmarnock (211135) non ha ancora una base di lega e porta comunque
+    la frequenza di squadra su tutte e quattro le letture. Costo in altezza sulla stessa
+    pagina: +118 px a 375 e 768, +84 a 1024, +51 a 1440; zero overflow, zero sotto AA.
+    Due prove nuove in `test:base-di-lega` che ricontano a mano sul livello dati.
 22. **Elenco gare per esteso** sotto ogni famiglia.
 23. **Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce. Richiede
     un passaggio offline sulle gare chiuse: gli artefatti non la portano.
