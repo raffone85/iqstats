@@ -15,7 +15,7 @@ import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match"
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
 
 // Nome e tinta stanno nella **stessa** tabella apposta: due tabelle separate divergono al
-// primo bersaglio nuovo, e una famiglia senza tinta prenderebbe il bordeaux in silenzio,
+// primo bersaglio nuovo, e una famiglia senza tinta prenderebbe il verde del marchio in silenzio,
 // cioè due card dello stesso colore senza che nessuno se ne accorga.
 //
 // La tinta è l'unica eccezione alla regola «il colore dichiara un verso» del design system:

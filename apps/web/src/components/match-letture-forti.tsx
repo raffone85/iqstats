@@ -10,8 +10,8 @@
 // sotto una al 68% su un bersaglio che sbaglia poco, ed e' esattamente il punto.
 //
 // **Nessuna istruzione di puntata**, come vuole il master: si dice dove la lettura regge,
-// non che cosa fare. La barra e' quella bordeaux del dossier, che non dichiara un verso;
-// la tinta della famiglia compare accanto al suo nome **scritto**, quindi nessuna
+// non che cosa fare. La barra e' quella del dossier, col colore del marchio, che non
+// dichiara un verso; la tinta della famiglia compare accanto al suo nome **scritto**, quindi nessuna
 // informazione vive solo nel colore. Nessun CSS nuovo.
 import type { CSSProperties } from "react";
 

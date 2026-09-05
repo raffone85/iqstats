@@ -15,7 +15,7 @@ import type { RitmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
  *
  * **Il centro dell'asse e' la media delle squadre di quel lato**, i due punti sono le due
  * squadre. Quando cadono dalla stessa parte del centro il tratto si vede prima di leggerlo.
- * Verde e mattone dicono da che parte, cioe' un verso: non sono decorazione. Le cifre
+ * Blu e arancio dicono da che parte, cioe' un verso: non sono decorazione. Le cifre
  * esatte stanno scritte sopra l'asse, quindi niente vive solo nel colore.
  */
 function Prova({ t, faseDelTitolo }: {

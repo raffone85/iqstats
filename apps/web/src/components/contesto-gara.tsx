@@ -9,7 +9,7 @@ import { FAMIGLIE } from "./match-projection-section";
  * che gara e' senza leggere paragrafi.
  *
  * Ogni tessera porta l'atteso, il metro con cui va letto - la media delle squadre di questo
- * torneo sui due lati - e la lettura del modello con la sua probabilita'. Verde e mattone
+ * torneo sui due lati - e la lettura del modello con la sua probabilita'. Blu e arancio
  * stanno solo sullo scarto dal metro, e solo quando supera mezza dispersione: dove non lo
  * supera il numero resta inchiostro, perche' non si distingue.
  */

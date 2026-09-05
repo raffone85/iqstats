@@ -48,11 +48,12 @@ export function MatchAssettoSection({ assetto, fasce }: {
 
       <div className="gamestat-heads">
         <span>
-          {teste.nomeCasa} · {teste.gareCasa} gare
+          {teste.nomeCasa} · {teste.gareCasa} {teste.gareCasa === 1 ? "gara" : "gare"}
           {affidabilita(teste.gareCasa) === null ? null : ` · ${affidabilita(teste.gareCasa)}`}
         </span>
         <span>
-          {teste.nomeTrasferta} · {teste.gareTrasferta} gare
+          {teste.nomeTrasferta} · {teste.gareTrasferta}{" "}
+          {teste.gareTrasferta === 1 ? "gara" : "gare"}
           {affidabilita(teste.gareTrasferta) === null
             ? null
             : ` · ${affidabilita(teste.gareTrasferta)}`}
