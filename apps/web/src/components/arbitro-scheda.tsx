@@ -336,7 +336,7 @@ export function ArbitroScheda({
               </span>
             );
           })}
-          . Le loro righe stanno nell&apos;elenco qui sotto, con più colonne: non si ripetono
+          . Le loro righe stanno nell&apos;elenco qui sotto, con più colonne, e non si ripetono
           qui. Uno scarto sotto <b>0,05</b> non si scrive, perché non si distingue dal rumore.
         </p>
       ) : (

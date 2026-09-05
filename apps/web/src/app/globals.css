@@ -1340,6 +1340,17 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .ref-sub { margin: 22px 0 10px; font-family: var(--font-display); font-size: 16px; color: var(--card-ink); }
 .ref-sub .ref-campione { display: block; margin-top: 3px; }
 
+/* L'elenco delle gare chiuso nel dossier: stessa testata di .ref-sub, piu' il segno che si
+   apre. Il campione va a capo da solo, altrimenti il titolo si spezza a schermo stretto. */
+.ref-elenco { margin: 22px 0 0; border-top: 1px solid var(--card-stroke); }
+.ref-elenco > summary { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; min-height: var(--h-control); padding-top: 10px; cursor: pointer; font-family: var(--font-display); font-size: 16px; color: var(--card-ink); list-style: none; }
+.ref-elenco > summary::-webkit-details-marker { display: none; }
+.ref-elenco > summary::after { content: "+"; margin-left: auto; order: 1; font-family: var(--font-mono, monospace); font-size: 17px; color: var(--card-brand); }
+.ref-elenco[open] > summary::after { content: "−"; }
+.ref-elenco > summary:hover { color: var(--card-brand-strong); }
+.ref-elenco > summary:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; border-radius: var(--r-control); }
+.ref-elenco > summary .ref-campione { flex-basis: 100%; order: 2; margin-top: 3px; }
+
 /* Lo scorrimento e' dentro il riquadro, mai sulla pagina: a schermo largo una
    competizione dal nome lungo puo' allargare la tabella oltre il suo contenitore, e
    allora scorre lei invece di spingere fuori il corpo della pagina. */

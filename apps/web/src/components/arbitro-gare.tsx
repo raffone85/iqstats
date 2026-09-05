@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 import type { GaraDiretta } from "@/server/iqstats/referees";
 
@@ -126,6 +126,28 @@ type Props = {
   } | null;
 };
 
+/**
+ * L'elenco con la sua testata: aperto nella scheda dell'arbitro, chiuso nel dossier.
+ *
+ * **Misurato a 375 px sul dossier del Bundesliga 213683:** le sedici gare una per una sono
+ * 2.349 px, l'11,7 per cento della pagina, dentro una card che gia' ne occupa il 30. Chi
+ * apre una gara non chiede per prima cosa la sedicesima partita dell'arbitro; chi apre la
+ * scheda dell'arbitro chiede esattamente quella, e li' l'elenco resta aperto.
+ */
+function Contenitore({ chiuso, testata, children }: Readonly<{
+  chiuso: boolean;
+  testata: ReactNode;
+  children: ReactNode;
+}>) {
+  if (!chiuso) return <><h3 className="ref-sub">{testata}</h3>{children}</>;
+  return (
+    <details className="ref-elenco">
+      <summary>{testata}</summary>
+      {children}
+    </details>
+  );
+}
+
 export function ArbitroGare({ gare, dentro }: Props) {
   const [colonna, setColonna] = useState<Colonna>("quando");
   const [crescente, setCrescente] = useState(false);
@@ -153,20 +175,22 @@ export function ArbitroGare({ gare, dentro }: Props) {
     setPagina(0);
   }
 
-  return (
+  const testata = (
     <>
-      <h3 className="ref-sub">
+      {dentro === null
+        ? "Tutte le gare che ha diretto"
+        : `Le gare in ${dentro.competizione}, stagione ${dentro.stagione}`}
+      <span className="ref-campione">
         {dentro === null
-          ? "Tutte le gare che ha diretto"
-          : `Le gare in ${dentro.competizione}, stagione ${dentro.stagione}`}
-        <span className="ref-campione">
-          {dentro === null
-            ? "ogni competizione, dalla piu' recente"
-            : "la stessa competizione di questa gara"}{" "}
-          · {ordinate.length} {ordinate.length === 1 ? "gara" : "gare"}
-        </span>
-      </h3>
+          ? "ogni competizione, dalla piu' recente"
+          : "la stessa competizione di questa gara"}{" "}
+        · {ordinate.length} {ordinate.length === 1 ? "gara" : "gare"}
+      </span>
+    </>
+  );
 
+  return (
+    <Contenitore chiuso={dentro !== null} testata={testata}>
       <div className="ref-table-wrap">
         <table className="ref-table ref-table-gare">
           <caption className="sr-only-heading">
@@ -275,6 +299,6 @@ export function ArbitroGare({ gare, dentro }: Props) {
           </button>
         </nav>
       )}
-    </>
+    </Contenitore>
   );
 }
