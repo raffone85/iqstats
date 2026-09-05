@@ -163,6 +163,35 @@ respiro si prende **attorno** alla lista, non dentro ogni riga: gonfiare la riga
 un'altezza d'azione significa perdere di vista la pagina. La riga usa `--r-control` per il
 raggio ma tiene la sua altezza.
 
+## Che cosa sta aperto e che cosa si apre
+
+Regole misurate il 5 settembre 2026 tagliando il dossier gara da 20.089 a 14.867 px a 375 px
+e il tabellone da 64.691 a 57.691. Valgono per ogni pagina, non solo per quelle toccate.
+
+**Si apre ciò che spiega una scala; resta aperto ciò che previene una lettura sbagliata.**
+La spiegazione di «severo, in linea o permissivo» è la stessa su ogni arbitro e sta dietro
+un comando; «un ritardo lungo non rende l'evento più probabile» no, perché nasconderla
+significherebbe suggerire proprio la lettura che smentisce. La provenienza — fonte,
+freschezza, campione — resta **sempre** in pagina: è la voce che il monospazio porta.
+
+**Sotto un centinaio di pixel di spiegazione, la porta costa più di quello che risparmia.**
+Un `<summary>` occupa 44 px fissi. Misurato: chiudere tre righe di testo nella card dei
+giocatori ha reso 58 px a 375 px e ne ha aggiunti undici a 1440. Prima di chiudere si misura.
+
+**Ogni riquadro che si apre lo dichiara.** `display: flex` sul `summary` toglie il marcatore
+nativo: senza un segno esplicito quei titoli sembrano morti. Il segno è il più e il meno in
+monospazio a destra — `.squad-group`, `.ref-elenco`, `.dossier-spiega`, `.engine-scala`.
+
+**La stessa assenza non si scrive due volte.** Sul tabellone cento righe dicevano «Lettura
+non disponibile per questa gara» accanto alla targhetta «Solo calendario», che dichiara la
+stessa cosa in un quarto dello spazio. Dove una dichiarazione di copertura esiste già, la
+riga di lettura si scrive solo se ha qualcosa da dire.
+
+**Lo stesso dato non si mostra due volte nella stessa card.** Le ultime cinque gare di un
+arbitro erano una tabella da 1.340 px e insieme le prime cinque righe dell'elenco sotto:
+dove la sovrapposizione è totale resta l'elenco, e della tabella sopravvive solo la sintesi
+che l'elenco non sa dare.
+
 ## Firma visiva — il filo del campione
 
 Sotto ogni metrica della scheda squadra, un filo alto 3 px diviso in due segmenti
@@ -198,12 +227,17 @@ scritte accanto a ogni riga.
 
 ## Pre-Delivery Checklist
 
-Rimisurata il 4 settembre 2026 col passaggio a «campo e calce», con una sonda su Chrome
-headless che per ogni testo visibile risale ai genitori fino al primo fondo opaco: **zero
-combinazioni sotto AA** su Oggi, Partite, Squadre, Arbitri, Metodo, Accedi e sul dossier
-gara, a 375 e a 1440 px. La sonda non misura un testo sopra una fotografia e lo dichiara:
-quelli restano da guardare a vista. La verifica precedente è del 14 agosto 2026, con
-`scratchpad/qa-contrasto.mjs` e `qa-squadra.mjs` (Playwright, quattro viewport):
+Gli strumenti stanno nel repository e non vanno riscritti a ogni sessione:
+`apps/web/scripts/verification/contrasto-wcag.mjs` (con `--prova`, che dimostra di saper
+diventare rosso) e `misura-pagina.mjs` per altezza e overflow alle quattro larghezze.
+Entrambi chiedono un Chrome headless in ascolto sulla porta di debug.
+
+Rimisurata il 5 settembre 2026: **zero combinazioni sotto AA** su Oggi, Partite, Squadre,
+Arbitri, Metodo, Accedi e sul dossier gara, a 375 e a 1440 px. Le due combinazioni che le
+verifiche precedenti dichiaravano «note» erano un difetto della sonda, che saltava i fondi
+traslucidi invece di comporli: ora li compone, e non restano casi aperti. Un testo sopra una
+fotografia continua a non essere misurabile così, e la sonda lo dichiara invece di
+indovinarlo — undici sulla home, uno sulla porta d'ingresso, da guardare a vista.
 
 - [ ] Contrasto: zero combinazioni sotto AA, misurate sullo **stack di rendering** e non
       sulla catena dei genitori — un testo sopra una foto va verificato a vista
