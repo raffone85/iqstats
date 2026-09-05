@@ -169,7 +169,25 @@ piede; i termini invece sono una pagina sul loro dominio.
 
 ## Blocco 5 — i dati che loro non hanno
 
-20. **Scontri comuni**: le due squadre contro gli stessi avversari.
+20. ~~**Scontri comuni**: le due squadre contro gli stessi avversari.~~ — **fatto il
+    6 settembre 2026.** `scontri-comuni.ts` legge le gare delle due squadre contro le sole
+    squadre che **entrambe** hanno affrontato in quella competizione, su tutte le stagioni
+    archiviate; le loro gare dirette restano fuori, quelle sono il testa a testa. Nove
+    metriche: gol fatti e subiti piu' i sette bersagli del motore. Il campo non e' tenuto
+    fermo, e la sezione lo dichiara: per il lato c'e' gia' `lati.ts`.
+    **La finestra e' larga per necessita', ed e' misurato:** nella sola stagione in corso la
+    mediana degli avversari comuni e' **3** e il primo quartile **1**, cioe' a settembre la
+    sezione non esisterebbe meta' delle volte; su tutte le stagioni archiviate la mediana e'
+    **16**, il primo quartile **10**, e il **76% delle coppie** arriva a dieci. Minimo cinque
+    avversari comuni (81% delle 6.314 coppie) e cinque gare per metrica, come `lati.ts`.
+    **Una differenza si dichiara differenza solo se supera l'errore delle due medie messo
+    insieme**, la stessa disciplina di `lati.ts`; le metriche che restano dentro l'errore
+    stanno dietro un comando che le nomina.
+    *Misurato in pagina* su NEC Nijmegen-Feyenoord (210836): 16 avversari comuni, 34 gare a
+    testa, due metriche su nove oltre l'errore - falli, scarto 2,3, e fuorigioco, 0,6. Costo
+    in altezza: +667 px a 375 (24.237 -> 24.904), +503 a 768, +493 a 1024, +476 a 1440; la
+    porta sulle sette metriche dentro l'errore ne rende 336. Zero overflow, zero sotto AA.
+    Due prove in `test:scontri-comuni` che ricontano a mano sul livello dati.
 21. ~~**Frequenza storica della linea** per squadra, accanto alla base di lega.~~ —
     **fatto il 5 settembre 2026.** `baseDiSquadra` in `base-di-lega.ts`: stessa competizione,
     tutte le stagioni archiviate, gare della squadra **dal lato che giochera' in questa gara**,

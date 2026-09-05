@@ -34,6 +34,8 @@ import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-secti
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
+import { MatchScontriComuniSection } from "@/components/match-scontri-comuni-section";
+import { scontriComuni } from "@/server/iqstats/scontri-comuni";
 import { FinestraStagione } from "@/components/finestra-stagione";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
@@ -818,6 +820,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         candidate.filter((c) => c.lato !== "casa").map(richiesta)),
     ]);
   const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi, basiCasa, basiFuori) : null;
+  // Le due squadre contro gli stessi avversari: toglie dal confronto la parte di differenza
+  // che e' calendario. Una lettura sola, e non si chiede se il piano non la fa vedere.
+  const comuni = !insight.allowed || lega === null || idCasa === null || idFuori === null
+    ? null
+    : await scontriComuni(lega, idCasa, idFuori);
   const contesto = contestoDiGara({
     bersagli: proiezioni?.bersagli ?? [],
     forti,
@@ -967,7 +974,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     contesto: true,
     giocatori: Boolean(lineups && (lineups.home || lineups.away)) || giocatori !== null,
     arbitro: (insight.allowed && arbitroNostro !== null) || referee?.careerGames != null,
-    precedenti: Boolean(h2h && h2h.totalMatches) || (insight.allowed && analisi !== null),
+    precedenti: Boolean(h2h && h2h.totalMatches)
+      || (insight.allowed && (comuni !== null || analisi !== null)),
   };
 
   return (
@@ -1587,6 +1595,12 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             </details>
           </section>
         ) : null}
+
+        <MatchScontriComuniSection
+          dati={comuni}
+          homeTeam={detail.homeTeam}
+          awayTeam={detail.awayTeam}
+        />
 
         {/* L'analisi finale chiude Precedenti invece di aprire un capitolo suo: e' la
             rilettura di tutto quello che sta sopra, non una decima domanda. */}
