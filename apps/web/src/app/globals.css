@@ -617,7 +617,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* Sopra i 640 px le barre fisse sono due, quindi l'ancora deve fermarsi piu' in basso:
    68 px di testata, 45 di barra dei capitoli, e un respiro. */
 @media (min-width: 641px) { .dossier-capitolo h2 { scroll-margin-top: 124px; } }
-.dossier-capitolo p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-3); }
 
 /* line-height 1.35 e non 1: la classe trasforma in maiuscolo, e un maiuscolo accentato
    (PUÒ, PIÙ, È) porta l'accento sopra l'altezza delle maiuscole. Con l'interlinea pari al

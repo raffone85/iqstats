@@ -1054,7 +1054,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             <DossierCapitolo
               id="cap-giocata"
               nome="La gara giocata"
-              descrizione="Il tabellino, la mappa dei tiri, la cronologia, e il conto di quello che avevamo detto."
             />
             <MatchFinishedSection
               stats={finishedStats}
@@ -1070,7 +1069,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-insight"
             nome="Insight"
-            descrizione="Che cosa vede IQstatS in questa gara, e quanto quella lettura regge."
           />
         ) : null}
 
@@ -1116,7 +1114,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-mercati"
             nome="Mercati"
-            descrizione="La nostra probabilita' contro il prezzo: quota, movimento, margine e quanto quel margine regge."
           />
         ) : null}
 
@@ -1166,7 +1163,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-gol"
             nome="Gol"
-            descrizione="Quanti se ne attendono, chi li segna, se segnano entrambe, e come si dividono fra primo e secondo tempo."
           />
         ) : null}
 
@@ -1205,7 +1201,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-proiezioni"
             nome="Proiezioni"
-            descrizione="Tiri, tiri in porta, falli, corner, cartellini, fuorigioco, parate: una card per famiglia, con intervallo e linea."
           />
         ) : null}
 
@@ -1260,7 +1255,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-trend"
             nome="Trend"
-            descrizione="Come stanno arrivando: quello che una produce contro quello che l'altra concede, le ultime gare, la classifica e la forma."
           />
         ) : null}
 
@@ -1339,7 +1333,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-contesto"
             nome="Contesto"
-            descrizione="Che tipo di gara aspettarsi: il ritmo con cui le due squadre ci arrivano, e la cornice in cui si gioca."
           />
         ) : null}
 
@@ -1393,7 +1386,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-giocatori"
             nome="Giocatori"
-            descrizione="Chi scende in campo, e che cosa ci si aspetta da chi ci scende."
           />
         ) : null}
 
@@ -1464,7 +1456,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-arbitro"
             nome="Arbitro"
-            descrizione="Come fischia, contro il metro della sua lega, e quanto pesa gia' dentro le proiezioni."
           />
         ) : null}
 
@@ -1552,7 +1543,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <DossierCapitolo
             id="cap-precedenti"
             nome="Precedenti"
-            descrizione="Il testa a testa, il conto di quello che avevamo detto, e i limiti di tutto il resto."
           />
         ) : null}
 

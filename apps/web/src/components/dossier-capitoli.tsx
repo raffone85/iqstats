@@ -75,20 +75,23 @@ export function DossierCapitoli({ capitoli }: Props) {
 }
 
 /**
- * L'intestazione di un capitolo, con la riga che dice che cosa ci si trova dentro.
+ * L'intestazione di un capitolo: il nome, e basta.
  *
- * Il sottotitolo non e' decorazione: e' la risposta a «dove sono e che cosa sto guardando»,
- * che su una pagina lunga trentanove schermate nessun titolo da solo riesce a dare.
+ * **Fino al 5 settembre 2026 portava anche una riga che spiegava il capitolo**, difesa qui
+ * come «la risposta a dove sono, che su una pagina lunga trentanove schermate nessun titolo
+ * da solo riesce a dare». Quell'argomento si e' rivoltato contro se stesso: il dossier era
+ * arrivato a 20.563 px a 375 px, ventitre schermate di telefono, e undici righe che
+ * spiegano un capitolo invece di mostrarlo sono parte del motivo, non il rimedio. Dove
+ * serve dire che cosa contiene un'area, lo dice il titolo della card, che e' gia' una
+ * frase intera e nasce dai dati di quella gara.
  */
 export function DossierCapitolo({
   id,
   nome,
-  descrizione,
-}: Readonly<{ id: string; nome: string; descrizione: string }>) {
+}: Readonly<{ id: string; nome: string }>) {
   return (
     <div className="dossier-capitolo">
       <h2 id={id}>{nome}</h2>
-      <p>{descrizione}</p>
     </div>
   );
 }
