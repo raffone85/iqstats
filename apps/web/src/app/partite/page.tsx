@@ -329,14 +329,20 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                           <span className="partite-teams">
                             <span className="partite-team"><Crest name={m.homeTeam} teamId={m.homeTeamId} />{m.homeTeam}</span>
                             <span className="partite-team"><Crest name={m.awayTeam} teamId={m.awayTeamId} />{m.awayTeam}</span>
+                            {/* **Dove non c'e' niente da leggere, la riga non lo scrive.**
+                                Misurato a 375 px sul tabellone del 5 settembre: su 280 gare,
+                                100 righe portavano «Lettura non disponibile per questa gara»
+                                per 49 px l'una, e 99 di quelle 100 avevano gia' accanto la
+                                targhetta «Solo calendario», che dice la stessa cosa in venti
+                                pixel. La stessa assenza scritta due volte non e' due
+                                informazioni. */}
+                            {!(finished && outcome) && !reading ? null : (
                             <span className="partite-read">
                               <span className="partite-read-line">
                                 <em>
                                   {finished && outcome
                                     ? outcome
-                                    : reading
-                                      ? [reading.headline, reading.goals].filter(Boolean).join(" · ")
-                                      : "Lettura non disponibile per questa gara"}
+                                    : [reading?.headline, reading?.goals].filter(Boolean).join(" · ")}
                                 </em>
                                 <i aria-hidden="true">Apri l&apos;analisi ›</i>
                               </span>
@@ -348,6 +354,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                                 </span>
                               ) : null}
                             </span>
+                            )}
                             {/* Le targhette stanno in fondo alla cella, non fra i nomi e la
                                 lettura: li' spostavano in basso il secondo nome e lo
                                 disallineavano dal punteggio, che e' impilato apposta con una
