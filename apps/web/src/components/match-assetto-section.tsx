@@ -39,26 +39,20 @@ export function MatchAssettoSection({ assetto, fasce }: {
   const teste = assetto ?? fasce;
   if (teste === null) return null;
 
-  return (
-    <section className="dossier-panel" aria-labelledby="assetto-title">
-      <p className="dossier-kick">Assetto in campo</p>
-      <h2 id="assetto-title" className="squad-section-title">
-        {assetto?.verdetto ?? fasce?.verdetto ?? "Troppe poche gare in questa stagione per un assetto"}
-      </h2>
+  // **Senza verdetto i numeri restano, ma non aperti.** Quando ne' l'assetto ne' le fasce
+  // hanno un verdetto la card dichiara «troppe poche gare» e poi mostrava 559 px di numeri
+  // costruiti su quelle poche gare - misurato a 375 px su una gara di inizio stagione, con
+  // una partita per squadra. E' lo stesso principio di `2f02fa32`: sotto soglia non si
+  // dichiara. I numeri non spariscono, si aprono, e il comando dice su quante gare poggiano.
+  const senzaVerdetto = (assetto?.verdetto ?? null) === null && (fasce?.verdetto ?? null) === null;
+  // «1 gara e 1 gara» si legge male: quando il campione e' lo stesso da tutte e due le parti
+  // si dice una volta sola, e quando cambia si dice da che lato sta ciascuno.
+  const quanteGare = teste.gareCasa === teste.gareTrasferta
+    ? `${teste.gareCasa} ${teste.gareCasa === 1 ? "gara" : "gare"} per squadra`
+    : `${teste.gareCasa} ${teste.gareCasa === 1 ? "gara" : "gare"} in casa e ${teste.gareTrasferta} in trasferta`;
 
-      <div className="gamestat-heads">
-        <span>
-          {teste.nomeCasa} · {teste.gareCasa} {teste.gareCasa === 1 ? "gara" : "gare"}
-          {affidabilita(teste.gareCasa) === null ? null : ` · ${affidabilita(teste.gareCasa)}`}
-        </span>
-        <span>
-          {teste.nomeTrasferta} · {teste.gareTrasferta}{" "}
-          {teste.gareTrasferta === 1 ? "gara" : "gare"}
-          {affidabilita(teste.gareTrasferta) === null
-            ? null
-            : ` · ${affidabilita(teste.gareTrasferta)}`}
-        </span>
-      </div>
+  const numeri = (
+    <>
       {assetto === null ? null : <Righe righe={assetto.righe} />}
 
       {fasce === null ? null : (
@@ -79,6 +73,35 @@ export function MatchAssettoSection({ assetto, fasce }: {
           />
         </>
       )}
+    </>
+  );
+
+  return (
+    <section className="dossier-panel" aria-labelledby="assetto-title">
+      <p className="dossier-kick">Assetto in campo</p>
+      <h2 id="assetto-title" className="squad-section-title">
+        {assetto?.verdetto ?? fasce?.verdetto ?? "Troppe poche gare in questa stagione per un assetto"}
+      </h2>
+
+      <div className="gamestat-heads">
+        <span>
+          {teste.nomeCasa} · {teste.gareCasa} {teste.gareCasa === 1 ? "gara" : "gare"}
+          {affidabilita(teste.gareCasa) === null ? null : ` · ${affidabilita(teste.gareCasa)}`}
+        </span>
+        <span>
+          {teste.nomeTrasferta} · {teste.gareTrasferta}{" "}
+          {teste.gareTrasferta === 1 ? "gara" : "gare"}
+          {affidabilita(teste.gareTrasferta) === null
+            ? null
+            : ` · ${affidabilita(teste.gareTrasferta)}`}
+        </span>
+      </div>
+      {senzaVerdetto ? (
+        <details className="dossier-spiega">
+          <summary>I numeri, su {quanteGare}</summary>
+          {numeri}
+        </details>
+      ) : numeri}
 
       <p className="dossier-src">
         Dalle posizioni medie dei giocatori e dai gol attesi minuto per minuto che la fonte
