@@ -43,6 +43,20 @@ function conto(voce: Voce | undefined): ContoDelleLetture | null {
   return { letture, prese, frequenzaOsservata: osservata, probabilitaPromessa: promessa };
 }
 
+/**
+ * Quanto ha reso finora una famiglia di letture, o `null` se l'artefatto non la conta.
+ *
+ * **Serve al pronostico del dossier**, che dichiara la lettura in cima: senza questo numero
+ * direbbe soltanto quanto ci crede, e non quanto quel tipo di lettura ha tenuto sulle gare
+ * gia' chiuse. E' la stessa misura del consuntivo su `/metodo`, letta per un bersaglio solo.
+ */
+export function resaDelBersaglio(target: string): ContoDelleLetture | null {
+  return conto(rapporto.per_bersaglio.find((v) => v.bersaglio === target));
+}
+
+/** Su quante gare chiuse poggia quella resa. */
+export const GARE_DEL_CONSUNTIVO: number = rapporto.gare_con_almeno_una_lettura;
+
 /** Il consuntivo, o `null` se l'artefatto e' vecchio o incompleto. */
 export function consuntivoDelleLetture(): Consuntivo | null {
   const complessivo = conto(rapporto.complessivo);

@@ -38,6 +38,7 @@ import { ComeSiAffrontano } from "@/components/come-si-affrontano";
 import { MatchScontriComuniSection } from "@/components/match-scontri-comuni-section";
 import { scontriComuni } from "@/server/iqstats/scontri-comuni";
 import { FinestraStagione } from "@/components/finestra-stagione";
+import { GARE_DEL_CONSUNTIVO, resaDelBersaglio } from "@/server/iqstats/consuntivo";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
@@ -1135,6 +1136,10 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             forti={forti}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
+            resa={forti === null || forti.letture.length === 0
+              ? null
+              : resaDelBersaglio(forti.letture[0].bersaglio)}
+            gareDelConsuntivo={GARE_DEL_CONSUNTIVO}
           />
         ) : (
           <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
