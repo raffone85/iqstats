@@ -1,0 +1,82 @@
+{
+  "schema": "consuntivo-letture/1",
+  "calcolato_il": "2026-09-06T04:51:46.789Z",
+  "gare_chieste": 1200,
+  "gare_con_almeno_una_lettura": 547,
+  "come_e_stato_misurato": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, ordinaLetture - rifatte girare sulle gare chiuse; il motore legge solo cio' che esisteva prima del calcio d'inizio, quindi la lettura ricostruita e' quella che la pagina avrebbe mostrato. Contate tutte, prese e sbagliate: nessuna selezione.",
+  "complessivo": {
+    "letture": 1409,
+    "prese": 936,
+    "frequenza_osservata": 0.6643,
+    "probabilita_promessa": 0.6706,
+    "scarto": -0.0063
+  },
+  "per_fascia": [
+    {
+      "fascia": "50-60%",
+      "letture": 248,
+      "prese": 154,
+      "frequenza_osservata": 0.621,
+      "probabilita_promessa": 0.5864,
+      "scarto": 0.0346
+    },
+    {
+      "fascia": "60-70%",
+      "letture": 679,
+      "prese": 423,
+      "frequenza_osservata": 0.623,
+      "probabilita_promessa": 0.6439,
+      "scarto": -0.0209
+    },
+    {
+      "fascia": "70-80%",
+      "letture": 412,
+      "prese": 308,
+      "frequenza_osservata": 0.7476,
+      "probabilita_promessa": 0.7404,
+      "scarto": 0.0072
+    },
+    {
+      "fascia": "80-90%",
+      "letture": 70,
+      "prese": 51,
+      "frequenza_osservata": 0.7286,
+      "probabilita_promessa": 0.8159,
+      "scarto": -0.0873
+    }
+  ],
+  "per_bersaglio": [
+    {
+      "bersaglio": "corner_kicks",
+      "letture": 311,
+      "prese": 213,
+      "frequenza_osservata": 0.6849,
+      "probabilita_promessa": 0.6891,
+      "scarto": -0.0042
+    },
+    {
+      "bersaglio": "goalkeeper_saves",
+      "letture": 286,
+      "prese": 199,
+      "frequenza_osservata": 0.6958,
+      "probabilita_promessa": 0.7373,
+      "scarto": -0.0415
+    },
+    {
+      "bersaglio": "offsides",
+      "letture": 351,
+      "prese": 239,
+      "frequenza_osservata": 0.6809,
+      "probabilita_promessa": 0.6874,
+      "scarto": -0.0065
+    },
+    {
+      "bersaglio": "total_shots",
+      "letture": 461,
+      "prese": 285,
+      "frequenza_osservata": 0.6182,
+      "probabilita_promessa": 0.6038,
+      "scarto": 0.0144
+    }
+  ]
+}

@@ -2,6 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductShell } from "@/components/product-shell";
+import { consuntivoDelleLetture } from "@/server/iqstats/consuntivo";
+
+/** Una quota scritta come si legge: 0,664 e' 66%. */
+function percento(quota: number): string {
+  return Math.round(quota * 100) + "%";
+}
+
+/** Il giorno in cui il consuntivo e' stato rifatto, scritto per esteso. */
+function giorno(istante: string): string {
+  const data = new Date(istante);
+  return Number.isNaN(data.getTime())
+    ? istante
+    : new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric" })
+      .format(data);
+}
 
 export const metadata: Metadata = {
   title: "Metodo e limiti",
@@ -29,6 +44,7 @@ const layers = [
 ];
 
 export default function MethodPage() {
+  const consuntivo = consuntivoDelleLetture();
   return (
     <ProductShell activeSection="method">
       <section className="page-intro method-intro" aria-labelledby="method-page-title">
@@ -59,6 +75,40 @@ export default function MethodPage() {
           ))}
         </div>
       </section>
+
+      {/* **Il consuntivo sta prima dei confini, e non e' un vezzo di ordine.** «Cosa non fa
+          IQstatS» e' una promessa; questa sezione e' l'unica pagina che porta un numero
+          capace di smentirci, e chi legge deve incontrarla prima. Sono tutte le letture che
+          la regola avrebbe messo in cima, prese e sbagliate: mostrare solo le riuscite
+          sarebbe una selezione, non una misura. */}
+      {consuntivo === null ? null : (
+        <section className="method-boundaries" aria-labelledby="consuntivo-title">
+          <p className="eyebrow">Consuntivo completo</p>
+          <h2 id="consuntivo-title">Quanto ci prendiamo, comprese le volte in cui sbagliamo.</h2>
+          <p>
+            Su {consuntivo.gare} gare chiuse abbiamo ricostruito{" "}
+            {consuntivo.complessivo.letture} letture, cioè quelle che il dossier avrebbe messo
+            in cima prima del calcio d&apos;inizio. Ne sono uscite{" "}
+            <b>{consuntivo.complessivo.prese}</b>, il{" "}
+            {percento(consuntivo.complessivo.frequenzaOsservata)}, contro il{" "}
+            {percento(consuntivo.complessivo.probabilitaPromessa)} che avevamo promesso.
+          </p>
+          <ul>
+            {consuntivo.perFascia.map((f) => (
+              <li key={f.fascia}>
+                Promesso {f.fascia}: uscite {f.prese} su {f.letture}, cioè il{" "}
+                {percento(f.frequenzaOsservata)} contro il{" "}
+                {percento(f.probabilitaPromessa)} dichiarato.
+              </li>
+            ))}
+          </ul>
+          <p>
+            Il motore legge soltanto ciò che esisteva prima di quella gara, quindi la lettura
+            ricostruita è la stessa che la pagina avrebbe mostrato: è una verifica, non una
+            profezia scritta dopo. Ricalcolato il {giorno(consuntivo.calcolatoIl)}.
+          </p>
+        </section>
+      )}
 
       <section className="method-boundaries" aria-labelledby="boundaries-title">
         <p className="eyebrow">Confini espliciti</p>
