@@ -7,7 +7,7 @@
 // Ogni scala evidenzia la voce più probabile. È una lettura, non un consiglio di giocata:
 // il limite del modello sta scritto in fondo alla sezione, non solo nel codice.
 import type { GolDellaGara } from "@/server/iqstats/projection-runtime";
-import type { Intervallo } from "@/server/iqstats/projection/gol";
+import type { CellaMatrice, Intervallo } from "@/server/iqstats/projection/gol";
 
 function valore(numero: number): string {
   return numero.toFixed(2).replace(".", ",");
@@ -67,6 +67,86 @@ function daIntervalli(intervalli: readonly Intervallo[]): Voce[] {
     etichetta: `${i.da}-${i.a}`,
     probabilita: i.probabilita,
   }));
+}
+
+const ESITI: ReadonlyArray<{ chiave: CellaMatrice["esito"]; nome: string }> = [
+  { chiave: "uno", nome: "1" },
+  { chiave: "x", nome: "X" },
+  { chiave: "due", nome: "2" },
+];
+
+/**
+ * Esito e linea insieme.
+ *
+ * **Nessuna cella e' il prodotto di due probabilita'.** Ogni numero e' la somma delle
+ * caselle della griglia dei punteggi che soddisfano tutte e due le condizioni; accanto sta
+ * di quanto quel numero si discosta dalla moltiplicazione, che e' il modo in cui le due
+ * letture verrebbero messe insieme se fossero indipendenti. Non lo sono, e la tabella lo
+ * mostra cella per cella invece di dirlo in una nota.
+ */
+/** «Over 1,5», come la scala qui sopra: la linea non ha due decimali. */
+function linea(valore: number): string {
+  return `Over ${String(valore).replace(".", ",")}`;
+}
+
+function Matrice({
+  celle,
+  homeTeam,
+  awayTeam,
+}: {
+  readonly celle: readonly CellaMatrice[];
+  readonly homeTeam: string;
+  readonly awayTeam: string;
+}) {
+  const linee = [...new Set(celle.map((cella) => cella.linea))].sort((a, b) => a - b);
+  const nome = (chiave: CellaMatrice["esito"]): string =>
+    chiave === "uno" ? `1 · ${homeTeam}` : chiave === "due" ? `2 · ${awayTeam}` : "X · pareggio";
+
+  return (
+    <div className="ref-table-wrap">
+      <table className="ref-table">
+        <thead>
+          <tr>
+            <th scope="col">Esito</th>
+            {linee.map((soglia) => (
+              <th scope="col" key={soglia}>
+                {linea(soglia)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {ESITI.map((esito) => (
+            <tr key={esito.chiave}>
+              <th scope="row">{nome(esito.chiave)}</th>
+              {linee.map((soglia) => {
+                const cella = celle.find(
+                  (c) => c.esito === esito.chiave && c.linea === soglia,
+                );
+                if (cella === undefined) {
+                  return <td key={soglia} data-label={linea(soglia)}>n/d</td>;
+                }
+                const punti = (cella.congiunta - cella.prodotto) * 100;
+                const verso = punti >= 0 ? "is-sopra" : "is-sotto";
+                return (
+                  // `data-label` non e' decorazione: sotto i 760 px la tabella diventa una
+                  // scheda per riga e il `thead` esce di scena, quindi senza etichetta il
+                  // numero resterebbe senza la sua linea. Misurato guardando la cattura.
+                  <td key={soglia} data-label={linea(soglia)}>
+                    <b className="matrice-quota">{percento(cella.congiunta)}</b>
+                    <span className={`matrice-scarto ${verso}`}>
+                      {punti >= 0 ? "+" : "−"}
+                      {valore(Math.abs(punti))} sul prodotto
+                    </span>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 type Props = {
@@ -167,7 +247,7 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
           informazione nuova, sono la stessa informazione tagliata in altri modi. Chi li
           vuole li apre; chi cerca quanti gol si ferma prima. */}
       <details className="gol-derivati">
-        <summary>Doppia chance, gol esatti, risultati e multigol</summary>
+        <summary>Doppia chance, gol esatti, risultati, esito con la linea e multigol</summary>
         <ul className="engine-rows">
         <Riga titolo="Doppia chance">
           <Scala
@@ -201,6 +281,16 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
               probabilita: r.probabilita,
             }))}
           />
+        </Riga>
+        <Riga titolo="Esito e linea insieme">
+          <Matrice celle={m.matrice} homeTeam={homeTeam} awayTeam={awayTeam} />
+          <p className="dossier-src">
+            Ogni casella è la probabilità che le <b>due cose accadano nella stessa gara</b>,
+            sommata sulla griglia dei punteggi. Accanto sta di quanto si discosta dal
+            prodotto delle due probabilità separate: le due letture <b>non sono
+            indipendenti</b>, e moltiplicarle sbaglierebbe di quel tanto. Il caso più
+            grosso è il pareggio con molti gol, che ha bisogno di un 2-2 o di un 3-3.
+          </p>
         </Riga>
         <Riga titolo="Multigol">
           <ul className="engine-splits">

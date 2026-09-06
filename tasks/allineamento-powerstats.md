@@ -201,8 +201,27 @@ piede; i termini invece sono una pagina sul loro dominio.
     **Una misura da non fidarsi:** a 375 px la scheda squadra non da' un'altezza stabile — lo
     stesso codice, due giri di fila, rende **29.086 e 23.693 px**. Le altre tre larghezze sono
     identiche fra i due giri, quindi il confronto prima-dopo a 375 su quella pagina non vale.
-16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
-    dichiarare la correlazione fra le due linee.
+16. ~~**Combo e matrice esito × over/under.**~~ — **fatto il 6 settembre 2026.** Tre esiti per
+    quattro linee, nella sezione Gol del dossier, dentro la porta dei mercati derivati.
+    **Nessuna casella e' una moltiplicazione:** ognuna e' la somma delle caselle della griglia
+    dei punteggi che soddisfano tutte e due le condizioni, sommate nella stessa passata che
+    `mercatiGol` gia' faceva. Accanto a ogni quota sta di quanto si discosta dal prodotto delle
+    due marginali, col suo verso: e' li' che la correlazione si dichiara, cella per cella.
+    **Le due letture non sono indipendenti, ed e' misurato su 11.330 gare archiviate:** il
+    pareggio con oltre 2,5 gol vale **6,63%** mentre il prodotto delle marginali dice
+    **13,42%**, cioe' il doppio del vero; sopra 4,5 e' **1,31%** contro **3,63%**; la vittoria
+    interna sopra 4,5 e' **7,60%** contro **6,13%**.
+    **Il modello lo coglie.** Con gli attesi medi (1,510 e 1,185) la congiunta della griglia da'
+    6,61% dove l'osservato e' 6,63%, e su tutte e dodici le caselle lo scarto massimo e'
+    **0,57 punti**. E' un confronto aggregato sugli attesi medi, non gara per gara: va letto
+    come tale, e non sostituisce una taratura fuori campione.
+    Quattro prove in `test:projection-gol`, che sanno diventare rosse: col prodotto al posto
+    della congiunta ne falliscono tre.
+    **Difetto trovato guardando la cattura:** sotto i 760 px la tabella diventa una scheda per
+    riga e il `thead` esce di scena, quindi i quattro numeri di ogni esito restavano senza la
+    loro linea; ora ogni cella porta il suo `data-label`.
+    *Costo in pagina:* **zero a porta chiusa**, e 811 px a 375, 690 a 768, 333 a 1024 e 1440
+    quando si apre. Zero overflow e zero sotto AA a tutte e quattro le larghezze.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
     alla vetrina sta il **consuntivo completo**, non solo le riuscite: la loro versione
     mostra solo gli azzeccati fra l'88 e il 99 per cento, ed è selezione, non misura.
@@ -264,7 +283,22 @@ piede; i termini invece sono una pagina sul loro dominio.
     la frequenza di squadra su tutte e quattro le letture. Costo in altezza sulla stessa
     pagina: +118 px a 375 e 768, +84 a 1024, +51 a 1440; zero overflow, zero sotto AA.
     Due prove nuove in `test:base-di-lega` che ricontano a mano sul livello dati.
-22. **Elenco gare per esteso** sotto ogni famiglia.
+22. ~~**Elenco gare per esteso** sotto ogni famiglia.~~ — **fatto il 6 settembre 2026.** Ogni
+    card delle sette famiglie porta una porta con le gare che compongono le due medie
+    osservate: giorno, avversario e valore, dalla piu' recente.
+    **Costa zero richieste alla fonte e zero interrogazioni nuove al motore:** sono le stesse
+    righe gia' lette per proiettare, elencate invece che mediate. L'unica lettura in piu' e'
+    una sola per dossier, che traduce gli identificativi delle squadre in nomi.
+    **Il filtro e' ripetuto e non condiviso, per una ragione misurata:** far calcolare la media
+    da questa lista ne cambierebbe l'ordine di somma, e il motore ha una prova di parita' con
+    Python che confronta quei numeri fino all'ultima cifra. A tenere insieme le due funzioni
+    c'e' la prova «l'elenco e la media dicono la stessa cosa».
+    *Verificato in pagina* su Juventus-AC Milan (210084): «osservato in casa 21,0 su 1 gara» e
+    l'elenco scrive 21,0 contro il Parma; fuori casa 19,0 e l'elenco 19,0 contro il Torino.
+    *Costo:* **+364 px a porte chiuse** alle quattro larghezze, 52 px per famiglia, e le sette
+    porte nascondono **928 px** gia' oggi con due gare per famiglia: 564 px netti risparmiati a
+    settembre, molti di piu' a stagione avanzata. Zero overflow e zero sotto AA a porte aperte
+    e chiuse.
 23. ~~**Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce.~~ —
     **fatto il 6 settembre 2026, e la premessa del piano era sbagliata.** Il passaggio
     offline **esiste gia'**: `scripts/projection/models/lines.py` misura la calibrazione delle

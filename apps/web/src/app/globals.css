@@ -1362,6 +1362,20 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .ref-table tbody tr + tr, .ref-table tfoot tr { border-top: 1px solid var(--card-stroke); }
 .ref-table tbody th, .ref-table tbody td, .ref-table tfoot th, .ref-table tfoot td { padding: 9px 10px; vertical-align: top; }
 .ref-table tfoot { background: var(--card-panel-2); }
+/* Matrice esito x linea: la quota congiunta e, sotto, il suo scarto dal prodotto delle
+   due marginali. Il colore dice il verso rispetto a quel riferimento, e la parola resta
+   scritta accanto al numero. */
+.matrice-quota { display: block; font-family: var(--font-mono, monospace); font-size: 15px; font-weight: 600; color: var(--card-ink); font-variant-numeric: tabular-nums; }
+.matrice-scarto { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 11px; white-space: nowrap; }
+.matrice-scarto.is-sopra { color: var(--card-up); }
+.matrice-scarto.is-sotto { color: var(--card-down); }
+/* Le gare che compongono una media osservata: tre colonne strette, il valore a destra,
+   e nessun filetto per riga - con sette famiglie sarebbero centinaia di righe segnate. */
+.engine-gare { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.engine-gare li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: baseline; gap: 8px; padding: 3px 0; }
+.engine-gara-quando { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
+.engine-gara-chi { font-size: 12.5px; color: var(--card-ink-2); overflow-wrap: anywhere; }
+.engine-gara-valore { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); font-variant-numeric: tabular-nums; }
 .ref-stagione { text-align: left; font-family: var(--font-mono, monospace); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ref-data { text-align: left; font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 600; color: var(--card-brand-strong); white-space: nowrap; }
 .ref-ora { display: block; margin-top: 2px; font: 600 10px/1 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }

@@ -149,3 +149,43 @@ test("senza un metro di lega non si inventa un numero", () => {
   assert.equal(attesiDellaGara({ ...forze, legaCasa: 1.5, legaTrasferta: 0 }), null);
   assert.equal(attesiDellaGara({ ...forze, legaCasa: NaN, legaTrasferta: 1.1 }), null);
 });
+
+test("la matrice si somma sulle stesse caselle delle marginali", () => {
+  const m = mercatiGol(1.51, 1.185);
+  for (const linea of m.overUnder) {
+    const somma = m.matrice
+      .filter((cella) => cella.linea === linea.linea)
+      .reduce((totale, cella) => totale + cella.congiunta, 0);
+    // I tre esiti coprono tutte le caselle: la loro congiunta con la stessa linea deve
+    // ricomporre esattamente la probabilita' di quella linea.
+    assert.ok(Math.abs(somma - linea.sopra) < 1e-12, `linea ${linea.linea}: ${somma}`);
+  }
+});
+
+test("il pareggio sopra 2,5 e il pareggio sopra 3,5 sono la stessa cosa", () => {
+  const m = mercatiGol(1.51, 1.185);
+  // Un pareggio ha totale pari: se supera 2,5 vale almeno 4, quindi supera anche 3,5.
+  // Se questa uguaglianza si rompe, la congiunta non sta leggendo la griglia.
+  const pareggio = (linea: number) =>
+    m.matrice.find((cella) => cella.esito === "x" && cella.linea === linea)?.congiunta;
+  assert.equal(pareggio(2.5), pareggio(3.5));
+});
+
+test("esito e linea non sono indipendenti, e la matrice lo dichiara", () => {
+  const m = mercatiGol(1.51, 1.185);
+  const cella = m.matrice.find((c) => c.esito === "x" && c.linea === 2.5);
+  assert.ok(cella !== undefined);
+  // Misurato su 11.330 gare archiviate: pareggio con oltre 2,5 gol al 6,63%, mentre il
+  // prodotto delle marginali dice 13,42%. Il modello deve stare dalla parte del vero.
+  assert.ok(cella.congiunta < cella.prodotto * 0.6, `${cella.congiunta} contro ${cella.prodotto}`);
+  assert.ok(Math.abs(cella.congiunta - 0.0663) < 0.01, `congiunta ${cella.congiunta}`);
+});
+
+test("dove le due letture tirano nello stesso verso la congiunta supera il prodotto", () => {
+  const m = mercatiGol(1.51, 1.185);
+  const cella = m.matrice.find((c) => c.esito === "uno" && c.linea === 4.5);
+  assert.ok(cella !== undefined);
+  // Una vittoria con piu' di 4,5 gol e' piu' probabile di quanto direbbe il prodotto:
+  // osservato 7,60% contro 6,13% su 11.330 gare.
+  assert.ok(cella.congiunta > cella.prodotto, `${cella.congiunta} contro ${cella.prodotto}`);
+});
