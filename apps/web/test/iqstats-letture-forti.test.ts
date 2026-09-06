@@ -1,9 +1,11 @@
 // Prove della classifica delle letture piu' forti. Nessuna connessione: e' aritmetica.
 //
-// Quello che verificano e' l'unica cosa che rende questa sezione diversa da un elenco
-// ordinato per percentuale: **una lettura piu' probabile puo' finire sotto una meno
-// probabile**, quando il bersaglio da cui viene sbaglia di piu' fuori campione. Se questa
-// prova passasse anche ordinando per probabilita', la sezione non varrebbe niente.
+// **Il criterio e' cambiato il 6 settembre 2026** e queste prove sono state riscritte con
+// lui, non cancellate. Prima l'ordine era per forza, `|probabilita - base| x affidabilita`;
+// ora e' per probabilita' dentro la fascia dove la taratura tiene, perche' su 1.200 gare
+// chiuse la vecchia regola portava in cima letture che rendevano 63,2% contro il 65,1%
+// promesso. Quello che resta da verificare e' che la fascia sia rispettata, che l'ordine sia
+// quello dichiarato, e che a parita' vinca il bersaglio che sbaglia meno.
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -54,23 +56,27 @@ function bersaglio(
   };
 }
 
-test("una lettura piu' probabile finisce sotto una meno probabile se regge di meno", () => {
-  // Rumoroso: 78% ma il bersaglio ci prende il 50% delle volte -> forza 0,28 x 0,50 = 0,140
-  // Solido:   68% ma il bersaglio ci prende il 90% delle volte -> forza 0,18 x 0,90 = 0,162
+test("in cima sta la lettura piu' probabile, dentro la fascia che regge", () => {
   const { letture } = lettureForti([
-    bersaglio("rumoroso", 0.78, 50),
-    bersaglio("solido", 0.68, 90),
+    bersaglio("alta", 0.78, 50),
+    bersaglio("bassa", 0.68, 90),
   ]);
 
   assert.equal(letture.length, 2);
-  assert.equal(
-    letture[0]?.bersaglio, "solido",
-    "in cima deve stare la lettura che regge, non quella con la percentuale piu' alta",
-  );
-  assert.ok(Math.abs((letture[0]?.forza ?? 0) - 0.162) < 1e-9, `forza ${letture[0]?.forza}`);
-  assert.ok(Math.abs((letture[1]?.forza ?? 0) - 0.14) < 1e-9, `forza ${letture[1]?.forza}`);
-  // La probabilita' resta quella vera: si riordina la lettura, non si ritocca il numero.
-  assert.ok(Math.abs((letture[1]?.probabilita ?? 0) - 0.78) < 1e-9);
+  assert.equal(letture[0]?.bersaglio, "alta", "l'ordine dichiarato e' per probabilita'");
+  assert.ok(Math.abs((letture[0]?.probabilita ?? 0) - 0.78) < 1e-9);
+  // La forza resta nel contratto e continua a dire quanto la lettura si stacca dalla lega,
+  // ma non decide piu' l'ordine: qui la piu' forte e' la seconda.
+  assert.ok((letture[1]?.forza ?? 0) > (letture[0]?.forza ?? 0), "la forza non ordina piu'");
+});
+
+test("a parita' di probabilita' vince il bersaglio che sbaglia meno", () => {
+  const { letture } = lettureForti([
+    bersaglio("fragile", 0.72, 55),
+    bersaglio("saldo", 0.72, 95),
+  ]);
+  assert.equal(letture[0]?.bersaglio, "saldo");
+  assert.equal(letture[1]?.bersaglio, "fragile");
 });
 
 test("un bersaglio senza affidabilita' misurata resta fuori e viene dichiarato", () => {
@@ -95,10 +101,14 @@ test("il verso e la soglia sono quelli della linea accesa, non della piu' estrem
   assert.equal(prima.lato, "casa");
 });
 
-test("sotto la forza minima non si dichiara niente", () => {
-  // 53% su un bersaglio all'80%: forza 0,03 x 0,80 = 0,024, sotto lo 0,05 richiesto.
-  const { letture } = lettureForti([bersaglio("fiacco", 0.53, 80)]);
-  assert.deepEqual(letture, [], "una lettura quasi a moneta non e' una lettura forte");
+test("sopra l'ottanta per cento una lettura non sale in cima", () => {
+  // 88% su un bersaglio solido: fuori dalla fascia dove promesso e reso coincidono. Nella
+  // fascia 80-90% il modello promette 81,5% e rende 74,7%, misurato su 1.200 gare chiuse.
+  const { letture } = lettureForti([bersaglio("troppo_alta", 0.88, 90)]);
+  assert.deepEqual(letture, [], "una lettura fuori dalla fascia tarata non e' una lettura forte");
+  // Il limite e' la fascia, non la solidita': all'ottanta netto la stessa lettura entra.
+  const dentro = lettureForti([bersaglio("al_limite", 0.8, 90)]);
+  assert.equal(dentro.letture.length, 1);
 });
 
 test("lo stesso bersaglio non compare due volte", () => {

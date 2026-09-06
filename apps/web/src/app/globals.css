@@ -1393,6 +1393,12 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .combo-nota { margin: 8px 0 0; font-size: 12.5px; color: var(--card-ink-2); }
 .combo-nota .is-sopra { color: var(--card-up); font-family: var(--font-mono, monospace); }
 .combo-nota .is-sotto { color: var(--card-down); font-family: var(--font-mono, monospace); }
+/* La risposta dell'assistente: un riquadro come gli altri, con le sue righe di numeri e il
+   comando che porta alla pagina che li mostra per esteso. */
+.assistente { margin: 0 0 20px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel); }
+.assistente .squad-player-stats { margin-top: 10px; }
+.assistente-nota { display: block; font-style: normal; font-size: 11px; color: var(--card-ink-3); }
+.assistente-vai { display: inline-flex; align-items: center; margin-top: 6px; text-decoration: none; }
 .ref-stagione { text-align: left; font-family: var(--font-mono, monospace); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ref-data { text-align: left; font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 600; color: var(--card-brand-strong); white-space: nowrap; }
 .ref-ora { display: block; margin-top: 2px; font: 600 10px/1 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }

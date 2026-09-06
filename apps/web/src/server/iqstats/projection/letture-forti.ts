@@ -41,8 +41,19 @@ import type { Linea, ProiezioneDiGara } from "./match";
 /** Le frequenze gia' lette dal livello dati, per linea. `null` quando non si sanno. */
 type Basi = ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null;
 
-/** Sotto questa forza una lettura non merita di stare in cima a niente. */
-const FORZA_MINIMA = 0.05;
+/**
+ * Oltre questa probabilita' una lettura non entra, e non e' prudenza generica.
+ *
+ * Il consuntivo su 1.200 gare chiuse dice dove la taratura tiene e dove cede: nella fascia
+ * 60-70% il modello promette 63,8% e rende 63,8%, nella 70-80% promette 75,4% e rende
+ * 74,9%, ma nella 80-90% promette 81,5% e rende 74,7%. La cima non si prende dove il
+ * modello sbaglia di piu': **le letture sopra l'80% restano nella card della loro famiglia,
+ * non salgono in cima.**
+ *
+ * Misurato il 6 settembre 2026 con `npm run criterio-vetrina`, cinque criteri a confronto
+ * sulle stesse candidate.
+ */
+const FASCIA_MASSIMA = 0.8;
 
 /** Quante letture si mostrano. Oltre la quinta si torna a chiedere «e allora?». */
 const QUANTE = 4;
@@ -166,15 +177,22 @@ export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
 }
 
 /**
- * Le letture piu' forti della gara, dalla piu' solida in giu'.
+ * Le letture piu' forti della gara, dalla piu' probabile in giu'.
  *
- * La forza e' **quanto la nostra probabilita' si scosta da quante volte quella linea
- * succede in quel campionato**, per quanto quel bersaglio regge fuori campione. Dove la
- * base non si conosce il riferimento resta cinquanta, che e' il vecchio criterio: senza
- * misura l'unico paragone onesto e' la moneta.
+ * **Il criterio e' cambiato il 6 settembre 2026, e la ragione e' misurata.** Prima ordinava
+ * per forza, cioe' `|probabilita - base di lega| x affidabilita`: quella regola premia per
+ * costruzione gli scostamenti piu' grandi, e su 1.200 gare chiuse portava in cima letture
+ * che rendevano **63,2% contro il 65,1% promesso**, con il **44%** di esse sopra sia alla
+ * base di lega sia alla storia della squadra. Ordinando per probabilita' dentro la fascia
+ * dove la taratura tiene, le stesse gare danno **77,9% contro 76,6%**, il sopra-entrambe
+ * scende al **25,9%** e **nessuna** lettura si scosta oltre quaranta punti dalla frequenza
+ * storica delle squadre in campo.
  *
- * A parita' di forza vince l'affidabilita' piu' alta: fra due letture che dicono la stessa
- * cosa con la stessa sorpresa, si preferisce quella del bersaglio che sbaglia meno.
+ * `sorpresa` e `forza` restano nel contratto - dicono quanto la lettura si stacca dalla
+ * lega, ed e' informazione che la pagina scrive - ma non decidono piu' l'ordine.
+ *
+ * A parita' di probabilita' vince l'affidabilita' piu' alta: fra due letture che dicono la
+ * stessa cosa, si preferisce quella del bersaglio che sbaglia meno.
  */
 /**
  * Le candidate con il loro riferimento, la sorpresa e la forza, **senza filtrare niente**.
@@ -221,9 +239,16 @@ export function ordinaLetture(
   quante: number = QUANTE,
 ): LettureDellaGara {
   const letture = arricchisci(candidate, basi, basiCasa, basiFuori)
-    .filter((l) => l.forza >= FORZA_MINIMA)
+    .filter((l) => l.probabilita <= FASCIA_MASSIMA)
     .slice()
-    .sort((a, b) => (b.forza - a.forza) || (b.affidabilita - a.affidabilita));
+    // **L'ordine e' per punto percentuale, non per decimale.** Con il tetto all'ottanta le
+    // prime letture si schiacciano contro il tetto: sulla vetrina del 6 settembre le dieci
+    // in cima andavano da 0,7997 a 0,7956, cioe' tutte 80% una volta scritte, e ordinarle
+    // per quel quarto decimale sarebbe stato ordinare del rumore. A parita' di punto
+    // decide l'affidabilita', che e' una differenza che si vede e si spiega.
+    .sort((a, b) =>
+      (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))
+      || (b.affidabilita - a.affidabilita));
 
   // **Una lettura per bersaglio, e non e' una scelta estetica.** Su Bragantino contro
   // Gremio le prime quattro erano «Over 1,5 fuorigioco totale» al 81% e «Under 2,5

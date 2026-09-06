@@ -53,7 +53,7 @@ const COLONNA: Readonly<Record<string, string>> = {
 /** Quante letture per gara, come la vetrina di produzione. */
 const QUANTE = 4;
 /** La forza minima del criterio di oggi, ripetuta qui perche' e' un parametro del criterio. */
-const FORZA_MINIMA = 0.04;
+const FORZA_MINIMA = 0.05;
 
 /**
  * Quanto una lettura puo' scostarsi dalla storia della squadra restando credibile.
@@ -123,13 +123,17 @@ const CRITERI: readonly Criterio[] = [
   },
   {
     nome: "fascia-tarata",
-    spiegazione: "solo fino all'80%, dove il consuntivo dice che promesso e reso coincidono",
+    spiegazione:
+      "solo fino all'80%, dove il consuntivo dice che promesso e reso coincidono; a parita' di "
+      + "punto percentuale decide l'affidabilita', com'e' in produzione dal 6 settembre 2026",
     scegli: (letture) =>
       unaPerBersaglio(
         letture
           .filter((l) => l.probabilita <= 0.8)
           .slice()
-          .sort((a, b) => (b.probabilita - a.probabilita) || (b.affidabilita - a.affidabilita)),
+          .sort((a, b) =>
+            (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))
+            || (b.affidabilita - a.affidabilita)),
       ),
   },
   {

@@ -20,6 +20,8 @@
     "test:projection-gol": "node --experimental-strip-types --test test/iqstats-projection-gol.test.ts",
     "test:metro-ruolo": "node --experimental-strip-types --test test/iqstats-metro-ruolo.test.ts",
     "test:linea-scelta": "node --experimental-strip-types --test test/iqstats-linea-scelta.test.ts",
+    "test:vetrina": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-vetrina.test.ts",
+    "test:assistente": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-assistente.test.ts",
     "test:letture-forti": "node --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-letture-forti.test.ts",
     "test:contesto": "node --experimental-strip-types --test test/iqstats-contesto.test.ts",
     "test:giornate": "node --experimental-strip-types --test test/iqstats-giornate.test.ts",

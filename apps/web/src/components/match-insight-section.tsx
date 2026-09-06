@@ -158,8 +158,12 @@ function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
           {" · affidabilità "}{lettura.affidabilita}/100
         </em>
       </span>
+      {/* La barra segue **la probabilita'**, che e' il numero scritto qui accanto e il
+          criterio con cui queste righe sono ordinate dal 6 settembre 2026. Prima seguiva la
+          forza: con l'ordine nuovo la prima riga non e' piu' la piu' forte, e le barre
+          sarebbero uscite disordinate rispetto ai numeri che accompagnano. */}
       <span className="dossier-bar" aria-hidden="true">
-        <i style={{ width: `${Math.round((lettura.forza / massima) * 100)}%` }} />
+        <i style={{ width: `${Math.round((lettura.probabilita / massima) * 100)}%` }} />
       </span>
       <span className="dossier-1x2-val">{percento(lettura.probabilita)}</span>
     </div>
@@ -182,7 +186,7 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
   const conflitto = dossier.conflitti[0] ?? null;
   const valore = dossier.candidatoDiValore;
   const righe = forti?.letture ?? [];
-  const massima = righe[0]?.forza ?? 1;
+  const massima = righe[0]?.probabilita ?? 1;
   const chi = (lettura: LetturaForte) => lettura.lato === "casa" ? homeTeam
     : lettura.lato === "trasferta" ? awayTeam : "Totale gara";
 
