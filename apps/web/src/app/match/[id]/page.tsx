@@ -1,3 +1,4 @@
+import { statoInGioco } from "@iqstats/shared";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -1045,7 +1046,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             {/* A gara in corso il punteggio in testata si muove da solo. Fuori dalla gara in
                 corso il componente non rende nulla e non arma nessun timer. */}
             <AggiornamentoLive
-              gareLive={detail.status === "inprogress" || detail.status === "live" ? 1 : 0}
+              gareLive={statoInGioco(detail.status) ? 1 : 0}
               ogniMs={MATCHES_TTL_MS}
             />
           </div>

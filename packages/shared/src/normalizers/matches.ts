@@ -39,16 +39,43 @@ const sections: readonly MatchSection[] = [
   "signals",
 ];
 
+/**
+ * Gli stati con cui la fonte dice «si sta giocando», misurati sul suo calendario.
+ *
+ * **La fonte non manda mai «live» ne' «inprogress».** Su sette giorni di calendario, letti
+ * il 6 settembre 2026, gli stati in corso sono `1st_half` (18 gare), `2nd_half` (17) e
+ * `halftime` (2): tutti e tre finivano in `unknown`, quindi il filtro Live del tabellone
+ * non trovava mai niente e l'aggiornamento del punteggio non si armava mai. Gli stati dei
+ * tempi supplementari e dei rigori non sono comparsi in quei sette giorni ma la fonte li
+ * nomina allo stesso modo: stanno qui perche' una finale ai rigori non aspetti un'altra
+ * misura per essere riconosciuta.
+ */
+const IN_GIOCO = new Set([
+  "live", "inprogress", "playing",
+  "1sthalf", "2ndhalf", "halftime", "break",
+  "extratime", "1stextra", "2ndextra", "awaitingextratime",
+  "penalties", "awaitingpenalties", "penaltyshootout",
+]);
+
+/** Vero quando la fonte dice che quella gara si sta giocando adesso. */
+export function statoInGioco(raw: string | null | undefined): boolean {
+  return raw === null || raw === undefined
+    ? false
+    : IN_GIOCO.has(raw.toLowerCase().replaceAll("-", "").replaceAll("_", ""));
+}
+
 function normalizedStatus(value: unknown): MatchStatus {
   const raw = isRecord(value) ? nonEmptyString(value.name) : nonEmptyString(value);
-  switch (raw?.toLowerCase().replaceAll("-", "").replaceAll("_", "")) {
+  const pulito = raw?.toLowerCase().replaceAll("-", "").replaceAll("_", "");
+  if (pulito !== undefined && IN_GIOCO.has(pulito)) return "live";
+  switch (pulito) {
     case "notstarted":
     case "scheduled":
     case "upcoming":
+    // Rinviata di poco, non a data da destinarsi: si giochera', quindi resta fra quelle da
+    // giocare invece di finire fra le rinviate.
+    case "delayed":
       return "not_started";
-    case "live":
-    case "inprogress":
-      return "live";
     case "finished":
     case "final":
       return "finished";

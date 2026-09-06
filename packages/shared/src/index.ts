@@ -96,6 +96,7 @@ export {
   normalizeMatchDetail,
   normalizeMatchList,
   normalizeSeasonCatalog,
+  statoInGioco,
   type MatchNormalizationContext,
 } from "./normalizers/matches.ts";
 export {
