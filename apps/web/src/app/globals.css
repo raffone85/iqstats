@@ -139,7 +139,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
 .section-heading > p { max-width: 360px; margin: 0; color: var(--product-muted); font-size: 13px; line-height: 1.55; text-align: right; }
 .coverage-note { margin-bottom: 18px; padding: 10px 12px; border-left: 3px solid var(--product-accent); background: var(--surface-soft); color: var(--ink-soft); }
-.match-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .match-row { display: grid; grid-template-columns: 130px minmax(150px, .9fr) minmax(220px, 1.4fr) minmax(100px, .55fr) minmax(110px, .6fr) auto; gap: 16px; align-items: center; min-height: 76px; padding: 14px 16px; border: 1px solid transparent; border-radius: var(--r-control); background: var(--product-background); transition: background-color 180ms ease, border-color 180ms ease; }
 .match-row:hover { border-color: var(--product-border); background: var(--product-surface-soft); }
 .match-kickoff, .match-score { color: var(--product-primary-deep); font-family: "Fira Code", ui-monospace, monospace; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -194,11 +193,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .h2h-summary div, .standing-card { min-width: 0; padding: 14px; border: 1px solid var(--product-border); border-radius: var(--r-control); background: var(--product-background); }
 .h2h-summary dt, .standing-card dt, .odds-list dt { color: var(--product-muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .h2h-summary dd { margin: 7px 0 0; color: var(--product-primary-deep); font-family: "Fira Code", ui-monospace, monospace; font-size: 22px; font-weight: 800; letter-spacing: -.055em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.recent-match-list { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
-.recent-match-list li { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 14px; align-items: center; padding: 12px 14px; border: 1px solid var(--product-border); border-radius: var(--r-control); background: var(--product-background); }
-.recent-match-list time { color: var(--product-muted); font-family: "Fira Code", ui-monospace, monospace; font-size: 12px; font-weight: 700; }
-.recent-match-list span { color: var(--product-text); font-size: 14px; overflow-wrap: anywhere; }
-.recent-match-list strong { color: var(--product-primary-deep); font-family: "Fira Code", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .evidence-empty, .evidence-intro, .evidence-limit { max-width: 760px; margin: 0; color: var(--product-muted); font-size: 14px; line-height: 1.6; }
 .evidence-intro { margin-bottom: 16px; }
 .evidence-limit { margin-top: 16px; font-size: 13px; }
@@ -292,7 +286,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   .stat-comparison th, .stat-comparison td { padding: 11px 9px; font-size: 12px; }
   .stat-comparison thead th, .stat-comparison tbody th { font-size: 11px; }
   .h2h-summary, .odds-list, .standing-grid { grid-template-columns: 1fr; }
-  .recent-match-list li { grid-template-columns: 1fr; gap: 5px; }
   .odds-list dl, .standing-card dl { grid-template-columns: 1fr 1fr; }
   .billing-current-plan, .billing-catalog { margin-top: 24px; padding: 20px; }
   .billing-plan-grid { grid-template-columns: 1fr; }
