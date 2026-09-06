@@ -77,9 +77,15 @@ type AreeDelDossier = Readonly<Record<
   boolean
 >>;
 
-function capitoliDi(aree: AreeDelDossier): readonly { id: string; nome: string }[] {
+function capitoliDi(
+  aree: AreeDelDossier,
+  inCorso = false,
+): readonly { id: string; nome: string }[] {
   const tutte = [
-    { id: "cap-giocata", nome: "Gara giocata", c: aree.giocata },
+    // Il nome del capitolo cambia con lo stato: «In campo» mentre si gioca, «Gara giocata»
+    // dopo. E' lo stesso contenuto, ma chi legge l'indice deve sapere se sta guardando un
+    // tabellino che si muove o uno fermo.
+    { id: "cap-giocata", nome: inCorso ? "In campo" : "Gara giocata", c: aree.giocata },
     { id: "cap-insight", nome: "Insight", c: aree.insight },
     { id: "cap-mercati", nome: "Mercati", c: aree.mercati },
     { id: "cap-gol", nome: "Gol", c: aree.gol },
@@ -469,9 +475,14 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // cronologia. Sono due richieste in tutto — le statistiche e la mappa arrivano insieme —
   // e su una gara ancora da giocare non partono affatto.
   const played = detail.status === "finished";
+  // **Le stesse due letture valgono anche mentre si gioca.** La fonte espone il tabellino e
+  // la cronologia su una gara in corso: misurato su Juventus-AC Milan nel primo tempo,
+  // trentotto punti di momentum e otto tiri gia' in mappa. Chiedendole solo a gara conclusa
+  // il dossier di una gara in corso diceva il punteggio e nient'altro.
+  const inCorso = statoInGioco(detail.status);
   const [finishedStats, incidents] = await Promise.all([
-    played ? getFinishedMatchStats(eventId) : Promise.resolve(null),
-    played ? getMatchIncidents(eventId) : Promise.resolve(null),
+    played || inCorso ? getFinishedMatchStats(eventId, inCorso) : Promise.resolve(null),
+    played || inCorso ? getMatchIncidents(eventId) : Promise.resolve(null),
   ]);
 
   // Motore statistico: lettura sincrona dell'artefatto generato, nessuna chiamata al provider.
@@ -958,7 +969,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // capitolo che sotto non esiste, e un'area riservata non compare fra le destinazioni di
   // chi non puo' aprirla - il suo riquadro d'accesso resta in pagina, al posto giusto.
   const aree = {
-    giocata: played && (
+    giocata: (played || inCorso) && (
       (finishedStats?.headline.length ?? 0) > 0
       || (finishedStats?.rest.length ?? 0) > 0
       || (finishedStats?.shots.length ?? 0) > 0
@@ -1081,7 +1092,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         {/* I due capitoli condizionati seguono il diritto, non solo il dato: senza il piano
             Insight quelle sezioni non si disegnano, e un indice che punta a un'ancora che
             non esiste manda chi tocca in fondo alla pagina, dove non c'e' niente. */}
-        <DossierCapitoli capitoli={capitoliDi(aree)} />
+        <DossierCapitoli capitoli={capitoliDi(aree, inCorso)} />
 
         {/* **A gara finita l'ordine cambia in cima, non ovunque.** Quello che si cerca non e'
             piu' la previsione ma il tabellino, e subito dopo se quella previsione ha tenuto.
@@ -1091,13 +1102,14 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           <>
             <DossierCapitolo
               id="cap-giocata"
-              nome="La gara giocata"
+              nome={inCorso ? "La gara in corso" : "La gara giocata"}
             />
             <MatchFinishedSection
               stats={finishedStats}
               incidents={incidents}
               homeTeam={detail.homeTeam}
               awayTeam={detail.awayTeam}
+              inCorso={inCorso}
             />
             {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
           </>
