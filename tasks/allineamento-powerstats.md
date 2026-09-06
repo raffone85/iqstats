@@ -162,6 +162,24 @@ piede; i termini invece sono una pagina sul loro dominio.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
     alla vetrina sta il **consuntivo completo**, non solo le riuscite: la loro versione
     mostra solo gli azzeccati fra l'88 e il 99 per cento, ed è selezione, non misura.
+    — **meta' fatta il 6 settembre 2026, meta' ferma per una misura.**
+    ~~Il consuntivo completo~~ e' pubblicato su `/metodo`, prima di «Cosa non fa IQstatS»:
+    `apps/web/scripts/consuntivo-letture.ts` rifa' girare `candidateDiGara`, `baseDiLega` e
+    `ordinaLetture` sulle gare chiuse e conta tutte le letture, prese e sbagliate. Primo
+    giro su 1.200 gare: 547 con letture, **1.409 letture, 936 prese, 66,4% contro il 67,1%
+    promesso**; per fascia 62,1 contro 58,6 (50-60%), 62,3 contro 64,4 (60-70%), 74,8 contro
+    74,0 (70-80%), **72,9 contro 81,6 (80-90%)**. Due minuti e quattro secondi.
+    **La vetrina non e' pubblicata, e la ragione e' misurata.** `scripts/vetrina-letture.ts`
+    esiste e gira - 131 gare in arrivo in un giorno, 56 con una lettura, 14,8 s - ma la
+    forza (`|probabilita - base| x affidabilita`) **seleziona per costruzione gli scostamenti
+    piu' grandi**, e in cima finisce la coda degli errori del modello. Confrontate le sette
+    letture di lato con la storia della squadra dallo stesso lato: **sei su sette stanno
+    sopra sia alla base di lega sia alle sue gare**, due di quaranta e sessanta punti —
+    Liaoning Tieren over 3,5 fuorigioco al 74% contro il 14% di lega e il **10% su dieci sue
+    gare**; Valencia under 4,5 corner al 71% contro il 34% di lega e il **24% su ventuno**.
+    Il consuntivo lo conferma da solo: la fascia 80-90%, dove la vetrina abita, promette 81,6
+    e rende 72,9. **Deciso dall'utente il 6 settembre: lo script resta come strumento di
+    misura, la pagina non si pubblica finche' il criterio della vetrina non regge.**
 18. **Generatore di multiple.** *Criterio:* la probabilità della combinazione dichiara la
     correlazione; senza quella, non si mostra un numero.
 19. **Assistente conversazionale.** *Criterio:* risponde solo con numeri che la pagina
