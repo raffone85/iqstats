@@ -1303,6 +1303,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             proiezioni={proiezioni}
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
+            inCima={(forti?.letture ?? []).map((l) => l.bersaglio)}
           />
         )}
 
