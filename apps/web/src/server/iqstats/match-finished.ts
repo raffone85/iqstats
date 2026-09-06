@@ -10,6 +10,8 @@ import { ProviderClient } from "./provider-client.ts";
 const DEFAULT_PROVIDER_BASE_URL = "https://sports.bzzoiro.com/api/v2/";
 /** Un'ora: il tabellino di una gara finita si assesta subito e poi resta fermo. */
 const CACHE_TTL_SECONDS = 3600;
+/** Quanto dura la copia mentre si gioca: come quella del calendario, due minuti. */
+const CACHE_IN_CORSO_SECONDS = 120;
 
 /** Come è finito il tiro. Il legno resta distinto: non è né dentro né fuori. */
 export type ShotOutcome = "goal" | "onTarget" | "offTarget" | "blocked" | "woodwork";
@@ -414,12 +416,29 @@ async function loadIncidents(eventId: number): Promise<readonly MatchIncident[] 
 }
 
 /** Statistiche e mappa dei tiri della gara conclusa. Fail-closed → null. */
-export async function getFinishedMatchStats(eventId: number): Promise<FinishedMatchStats | null> {
+/**
+ * Le statistiche della gara, che la fonte espone **anche mentre si gioca**.
+ *
+ * Misurato il 6 settembre 2026 su Juventus-AC Milan nel primo tempo: `events/{id}/stats/`
+ * risponde in 100-200 ms con duelli, falli, passaggi, cross, contrasti e dribbling per
+ * lato, trentotto punti di momentum e otto tiri nella mappa. E' lo stesso endpoint che la
+ * gara conclusa usa gia': non serve niente di nuovo, serviva solo chiamarlo.
+ *
+ * **La scadenza cambia con lo stato, e non e' un dettaglio.** Un'ora va bene per una gara
+ * finita, dove i numeri non cambiano piu'; su una gara in corso terrebbe fermo il tabellino
+ * mentre il punteggio accanto si muove. Con `inCorso` la copia dura due minuti, quanto
+ * quella del calendario, e la chiave di cache e' diversa perche' le due finestre non si
+ * devono mescolare.
+ */
+export async function getFinishedMatchStats(
+  eventId: number,
+  inCorso = false,
+): Promise<FinishedMatchStats | null> {
   if (!Number.isInteger(eventId) || eventId <= 0) return null;
   const load = unstable_cache(
     () => loadStats(eventId),
-    ["iqstats-match-stats", String(eventId)],
-    { revalidate: CACHE_TTL_SECONDS },
+    ["iqstats-match-stats", inCorso ? "in-corso" : "conclusa", String(eventId)],
+    { revalidate: inCorso ? CACHE_IN_CORSO_SECONDS : CACHE_TTL_SECONDS },
   );
   return load();
 }

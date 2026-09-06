@@ -192,11 +192,14 @@ export function MatchFinishedSection({
   incidents,
   homeTeam,
   awayTeam,
+  inCorso = false,
 }: {
   stats: FinishedMatchStats | null;
   incidents: readonly MatchIncident[] | null;
   homeTeam: string;
   awayTeam: string;
+  /** La gara si sta giocando: gli stessi numeri, ma parziali e in movimento. */
+  inCorso?: boolean;
 }) {
   const shots = stats?.shots ?? [];
   const homeShots = shots.filter((shot) => shot.home);
@@ -211,10 +214,20 @@ export function MatchFinishedSection({
     <>
       {hasStats || hasShots ? (
         <section className="dossier-panel" aria-labelledby="played-title">
-          <p className="dossier-kick">La gara giocata</p>
+          <p className="dossier-kick">{inCorso ? "La gara in corso" : "La gara giocata"}</p>
           <h2 id="played-title" className="sr-only-heading">
-            Statistiche e tiri della gara conclusa
+            {inCorso ? "Statistiche e tiri fin qui" : "Statistiche e tiri della gara conclusa"}
           </h2>
+
+          {/* **Un tabellino che si muove va detto che si muove.** Sono gli stessi numeri
+              della gara conclusa, chiesti alla stessa lettura, ma presi a partita in corso:
+              senza questa riga si leggerebbero come definitivi. */}
+          {inCorso ? (
+            <p className="dossier-src">
+              Numeri <b>fin qui</b>, non finali: la partita è in corso e questa copia dura
+              due minuti, come quella del punteggio.
+            </p>
+          ) : null}
 
           {hasStats ? (
             <>
