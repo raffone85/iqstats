@@ -234,6 +234,11 @@ function Scale({ gruppi }: {
   );
 }
 
+/** Uno scarto di calibrazione scritto come si legge: 0,0168 sono 1,7 punti. */
+function punti(scarto: number): string {
+  return (scarto * 100).toFixed(1).replace(".", ",") + " punti";
+}
+
 /**
  * L'affidabilità come punteggio con la sua fascia di lettura.
  *
@@ -243,10 +248,26 @@ function Scale({ gruppi }: {
 function Affidabilita({ bersaglio }: { readonly bersaglio: ProiezioneDiGara }) {
   const livello = bersaglio.totale === null ? null : bersaglio.totale.affidabilita;
   if (livello === null) return null;
+  // **Quanto sbaglia la percentuale, non quanto sbaglia il numero.** Sono due misure
+  // diverse: l'affidabilità dice se l'atteso resta entro la soglia, questa dice se il
+  // «71%» esce davvero il 71% delle volte. I due scarti sono due perché il lato e il
+  // totale sono due scale: mostrarne uno per entrambe direbbe il falso su una.
+  const lati = bersaglio.scartoDiCalibrazioneDelleLinee;
+  const totale = bersaglio.scartoDiCalibrazioneDelTotale;
+  const gare = bersaglio.gareDiProvaDelleLinee;
   return (
     <p className="engine-badge">
       Affidabilità del totale {livello.punteggio}/100 · {livello.fasciaDiLettura.toLowerCase()}
       {" "}· entro {valore(livello.soglia)} su {livello.righeDiProva} gare di prova
+      {lati === null && totale === null ? null : (
+        <>
+          {" · le percentuali delle soglie sbagliano "}
+          {lati === null ? null : <>{punti(lati)} di lato</>}
+          {lati !== null && totale !== null ? " e " : null}
+          {totale === null ? null : <>{punti(totale)} sul totale</>}
+          {gare === null ? null : <> su {gare} gare</>}
+        </>
+      )}
     </p>
   );
 }
@@ -389,6 +410,16 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
         rimasto entro la soglia dichiarata, misurata su gare mai usate per costruire il
         modello. <b>Non è la probabilità dell&apos;evento</b>: sono due numeri diversi e non si
         sommano.
+      </p>
+
+      <p className="dossier-src">
+        Lo scarto delle percentuali è un terzo numero ancora: <b>di quanto la probabilità
+        promessa si è scostata dalla frequenza vera</b>, misurata a decili di probabilità su
+        gare mai usate per costruire il modello. Sui sette bersagli va da 1,3 punti — i
+        fuorigioco di lato — a 3,4 — i falli sul totale: quando qui c&apos;è scritto 71%,
+        l&apos;evento è uscito fra il 68 e il 74 per cento delle volte, secondo il bersaglio
+        e secondo la scala. Il totale sbaglia più dei lati su tutti e sette, ed è per questo
+        che i due numeri stanno scritti separati invece che mediati in uno.
       </p>
 
       </details>

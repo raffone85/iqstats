@@ -203,8 +203,23 @@ piede; i termini invece sono una pagina sul loro dominio.
     pagina: +118 px a 375 e 768, +84 a 1024, +51 a 1440; zero overflow, zero sotto AA.
     Due prove nuove in `test:base-di-lega` che ricontano a mano sul livello dati.
 22. **Elenco gare per esteso** sotto ogni famiglia.
-23. **Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce. Richiede
-    un passaggio offline sulle gare chiuse: gli artefatti non la portano.
+23. ~~**Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce.~~ —
+    **fatto il 6 settembre 2026, e la premessa del piano era sbagliata.** Il passaggio
+    offline **esiste gia'**: `scripts/projection/models/lines.py` misura la calibrazione delle
+    cinque soglie fuori campione, ha girato su tutti e sette i bersagli, e il suo numero e'
+    **gia' dentro gli artefatti che l'app spedisce** —
+    `totale.calibrazione_delle_linee_sui_due_lati` per le scale di lato,
+    `totale.prova_fuori_campione.scarto_di_calibrazione_delle_linee` per quella del totale.
+    `corner_kicks-linee.json` dice 0,0168 e l'artefatto dice 0,0168: stesso numero.
+    Il read model lo portava gia' a meta': `scartoDiCalibrazioneDelleLinee` esisteva su
+    `ProiezioneDiGara` dal giorno del totale e **nessuna riga dell'app lo leggeva**. Ora la
+    card di ogni famiglia lo scrive accanto all'affidabilita', con i due numeri separati
+    perche' il lato e il totale sono due scale.
+    **Le misure, a decili di probabilita' e fuori campione:** di lato da **1,30** punti
+    (fuorigioco) a **1,83** (tiri); sul totale da **2,00** (gialli) a **3,38** (falli), su
+    2.745-3.000 gare di prova. Il totale sbaglia piu' dei lati su tutti e sette.
+    *Misurato in pagina:* +243 px a 375 e +100 alle altre tre larghezze, zero overflow, zero
+    sotto AA.
 
 ---
 

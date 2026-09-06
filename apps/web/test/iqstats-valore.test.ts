@@ -105,6 +105,8 @@ function bersaglioCorner(
       perche: "prova",
     },
     scartoDiCalibrazioneDelleLinee: null,
+    scartoDiCalibrazioneDelTotale: null,
+    gareDiProvaDelleLinee: null,
   };
 }
 

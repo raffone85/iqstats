@@ -94,6 +94,8 @@ function bersaglio(target: string, casa: EsitoDiProduzione, trasferta: EsitoDiPr
     target, modelId: "prova", casa, trasferta,
     linee: { casa: null, trasferta: null }, totale: null,
     scartoDiCalibrazioneDelleLinee: null,
+    scartoDiCalibrazioneDelTotale: null,
+    gareDiProvaDelleLinee: null,
   } as ProiezioneDiGara;
 }
 
