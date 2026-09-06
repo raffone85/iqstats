@@ -125,19 +125,26 @@ export async function ritmoDellaGara(args: {
   if (sql === null) return null;
 
   const colonne = METRICHE.map((m) => m.colonna);
-  const righe = await sql<Record<string, string | null>[]>`
-    select t.source_id::text as squadra, o.side as lato,
-           ${sql.unsafe(colonne.map((c) => `o.${c}::text as ${c}`).join(", "))}
-    from football.team_match_observations o
-    join football.matches g on g.id = o.match_id
-    join football.competitions c on c.id = g.competition_id
-    join football.teams t on t.id = o.team_id
-    where c.source_id = ${leagueId}::bigint
-      and g.season_id = (select id from football.seasons where source_id = ${seasonId}::bigint)
-      and o.kickoff_at < ${kickoffAt}::timestamptz
-    order by o.kickoff_at desc
-    limit ${MAX_GARE * 2}
-  `;
+  // La lettura non fa cadere il dossier: dove il livello dati non risponde, il capitolo
+  // del ritmo non compare invece di far fallire la pagina.
+  let righe: Array<Record<string, string | null>>;
+  try {
+    righe = await sql<Record<string, string | null>[]>`
+      select t.source_id::text as squadra, o.side as lato,
+             ${sql.unsafe(colonne.map((c) => `o.${c}::text as ${c}`).join(", "))}
+      from football.team_match_observations o
+      join football.matches g on g.id = o.match_id
+      join football.competitions c on c.id = g.competition_id
+      join football.teams t on t.id = o.team_id
+      where c.source_id = ${leagueId}::bigint
+        and g.season_id = (select id from football.seasons where source_id = ${seasonId}::bigint)
+        and o.kickoff_at < ${kickoffAt}::timestamptz
+      order by o.kickoff_at desc
+      limit ${MAX_GARE * 2}
+    `;
+  } catch {
+    return null;
+  }
 
   const dati: Riga[] = righe.map((r) => ({
     squadra: Number(r.squadra),

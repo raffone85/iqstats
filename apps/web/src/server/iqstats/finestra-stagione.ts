@@ -67,19 +67,26 @@ export async function stagioniScelte(
   if (sql === null) {
     return { finestra: "corrente", stagioni: [seasonSourceId], etichetta: "questa stagione" };
   }
-  const righe = await sql<{ source_id: string; starts_on: string; ends_on: string }[]>`
-    select s.source_id::text, s.starts_on::text, s.ends_on::text
-    from football.seasons s
-    join football.competitions c on c.id = s.competition_id
-    where c.source_id = ${competitionSourceId}::bigint
-      and s.starts_on <= (
-        select s2.starts_on from football.seasons s2
-        join football.competitions c2 on c2.id = s2.competition_id
-        where c2.source_id = ${competitionSourceId}::bigint
-          and s2.source_id = ${seasonSourceId}::bigint
-      )
-    order by s.starts_on desc
-  `;
+  // La lettura non fa cadere la pagina: senza livello dati la finestra non si offre.
+  let righe: Array<{ source_id: string; starts_on: string; ends_on: string }>;
+  try {
+    righe = await sql<{ source_id: string; starts_on: string; ends_on: string }[]>`
+      select s.source_id::text, s.starts_on::text, s.ends_on::text
+      from football.seasons s
+      join football.competitions c on c.id = s.competition_id
+      where c.source_id = ${competitionSourceId}::bigint
+        and s.starts_on <= (
+          select s2.starts_on from football.seasons s2
+          join football.competitions c2 on c2.id = s2.competition_id
+          where c2.source_id = ${competitionSourceId}::bigint
+            and s2.source_id = ${seasonSourceId}::bigint
+        )
+      order by s.starts_on desc
+    `;
+  } catch {
+    // Stesso esito del livello dati assente: la finestra resta quella della gara.
+    return { finestra: "corrente", stagioni: [seasonSourceId], etichetta: "questa stagione" };
+  }
   // La prima e' quella della gara, la seconda quella prima: l'ordine e' per data e non per
   // identificativo, perche' gli identificativi della fonte non sono ordinati nel tempo.
   const corrente = righe[0];

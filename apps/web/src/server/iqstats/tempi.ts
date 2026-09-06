@@ -202,6 +202,16 @@ export function attesiDelTempo(
  * gare chiuse prima di questa, o quando manca uno degli identificativi: senza uno di
  * quelli non c'e' niente da misurare, e mezza misura non si mostra.
  */
+interface RigaGrezza {
+  readonly quando: string;
+  readonly casa_id: string;
+  readonly trasferta_id: string;
+  readonly gol_casa: string;
+  readonly gol_trasferta: string;
+  readonly gol_casa_pt: string;
+  readonly gol_trasferta_pt: string;
+}
+
 export async function tempiDellaGara(args: {
   readonly leagueId: number | null;
   readonly seasonId: number | null;
@@ -218,37 +228,36 @@ export async function tempiDellaGara(args: {
   const sql = connessione();
   if (sql === null) return null;
 
-  const righe = await sql<
-    {
-      quando: string;
-      casa_id: string;
-      trasferta_id: string;
-      gol_casa: string;
-      gol_trasferta: string;
-      gol_casa_pt: string;
-      gol_trasferta_pt: string;
-    }[]
-  >`
-    select g.kickoff_at::text as quando,
-           casa.source_id::text as casa_id,
-           ospite.source_id::text as trasferta_id,
-           g.home_score::text as gol_casa,
-           g.away_score::text as gol_trasferta,
-           g.home_score_halftime::text as gol_casa_pt,
-           g.away_score_halftime::text as gol_trasferta_pt
-    from football.matches g
-    join football.competitions c on c.id = g.competition_id
-    join football.teams casa on casa.id = g.home_team_id
-    join football.teams ospite on ospite.id = g.away_team_id
-    where c.source_id = ${leagueId}::bigint
-      and g.season_id = (select id from football.seasons where source_id = ${seasonId}::bigint)
-      and g.normalized_status = 'finished'
-      and g.home_score is not null and g.away_score is not null
-      and g.home_score_halftime is not null and g.away_score_halftime is not null
-      and g.kickoff_at < ${kickoffAt}::timestamptz
-    order by g.kickoff_at desc
-    limit ${MAX_GARE}
-  `;
+  // **La lettura non fa cadere il dossier.** Ogni altro modulo che interroga il livello
+  // dati avvolge la query: qui mancava, e le colonne del punteggio all'intervallo esistono
+  // solo dove la migrazione `iqstats_data1_halftime_score` e' stata applicata. Dove non
+  // c'e', il capitolo dei due tempi non compare, invece di far fallire la pagina.
+  let righe: RigaGrezza[];
+  try {
+    righe = await sql<RigaGrezza[]>`
+      select g.kickoff_at::text as quando,
+             casa.source_id::text as casa_id,
+             ospite.source_id::text as trasferta_id,
+             g.home_score::text as gol_casa,
+             g.away_score::text as gol_trasferta,
+             g.home_score_halftime::text as gol_casa_pt,
+             g.away_score_halftime::text as gol_trasferta_pt
+      from football.matches g
+      join football.competitions c on c.id = g.competition_id
+      join football.teams casa on casa.id = g.home_team_id
+      join football.teams ospite on ospite.id = g.away_team_id
+      where c.source_id = ${leagueId}::bigint
+        and g.season_id = (select id from football.seasons where source_id = ${seasonId}::bigint)
+        and g.normalized_status = 'finished'
+        and g.home_score is not null and g.away_score is not null
+        and g.home_score_halftime is not null and g.away_score_halftime is not null
+        and g.kickoff_at < ${kickoffAt}::timestamptz
+      order by g.kickoff_at desc
+      limit ${MAX_GARE}
+    `;
+  } catch {
+    return null;
+  }
 
   const gare: RigaGara[] = righe
     .map((r) => ({
