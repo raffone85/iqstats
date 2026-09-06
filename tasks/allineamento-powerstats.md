@@ -181,8 +181,26 @@ piede; i termini invece sono una pagina sul loro dominio.
     §1 diceva che i dati per giocatore non stanno nel nostro livello dati.
     `football.player_match_observations` ne ha **457.416 righe su 10.968 gare e 57 stagioni**,
     con sette colonne e **senza `goals`**.
-    **Resta aperta la classifica di stagione** del punto 3 del §8 di quel documento: marcatori,
-    ammoniti e falli per campionato, con le gare coperte su quelle giocate scritte accanto.
+    **La classifica di stagione e' fatta lo stesso giorno**, ed e' il punto 3 del §8 di quel
+    documento: `/giocatori` per minuti, tiri, tiri in porta, falli, gialli e parate, raggiunta
+    dalla rosa della scheda squadra sulla stessa competizione e stagione che quella sta gia'
+    mostrando. La barra di navigazione resta a cinque voci, per la misura del 3 settembre.
+    **La classifica dei marcatori non c'e', e la ragione e' misurata:**
+    `football.player_match_observations` ha sette colonne e **non ha `goals`**, e nel livello
+    dati non esiste nessuna tavola di episodi; alla fonte i gol costerebbero **una chiamata per
+    gara, 380 per la sola Serie A**. La pagina lo dichiara invece di sostituirli con i tiri.
+    **Due cose trovate misurando.** Il denominatore non puo' essere lo stato della gara: le 380
+    gare di Serie A 26/27 in `football.matches` sono **tutte `scheduled`**, comprese le 24 gia'
+    giocate che hanno le osservazioni; le gare giocate si contano sull'orario d'inizio. E i
+    **pari merito sono il caso normale sui gialli**: in Serie A 25/26 il massimo e' **sette** e
+    **nove giocatori su dieci** ci arrivano, quindi le posizioni sono condivise e non numerate
+    una per una. Sui falli i valori si separano: 87, 71, 69, su 380 gare coperte su 380.
+    *Misurato in pagina:* elenco delle competizioni 1,0 s e classifica 0,96 s sul livello dati
+    locale, zero overflow e zero sotto AA a 375, 768, 1024 e 1440 px; il rimando dalla rosa
+    costa **22 px** a 768, 1024 e 1440.
+    **Una misura da non fidarsi:** a 375 px la scheda squadra non da' un'altezza stabile — lo
+    stesso codice, due giri di fila, rende **29.086 e 23.693 px**. Le altre tre larghezze sono
+    identiche fra i due giri, quindi il confronto prima-dopo a 375 su quella pagina non vale.
 16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
     dichiarare la correlazione fra le due linee.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
