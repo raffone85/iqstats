@@ -58,6 +58,34 @@ export function nomeDiStagione(inizio: string, fine: string): string {
  * Senza livello dati non si inventa una finestra: si torna quella della gara, che e' il
  * comportamento di sempre, e le letture decideranno da sole di non comparire.
  */
+/**
+ * La stagione in corso di una competizione: quella con la gara piu' recente in archivio.
+ *
+ * Non si guarda `is_current` del livello dati perche' quel campo racconta il catalogo della
+ * fonte, non le nostre osservazioni: una stagione dichiarata corrente ma senza gare raccolte
+ * darebbe una finestra vuota.
+ */
+export async function stagioneInCorso(competitionSourceId: number): Promise<number | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+  try {
+    const righe = await sql<Array<{ source_id: string | null }>>`
+      select s.source_id::text
+      from football.team_match_observations o
+      join football.seasons s on s.id = o.season_id
+      join football.competitions c on c.id = o.competition_id
+      where c.source_id = ${competitionSourceId}::bigint
+      group by s.source_id
+      order by max(o.kickoff_at) desc
+      limit 1
+    `;
+    const trovata = righe[0]?.source_id ?? null;
+    return trovata === null ? null : Number(trovata);
+  } catch {
+    return null;
+  }
+}
+
 export async function stagioniScelte(
   competitionSourceId: number,
   seasonSourceId: number,
