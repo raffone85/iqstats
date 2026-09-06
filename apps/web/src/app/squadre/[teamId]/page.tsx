@@ -227,6 +227,8 @@ async function SquadBlock({
       squad={envelope.data}
       availability={envelope.availability}
       minimumSample={TEAM_MINIMUM_SAMPLE}
+      leagueId={selection.leagueId}
+      seasonId={selection.seasonId}
     />
   );
 }

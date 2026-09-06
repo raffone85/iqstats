@@ -7,8 +7,9 @@
 ---
 
 **Project:** IQstatS
-**Identità visiva:** «carta e campo» — sostituisce «Il Cardinale» (bruno e oro su fondo
-scuro) e la precedente veste blu «IQstatS Professional», il 14 agosto 2026.
+**Identità visiva:** «campo e calce» — sostituisce «carta e campo» (bordeaux su carta
+calda) il 4 settembre 2026, che a sua volta aveva sostituito «Il Cardinale» e la veste blu
+«IQstatS Professional» il 14 agosto 2026.
 **Category:** Analytics / football intelligence
 **Percorso storico:** la cartella si chiama ancora `iqstats-professional` perché
 `AGENTS.md` vi rimanda; il contenuto è stato riscritto, il nome no.
@@ -20,14 +21,21 @@ scuro) e la precedente veste blu «IQstatS Professional», il 14 agosto 2026.
 Il prodotto esiste per far capire **quanto ci si può fidare di un numero**, non solo
 quale sia il numero. Da qui discendono le due regole che tengono insieme tutto il resto:
 
-1. **Il colore dichiara un verso, non decora.** Verde e mattone compaiono solo dove un
+1. **Il colore dichiara un verso, non decora.** Blu e arancio compaiono solo dove un
    valore sta sopra o sotto un riferimento — media, metro di lega, forma. Dove un numero
    non ha un verso, resta inchiostro.
+   **Il verde è del marchio e non dice mai un verso.** Fino al 4 settembre 2026 il verso
+   era verde e mattone; quando il verde è passato al marchio, il verso è andato su blu e
+   arancio, che restano distinguibili anche a chi non separa il rosso dal verde. Nello
+   stesso passaggio sono uscite dal verso tre cose che non lo erano mai state: la pastiglia
+   della vittoria, il segnale di gara in corso e il messaggio di operazione riuscita. Ora si
+   distinguono per quanto sono piene, con la parola sempre scritta.
    **Un'eccezione sola, aggiunta il 23 agosto 2026:** le sette famiglie statistiche del
    dossier hanno una tinta ciascuna, e lì il colore dichiara **un'identità**. Regge a tre
    condizioni, tutte e tre necessarie: l'identità è **scritta** nella testata, quindi
    nessuna informazione vive solo nel colore; nessuna delle sette tinte entra negli
-   intervalli del verde (162°) e del mattone (8°), che dicono un verso; le sette sono un
+   intervalli del blu (224°) e dell'arancio (17°), che dicono un verso: la piu' vicina, il
+   corner, sta a 28 gradi; le sette sono un
    **insieme chiuso e nominato**, non una tavolozza libera. Fuori da queste sette famiglie
    la regola non cambia.
 2. **Il monospazio è la voce della provenienza, la prosa è la voce della lettura.**
@@ -43,26 +51,29 @@ spiega.** Non introdurre colori fuori da questa tabella.
 
 | Ruolo | Hex | Token | Contrasto su carta |
 |---|---|---|---|
-| Carta (fondo pagina) | `#F7F6F3` | `--card-ground`, `--canvas` | — |
+| Calce (fondo pagina) | `#F6F7F5` | `--card-ground`, `--canvas` | — |
 | Superficie (card) | `#FFFFFF` | `--card-panel`, `--surface` | — |
-| Superficie tenue | `#FBFAF7` | `--card-panel-2`, `--surface-soft` | — |
-| Bordeaux (brand, testate) | `#6E1522` | `--card-brand`, `--brand` | 10,84 |
-| Bordeaux forte (enfasi) | `#56101B` | `--card-brand-strong` | 13,08 |
-| Bordeaux profondo (hero) | `#4E0E18` | `--card-oxblood-deep`, `--brand-deep` | — |
-| Inchiostro (testo) | `#1C1A17` | `--card-ink`, `--ink` | 16,07 |
-| Testo secondario | `#4A443D` | `--card-ink-2`, `--ink-soft` | 8,89 |
-| Testo di servizio | `#6A645C` | `--card-ink-3`, `--muted` | 5,41 |
-| Verde — sopra il riferimento | `#0F6B4F` | `--card-up`, `--green` | 6,00 |
-| Mattone — sotto il riferimento | `#A6321F` | `--card-down`, `--amber` | 6,27 |
-| Filetto | `#E3DED4` | `--card-stroke`, `--line` | bordo, mai testo |
-| Testo su bordeaux | `#FBF7F3` | `--card-on-brand` | 10,99 su `#6E1522` |
-| Famiglia — tiri | `#6E1522` | `--fam-tiri` | 10,99 col testo chiaro sopra |
-| Famiglia — tiri in porta | `#7A4E1D` | `--fam-tiri-porta` | 6,71 |
-| Famiglia — falli | `#3E3A8C` | `--fam-falli` | 9,00 |
-| Famiglia — corner | `#1F5673` | `--fam-corner` | 7,47 |
-| Famiglia — cartellini gialli | `#7A5C00` | `--fam-gialli` | 5,87 |
-| Famiglia — parate | `#5B3A6E` | `--fam-parate` | 8,66 |
-| Famiglia — fuorigioco | `#403E3A` | `--fam-fuorigioco` | 10,01 |
+| Superficie tenue | `#FAFBFA` | `--card-panel-2`, `--surface-soft` | — |
+| Verde campo (brand, testate) | `#0B4F35` | `--card-brand`, `--brand` | 8,95 |
+| Verde forte (enfasi) | `#073B27` | `--card-brand-strong` | 11,74 |
+| Verde profondo (hero) | `#05301F` | `--card-verde-deep`, `--brand-deep` | — |
+| Inchiostro (testo) | `#14181A` | `--card-ink`, `--ink` | 16,63 |
+| Testo secondario | `#414B4E` | `--card-ink-2`, `--ink-soft` | 8,35 |
+| Testo di servizio | `#5E686B` | `--card-ink-3`, `--muted` | 5,33 |
+| Blu — sopra il riferimento | `#1D4ED8` | `--card-up`, `--green` | 6,24 |
+| Arancio — sotto il riferimento | `#A63709` | `--card-down`, `--amber` | 6,16 |
+| Filetto | `#E2E6E2` | `--card-stroke`, `--line` | bordo, mai testo |
+| Testo su verde | `#F4F8F5` | `--card-on-brand` | 8,97 su `#0B4F35` |
+| Famiglia — tiri | `#8C215A` | `--fam-tiri` | 7,90 col testo chiaro sopra |
+| Famiglia — tiri in porta | `#70218C` | `--fam-tiri-porta` | 8,57 |
+| Famiglia — falli | `#41218C` | `--fam-falli` | 10,76 |
+| Famiglia — corner | `#206C88` | `--fam-corner` | 5,50 |
+| Famiglia — cartellini gialli | `#74601B` | `--fam-gialli` | 5,71 |
+| Famiglia — parate | `#37701A` | `--fam-parate` | 5,61 |
+| Famiglia — fuorigioco | `#3E4441` | `--fam-fuorigioco` | 9,29 |
+
+I due nomi `--green` e `--amber` sono rimasti dal sistema precedente e ora portano il blu e
+l'arancio: il valore dice il verso, il nome no. Vanno letti come «sopra» e «sotto».
 
 **Nessuna modalità scura.** Il tema è unico. Il ribaltamento su `prefers-color-scheme`
 esisteva ed è stato rimosso: i componenti dell'identità non lo seguivano, e la cornice
@@ -85,7 +96,7 @@ gerarchia si costruisce con bordo da 1 px, superficie tenue e spaziatura.
 
 ### Un solo blocco ad alto contrasto per pagina, e la deroga del dossier
 
-Un blocco ad alto contrasto è una superficie bordeaux piena con testo chiaro sopra: la
+Un blocco ad alto contrasto è una superficie verde piena con testo chiaro sopra: la
 hero della gara, il campo della porta d'ingresso, il pannello «Cosa non fa IQstatS» di
 `/metodo`. **Ogni pagina ne ammette uno e uno solo**, e quell'uno è il protagonista della
 pagina: ciò che deve essere letto per primo. Tutto il resto torna su carta, anche quando
@@ -112,15 +123,15 @@ affaticano. Va riletto in pagina, non dedotto.
 
 Dal 15 agosto 2026 la pagina di accesso ha un impianto proprio, nato da un riferimento
 grafico scelto dall'utente e tradotto in questo sistema: **un riquadro chiaro al centro di
-un campo bordeaux**, gerarchia verticale marcata (segno tondo, titolo grande, sottotitolo
+un campo verde**, gerarchia verticale marcata (segno tondo, titolo grande, sottotitolo
 di servizio), **campi alti 56 px** con etichetta in maiuscoletto sopra, **una sola azione
 che domina** a tutta larghezza, separatore con la parola in mezzo, **due azioni secondarie
 affiancate** di pari altezza. Classi `.gate-*`.
 
-Il campo bordeaux **è il blocco ad alto contrasto di quella pagina**, e ne esaurisce la
+Il campo verde **è il blocco ad alto contrasto di quella pagina**, e ne esaurisce la
 quota: sulla porta d'ingresso non ce ne sono altri. Dal riferimento si prendono impianto
 e ritmo, **mai** i suoi colori
-(verde e viola restano fuori: qui il verde significa «sopra il riferimento») e mai le sue
+(verde e viola restano fuori: il verde qui è il marchio, e il viola non ha significato) e mai le sue
 ombre o i suoi bagliori. Lo stacco lo dà il fondo, non un'ombra.
 
 Le icone in questo blocco sono disegnate a tratto, monocrome, e prendono il colore del
@@ -152,6 +163,35 @@ respiro si prende **attorno** alla lista, non dentro ogni riga: gonfiare la riga
 un'altezza d'azione significa perdere di vista la pagina. La riga usa `--r-control` per il
 raggio ma tiene la sua altezza.
 
+## Che cosa sta aperto e che cosa si apre
+
+Regole misurate il 5 settembre 2026 tagliando il dossier gara da 20.089 a 14.867 px a 375 px
+e il tabellone da 64.691 a 57.691. Valgono per ogni pagina, non solo per quelle toccate.
+
+**Si apre ciò che spiega una scala; resta aperto ciò che previene una lettura sbagliata.**
+La spiegazione di «severo, in linea o permissivo» è la stessa su ogni arbitro e sta dietro
+un comando; «un ritardo lungo non rende l'evento più probabile» no, perché nasconderla
+significherebbe suggerire proprio la lettura che smentisce. La provenienza — fonte,
+freschezza, campione — resta **sempre** in pagina: è la voce che il monospazio porta.
+
+**Sotto un centinaio di pixel di spiegazione, la porta costa più di quello che risparmia.**
+Un `<summary>` occupa 44 px fissi. Misurato: chiudere tre righe di testo nella card dei
+giocatori ha reso 58 px a 375 px e ne ha aggiunti undici a 1440. Prima di chiudere si misura.
+
+**Ogni riquadro che si apre lo dichiara.** `display: flex` sul `summary` toglie il marcatore
+nativo: senza un segno esplicito quei titoli sembrano morti. Il segno è il più e il meno in
+monospazio a destra — `.squad-group`, `.ref-elenco`, `.dossier-spiega`, `.engine-scala`.
+
+**La stessa assenza non si scrive due volte.** Sul tabellone cento righe dicevano «Lettura
+non disponibile per questa gara» accanto alla targhetta «Solo calendario», che dichiara la
+stessa cosa in un quarto dello spazio. Dove una dichiarazione di copertura esiste già, la
+riga di lettura si scrive solo se ha qualcosa da dire.
+
+**Lo stesso dato non si mostra due volte nella stessa card.** Le ultime cinque gare di un
+arbitro erano una tabella da 1.340 px e insieme le prime cinque righe dell'elenco sotto:
+dove la sovrapposizione è totale resta l'elenco, e della tabella sopravvive solo la sintesi
+che l'elenco non sa dare.
+
 ## Firma visiva — il filo del campione
 
 Sotto ogni metrica della scheda squadra, un filo alto 3 px diviso in due segmenti
@@ -174,7 +214,8 @@ scritte accanto a ogni riga.
 
 ## Anti-Patterns (Do NOT Use)
 
-- ❌ Colore usato come decorazione: verde e mattone significano un verso, o non si usano
+- ❌ Colore usato come decorazione: blu e arancio significano un verso, o non si usano
+- ❌ Il verde per dire che un numero sta sopra il riferimento: il verde è il marchio
 - ❌ Emoji come icone
 - ❌ Due blocchi ad alto contrasto sulla stessa pagina
 - ❌ Raggi, altezze di controllo e padding di riquadro scritti a mano invece dei sei token
@@ -186,8 +227,17 @@ scritte accanto a ogni riga.
 
 ## Pre-Delivery Checklist
 
-Verificata su tutte le pagine il 14 agosto 2026 con la sonda in `scratchpad/qa-contrasto.mjs`
-e `qa-squadra.mjs` (Playwright, quattro viewport, entrambi i `color-scheme`):
+Gli strumenti stanno nel repository e non vanno riscritti a ogni sessione:
+`apps/web/scripts/verification/contrasto-wcag.mjs` (con `--prova`, che dimostra di saper
+diventare rosso) e `misura-pagina.mjs` per altezza e overflow alle quattro larghezze.
+Entrambi chiedono un Chrome headless in ascolto sulla porta di debug.
+
+Rimisurata il 5 settembre 2026: **zero combinazioni sotto AA** su Oggi, Partite, Squadre,
+Arbitri, Metodo, Accedi e sul dossier gara, a 375 e a 1440 px. Le due combinazioni che le
+verifiche precedenti dichiaravano «note» erano un difetto della sonda, che saltava i fondi
+traslucidi invece di comporli: ora li compone, e non restano casi aperti. Un testo sopra una
+fotografia continua a non essere misurabile così, e la sonda lo dichiara invece di
+indovinarlo — undici sulla home, uno sulla porta d'ingresso, da guardare a vista.
 
 - [ ] Contrasto: zero combinazioni sotto AA, misurate sullo **stack di rendering** e non
       sulla catena dei genitori — un testo sopra una foto va verificato a vista

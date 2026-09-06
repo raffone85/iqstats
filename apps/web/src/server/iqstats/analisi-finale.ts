@@ -79,8 +79,8 @@ export function analisiFinale(args: {
       + `su ${elenco(famiglieForti)}`;
   if (favorito !== null || scostamento !== null) {
     dice.push({
-      ancora: "cap-colpo-occhio",
-      capitolo: "Il colpo d'occhio",
+      ancora: "cap-insight",
+      capitolo: "Insight",
       testo: favorito === null
         ? `Il modello ${scostamento}.`
         : scostamento === null
@@ -92,8 +92,8 @@ export function analisiFinale(args: {
   // Il capitolo dei due lati parla di gioco, non di esito: la frase resta la sua.
   if (cappello !== null && cappello.tratti.length > 0) {
     dice.push({
-      ancora: "cap-affronto",
-      capitolo: "Come si affrontano",
+      ancora: "cap-trend",
+      capitolo: "Trend",
       testo: `Dai due lati la gara si legge come ${minuscola(cappello.titolo)}`
         + `${cappello.fase === null ? "" : ` ${cappello.fase}`}, e vale se le due squadre `
         + "continuano così.",
@@ -102,8 +102,8 @@ export function analisiFinale(args: {
 
   if (arbitroGiudizio !== null) {
     dice.push({
-      ancora: "cap-contesto",
-      capitolo: "Il contesto",
+      ancora: "cap-arbitro",
+      capitolo: "Arbitro",
       testo: `L'arbitro designato fischia ${arbitroGiudizio} rispetto ai colleghi che `
         + "dirigono questa competizione.",
     });
@@ -113,16 +113,16 @@ export function analisiFinale(args: {
 
   if (senzaProiezione) {
     limiti.push({
-      ancora: "cap-gioco",
-      capitolo: "Il gioco",
+      ancora: "cap-proiezioni",
+      capitolo: "Proiezioni",
       testo: "La proiezione non gira su questa gara: al suo posto si legge il motore di "
         + "base, che poggia su medie e non sui modelli.",
     });
   }
   if (senzaMisura.length > 0) {
     limiti.push({
-      ancora: "cap-gioco",
-      capitolo: "Il gioco",
+      ancora: "cap-proiezioni",
+      capitolo: "Proiezioni",
       testo: `Sulle famiglie ${elenco(senzaMisura)} non sappiamo ancora quanto il modello `
         + "regga fuori campione, quindi restano fuori dalle letture in cima.",
     });
@@ -130,25 +130,25 @@ export function analisiFinale(args: {
   if (senzaGol) {
     limiti.push({
       ancora: "cap-gol",
-      capitolo: "I gol",
+      capitolo: "Gol",
       testo: "I mercati dei gol non si possono costruire qui: manca la colonna dei gol "
         + "attesi osservati su cui poggiano.",
     });
   }
   if (cappello !== null && cappello.mute !== null) {
     limiti.push({
-      ancora: "cap-affronto",
-      capitolo: "Come si affrontano",
+      ancora: "cap-trend",
+      capitolo: "Trend",
       testo: "Non tutti i confronti fra i due lati separano le due squadre: quelli che non "
         + "superano l'errore delle proprie medie non si leggono.",
     });
   }
   if (senzaArbitro) {
     limiti.push({
-      ancora: "cap-contesto",
-      capitolo: "Il contesto",
+      ancora: "cap-arbitro",
+      capitolo: "Arbitro",
       testo: "L'arbitro non è ancora designato: quando la fonte lo dichiara, la sua scheda e "
-        + "il metro della sua lega compaiono nel Contesto.",
+        + "il metro della sua lega compaiono nella sua area.",
     });
   }
 

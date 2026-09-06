@@ -21,7 +21,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const READING = [
   ["La media", "Quanto fa di solito quella squadra nella stagione in corso."],
   ["Casa e trasferta", "Sempre separate: la stessa squadra non gioca allo stesso modo."],
-  ["Verde e mattone", "Un valore sopra o sotto il suo riferimento. Dicono il verso, non se è un bene."],
+  ["Blu e arancio", "Un valore sopra o sotto il suo riferimento. Dicono il verso, non se è un bene."],
   ["Il numero piccolo", "Su quante gare poggia il valore. Poche gare, valore fragile."],
   ["La lineetta", "Quel dato non c'è. Non è uno zero e non viene sostituito."],
   ["Il filo sotto la riga", "Quanta parte del valore viene dalle gare in casa e quanta da quelle fuori."],
@@ -69,7 +69,7 @@ export default async function AccessPage({ searchParams }: Readonly<{ searchPara
 
   return (
     <ProductShell activeSection="account">
-      {/* La porta d'ingresso: un riquadro solo, al centro, su fondo bordeaux. */}
+      {/* La porta d'ingresso: un riquadro solo, al centro, su fondo verde. */}
       <section className="gate" aria-labelledby="access-title">
         <div className="gate-card">
           <span className="gate-mark" aria-hidden="true">

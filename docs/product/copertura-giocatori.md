@@ -20,9 +20,17 @@ se la formula si rompe, si ferma con un `AssertionError` invece di stampare nume
 
 ## 1. Da dove arrivano i dati per giocatore
 
-**Non dal nostro livello dati.** Il contratto `FootballDataStore`
+**Non dal contratto dell'app.** `FootballDataStore`
 (`src/server/iqstats/database-store.ts`) espone competizioni, gare, stagioni e classifiche:
 nessuna entità giocatore.
+
+**Corretto il 6 settembre 2026:** una parte dei dati per giocatore **sta invece nel nostro
+livello dati**, e la prima stesura di questo documento diceva il contrario.
+`football.player_match_observations` ha **457.416 righe, 21.667 giocatori, 10.968 gare, 57
+stagioni, dal 22 febbraio 2025 al 5 settembre 2026**, con sette colonne: `minutes_played`,
+`total_shots`, `shots_on_target`, `fouls`, `yellow_card`, `red_card`, `saves`. **`goals` non
+c'è**, quindi quella tavola sa dire quanto un giocatore tira, non quanto segna. Le altre
+sessantaquattro metriche restano alla fonte.
 
 **Non dalle formazioni.** `LineupPlayer` (`src/server/iqstats/lineups.ts`) porta soltanto
 identificativo, nome, ruolo e numero di maglia.
@@ -41,6 +49,20 @@ identificativo, nome, ruolo e numero di maglia.
 **La fonte non ha aggregati di stagione per giocatore.** `/api/v2/players/{id}/stats/`
 restituisce le stesse righe per gara, ciascuna con il suo `event_id` — 271 righe per un
 titolare di Serie A. La somma di stagione la calcoliamo noi, come vuole `AGENTS.md`.
+
+**Misurato il 6 settembre 2026, e non era in questo documento:** quell'endpoint **pagina a
+cinquanta** e **taglia a duecento** qualunque `limit` più alto. Su David Neres (1090),
+`limit=200`, `limit=300` e `limit=500` rendono tutti **200 righe** su un `count` di **359**;
+con `offset` le 359 arrivano in **due chiamate, 1,3 secondi**. Le righe **non portano né data
+né competizione né avversario**: solo `event_id` e `team_id`. Il filtro **`?season_id=`
+funziona** e separa una stagione in una chiamata sola: 3 righe per `season_id=1375` (Serie A
+26/27), 17 per `season_id=358` (Serie A 25/26).
+
+**Il contesto delle gare non si ricava dal nostro livello dati, e si è misurato quanto.** Dei
+359 `event_id` di Neres, `football.app_match_read_model` ne riconosce **3** e `football.matches`
+**20**: il read model dell'app tiene **solo la stagione in corso** (Serie A 26/27, 380 gare, da
+agosto 2026). Per le venti che l'archivio conosce, l'osservazione locale del giocatore c'è
+**venti volte su venti**.
 La conseguenza pesa: **una classifica di stagione è onesta solo se copre tutte le gare della
 stagione**, perché ogni gara scoperta è un buco nel totale che non si vede guardando il totale.
 
@@ -189,9 +211,9 @@ l'hanno nessuna, zero eccezioni in entrambi i versi. Il 48,6% di presenza non è
 copertura: è la definizione del campo. Va trattato come zero quando i tiri sono zero, e come
 mancante mai.
 
-**Valori derivati da non confondere con misure.** `/api/v2/players/{id}/` porta anche
-`rating`, `potential` (un'etichetta testuale, per esempio `"Can Polish Skills"`), `injury_risk`,
-`market_value_eur` e `wage_eur_annual`. Valgono la decisione già presa il 30 agosto su
+**Valori derivati da non confondere con misure.** `/api/v2/players/{id}/` porta **27 campi**
+in tutto (misurati il 6 settembre 2026), fra cui `rating`, `potential` (un'etichetta testuale,
+per esempio `"Can Polish Skills"`), `injury_risk`, `market_value_eur` e `wage_eur_annual`. Valgono la decisione già presa il 30 agosto su
 `rating`: sono numeri calcolati con un metodo che non conosciamo, e valore di mercato e
 stipendio non sono nemmeno statistiche. Accanto ai nostri numeri passerebbero per nostri.
 
@@ -231,6 +253,12 @@ dichiarandone l'origine, non si mostra come se fosse una nostra misura.
    stretto.
 5. **`rating`, `ai_score`, `potential`, `market_value_eur`, `wage_eur_annual` non si mostrano**
    accanto ai nostri numeri.
+6. **Sette campi del profilo sono utilizzabili e non erano in questo elenco**, misurati il
+   6 settembre: `height_cm`, `preferred_foot`, `specific_position` (il ruolo stretto, per
+   esempio `RW`), `contract_until`, `availability`, `injury_type` e `injury_expected_return`.
+   Gli ultimi tre stanno anche sulla rosa `teams/{id}/squad/`, cioè per l'intera rosa in una
+   chiamata sola. `strengths` e `weaknesses` tornano **vuoti** e `attributes` **nullo** sui
+   due giocatori misurati: non si mostrano finché non si sa quando siano valorizzati.
 
 Il seguito operativo — probabili ammoniti e probabili marcatori — sta in
 `tasks/giocatori-cartellini-e-marcatori.md`.

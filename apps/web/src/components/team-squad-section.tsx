@@ -5,6 +5,7 @@ import {
   type TeamSquad,
   type TeamSquadEntry,
 } from "@iqstats/shared";
+import Link from "next/link";
 
 import { PLAYER_METRIC_LABELS, SQUAD_POSITION_LABELS } from "./team-labels";
 import { VerifiedMediaImage } from "./verified-media-image";
@@ -13,6 +14,9 @@ type TeamSquadSectionProps = Readonly<{
   squad: TeamSquad;
   availability: DataAvailability;
   minimumSample: number;
+  /** Competizione e stagione della fonte, per il rimando alla classifica di campionato. */
+  leagueId: string;
+  seasonId: string;
 }>;
 
 const ROLE_ORDER: readonly SquadPosition[] = ["goalkeeper", "defender", "midfielder", "forward"];
@@ -28,8 +32,8 @@ function initials(name: string): string {
 
 function formatTotal(value: number | null): string {
   if (value === null) return "n/d";
-  if (Number.isInteger(value)) return String(value);
-  return value.toFixed(2);
+  if (Number.isInteger(value)) return value.toLocaleString("it-IT");
+  return value.toFixed(2).replace(".", ",");
 }
 
 function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; minimumSample: number }>) {
@@ -49,7 +53,9 @@ function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; m
           />
         </span>
         <span className="squad-player-name">
-          <b>{profile.name}</b>
+          <b>
+            <Link href={`/giocatori/${profile.playerId}`}>{profile.name}</Link>
+          </b>
           <em>
             {profile.jerseyNumber !== null ? `#${profile.jerseyNumber}` : "senza numero"}
             {profile.nationality ? ` · ${profile.nationality}` : ""}
@@ -95,7 +101,13 @@ function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; m
   );
 }
 
-export function TeamSquadSection({ squad, availability, minimumSample }: TeamSquadSectionProps) {
+export function TeamSquadSection({
+  squad,
+  availability,
+  minimumSample,
+  leagueId,
+  seasonId,
+}: TeamSquadSectionProps) {
   const played = squad.entries.filter((entry) => entry.stats !== null).length;
 
   return (
@@ -109,7 +121,11 @@ export function TeamSquadSection({ squad, availability, minimumSample }: TeamSqu
         medie di squadra: una richiesta per gara, mai una per giocatore.{" "}
         <b>{played}</b> tesserati su {squad.entries.length} hanno almeno una presenza nel campione.
         Le metriche mostrate cambiano per ruolo; il voto medio compare da{" "}
-        {minimumSample} gare in su.
+        {minimumSample} gare in su.{" "}
+        <Link href={`/giocatori?competizione=${leagueId}&stagione=${seasonId}`}>
+          Come stanno rispetto agli altri del campionato
+        </Link>
+        .
       </p>
 
       {ROLE_ORDER.map((role) => {

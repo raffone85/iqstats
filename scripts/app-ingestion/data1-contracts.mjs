@@ -259,6 +259,21 @@ function matchRecord(candidate, observedAt) {
   const scorePairAvailable = rawHomeScore !== null && rawAwayScore !== null;
   const homeScore = scorePairAvailable ? rawHomeScore : null;
   const awayScore = scorePairAvailable ? rawAwayScore : null;
+  // L'intervallo segue la stessa regola di coppia dei gol finali, piu' la guardia di
+  // coerenza: un intervallo maggiore del finale e' un dato rotto e si dichiara assente
+  // invece di sceglierne uno. E' la stessa regola di
+  // scripts/projection/dataset/export_reference_local.py, cosi' i due percorsi che
+  // riempiono football.matches non scrivono verita' diverse nelle stesse colonne.
+  const rawHomeScoreHalftime = nonNegativeInteger(candidate.home_score_ht);
+  const rawAwayScoreHalftime = nonNegativeInteger(candidate.away_score_ht);
+  const halftimeSound =
+    scorePairAvailable &&
+    rawHomeScoreHalftime !== null &&
+    rawAwayScoreHalftime !== null &&
+    rawHomeScoreHalftime <= rawHomeScore &&
+    rawAwayScoreHalftime <= rawAwayScore;
+  const homeScoreHalftime = halftimeSound ? rawHomeScoreHalftime : null;
+  const awayScoreHalftime = halftimeSound ? rawAwayScoreHalftime : null;
   const status = normalizedStatus(candidate.status);
   const sourceUpdatedAt = dateTime(candidate.updated_at ?? candidate.last_updated);
   const normalized = {
@@ -275,6 +290,8 @@ function matchRecord(candidate, observedAt) {
     roundName: text(candidate.round_name) ?? (integer(candidate.round_number) !== null ? String(candidate.round_number) : null),
     homeScore,
     awayScore,
+    homeScoreHalftime,
+    awayScoreHalftime,
     sourceSequence: nonNegativeInteger(candidate.version ?? candidate.sequence),
     sourceUpdatedAt,
     observedAt,
@@ -295,6 +312,8 @@ function matchRecord(candidate, observedAt) {
         roundName: normalized.roundName,
         homeScore,
         awayScore,
+        homeScoreHalftime,
+        awayScoreHalftime,
       }),
     },
     teams: [

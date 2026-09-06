@@ -5,7 +5,7 @@
 // per parte tre tiri di scarto stanno dentro il rumore. Ogni riga dice se lo scarto **regge**
 // due errori standard, e quando non regge lo scrive invece di lasciarlo dedurre.
 //
-// **Niente verde e niente mattone.** Il master li riserva a un verso rispetto a un
+// **Niente blu e niente arancio.** Il master li riserva a un verso rispetto a un
 // riferimento: qui «piu' falli» non e' meglio ne' peggio, e colorarlo sarebbe un giudizio.
 // Le due barre sono quelle di «Casa contro trasferta» — `is-home` e `is-away` — che
 // distinguono due lati senza dichiarare un verso. Nessun CSS nuovo.

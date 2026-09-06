@@ -4,10 +4,11 @@
 // guarda una squadra sola; qui si dice l'unica cosa che quella non puo' dire — la posizione
 // nella distribuzione — e la media compare solo come ancoraggio di quella posizione.
 //
-// **Niente verde e niente mattone.** Il master li riserva a un verso rispetto a un
-// riferimento, e qui sarebbero letti come un giudizio: verde su «piu' falli» direbbe
-// «bravo». La posizione la dicono le parole; la barra e' quella bordeaux del dossier, che
-// non dichiara nessun verso. Nessun CSS nuovo: la riga etichetta-barra-valore esiste gia'.
+// **Niente blu e niente arancio.** Il master li riserva a un verso rispetto a un
+// riferimento, e qui sarebbero letti come un giudizio: il blu su «piu' falli» direbbe
+// «bravo». La posizione la dicono le parole; la barra e' quella del dossier, che porta il
+// colore del marchio e non dichiara nessun verso. Nessun CSS nuovo: la riga
+// etichetta-barra-valore esiste gia'.
 import type { MetroDiLega, VoceDelMetro } from "@/server/iqstats/team-metro";
 
 function valore(numero: number): string {

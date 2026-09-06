@@ -31,6 +31,7 @@ function lettura(bersaglio: string, forza: number, soglia = 7.5, prob = 0.71): L
     decisione: Math.abs(prob - 0.5),
     base: null,
     gareDiBase: null,
+    squadre: [],
     affidabilita: 60,
     righeDiProva: 2000,
     sorpresa: Math.abs(prob - 0.5),

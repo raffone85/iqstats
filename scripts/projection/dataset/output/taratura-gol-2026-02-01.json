@@ -1,0 +1,367 @@
+{
+ "taglio": "2026-02-01",
+ "casi": 1383,
+ "fuori": 1383,
+ "mercati": {
+  "pt_over05": {
+   "casi": 1383,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 172,
+     "stima_media": 0.34685,
+     "osservata": 0.73837,
+     "ic95": [
+      0.66799,
+      0.79834
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.51142,
+     "osservata": 0.7052,
+     "ic95": [
+      0.63339,
+      0.76809
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.59214,
+     "osservata": 0.71676,
+     "ic95": [
+      0.64548,
+      0.77863
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.655,
+     "osservata": 0.73988,
+     "ic95": [
+      0.6698,
+      0.79954
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.71079,
+     "osservata": 0.69942,
+     "ic95": [
+      0.62737,
+      0.76281
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.76285,
+     "osservata": 0.75723,
+     "ic95": [
+      0.6882,
+      0.81508
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.82066,
+     "osservata": 0.78613,
+     "ic95": [
+      0.71916,
+      0.84067
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.89893,
+     "osservata": 0.69364,
+     "ic95": [
+      0.62136,
+      0.75751
+     ],
+     "dentro": false
+    }
+   ],
+   "ece": 0.13127,
+   "scarto_massimo": 0.39152,
+   "gruppi_fuori": 5,
+   "brier": 0.23064
+  },
+  "pt_over15": {
+   "casi": 1383,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 172,
+     "stima_media": 0.07473,
+     "osservata": 0.35465,
+     "ic95": [
+      0.28704,
+      0.42861
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.16219,
+     "osservata": 0.39306,
+     "ic95": [
+      0.32336,
+      0.46741
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.2269,
+     "osservata": 0.36416,
+     "ic95": [
+      0.29613,
+      0.4381
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.28829,
+     "osservata": 0.31214,
+     "ic95": [
+      0.2478,
+      0.38464
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.35237,
+     "osservata": 0.32948,
+     "ic95": [
+      0.26381,
+      0.40256
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.42215,
+     "osservata": 0.3815,
+     "ic95": [
+      0.31244,
+      0.45572
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.51329,
+     "osservata": 0.42775,
+     "ic95": [
+      0.35638,
+      0.50225
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.67304,
+     "osservata": 0.39306,
+     "ic95": [
+      0.32336,
+      0.46741
+     ],
+     "dentro": false
+    }
+   ],
+   "ece": 0.13752,
+   "scarto_massimo": 0.27997,
+   "gruppi_fuori": 5,
+   "brier": 0.26295
+  },
+  "over25": {
+   "casi": 1383,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 172,
+     "stima_media": 0.19846,
+     "osservata": 0.50581,
+     "ic95": [
+      0.43179,
+      0.57959
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.32306,
+     "osservata": 0.53757,
+     "ic95": [
+      0.46327,
+      0.61025
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.40469,
+     "osservata": 0.50289,
+     "ic95": [
+      0.42913,
+      0.57652
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.47359,
+     "osservata": 0.61272,
+     "ic95": [
+      0.53843,
+      0.68211
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.54684,
+     "osservata": 0.46821,
+     "ic95": [
+      0.39535,
+      0.54245
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.61017,
+     "osservata": 0.58382,
+     "ic95": [
+      0.50932,
+      0.65467
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.68281,
+     "osservata": 0.57225,
+     "ic95": [
+      0.49775,
+      0.64362
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.81266,
+     "osservata": 0.6474,
+     "ic95": [
+      0.5737,
+      0.71469
+     ],
+     "dentro": false
+    }
+   ],
+   "ece": 0.14238,
+   "scarto_massimo": 0.30735,
+   "gruppi_fuori": 7,
+   "brier": 0.27087
+  },
+  "btts": {
+   "casi": 1383,
+   "sufficiente": true,
+   "gruppi": [
+    {
+     "casi": 172,
+     "stima_media": 0.20677,
+     "osservata": 0.5814,
+     "ic95": [
+      0.50668,
+      0.65256
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.31651,
+     "osservata": 0.53179,
+     "ic95": [
+      0.45755,
+      0.60465
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.38325,
+     "osservata": 0.50867,
+     "ic95": [
+      0.4348,
+      0.58217
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.4322,
+     "osservata": 0.57803,
+     "ic95": [
+      0.50353,
+      0.64915
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.48475,
+     "osservata": 0.5896,
+     "ic95": [
+      0.51512,
+      0.66018
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.54187,
+     "osservata": 0.6185,
+     "ic95": [
+      0.54428,
+      0.68756
+     ],
+     "dentro": false
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.60294,
+     "osservata": 0.5896,
+     "ic95": [
+      0.51512,
+      0.66018
+     ],
+     "dentro": true
+    },
+    {
+     "casi": 173,
+     "stima_media": 0.71429,
+     "osservata": 0.59538,
+     "ic95": [
+      0.52093,
+      0.66567
+     ],
+     "dentro": false
+    }
+   ],
+   "ece": 0.1467,
+   "scarto_massimo": 0.37462,
+   "gruppi_fuori": 7,
+   "brier": 0.27649
+  }
+ }
+}

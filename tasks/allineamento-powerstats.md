@@ -157,11 +157,73 @@ piede; i termini invece sono una pagina sul loro dominio.
     `tasks/giocatori-cartellini-e-marcatori.md`**, con il segnale gia' misurato su 380 gare
     di Serie A: base del giallo 8,9% e fattore piu' forte 1,52x, base del gol 7,4% e fattore
     piu' forte 2,16x. Nessuna lettura in pagina prima della taratura.
+    **Quella lettura e' in pagina dal 31 agosto** (`match-giocatori-section.tsx`, importato da
+    `app/match/[id]/page.tsx`, fase 3 del documento del seguito): «interfaccia non iniziata»
+    valeva per la **scheda del giocatore**, non per il dossier.
+    **La scheda del giocatore e' fatta il 6 settembre 2026.** `/giocatori/[playerId]` con tre
+    blocchi in quest'ordine — stagione in corso, stagione precedente, carriera — raggiunta dai
+    nomi della rosa, che prima non portavano da nessuna parte.
+    **Il contratto e' misurato:** `players/{id}/stats/` pagina a cinquanta e **taglia a
+    duecento** qualunque `limit` piu' alto (su Neres `limit=500` rende comunque 200 righe su
+    `count` 359; con `offset` le 359 arrivano in **due chiamate, 1,3 s**), e le righe **non
+    portano data ne' competizione**: la separazione per stagione la fa la fonte con
+    `?season_id=`, una chiamata per stagione.
+    **Il contesto delle gare non viene dal nostro livello dati, ed e' misurato:** dei 359
+    `event_id` di Neres, `app_match_read_model` ne riconosce **3** e `football.matches` **20**,
+    perche' il read model dell'app tiene **solo la stagione in corso**. Da qui la forma a
+    totali e non a elenco di gare, che resta la voce 22.
+    *Misurato in pagina:* David Neres (1090) Serie A 26/27 tre gare e 38 minuti, Serie A 25/26
+    diciassette gare, 925 minuti, 3 gol e 3 assist, carriera 359 gare, 18.219 minuti, 70 gol e
+    cinque squadre; Alessandro Buongiorno (1085), infortunato e senza gare quest'anno, dichiara
+    l'assenza invece di mostrare una griglia di zeri. Zero overflow e zero sotto AA a 375, 768,
+    1024 e 1440 px; altezze 3.099 / 2.269 / 2.253 / 2.264 px.
+    **Errore vero corretto nel documento di copertura:** `docs/product/copertura-giocatori.md`
+    §1 diceva che i dati per giocatore non stanno nel nostro livello dati.
+    `football.player_match_observations` ne ha **457.416 righe su 10.968 gare e 57 stagioni**,
+    con sette colonne e **senza `goals`**.
+    **La classifica di stagione e' fatta lo stesso giorno**, ed e' il punto 3 del §8 di quel
+    documento: `/giocatori` per minuti, tiri, tiri in porta, falli, gialli e parate, raggiunta
+    dalla rosa della scheda squadra sulla stessa competizione e stagione che quella sta gia'
+    mostrando. La barra di navigazione resta a cinque voci, per la misura del 3 settembre.
+    **La classifica dei marcatori non c'e', e la ragione e' misurata:**
+    `football.player_match_observations` ha sette colonne e **non ha `goals`**, e nel livello
+    dati non esiste nessuna tavola di episodi; alla fonte i gol costerebbero **una chiamata per
+    gara, 380 per la sola Serie A**. La pagina lo dichiara invece di sostituirli con i tiri.
+    **Due cose trovate misurando.** Il denominatore non puo' essere lo stato della gara: le 380
+    gare di Serie A 26/27 in `football.matches` sono **tutte `scheduled`**, comprese le 24 gia'
+    giocate che hanno le osservazioni; le gare giocate si contano sull'orario d'inizio. E i
+    **pari merito sono il caso normale sui gialli**: in Serie A 25/26 il massimo e' **sette** e
+    **nove giocatori su dieci** ci arrivano, quindi le posizioni sono condivise e non numerate
+    una per una. Sui falli i valori si separano: 87, 71, 69, su 380 gare coperte su 380.
+    *Misurato in pagina:* elenco delle competizioni 1,0 s e classifica 0,96 s sul livello dati
+    locale, zero overflow e zero sotto AA a 375, 768, 1024 e 1440 px; il rimando dalla rosa
+    costa **22 px** a 768, 1024 e 1440.
+    **Una misura da non fidarsi:** a 375 px la scheda squadra non da' un'altezza stabile — lo
+    stesso codice, due giri di fila, rende **29.086 e 23.693 px**. Le altre tre larghezze sono
+    identiche fra i due giri, quindi il confronto prima-dopo a 375 su quella pagina non vale.
 16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
     dichiarare la correlazione fra le due linee.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
     alla vetrina sta il **consuntivo completo**, non solo le riuscite: la loro versione
     mostra solo gli azzeccati fra l'88 e il 99 per cento, ed è selezione, non misura.
+    — **meta' fatta il 6 settembre 2026, meta' ferma per una misura.**
+    ~~Il consuntivo completo~~ e' pubblicato su `/metodo`, prima di «Cosa non fa IQstatS»:
+    `apps/web/scripts/consuntivo-letture.ts` rifa' girare `candidateDiGara`, `baseDiLega` e
+    `ordinaLetture` sulle gare chiuse e conta tutte le letture, prese e sbagliate. Primo
+    giro su 1.200 gare: 547 con letture, **1.409 letture, 936 prese, 66,4% contro il 67,1%
+    promesso**; per fascia 62,1 contro 58,6 (50-60%), 62,3 contro 64,4 (60-70%), 74,8 contro
+    74,0 (70-80%), **72,9 contro 81,6 (80-90%)**. Due minuti e quattro secondi.
+    **La vetrina non e' pubblicata, e la ragione e' misurata.** `scripts/vetrina-letture.ts`
+    esiste e gira - 131 gare in arrivo in un giorno, 56 con una lettura, 14,8 s - ma la
+    forza (`|probabilita - base| x affidabilita`) **seleziona per costruzione gli scostamenti
+    piu' grandi**, e in cima finisce la coda degli errori del modello. Confrontate le sette
+    letture di lato con la storia della squadra dallo stesso lato: **sei su sette stanno
+    sopra sia alla base di lega sia alle sue gare**, due di quaranta e sessanta punti —
+    Liaoning Tieren over 3,5 fuorigioco al 74% contro il 14% di lega e il **10% su dieci sue
+    gare**; Valencia under 4,5 corner al 71% contro il 34% di lega e il **24% su ventuno**.
+    Il consuntivo lo conferma da solo: la fascia 80-90%, dove la vetrina abita, promette 81,6
+    e rende 72,9. **Deciso dall'utente il 6 settembre: lo script resta come strumento di
+    misura, la pagina non si pubblica finche' il criterio della vetrina non regge.**
 18. **Generatore di multiple.** *Criterio:* la probabilità della combinazione dichiara la
     correlazione; senza quella, non si mostra un numero.
 19. **Assistente conversazionale.** *Criterio:* risponde solo con numeri che la pagina
@@ -169,11 +231,57 @@ piede; i termini invece sono una pagina sul loro dominio.
 
 ## Blocco 5 — i dati che loro non hanno
 
-20. **Scontri comuni**: le due squadre contro gli stessi avversari.
-21. **Frequenza storica della linea** per squadra, accanto alla base di lega.
+20. ~~**Scontri comuni**: le due squadre contro gli stessi avversari.~~ — **fatto il
+    6 settembre 2026.** `scontri-comuni.ts` legge le gare delle due squadre contro le sole
+    squadre che **entrambe** hanno affrontato in quella competizione, su tutte le stagioni
+    archiviate; le loro gare dirette restano fuori, quelle sono il testa a testa. Nove
+    metriche: gol fatti e subiti piu' i sette bersagli del motore. Il campo non e' tenuto
+    fermo, e la sezione lo dichiara: per il lato c'e' gia' `lati.ts`.
+    **La finestra e' larga per necessita', ed e' misurato:** nella sola stagione in corso la
+    mediana degli avversari comuni e' **3** e il primo quartile **1**, cioe' a settembre la
+    sezione non esisterebbe meta' delle volte; su tutte le stagioni archiviate la mediana e'
+    **16**, il primo quartile **10**, e il **76% delle coppie** arriva a dieci. Minimo cinque
+    avversari comuni (81% delle 6.314 coppie) e cinque gare per metrica, come `lati.ts`.
+    **Una differenza si dichiara differenza solo se supera l'errore delle due medie messo
+    insieme**, la stessa disciplina di `lati.ts`; le metriche che restano dentro l'errore
+    stanno dietro un comando che le nomina.
+    *Misurato in pagina* su NEC Nijmegen-Feyenoord (210836): 16 avversari comuni, 34 gare a
+    testa, due metriche su nove oltre l'errore - falli, scarto 2,3, e fuorigioco, 0,6. Costo
+    in altezza: +667 px a 375 (24.237 -> 24.904), +503 a 768, +493 a 1024, +476 a 1440; la
+    porta sulle sette metriche dentro l'errore ne rende 336. Zero overflow, zero sotto AA.
+    Due prove in `test:scontri-comuni` che ricontano a mano sul livello dati.
+21. ~~**Frequenza storica della linea** per squadra, accanto alla base di lega.~~ —
+    **fatto il 5 settembre 2026.** `baseDiSquadra` in `base-di-lega.ts`: stessa competizione,
+    tutte le stagioni archiviate, gare della squadra **dal lato che giochera' in questa gara**,
+    `having count(*) = 2`. Le linee di lato portano una squadra, quelle di totale entrambe
+    col nome accanto.
+    **Il minimo e' quindici e non trenta, ed e' misurato:** per squadra, competizione e lato
+    la mediana e' **19 gare** e solo **25-27 coppie su 623 (4%)** arrivano a trenta; a quindici
+    ne passa il **78%**, la stessa copertura che darebbe mescolare i due lati con il minimo di
+    trenta, senza pero' mescolarli.
+    *Misurato in pagina:* NEC Nijmegen-Feyenoord (210836) «lega 88% · NEC 78% su 18, Feyenoord
+    79% su 19»; Aberdeen-Kilmarnock (211135) non ha ancora una base di lega e porta comunque
+    la frequenza di squadra su tutte e quattro le letture. Costo in altezza sulla stessa
+    pagina: +118 px a 375 e 768, +84 a 1024, +51 a 1440; zero overflow, zero sotto AA.
+    Due prove nuove in `test:base-di-lega` che ricontano a mano sul livello dati.
 22. **Elenco gare per esteso** sotto ogni famiglia.
-23. **Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce. Richiede
-    un passaggio offline sulle gare chiuse: gli artefatti non la portano.
+23. ~~**Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce.~~ —
+    **fatto il 6 settembre 2026, e la premessa del piano era sbagliata.** Il passaggio
+    offline **esiste gia'**: `scripts/projection/models/lines.py` misura la calibrazione delle
+    cinque soglie fuori campione, ha girato su tutti e sette i bersagli, e il suo numero e'
+    **gia' dentro gli artefatti che l'app spedisce** —
+    `totale.calibrazione_delle_linee_sui_due_lati` per le scale di lato,
+    `totale.prova_fuori_campione.scarto_di_calibrazione_delle_linee` per quella del totale.
+    `corner_kicks-linee.json` dice 0,0168 e l'artefatto dice 0,0168: stesso numero.
+    Il read model lo portava gia' a meta': `scartoDiCalibrazioneDelleLinee` esisteva su
+    `ProiezioneDiGara` dal giorno del totale e **nessuna riga dell'app lo leggeva**. Ora la
+    card di ogni famiglia lo scrive accanto all'affidabilita', con i due numeri separati
+    perche' il lato e il totale sono due scale.
+    **Le misure, a decili di probabilita' e fuori campione:** di lato da **1,30** punti
+    (fuorigioco) a **1,83** (tiri); sul totale da **2,00** (gialli) a **3,38** (falli), su
+    2.745-3.000 gare di prova. Il totale sbaglia piu' dei lati su tutti e sette.
+    *Misurato in pagina:* +243 px a 375 e +100 alle altre tre larghezze, zero overflow, zero
+    sotto AA.
 
 ---
 

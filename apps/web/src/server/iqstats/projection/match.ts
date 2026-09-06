@@ -71,8 +71,17 @@ export interface ProiezioneDiGara {
     readonly trasferta: readonly Linea[] | null;
   };
   readonly totale: TotaleDiGara | null;
-  /** Quanto la probabilita' promessa si e' scostata dalla frequenza osservata. */
+  /** Quanto la probabilita' promessa si e' scostata dalla frequenza osservata, sui lati. */
   readonly scartoDiCalibrazioneDelleLinee: number | null;
+  /**
+   * Lo stesso scarto sulle soglie del **totale**, che e' un'altra grandezza e un altro
+   * numero: misurato su tutti e sette i bersagli, il totale sbaglia da 2,00 a 3,38 punti
+   * dove il lato ne sbaglia da 1,30 a 1,83. Mostrarne uno solo per entrambe le scale
+   * direbbe il falso su una delle due.
+   */
+  readonly scartoDiCalibrazioneDelTotale: number | null;
+  /** Le gare fuori campione su cui i due scarti sono stati misurati. */
+  readonly gareDiProvaDelleLinee: number | null;
 }
 
 /** I cinque passi attorno al centro, la stessa convenzione del lato che misura. */
@@ -287,6 +296,23 @@ function affidabilitaDelTotale(
 }
 
 /** La gara intera per un bersaglio: i due lati, le loro linee, e il totale. */
+/**
+ * Un numero della prova fuori campione, o `null` se l'artefatto non lo porta.
+ *
+ * `prova_fuori_campione` e' un blocco aperto nello schema: gli artefatti vecchi non hanno
+ * queste chiavi, e leggerle senza controllare vorrebbe dire mostrare `NaN` per un campo
+ * mancante. Un'assenza resta un'assenza.
+ */
+function dallaProva(
+  parametri: ArtefattoModello['totale'],
+  chiave: string,
+): number | null {
+  const prova = parametri === null || parametri === undefined ? null : parametri.prova_fuori_campione;
+  if (prova === null || prova === undefined) return null;
+  const valore = prova[chiave];
+  return typeof valore === 'number' && Number.isFinite(valore) ? valore : null;
+}
+
 export function proiezioneDiGara(
   artefatto: ArtefattoModello,
   casa: EsitoDiProduzione,
@@ -308,5 +334,7 @@ export function proiezioneDiGara(
         ? null
         : parametri.calibrazione_delle_linee_sui_due_lati
     ),
+    scartoDiCalibrazioneDelTotale: dallaProva(parametri, 'scarto_di_calibrazione_delle_linee'),
+    gareDiProvaDelleLinee: dallaProva(parametri, 'gare_di_prova'),
   };
 }

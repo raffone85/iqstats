@@ -10,9 +10,10 @@ import test from "node:test";
 import { analisiFinale } from "../src/server/iqstats/analisi-finale.ts";
 import type { Cappello } from "../src/server/iqstats/affronto.ts";
 
-/** Gli `id` dei capitoli montati da `capitoliDi` in `app/match/[id]/page.tsx`. */
+/** Gli `id` delle aree montate da `capitoliDi` in `app/match/[id]/page.tsx`. */
 const CAPITOLI = new Set([
-  "cap-colpo-occhio", "cap-affronto", "cap-gol", "cap-gioco", "cap-contesto",
+  "cap-giocata", "cap-insight", "cap-mercati", "cap-gol", "cap-proiezioni", "cap-trend",
+  "cap-contesto", "cap-giocatori", "cap-arbitro", "cap-precedenti",
 ]);
 
 /** Del cappello all'analisi servono titolo, fase, quante prove e la coda dei muti. */
@@ -74,7 +75,7 @@ test("favorito e scostamento stanno in una frase sola, non in due voci", () => {
   // lo stesso genere, quindi la preposizione resta nuda.
   const analisi = piena();
   assert.ok(analisi !== null);
-  const colpo = analisi.dice.filter((v) => v.ancora === "cap-colpo-occhio");
+  const colpo = analisi.dice.filter((v) => v.ancora === "cap-insight");
   assert.equal(colpo.length, 1);
   assert.match(colpo[0].testo, /Corinthians/);
   assert.match(colpo[0].testo, /su corner e fuorigioco/);
@@ -104,7 +105,7 @@ test("l'arbitro entra fra i limiti quando manca, e fra le letture quando c'e'", 
   const manca = analisiFinale({ ...vuoto, arbitroGiudizio: null, senzaArbitro: true });
   assert.equal(manca?.dice.length, 0);
   assert.equal(manca?.limiti.length, 1);
-  assert.equal(manca?.limiti[0].ancora, "cap-contesto");
+  assert.equal(manca?.limiti[0].ancora, "cap-arbitro");
 
   const ce = analisiFinale({ ...vuoto, arbitroGiudizio: "permissivo", senzaArbitro: false });
   assert.equal(ce?.limiti.length, 0);

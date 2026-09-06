@@ -70,6 +70,13 @@ export type {
   TeamVenue,
 } from "./contracts/team.ts";
 export { PLAYER_METRIC_KEYS, SQUAD_ROLE_METRICS } from "./contracts/team.ts";
+export type { PlayerProfile, PlayerStatsBlock } from "./contracts/player.ts";
+export {
+  aggregatePlayerStats,
+  normalizePlayerProfile,
+  normalizePlayerStatsPage,
+  type PlayerNormalizationContext,
+} from "./normalizers/player.ts";
 export type {
   RefereeDirectory,
   RefereeLeagueBenchmark,

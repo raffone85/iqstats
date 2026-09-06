@@ -49,6 +49,8 @@ function bersaglio(
       perche: "prova",
     },
     scartoDiCalibrazioneDelleLinee: null,
+    scartoDiCalibrazioneDelTotale: null,
+    gareDiProvaDelleLinee: null,
   };
 }
 

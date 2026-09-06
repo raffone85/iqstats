@@ -23,21 +23,31 @@ import {
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
-import { MatchLettureFortiSection } from "@/components/match-letture-forti";
+import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
+import { MatchAssettoSection } from "@/components/match-assetto-section";
+import { MatchTiriSection } from "@/components/match-tiri-section";
+import { MatchUltimeCinqueSection } from "@/components/match-ultime-cinque-section";
 import { MatchRitardiSection } from "@/components/match-ritardi-section";
 import { DossierCapitoli, DossierCapitolo } from "@/components/dossier-capitoli";
 import { ComeSiAffrontano } from "@/components/come-si-affrontano";
-import { ContestoGara } from "@/components/contesto-gara";
+import { MatchScontriComuniSection } from "@/components/match-scontri-comuni-section";
+import { scontriComuni } from "@/server/iqstats/scontri-comuni";
+import { FinestraStagione } from "@/components/finestra-stagione";
 import { contestoDiGara } from "@/server/iqstats/contesto-gara";
 import { AnalisiFinale } from "@/components/analisi-finale";
 import { analisiFinale } from "@/server/iqstats/analisi-finale";
 import { readFeatureDecision } from "@/server/auth/authorization";
 import { avvisoSenzaArbitro } from "@/server/iqstats/designazione";
 import { cappelloDi, comeSiAffrontano } from "@/server/iqstats/affronto";
+import { ritmoDeiTempi } from "@/server/iqstats/ritmo-tempi";
+import { assettoDelConfronto, quandoSpingono } from "@/server/iqstats/assetto";
+import { finestraDa, stagioniScelte } from "@/server/iqstats/finestra-stagione";
+import { daDoveTirano } from "@/server/iqstats/tiri-mappa";
+import { comeSiPresentano } from "@/server/iqstats/ultime-cinque";
 import {
   contese, duelliDiLato, medieDiLato, saltiDelTrend, trendUltime5,
 } from "@/server/iqstats/lati";
@@ -49,23 +59,37 @@ import {
 import { TrendRecente } from "@/components/trend-recente";
 
 /**
- * I capitoli del dossier, nell'ordine in cui si incontrano scorrendo.
+ * Le aree del dossier, nell'ordine in cui si incontrano scorrendo.
  *
- * Quattro ci sono sempre - ciascuno ha o il suo blocco o il blocco che ne dichiara l'assenza -
- * e due entrano con il loro contenuto: «Come si affrontano» quando i due lati si separano,
- * «Analisi finale» quando c'e' qualcosa da rileggere. L'indice non promette mai un capitolo
- * che non si trova.
+ * **Un'area e' una domanda dell'utente, non un elenco di funzioni.** «Chi puo' segnare» e
+ * «chi rischia il cartellino» non sono due aree: sono due moduli dentro Giocatori. Una
+ * funzione nuova entra nell'area che risponde alla sua domanda, e diventa un'area nuova solo
+ * se porta una domanda che nessuna delle nove pone gia'.
+ *
+ * Ogni area entra nell'indice **solo se ha contenuto visibile su questa gara**: l'indice non
+ * promette mai un capitolo che non si trova, e non promette nemmeno un capitolo che il piano
+ * dell'utente non gli fa vedere.
  */
-function capitoliDi(conAffronto: boolean, conAnalisi: boolean):
-  readonly { id: string; nome: string }[] {
-  return [
-    { id: "cap-colpo-occhio", nome: "Colpo d'occhio" },
-    ...(conAffronto ? [{ id: "cap-affronto", nome: "Come si affrontano" }] : []),
-    { id: "cap-gol", nome: "Gol" },
-    { id: "cap-gioco", nome: "Gioco" },
-    { id: "cap-contesto", nome: "Contesto" },
-    ...(conAnalisi ? [{ id: "cap-analisi", nome: "Analisi finale" }] : []),
+type AreeDelDossier = Readonly<Record<
+  "giocata" | "insight" | "mercati" | "gol" | "proiezioni" | "trend" | "contesto"
+  | "giocatori" | "arbitro" | "precedenti",
+  boolean
+>>;
+
+function capitoliDi(aree: AreeDelDossier): readonly { id: string; nome: string }[] {
+  const tutte = [
+    { id: "cap-giocata", nome: "Gara giocata", c: aree.giocata },
+    { id: "cap-insight", nome: "Insight", c: aree.insight },
+    { id: "cap-mercati", nome: "Mercati", c: aree.mercati },
+    { id: "cap-gol", nome: "Gol", c: aree.gol },
+    { id: "cap-proiezioni", nome: "Proiezioni", c: aree.proiezioni },
+    { id: "cap-trend", nome: "Trend", c: aree.trend },
+    { id: "cap-contesto", nome: "Contesto", c: aree.contesto },
+    { id: "cap-giocatori", nome: "Giocatori", c: aree.giocatori },
+    { id: "cap-arbitro", nome: "Arbitro", c: aree.arbitro },
+    { id: "cap-precedenti", nome: "Precedenti", c: aree.precedenti },
   ];
+  return tutte.filter((a) => a.c).map(({ id, nome }) => ({ id, nome }));
 }
 import { MatchStandingsSection } from "@/components/match-standings-section";
 import {
@@ -83,14 +107,21 @@ import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
-import { baseDiLega } from "@/server/iqstats/base-di-lega";
+import { baseDiLega, baseDiSquadra } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
+import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
+import { MatchValoreSection } from "@/components/match-valore-section";
+import { matchIntelligence } from "@/server/iqstats/match-intelligence";
+import { tempiDellaGara } from "@/server/iqstats/tempi";
+import { MatchTempiSection } from "@/components/match-tempi-section";
+import { ritmoDellaGara } from "@/server/iqstats/ritmo";
+import { MatchRitmoSection } from "@/components/match-ritmo-section";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
-  gareDirette, giudizioSulMetro, medieDaMostrare, medieDelPeriodo, metriDiLega, metroPer,
-  perStagioneCompetizione, profiloArbitro,
+  arbitroControLeSquadre, gareDirette, giudizioSulMetro, medieDaMostrare, medieDelPeriodo,
+  metriDiLega, metroPer, perStagioneCompetizione, profiloArbitro,
 } from "@/server/iqstats/referees";
 
 export const metadata: Metadata = {
@@ -100,6 +131,7 @@ export const metadata: Metadata = {
 
 type MatchPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const kickoffFormatter = new Intl.DateTimeFormat("it-IT", {
@@ -239,8 +271,19 @@ function Eleven({ side, teamName, confirmed }: { side: TeamLineup | null; teamNa
           </li>
         ))}
       </ol>
+      {/* **Chi non c'e', con il motivo dove la fonte lo dice.** Lo stato e il motivo
+          arrivano da `unavailable_players`, che la fonte marca `beta`: si mostra quello
+          che manda, tradotto, e non si completa a mano quello che non manda. Non entra in
+          nessun numero della pagina: e' informazione, non un fattore del modello. */}
       {side.unavailable.length > 0 ? (
-        <p className="bench-sample">Indisponibili: {side.unavailable.join(", ")}</p>
+        <p className="bench-sample">
+          Indisponibili: {side.unavailable.map((g, i) => (
+            <span key={g.nome}>
+              {i > 0 ? ", " : ""}{g.nome}
+              {" "}({g.motivo === null ? g.stato : `${g.stato}, ${g.motivo}`})
+            </span>
+          ))}
+        </p>
       ) : null}
     </div>
   );
@@ -335,8 +378,12 @@ function percheSenzaProiezione(motivo: SenzaProiezione): string {
   }
 }
 
-export default async function MatchPage({ params }: MatchPageProps) {
+export default async function MatchPage({ params, searchParams }: MatchPageProps) {
   const { id } = await params;
+  // La finestra scelta da chi legge sta nell'indirizzo: nessuno stato nel browser, e il
+  // collegamento mostra a un altro esattamente quello che si sta guardando.
+  const chiesto = (await searchParams).stagione;
+  const finestraChiesta = finestraDa(typeof chiesto === "string" ? chiesto : undefined);
 
   // Un indirizzo malformato non e' una gara con un problema: e' un indirizzo che non
   // esiste, e va detto con lo stesso 404 di una gara assente invece che con un riquadro.
@@ -455,7 +502,62 @@ export default async function MatchPage({ params }: MatchPageProps) {
   ]);
   const senzaAccount = !insight.allowed && insight.code === "unauthenticated";
 
-  const marketReading = odds ? readMarket(prediction, odds, detail.homeTeam, detail.awayTeam) : null;
+  // **Il modello del confronto e' il nostro, quando c'e'.** Fino al 2 settembre 2026 la
+  // colonna «Modello» del pannello del mercato veniva dalla previsione della fonte: un
+  // numero altrui accostato al mercato altrui. I mercati dei gol escono dai nostri attesi
+  // e hanno le stesse cinque voci, quindi entrano nello stesso confronto senza riscriverlo.
+  // Dove il motore non copre la gara si ripiega sulla previsione della fonte, e la pagina
+  // lo dichiara sotto la tabella.
+  const modelloDeiGol = proiezioni?.gol ? comparabileDaGol(proiezioni.gol.mercati) : null;
+  const confronto = modelloDeiGol ?? prediction;
+  const marketReading = odds ? readMarket(confronto, odds, detail.homeTeam, detail.awayTeam) : null;
+  // Il campione dei gol: il lato con meno storia fra i due, che e' quello che comanda.
+  const campioneGol = proiezioni?.gol
+    ? Math.min(proiezioni.gol.campioneCasa, proiezioni.gol.campioneTrasferta)
+    : null;
+  // **Il Value Engine, collegato.** Le regole di scelta stanno dove stavano; qui si porta
+  // soltanto la stessa gara che la pagina sta gia' mostrando: i nostri gol, i bersagli del
+  // motore quando ci sono, le quote gia' scaricate. Nessuna chiamata nuova alla fonte.
+  // **I due tempi e il ritmo, dal nostro livello dati.** Due interrogazioni in parallelo,
+  // nessuna chiamata nuova alla fonte: leggono le stesse tavole gia' aperte per il motore e
+  // per gli arbitri, con la stessa finestra `kickoff_at <` che il motore usa ovunque.
+  const [tempi, ritmo] = await Promise.all([
+    tempiDellaGara({
+      leagueId: detail.leagueId,
+      seasonId: detail.seasonId,
+      homeTeamId: detail.homeTeamId,
+      awayTeamId: detail.awayTeamId,
+      homeTeam: detail.homeTeam,
+      awayTeam: detail.awayTeam,
+      kickoffAt: detail.kickoff,
+    }),
+    ritmoDellaGara({
+      leagueId: detail.leagueId,
+      seasonId: detail.seasonId,
+      homeTeamId: detail.homeTeamId,
+      awayTeamId: detail.awayTeamId,
+      kickoffAt: detail.kickoff,
+    }),
+  ]);
+  const picks = buildMatchPicks(
+    confronto,
+    engineReading,
+    odds,
+    detail.homeTeam,
+    detail.awayTeam,
+    proiezioni?.bersagli ?? [],
+    campioneGol,
+  );
+  // **Il dossier non calcola niente di nuovo**: conta quante letture indipendenti dicono la
+  // stessa cosa, fra quelle che le sezioni sotto mostrano gia' una per una.
+  const dossier = matchIntelligence({
+    tempi,
+    bersagli: proiezioni?.bersagli ?? [],
+    nomiBersagli: Object.fromEntries(
+      Object.entries(FAMIGLIE).map(([target, famiglia]) => [target, famiglia.nome]),
+    ),
+    picks,
+  });
 
   // **I due lati che si giocheranno davvero**, letti dalle nostre righe: la casa dal suo
   // lato di casa, la trasferta dal suo di trasferta. Chiedere entrambi i lati a entrambe le
@@ -507,6 +609,55 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const letture = comeSiAffrontano(latoCasa, latoFuori, detail.homeTeam, detail.awayTeam);
   const cappello = cappelloDi(letture);
+
+  // **La finestra, risolta una volta sola.** Le quattro letture legate alla stagione
+  // guardano tutte lo stesso periodo: risolverla qui evita che due sezioni della stessa
+  // pagina rispondano su due archi di tempo diversi senza che si veda.
+  const finestra = detail.leagueId === null || detail.seasonId === null
+    ? null
+    : await stagioniScelte(detail.leagueId, detail.seasonId, finestraChiesta);
+  const stagioni = finestra?.stagioni ?? [];
+
+  // **Assetto e fasce.** Dove stanno in campo e in che tratto producono, dalle posizioni
+  // medie e dai gol attesi minuto per minuto gia' archiviati per il motore. Entrambi i
+  // lati: sono modi di giocare, non proprieta' del campo.
+  const [assetto, fasceDiGara] = detail.homeTeamId === null || detail.awayTeamId === null
+    || stagioni.length === 0
+    ? [null, null]
+    : await Promise.all([
+      assettoDelConfronto(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
+      quandoSpingono(detail.homeTeamId, detail.awayTeamId, stagioni, detail.kickoff),
+    ]);
+
+  // **Da dove tirano.** La forma delle conclusioni, dalla mappa dei tiri gia' archiviata
+  // e gia' usata dal motore come feature. Stessa finestra delle altre letture.
+  const tiri = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || stagioni.length === 0
+    ? null
+    : await daDoveTirano(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
+    );
+
+  // **Come si presentano.** Una frase sul carattere della gara e le tre differenze piu'
+  // marcate fra il lato di casa e quello di trasferta, dalle ultime gare **di questa
+  // stagione**: niente recupero dall'anno scorso, e sotto tre gare per lato il carattere
+  // non si dichiara.
+  const ultimeDiLato = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || stagioni.length === 0
+    ? null
+    : await comeSiPresentano(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
+    );
+
+  // **La stessa domanda, guardata nel tempo.** Come si affrontano dice che cosa producono;
+  // questo dice quando lo producono. Dal nostro livello dati, nessuna chiamata nuova alla
+  // fonte: i due tempi delle gare gia' archiviate.
+  const ritmoTempi = detail.homeTeamId === null || detail.awayTeamId === null
+    || detail.leagueId === null || stagioni.length === 0
+    ? null
+    : await ritmoDeiTempi(
+      detail.homeTeamId, detail.awayTeamId, detail.leagueId, stagioni, detail.kickoff,
+    );
 
   // La sintesi nasce solo da ciò che è già stato letto: nessun dato nuovo, nessuna frase
   // scritta a mano. Se non c'è niente da dire, il blocco non compare.
@@ -560,9 +711,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // Il profilo del designato dalle **nostre** osservazioni, non dalle medie di carriera
   // che la fonte pubblica: e' la regola del piano, e qui vale doppio perche' questi stessi
   // numeri sono gia' fra gli ingressi del motore.
-  const [arbitroNostro, arbitroGare] = detail.refereeId === null
-    ? [null, [] as const]
-    : await Promise.all([profiloArbitro(detail.refereeId), gareDirette(detail.refereeId)]);
+  // **La competizione e la stagione del profilo sono quelle di questa gara**, non quelle in
+  // cui l'arbitro ha diretto di piu': senza, il pannello lo confronterebbe con i colleghi di
+  // un altro torneo. Misurato sull'archivio locale il 3 settembre 2026: 329 gare su 9.240
+  // sono dirette fuori dalla competizione principale di chi le fischia, e 95 arbitri su 685
+  // ne hanno piu' d'una. Senza competizione o senza stagione non c'e' profilo: le medie di
+  // un'altra competizione non sono un ripiego.
+  const contestoArbitro = detail.leagueId === null || detail.seasonId === null ? null
+    : { competitionSourceId: detail.leagueId, seasonSourceId: detail.seasonId };
+  const [arbitroNostro, arbitroGare, arbitroControLoro] = detail.refereeId === null
+    ? [null, [] as const, null]
+    : await Promise.all([
+      contestoArbitro === null ? null : profiloArbitro(detail.refereeId, contestoArbitro),
+      gareDirette(detail.refereeId),
+      // Quante volte ha gia' diretto queste due squadre. Nessuna chiamata nuova alla fonte:
+      // `referee_id`, `team_id` e `side` stanno gia' sulla stessa riga delle osservazioni.
+      detail.homeTeamId === null || detail.awayTeamId === null ? null
+        : arbitroControLeSquadre(detail.refereeId, detail.homeTeamId, detail.awayTeamId),
+    ]);
   // La competizione e la stagione **di questa gara**, prese dalla gara piu' recente che
   // l'arbitro ha diretto qui: il confronto che serve al lettore del dossier e' con le altre
   // gare dello stesso torneo, non con tutta la sua storia.
@@ -634,13 +800,31 @@ export default async function MatchPage({ params }: MatchPageProps) {
   // volte ciascuna succede in questo campionato, poi si ordina. Si calcola una volta sola:
   // le usano il quadro in cima e la sezione che le elenca, e due calcoli darebbero due
   // ordini che possono divergere.
+  // Accanto al metro del campionato sta quello delle due squadre: la stessa linea, contata
+  // sulle loro gare dal lato che giocheranno qui. Le tre letture partono insieme.
   const { candidate, senzaMisura } = candidateDiGara(proiezioni?.bersagli ?? []);
-  const basi = candidate.length === 0 || detail.leagueId === null || detail.seasonId === null
+  const richiesta = (c: (typeof candidate)[number]) => ({
+    target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso,
+  });
+  const lega = detail.leagueId;
+  const stagione = detail.seasonId;
+  const idCasa = detail.homeTeamId;
+  const idFuori = detail.awayTeamId;
+  const [basi, basiCasa, basiFuori] = candidate.length === 0 || lega === null
+    ? [null, null, null]
+    : await Promise.all([
+      stagione === null ? null : baseDiLega(lega, stagione, candidate.map(richiesta)),
+      idCasa === null ? null : baseDiSquadra(lega, idCasa, "home",
+        candidate.filter((c) => c.lato !== "trasferta").map(richiesta)),
+      idFuori === null ? null : baseDiSquadra(lega, idFuori, "away",
+        candidate.filter((c) => c.lato !== "casa").map(richiesta)),
+    ]);
+  const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi, basiCasa, basiFuori) : null;
+  // Le due squadre contro gli stessi avversari: toglie dal confronto la parte di differenza
+  // che e' calendario. Una lettura sola, e non si chiede se il piano non la fa vedere.
+  const comuni = !insight.allowed || lega === null || idCasa === null || idFuori === null
     ? null
-    : await baseDiLega(detail.leagueId, detail.seasonId, candidate.map((c) => ({
-      target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso,
-    })));
-  const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi) : null;
+    : await scontriComuni(lega, idCasa, idFuori);
   const contesto = contestoDiGara({
     bersagli: proiezioni?.bersagli ?? [],
     forti,
@@ -653,6 +837,28 @@ export default async function MatchPage({ params }: MatchPageProps) {
     nomeFuori: detail.awayTeam,
     avvertenze,
   });
+
+  // **Perche' il verdetto non c'e', quando non c'e'.** Ogni riga esce da un fatto gia'
+  // calcolato sopra, non da una supposizione: se qui comparisse un motivo che il dossier
+  // non ha misurato, sarebbe una scusa, non una dichiarazione di assenza.
+  const motiviSenzaVerdetto = [
+    proiezioni === null
+      ? "Il motore non ha una proiezione per questa gara, e il verdetto nasce da lì."
+      : forti === null || forti.letture.length === 0
+        ? "Il motore proietta questa gara, ma nessuna lettura supera la forza minima: "
+          + "nessun numero si scosta abbastanza da quanto succede di solito in questa lega."
+        : null,
+    basi === null && proiezioni !== null
+      ? "Questo campionato non ha una base calibrata con cui confrontare le letture: "
+        + "senza un metro non diciamo se un numero è alto o basso."
+      : null,
+    cappello === null
+      ? "Le due squadre non hanno un tratto di gioco abbastanza marcato da nominarlo."
+      : null,
+    dossier.conflitti.length === 0 && dossier.principale === null
+      ? "Nessuna lettura entra in conflitto con un'altra: non c'è nemmeno una tensione da raccontare."
+      : null,
+  ].filter((riga): riga is string => riga !== null);
 
   // **L'analisi finale, in fondo:** la rilettura in parole di quello che il dossier ha gia'
   // detto sopra, senza una cifra, con il rimando al capitolo da cui ogni frase esce. Nasce
@@ -729,6 +935,48 @@ export default async function MatchPage({ params }: MatchPageProps) {
                 )}
     </>
   );
+
+  // **Quali aree hanno davvero qualcosa da mostrare su questa gara.** Serve una volta sola,
+  // e la usano sia l'indice sia le intestazioni: cosi' la barra non puo' promettere un
+  // capitolo che sotto non esiste, e un'area riservata non compare fra le destinazioni di
+  // chi non puo' aprirla - il suo riquadro d'accesso resta in pagina, al posto giusto.
+  const aree = {
+    giocata: played && (
+      (finishedStats?.headline.length ?? 0) > 0
+      || (finishedStats?.rest.length ?? 0) > 0
+      || (finishedStats?.shots.length ?? 0) > 0
+      || (incidents?.length ?? 0) > 0
+    ),
+    // **La condizione e la guardia del componente sono la stessa frase, scritta una volta
+    // sola.** Quando erano due, divergevano: il 3 settembre l'area Insight compariva vuota
+    // sulla gara 209561. Senza il piano l'area esiste lo stesso, perche' al posto suo c'e'
+    // il riquadro che dice che cosa ci sarebbe dentro.
+    // L'area esiste sempre: o porta il verdetto, o porta la riga che dice perche' non c'e'.
+    insight: true,
+    // `MatchValoreSection` tiene solo le letture che hanno un prezzo a cui confrontarsi:
+    // dei pick senza mercato non le fanno comparire.
+    mercati: insight.allowed
+      && (marketReading !== null || picks.some((p) => p.marketProbability !== null)),
+    gol: insight.allowed && (proiezioni !== null || tempi !== null),
+    proiezioni: motore.allowed,
+    // Sei pannelli, sei guardie: l'area vive se ne parla almeno uno. `standings` non nullo
+    // non basta - la sezione si ritira quando nessuno dei due lati ha una riga.
+    trend: (insight.allowed && (
+      cappello !== null
+      || saltiCasa.length > 0 || saltiFuori.length > 0
+      || leContese.length > 0
+      || (proiezioni !== null
+        && (proiezioni.ritardi.casa.length > 0 || proiezioni.ritardi.trasferta.length > 0))
+    ))
+      || (standings !== null && (standings.home !== null || standings.away !== null))
+      || (homeForm?.length ?? 0) > 0 || (awayForm?.length ?? 0) > 0
+      || proiezioni?.forma?.casa != null || proiezioni?.forma?.trasferta != null,
+    contesto: true,
+    giocatori: Boolean(lineups && (lineups.home || lineups.away)) || giocatori !== null,
+    arbitro: (insight.allowed && arbitroNostro !== null) || referee?.careerGames != null,
+    precedenti: Boolean(h2h && h2h.totalMatches)
+      || (insight.allowed && (comuni !== null || analisi !== null)),
+  };
 
   return (
     <ProductShell>
@@ -816,24 +1064,55 @@ export default async function MatchPage({ params }: MatchPageProps) {
         {/* I due capitoli condizionati seguono il diritto, non solo il dato: senza il piano
             Insight quelle sezioni non si disegnano, e un indice che punta a un'ancora che
             non esiste manda chi tocca in fondo alla pagina, dove non c'e' niente. */}
-        <DossierCapitoli
-          capitoli={capitoliDi(insight.allowed && letture.length > 0, insight.allowed && analisi !== null)}
-        />
+        <DossierCapitoli capitoli={capitoliDi(aree)} />
 
-        <DossierCapitolo
-          id="cap-colpo-occhio"
-          nome="Il colpo d'occhio"
-          descrizione="Chi e' favorito, e quali letture reggono davvero."
-        />
+        {/* **A gara finita l'ordine cambia in cima, non ovunque.** Quello che si cerca non e'
+            piu' la previsione ma il tabellino, e subito dopo se quella previsione ha tenuto.
+            Le due aree esistono solo qui: su una gara da giocare i due componenti rendono
+            `null` da soli, e non lasciano un capitolo vuoto. */}
+        {aree.giocata ? (
+          <>
+            <DossierCapitolo
+              id="cap-giocata"
+              nome="La gara giocata"
+            />
+            <MatchFinishedSection
+              stats={finishedStats}
+              incidents={incidents}
+              homeTeam={detail.homeTeam}
+              awayTeam={detail.awayTeam}
+            />
+            {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
+          </>
+        ) : null}
 
-        {/* Il quadro della gara: una riga, tre numeri, una riserva. Sostituisce «In breve»,
-            «Verdetto» e «La lettura IQstatS», che dicevano cose sovrapposte in 2.009 px
-            prima del primo capitolo. Le famiglie e il loro ordine sono quelli che
-            `lettureForti` sceglie gia', e il metro di ogni atteso e' la somma delle due
-            medie di lega dei due lati. */}
-        <ContestoGara contesto={contesto} />
+        {aree.insight ? (
+          <DossierCapitolo
+            id="cap-insight"
+            nome="Insight"
+          />
+        ) : null}
 
-        {/* Modello e mercato affiancati: nessun operatore nominato, nessun collegamento fuori */}
+        {/* **Un blocco solo, e dominante.** Verdetto, segnale principale con la sua forza,
+            secondo segnale, valore, affidabilita', campione, conflitti e letture che
+            reggono: erano quattro pannelli di pari rango - il quadro della gara, che cosa
+            dice la gara, dove il modello dice qualcosa, la sintesi del valore - e chi
+            apriva la pagina non sapeva quale fosse la risposta. Nessun numero e' nuovo:
+            arrivano tutti da `contestoDiGara`, `matchIntelligence` e `lettureForti`. */}
+        {!insight.allowed ? null : insightHaContenuto({ contesto, dossier, forti }) ? (
+          <MatchInsightSection
+            contesto={contesto}
+            dossier={dossier}
+            forti={forti}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+          />
+        ) : (
+          <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
+        )}
+
+        {/* Senza il piano non restano pannelli vuoti: al posto dell'intera area c'e' il
+            riquadro che dice che cosa ci sarebbe dentro. */}
         {!insight.allowed ? (
           <SezioneRiservata
             piano="Insight"
@@ -850,7 +1129,16 @@ export default async function MatchPage({ params }: MatchPageProps) {
               "L’analisi finale",
             ]}
           />
-        ) : marketReading ? (
+        ) : null}
+
+        {aree.mercati ? (
+          <DossierCapitolo
+            id="cap-mercati"
+            nome="Mercati"
+          />
+        ) : null}
+
+        {insight.allowed && marketReading ? (
           <section className="dossier-panel" aria-labelledby="market-title">
             <p className="dossier-kick">Modello e mercato</p>
             <h2 id="market-title" className="sr-only-heading">Confronto con il mercato</h2>
@@ -877,51 +1165,27 @@ export default async function MatchPage({ params }: MatchPageProps) {
             <p className="dossier-src">
               Quota di consenso su {odds?.bookmakers ?? 0} operatori, riportata a somma cento per
               togliere il margine di chi quota. Nessun operatore viene nominato e non ci sono
-              collegamenti esterni: qui il mercato è una misura, non una vetrina.
+              collegamenti esterni: qui il mercato è una misura, non una vetrina.{" "}
+              {modelloDeiGol !== null
+                ? "La colonna del modello sono i nostri numeri, dagli attesi delle due squadre."
+                : "Su questa gara il nostro motore non copre i gol: la colonna del modello è la previsione della fonte, non la nostra."}
             </p>
           </section>
         ) : null}
 
-        {/* Le letture piu' solide di tutta la gara, prima delle sette card: i numeri sono
-            gli stessi che stanno sotto, messi in fila una volta sola invece che confrontati
-            a mente. Ordinate per quanto reggono, non per percentuale. */}
-        {!insight.allowed || forti === null || proiezioni === null || proiezioni.bersagli.length === 0 ? null : (
-          <MatchLettureFortiSection
-            letture={forti}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
-        )}
-
-        {insight.allowed && letture.length > 0 ? (
-          <>
-            <DossierCapitolo
-              id="cap-affronto"
-              nome="Come si affrontano"
-              descrizione="Quello che una squadra produce dal suo lato, contro quello che l'altra concede dal suo."
-            />
-            <ComeSiAffrontano cappello={cappello} />
-            <TrendRecente
-              casa={saltiCasa}
-              fuori={saltiFuori}
-              nomeCasa={detail.homeTeam}
-              nomeFuori={detail.awayTeam}
-              gareCasa={trendCasa?.gare ?? 0}
-              gareFuori={trendFuori?.gare ?? 0}
-            />
-            <ConteseSection
-              contese={leContese}
-              nomeCasa={detail.homeTeam}
-              nomeFuori={detail.awayTeam}
-            />
-          </>
+        {/* Il margine fra la nostra lettura e il prezzo. Sta dentro Mercati e subito sotto il
+            confronto, perche' e' la stessa domanda vista piu' da vicino: sopra si vede che
+            cosa dicono i due, qui di quanto si separano e quanto quella distanza regge. */}
+        {insight.allowed ? (
+          <MatchValoreSection picks={picks} operatori={odds?.bookmakers ?? 0} />
         ) : null}
 
-        <DossierCapitolo
-          id="cap-gol"
-          nome="I gol"
-          descrizione="Quanti se ne attendono, chi li segna e se segnano entrambe."
-        />
+        {aree.gol ? (
+          <DossierCapitolo
+            id="cap-gol"
+            nome="Gol"
+          />
+        ) : null}
 
         {/* Gol: non passa dai modelli, quindi compare anche dove la proiezione non arriva */}
         {!insight.allowed ? null : proiezioni?.gol ? (
@@ -949,11 +1213,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </section>
         )}
 
-        <DossierCapitolo
-          id="cap-gioco"
-          nome="Il gioco"
-          descrizione="Tiri, falli, corner, cartellini: una card per famiglia, con la sua linea."
-        />
+        {/* Primo e secondo tempo stanno **dentro** Gol e non in un'area propria: sono gli
+            stessi gol, visti nella loro dimensione temporale. Un'area per ogni taglio dello
+            stesso dato moltiplicherebbe i capitoli senza aggiungere una domanda. */}
+        {insight.allowed && tempi !== null ? <MatchTempiSection tempi={tempi} /> : null}
+
+        {aree.proiezioni ? (
+          <DossierCapitolo
+            id="cap-proiezioni"
+            nome="Proiezioni"
+          />
+        ) : null}
 
         {/* Giocate statistiche: il motore di proiezione dove c'è, altrimenti ENG-1 */}
         {!motore.allowed ? (
@@ -1002,13 +1272,50 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         )}
 
-        <DossierCapitolo
-          id="cap-contesto"
-          nome="Il contesto"
-          descrizione="Classifica, forma, arbitro, formazioni e precedenti."
-        />
+        {aree.trend ? (
+          <DossierCapitolo
+            id="cap-trend"
+            nome="Trend"
+          />
+        ) : null}
 
-        {/* Dove stanno le due squadre: classifica della competizione e forma vera */}
+        {/* **Il selettore governa le quattro letture di stagione insieme**, e sta qui
+            perche' qui comincia la prima: assetto, quando spingono, come si presentano e
+            il ritmo per tempo stanno tutte dentro questo capitolo. */}
+        {insight.allowed && finestra !== null ? (
+          <FinestraStagione matchId={id} scelta={finestra} />
+        ) : null}
+
+        {/* Il pannello sta fuori dalla condizione delle letture perche' il ritmo per tempo
+            ha un campione suo - le gare della coppia, non le medie di lato - e a settembre
+            c'e' anche dove il resto del capitolo tace. */}
+        {insight.allowed ? (
+          <ComeSiAffrontano cappello={cappello} ritmoTempi={ritmoTempi} />
+        ) : null}
+
+        {insight.allowed && letture.length > 0 ? (
+          <>
+            <TrendRecente
+              casa={saltiCasa}
+              fuori={saltiFuori}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
+              gareCasa={trendCasa?.gare ?? 0}
+              gareFuori={trendFuori?.gare ?? 0}
+            />
+            <ConteseSection
+              contese={leContese}
+              nomeCasa={detail.homeTeam}
+              nomeFuori={detail.awayTeam}
+            />
+          </>
+        ) : null}
+
+        {/* **Classifica e forma, adiacenti dentro la stessa area.** Rispondono alla stessa
+            domanda con due unita' di misura: la striscia dei risultati e le reti fatte e
+            subite contro il metro della competizione. I due componenti restano distinti
+            perche' `MatchFormaSection` vive anche su `/expected`, dove quella striscia non
+            c'e': qui li tiene insieme l'area, non una fusione che romperebbe l'altra pagina. */}
         <MatchStandingsSection
           standings={standings}
           homeTeam={detail.homeTeam}
@@ -1017,9 +1324,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
           awayForm={awayForm}
         />
 
-        {/* Quanto pesano quei risultati: reti fatte e subite contro il metro della
-            competizione, dalle nostre osservazioni. Sta subito sotto la striscia perche'
-            risponde alla stessa domanda con un'altra unita' di misura. */}
+        {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
+
+        {insight.allowed ? <MatchAssettoSection assetto={assetto} fasce={fasceDiGara} /> : null}
+
+        {insight.allowed ? <MatchTiriSection tiri={tiri} /> : null}
+
         {proiezioni?.forma ? (
           <MatchFormaSection
             casa={proiezioni.forma.casa}
@@ -1029,57 +1339,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        {/* Chi rischia il cartellino, chi puo' segnare. Sta prima dell'arbitro perche' e'
-            una lettura sui giocatori attesi in campo, e l'arbitro e' il contesto in cui
-            quei giocatori giocheranno. */}
-        {!motore.allowed || giocatori === null ? null : (
-          <MatchGiocatoriSection
-            lettura={giocatori}
-            formazioneConfermata={lineups?.confirmed ?? false}
-          />
-        )}
-
-        {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
-            proiezione: 16 ingressi su 85 nel modello dei gialli. */}
-        {!insight.allowed || arbitroNostro === null ? null : (
-          <MatchArbitroSection
-            profilo={arbitroNostro}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-            entratoNei={arbitroEntratoIn}
-            scheda={arbitroGare.length === 0 ? null : (
-              <ArbitroScheda
-                nome={arbitroNostro.nome}
-                carriera={referee === null ? null : {
-                  gare: referee.careerGames,
-                  gialli: referee.careerYellowCards,
-                  rossi: referee.careerRedCards,
-                }}
-                righe={arbitroRighe}
-                gareDirette={arbitroGare}
-                medieLunghe={medieDelPeriodo(arbitroGare)}
-                quiEOra={arbitroQui === null ? null : {
-                  competizione: arbitroQui.competizione,
-                  stagione: arbitroQui.stagione,
-                  seasonId: arbitroQui.seasonId,
-                }}
-                daQuando={arbitroGare.at(-1)?.quando ?? null}
-                metri={arbitroMetri}
-              />
-            )}
-          />
-        )}
-
-        {/* «Il contesto» e' stato assorbito da «Come si affrontano» il 29 agosto 2026: le
-            due sezioni facevano lo stesso confronto - quanto una produce contro quanto
-            l'altra concede, ciascuna dal proprio lato - con due finestre diverse, e per lo
-            stesso fatto scrivevano 18,4 e 18,9. La tabella completa vive li', dietro
-            «Tutte le metriche», con una finestra sola. Il componente resta: su /expected e'
-            l'unica cosa che risponde a quella domanda, e li' non c'e' un capitolo che lo
-            faccia. */}
-
         {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
-            contate in un altro modo. */}
+            contate in un altro modo. Chiude Trend, non apre un'area propria. */}
         {insight.allowed && proiezioni ? (
           <MatchRitardiSection
             casa={proiezioni.ritardi.casa}
@@ -1089,88 +1350,24 @@ export default async function MatchPage({ params }: MatchPageProps) {
           />
         ) : null}
 
-        {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
-
-        {/* La gara giocata: il tabellino, la mappa dei tiri e la cronologia */}
-        <MatchFinishedSection
-          stats={finishedStats}
-          incidents={incidents}
-          homeTeam={detail.homeTeam}
-          awayTeam={detail.awayTeam}
-        />
-
-        {/* Chi gioca: previsto o confermato, e la differenza si dice */}
-        {lineups && (lineups.home || lineups.away) ? (
-          <section className="dossier-panel" aria-labelledby="lineups-title">
-            <p className="dossier-kick">Chi gioca</p>
-            <h2 id="lineups-title" className="sr-only-heading">Formazioni</h2>
-            <p className="dossier-verdict-lead">
-              {lineups.confirmed
-                ? "Formazioni ufficiali: sono gli undici scesi in campo."
-                : "Formazioni previste, non ancora ufficiali: possono cambiare fino al fischio d'inizio."}
-            </p>
-            {/* Quando un dato cambia da un momento all'altro, l'ora dice quanto vale. */}
-            {lineupsUpdatedAt ? (
-              <p className="dossier-src">
-                {lineups.confirmed ? "Ufficiali dalle " : "Ultimo aggiornamento delle "}
-                {lineupsUpdatedAt}
-                {lineups.confirmed ? "." : ", rilette ogni dieci minuti fino all'ufficialità."}
-              </p>
-            ) : null}
-            <div className="bench-grid">
-              <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
-              <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />
-            </div>
-          </section>
+        {aree.contesto ? (
+          <DossierCapitolo
+            id="cap-contesto"
+            nome="Contesto"
+          />
         ) : null}
 
-        {/* Le due panchine */}
-        {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (
-          <section className="dossier-panel" aria-labelledby="bench-title">
-            <p className="dossier-kick">Le due panchine</p>
-            <h2 id="bench-title" className="sr-only-heading">Gli allenatori</h2>
-            <div className="bench-grid">
-              <Bench allenatore={homeCoach} teamName={detail.homeTeam} />
-              <Bench allenatore={awayCoach} teamName={detail.awayTeam} />
-            </div>
-            <p className="dossier-src">
-              Medie della gestione di ciascun allenatore, non della sola stagione in corso: il
-              numero di gare è scritto accanto.
-            </p>
-          </section>
+        {insight.allowed && ritmo !== null ? (
+          <MatchRitmoSection ritmo={ritmo} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} />
         ) : null}
 
-        {/* Il contorno: chi arbitra, dove si gioca, con che tempo, dopo quanto viaggio */}
-        <section className="dossier-panel" aria-labelledby="ref-venue-title">
-          <p className="dossier-kick">Il contorno</p>
-          <h2 id="ref-venue-title" className="sr-only-heading">Arbitro, stadio e condizioni</h2>
+        {/* Il contorno: dove si gioca, con che tempo, dopo quanto viaggio. Sta qui e non piu'
+            in fondo alla pagina: e' informazione che serve **prima** della gara, e prima
+            della gara va letta. L'arbitro non e' piu' in questo riquadro - ha la sua area. */}
+        <section className="dossier-panel" aria-labelledby="contorno-title">
+          <p className="dossier-kick">La cornice</p>
+          <h2 id="contorno-title" className="sr-only-heading">Stadio e condizioni</h2>
           <div className="dossier-facts">
-            <div className="dossier-fact">
-              <dt>Arbitro</dt>
-              <dd>{referee ? referee.name : "Non designato / non disponibile"}</dd>
-            </div>
-            {/* **Qui NON ci sono le medie dell'arbitro**, e non è una dimenticanza.
-                Misurato il 27 agosto: gli aggregati della fonte filtrati per competizione
-                sono gli stessi delle nostre osservazioni dove abbiamo il campione — in
-                Premier, su cinque gare, stesso numero di gare in quattro casi su cinque e
-                scarto massimo 0,24 gialli — e sono una gara sola dove non ce l'abbiamo:
-                nelle coppe la mediana è 1-2 gare per arbitro. Ridondanti dove reggono,
-                rumore dove sarebbero l'unica cosa. Restano nella sezione dedicata, che
-                dichiara campione e metro. La carriera invece la sa solo la fonte. */}
-            {referee?.careerGames != null ? (
-              <div className="dossier-fact">
-                <dt>Carriera dell&apos;arbitro</dt>
-                <dd>
-                  {referee.careerGames.toLocaleString("it-IT")} gare
-                  {referee.careerYellowCards != null
-                    ? ` · ${referee.careerYellowCards.toLocaleString("it-IT")} gialli`
-                    : ""}
-                  {referee.careerRedCards != null
-                    ? ` · ${referee.careerRedCards.toLocaleString("it-IT")} rossi`
-                    : ""}
-                </dd>
-              </div>
-            ) : null}
             <div className="dossier-fact">
               <dt>Stadio</dt>
               <dd>{venue ? venue.name : "Non disponibile"}</dd>
@@ -1204,51 +1401,210 @@ export default async function MatchPage({ params }: MatchPageProps) {
               </div>
             ) : null}
           </div>
-          {referee?.careerGames != null ? (
+        </section>
+
+        {aree.giocatori ? (
+          <DossierCapitolo
+            id="cap-giocatori"
+            nome="Giocatori"
+          />
+        ) : null}
+
+        {/* **La formazione prima delle letture che la usano.** Fino al 3 settembre 2026 gli
+            undici comparivano cinque blocchi dopo la sezione che dichiarava «formazione
+            confermata»: si leggeva il giudizio prima del fatto su cui poggia. */}
+        {lineups && (lineups.home || lineups.away) ? (
+          <section className="dossier-panel" aria-labelledby="lineups-title">
+            <p className="dossier-kick">Chi gioca</p>
+            <h2 id="lineups-title" className="sr-only-heading">Formazioni</h2>
+            <p className="dossier-verdict-lead">
+              {lineups.confirmed
+                ? "Formazioni ufficiali: sono gli undici scesi in campo."
+                : "Formazioni previste, non ancora ufficiali: possono cambiare fino al fischio d'inizio."}
+            </p>
+            {/* Quando un dato cambia da un momento all'altro, l'ora dice quanto vale. */}
+            {lineupsUpdatedAt ? (
+              <p className="dossier-src">
+                {lineups.confirmed ? "Ufficiali dalle " : "Ultimo aggiornamento delle "}
+                {lineupsUpdatedAt}
+                {lineups.confirmed ? "." : ", rilette ogni dieci minuti fino all'ufficialità."}
+              </p>
+            ) : null}
+            <div className="bench-grid">
+              <Eleven side={lineups.home} teamName={detail.homeTeam} confirmed={lineups.confirmed} />
+              <Eleven side={lineups.away} teamName={detail.awayTeam} confirmed={lineups.confirmed} />
+            </div>
+            {/* La lista degli indisponibili la fonte la marca beta, e lo dichiariamo invece
+                di presentarla come un dato consolidato. Non entra in nessun numero. */}
+            {lineups.beta
+              && ((lineups.home?.unavailable.length ?? 0) > 0
+                || (lineups.away?.unavailable.length ?? 0) > 0) ? (
+              <p className="dossier-src">
+                L&apos;elenco degli indisponibili arriva da una parte della fonte dichiarata{" "}
+                <b>in prova</b>: può essere incompleto o non aggiornato, e per questo non
+                entra in nessuna stima di questa pagina. Chi manca senza comparire qui non è
+                detto che ci sia.
+              </p>
+            ) : null}
+            {/* Le due panchine stanno dentro Giocatori, chiuse: sono il contorno di chi
+                gioca, non una domanda a se'. */}
+            {homeCoach.esito === "trovato" || awayCoach.esito === "trovato" ? (
+              <details className="dossier-spiega">
+                <summary>Le due panchine</summary>
+                <div className="bench-grid">
+                  <Bench allenatore={homeCoach} teamName={detail.homeTeam} />
+                  <Bench allenatore={awayCoach} teamName={detail.awayTeam} />
+                </div>
+                <p className="dossier-src">
+                  Medie della gestione di ciascun allenatore, non della sola stagione in corso: il
+                  numero di gare è scritto accanto.
+                </p>
+              </details>
+            ) : null}
+          </section>
+        ) : null}
+
+        {/* Chi rischia il cartellino, chi puo' segnare: la lettura sui giocatori attesi, che
+            ora arriva dopo gli undici da cui dipende. */}
+        {!motore.allowed || giocatori === null ? null : (
+          <MatchGiocatoriSection
+            lettura={giocatori}
+            formazioneConfermata={lineups?.confirmed ?? false}
+          />
+        )}
+
+        {aree.arbitro ? (
+          <DossierCapitolo
+            id="cap-arbitro"
+            nome="Arbitro"
+          />
+        ) : null}
+
+        {/* L'arbitro con i nostri numeri, e la dichiarazione che e' gia' dentro la
+            proiezione: 16 ingressi su 85 nel modello dei gialli. */}
+        {!insight.allowed || arbitroNostro === null ? null : (
+          <MatchArbitroSection
+            profilo={arbitroNostro}
+            homeTeam={detail.homeTeam}
+            awayTeam={detail.awayTeam}
+            entratoNei={arbitroEntratoIn}
+            controLeSquadre={arbitroControLoro}
+            scheda={arbitroGare.length === 0 ? null : (
+              <ArbitroScheda
+                nome={arbitroNostro.nome}
+                carriera={referee === null ? null : {
+                  gare: referee.careerGames,
+                  gialli: referee.careerYellowCards,
+                  rossi: referee.careerRedCards,
+                }}
+                righe={arbitroRighe}
+                gareDirette={arbitroGare}
+                medieLunghe={medieDelPeriodo(arbitroGare)}
+                quiEOra={arbitroQui === null ? null : {
+                  competizione: arbitroQui.competizione,
+                  stagione: arbitroQui.stagione,
+                  seasonId: arbitroQui.seasonId,
+                }}
+                daQuando={arbitroGare.at(-1)?.quando ?? null}
+                metri={arbitroMetri}
+              />
+            )}
+          />
+        )}
+
+        {/* «Il contesto» e' stato assorbito da «Come si affrontano» il 29 agosto 2026: le
+            due sezioni facevano lo stesso confronto - quanto una produce contro quanto
+            l'altra concede, ciascuna dal proprio lato - con due finestre diverse, e per lo
+            stesso fatto scrivevano 18,4 e 18,9. La tabella completa vive li', dietro
+            «Tutte le metriche», con una finestra sola. Il componente resta: su /expected e'
+            l'unica cosa che risponde a quella domanda, e li' non c'e' un capitolo che lo
+            faccia. */}
+
+        {/* **La carriera sta qui, non piu' in fondo alla pagina.** E' l'unica cosa che sa
+            solo la fonte, e va letta accanto ai nostri numeri, non in un riquadro separato
+            a migliaia di pixel di distanza. Le medie di lega e il campione restano sopra:
+            questo dice da quanto dirige, non come fischia. */}
+        {referee?.careerGames != null ? (
+          <section className="dossier-panel" aria-labelledby="ref-career-title">
+            <p className="dossier-kick">La carriera</p>
+            <h2 id="ref-career-title" className="sr-only-heading">Carriera dell&apos;arbitro</h2>
+            <div className="dossier-facts">
+              <div className="dossier-fact">
+                <dt>Arbitro</dt>
+                <dd>{referee.name}</dd>
+              </div>
+              <div className="dossier-fact">
+                <dt>Gare dirette</dt>
+                <dd>
+                  {referee.careerGames.toLocaleString("it-IT")} gare
+                  {referee.careerYellowCards != null
+                    ? ` · ${referee.careerYellowCards.toLocaleString("it-IT")} gialli`
+                    : ""}
+                  {referee.careerRedCards != null
+                    ? ` · ${referee.careerRedCards.toLocaleString("it-IT")} rossi`
+                    : ""}
+                </dd>
+              </div>
+            </div>
             <p className="dossier-src">
               La carriera è il totale dichiarato dalla fonte su tutte le competizioni che
               segue: dice da quanto quest&apos;arbitro dirige, <b>non</b> come fischia questa
-              gara, e <b>non entra nella proiezione</b>. Il metro della competizione, il
-              campione e lo sbilancio fra i due lati stanno più sopra, nella sezione
-              dedicata, calcolati sulle nostre osservazioni.
+              gara, e <b>non entra nella proiezione</b>.{" "}
+              {arbitroNostro === null
+                ? "Di gare sue in questa competizione non ne abbiamo osservate, quindi qui "
+                  + "sopra non c'è un metro con cui confrontarla: le medie di un altro torneo "
+                  + "direbbero un'altra cosa."
+                : "Il metro della competizione, il campione e lo sbilancio fra i due lati "
+                  + "stanno qui sopra, calcolati sulle nostre osservazioni."}
             </p>
-          ) : null}
-        </section>
+          </section>
+        ) : null}
 
-        {/* Testa a testa */}
+        {aree.precedenti ? (
+          <DossierCapitolo
+            id="cap-precedenti"
+            nome="Precedenti"
+          />
+        ) : null}
+
+        {/* **Il testa a testa e' materiale di supporto, e sta chiuso.** Chi lo cerca lo apre;
+            chi legge la gara non attraversa quattro numeri che non entrano in nessuna delle
+            letture sopra. Il pannello resta, con il suo campione dichiarato in chiaro. */}
         {h2h && h2h.totalMatches ? (
           <section className="dossier-panel" aria-labelledby="h2h-title">
             <p className="dossier-kick">Testa a testa</p>
             <h2 id="h2h-title" className="sr-only-heading">Precedenti</h2>
-            <div className="dossier-h2h">
-              <div className="dossier-h2h-stat"><strong>{h2h.homeWins ?? 0}</strong><span>Vittorie {detail.homeTeam}</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.draws ?? 0}</strong><span>Pareggi</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.awayWins ?? 0}</strong><span>Vittorie {detail.awayTeam}</span></div>
-              <div className="dossier-h2h-stat"><strong>{h2h.avgTotalGoals != null ? h2h.avgTotalGoals.toFixed(1) : "n/d"}</strong><span>Gol medi</span></div>
-            </div>
-            {h2h.recent.length > 0 ? (
-              <ul className="dossier-recent">
-                {h2h.recent.slice(0, 5).map((m, i) => (
-                  <li key={`${m.date ?? "d"}-${i}`}>
-                    <span>{m.home ?? "—"} <b>{m.score ?? ""}</b> {m.away ?? "—"}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
             <p className="dossier-src">Su {h2h.totalMatches} precedenti registrati dalla fonte.</p>
+            <details className="dossier-spiega">
+              <summary>I precedenti fra queste due squadre</summary>
+              <div className="dossier-h2h">
+                <div className="dossier-h2h-stat"><strong>{h2h.homeWins ?? 0}</strong><span>Vittorie {detail.homeTeam}</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.draws ?? 0}</strong><span>Pareggi</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.awayWins ?? 0}</strong><span>Vittorie {detail.awayTeam}</span></div>
+                <div className="dossier-h2h-stat"><strong>{h2h.avgTotalGoals != null ? h2h.avgTotalGoals.toFixed(1) : "n/d"}</strong><span>Gol medi</span></div>
+              </div>
+              {h2h.recent.length > 0 ? (
+                <ul className="dossier-recent">
+                  {h2h.recent.slice(0, 5).map((m, i) => (
+                    <li key={`${m.date ?? "d"}-${i}`}>
+                      <span>{m.home ?? "—"} <b>{m.score ?? ""}</b> {m.away ?? "—"}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </details>
           </section>
         ) : null}
 
-        {!insight.allowed || analisi === null ? null : (
-          <>
-            <DossierCapitolo
-              id="cap-analisi"
-              nome="Analisi finale"
-              descrizione="Quello che il dossier dice e quello che non dice, con il rimando ai numeri."
-            />
-            <AnalisiFinale analisi={analisi} />
-          </>
-        )}
+        <MatchScontriComuniSection
+          dati={comuni}
+          homeTeam={detail.homeTeam}
+          awayTeam={detail.awayTeam}
+        />
+
+        {/* L'analisi finale chiude Precedenti invece di aprire un capitolo suo: e' la
+            rilettura di tutto quello che sta sopra, non una decima domanda. */}
+        {!insight.allowed || analisi === null ? null : <AnalisiFinale analisi={analisi} />}
 
         <p className="dossier-note">
           Dati letti soltanto lato server. Le probabilità sono letture di un modello statistico, mai certezze; nessun consiglio finanziario.

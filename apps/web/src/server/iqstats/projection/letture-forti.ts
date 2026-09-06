@@ -38,6 +38,9 @@
 import { daAccendere, decisione, soglieReali, type LineaProbabile } from "./linea-scelta";
 import type { Linea, ProiezioneDiGara } from "./match";
 
+/** Le frequenze gia' lette dal livello dati, per linea. `null` quando non si sanno. */
+type Basi = ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null;
+
 /** Sotto questa forza una lettura non merita di stare in cima a niente. */
 const FORZA_MINIMA = 0.05;
 
@@ -45,6 +48,19 @@ const FORZA_MINIMA = 0.05;
 const QUANTE = 4;
 
 export type LatoDellaGara = "casa" | "trasferta" | "totale";
+
+/**
+ * Quante volte quel verso succede **nelle gare di una delle due squadre**, dal lato che
+ * giochera' qui. Accanto alla base di lega, non al suo posto: la lega e' il metro del
+ * campionato, questa e' il metro di chi scende in campo.
+ */
+export interface BaseDiSquadra {
+  readonly lato: "casa" | "trasferta";
+  /** Da 0 a 100. */
+  readonly quota: number;
+  /** Su quante gare di quella squadra, da quel lato. */
+  readonly gare: number;
+}
 
 export interface LetturaForte {
   /** La chiave del bersaglio del motore, per risalire a nome e tinta della famiglia. */
@@ -60,6 +76,12 @@ export interface LetturaForte {
   readonly base: number | null;
   /** Su quante gare poggia la base. */
   readonly gareDiBase: number | null;
+  /**
+   * La stessa frequenza nelle gare delle squadre in campo: una voce per le linee di lato,
+   * due per quelle di totale, nessuna dove il campione non regge. Non entra nella forza:
+   * l'ordine resta quello dello scostamento dalla lega.
+   */
+  readonly squadre: readonly BaseDiSquadra[];
   /** Il punteggio di affidabilita' del bersaglio, da 0 a 100. */
   readonly affidabilita: number;
   /** Su quante gare di prova poggia quell'affidabilita'. */
@@ -132,6 +154,7 @@ export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
         decisione: decisione(accesa),
         base: null,
         gareDiBase: null,
+        squadre: [],
         affidabilita: livello.punteggio,
         righeDiProva: livello.righeDiProva,
         sorpresa: 0,
@@ -156,18 +179,28 @@ export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
 export function ordinaLetture(
   candidate: readonly LetturaForte[],
   senzaMisura: readonly string[],
-  basi: ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null,
+  basi: Basi,
+  basiCasa: Basi = null,
+  basiFuori: Basi = null,
   quante: number = QUANTE,
 ): LettureDellaGara {
   const letture = candidate
     .map((l) => {
-      const b = basi?.get(chiaveDiLinea(l)) ?? null;
+      const chiave = chiaveDiLinea(l);
+      const b = basi?.get(chiave) ?? null;
       const riferimento = b === null ? 0.5 : b.quota / 100;
       const sorpresa = Math.abs(l.probabilita - riferimento);
+      // Una linea di lato riguarda una squadra sola; una di totale le riguarda entrambe.
+      const squadre: BaseDiSquadra[] = [];
+      const dellaCasa = l.lato === "trasferta" ? undefined : basiCasa?.get(chiave);
+      if (dellaCasa !== undefined) squadre.push({ lato: "casa", ...dellaCasa });
+      const dellaFuori = l.lato === "casa" ? undefined : basiFuori?.get(chiave);
+      if (dellaFuori !== undefined) squadre.push({ lato: "trasferta", ...dellaFuori });
       return {
         ...l,
         base: b === null ? null : b.quota,
         gareDiBase: b === null ? null : b.gare,
+        squadre,
         sorpresa,
         forza: sorpresa * (l.affidabilita / 100),
       };
@@ -204,9 +237,9 @@ export function chiaveDiLinea(l: {
 /** Comodita' per chi non ha basi da passare: il criterio resta quello, col riferimento a 50. */
 export function lettureForti(
   bersagli: readonly ProiezioneDiGara[],
-  basi: ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null = null,
+  basi: Basi = null,
   quante: number = QUANTE,
 ): LettureDellaGara {
   const { candidate, senzaMisura } = candidateDiGara(bersagli);
-  return ordinaLetture(candidate, senzaMisura, basi, quante);
+  return ordinaLetture(candidate, senzaMisura, basi, null, null, quante);
 }

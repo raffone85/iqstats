@@ -8,8 +8,8 @@
 // diventano 30,9 e l'errore scende a 0,87.
 //
 // **Nessun verso dichiarato.** Qui non c'e' un riferimento rispetto a cui stare sopra o
-// sotto — quello e' il metro di lega, che sta nella sezione accanto — quindi niente verde e
-// niente mattone: restano inchiostro, come vuole il master. Nessun CSS nuovo: la casella
+// sotto — quello e' il metro di lega, che sta nella sezione accanto — quindi niente blu e
+// niente arancio: restano inchiostro, come vuole il master. Nessun CSS nuovo: la casella
 // `.squad-stat` e il gruppo richiudibile `.squad-group` esistono gia'.
 import type { ProfiloSquadra, VoceStatistica } from "@/server/iqstats/team-stats";
 
