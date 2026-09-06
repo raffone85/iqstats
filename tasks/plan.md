@@ -234,10 +234,20 @@ non avviato.
 
 ### Fase 4 — Dossier e domini incrementali
 
-- [ ] APP-7: mercati e probabilità solo quando normalizzati e spiegabili.
-- [ ] APP-8: gol, statistiche squadra e contesto una famiglia alla volta.
-- [ ] APP-9: competizioni, squadre e giocatori come viste database.
-- [ ] APP-10: segnali IQstatS versionati, con spiegazione e limiti.
+**Chiusa il 6 settembre 2026.** Le quattro caselle erano fatte da giorni e il piano non lo
+diceva: spuntate dopo averle verificate una per una in produzione, sul dossier 213553.
+
+- [x] APP-7: mercati e probabilità solo quando normalizzati e spiegabili. *Vive nei capitoli
+  «Modello e mercato» e «Dove ci stacchiamo dal mercato», con il margine e la quota accanto.*
+- [x] APP-8: gol, statistiche squadra e contesto una famiglia alla volta. *Capitoli «Gol»,
+  «Proiezioni» — sette famiglie, ciascuna con la sua card e le gare che fanno la media — e
+  «La cornice».*
+- [x] APP-9: competizioni, squadre e giocatori come viste database. *`/squadre`,
+  `/squadre/[teamId]`, `/arbitri`, e dal 6 settembre `/giocatori` e `/giocatori/[playerId]`:
+  tutte leggono dal nostro livello dati.*
+- [x] APP-10: segnali IQstatS versionati, con spiegazione e limiti. *Ogni lettura porta
+  l'affidabilità su cento e lo scarto di calibrazione della sua famiglia; `VERSIONE_LETTURA`
+  si alza anche quando cambia chi entra nella lettura, non solo la forma.*
 
 ### Fase 5 — Calibrazione e validazione del modello
 
@@ -429,8 +439,12 @@ sostituite** da questo lavoro.
   destinazioni — container locale e Supabase — con una riga di giornale per destinazione.
 - [ ] PROJ-6: la passata gira **solo a sessione aperta** e **non scrive un log**; l'attività
   Windows dipende dal PC dell'utente. Da decidere se spostarla fuori.
-- [ ] PROJ-7: la proiezione vive **solo** nel dossier della gara; niente in `/partite`,
-  `/pronostici`, `/oggi` né sulla scheda squadra.
+- [x] PROJ-7: ~~la proiezione vive **solo** nel dossier della gara~~ — **non più dal
+  6 settembre 2026.** La vetrina in `/pronostici` porta fuori dal dossier la lettura più
+  probabile di ogni gara in arrivo, con la sua affidabilità e il rimando al consuntivo
+  completo; `/partite` porta le targhette di copertura, che dicono prima del tocco se quella
+  gara avrà una proiezione. Restano fuori la scheda squadra e la home, dove la domanda è
+  un'altra.
 
 **Limiti dichiarati, non difetti:** sotto la quarta giornata di campionato la sezione non
 compare, e senza arbitro designato tre bersagli su sette ripiegano senza intervallo né linee.
