@@ -1,150 +1,149 @@
 # Dove siamo — IQstatS
 
-Ultimo aggiornamento: **23 agosto 2026, pomeriggio.** Misurato, non ricordato: ogni riga di
-questa pagina è stata verificata contro la produzione, il database in linea o il disco.
+Ultimo aggiornamento: **6 settembre 2026, sera.** Misurato, non ricordato: ogni riga con un
+numero è stata verificata oggi contro la produzione, il database in linea o il disco. Dove
+una riga non è stata rimisurata oggi, lo dice.
 
 Questa è **l'unica pagina che risponde alla domanda «a che punto siamo»**. Il piano con le
-caselle sta in `tasks/plan.md`; il diario con tutte le misure sta in `tasks/todo.md`; il
-funzionamento del motore sta in `docs/architecture/architettura-motore-proiezione.md`.
+caselle sta in `tasks/plan.md`; l'allineamento a PowerStats, con le misure di ogni voce, sta
+in `tasks/allineamento-powerstats.md`; il funzionamento del motore sta in
+`docs/architecture/architettura-motore-proiezione.md`.
 
-Produzione: `https://iqstats-indol.vercel.app` · `main` a `6bc07c4d` più il riordino della
-navigazione del 23 agosto, non ancora committato.
+Produzione: `https://iqstats-indol.vercel.app` · `main` a `0868e5c7`.
+
+**Perché questa pagina è stata riscritta.** La versione precedente era ferma al 23 agosto e
+dichiarava **«non ancora pubblicata»** la sezione Gol, la sezione proiezione, `/arbitri` e
+`/arbitri/[refereeId]`: tutte e quattro rispondono 200 in produzione da giorni. Un documento
+che dice il falso costa più di un documento che non esiste, perché chi lo legge ci crede.
 
 ---
 
 ## 1. Che cosa è vivo, per chi apre il sito
 
-Verificate il 22 agosto in produzione; il riordino del 23 è verificato in locale, non
-ancora pubblicato:
+Tutte verificate in produzione il 6 settembre: **dodici indirizzi, dodici risposte 200**.
 
 | Pagina | Che cosa mostra | Stato |
 | --- | --- | --- |
 | `/` | la dashboard: gara di oggi in evidenza e le porte del prodotto | viva |
-| `/partite` | le gare del giorno di tutti i campionati, calendario e filtro lega opzionale | viva |
-| `/pronostici` | le letture del modello, fuori dalla barra dal 23 agosto: si raggiunge dalla dashboard | viva |
-| `/match/[id]` | il dossier della gara: testata, riepilogo, quote, metodo e fonti | viva |
-| `/match/[id]` → sezione **Gol** | xG per squadra, 1X2 e doppia chance, O/U, GG/NG, gol esatti, risultati più probabili, multigol | viva dal 23 agosto, **non ancora pubblicata** |
-| `/match/[id]` → sezione proiezione | i sette bersagli, ogni soglia con **entrambi i lati** (O e U), la linea più decisa fra le vicine accesa con la sua spiegazione, e accanto il numero osservato casa/trasferta | viva **solo dove c'è storia** (vedi §4); scala doppia dal 23 agosto, **non ancora pubblicata** |
-| `/squadre/[teamId]` | la scheda squadra | viva |
-| `/arbitri` | le competizioni con arbitri, tre letture e la classifica | viva dal 23 agosto, **non ancora pubblicata**; i dati che legge sono già in linea |
-| `/arbitri/[refereeId]` | medie, metro della competizione, posizione fra i colleghi, storico | viva dal 23 agosto, **non ancora pubblicata** |
-| `/metodo` | la pagina di servizio | viva |
-| `/accedi` | accesso con codice a sei cifre via email | viva |
-| `/account/billing` | i quattro piani, Checkout e Portale Stripe | viva, Stripe in **test mode** |
+| `/partite` | le gare del giorno, calendario con giorni avanti e indietro, salto a una data qualsiasi, filtri lega e stato | viva |
+| `/pronostici` | **la vetrina delle letture in arrivo** più le gare lette dal modello | viva |
+| `/match/[id]` | il dossier della gara, venti capitoli | viva |
+| `/match/[id]` → **Gol** | gol attesi, 1X2, doppia chance, over/under, gol/nogol, multigol, risultati, **matrice esito × linea** e **più letture insieme** | viva |
+| `/match/[id]` → **Proiezioni** | i sette bersagli con soglie, intervalli, affidabilità, osservato per lato e **le gare che fanno ogni media** | viva |
+| `/match/[id]` → **In campo** | tabellino e cronologia **anche a gara in corso**, dal 6 settembre | viva |
+| `/squadre` | classifiche di competizione e confronto fra due squadre | viva |
+| `/squadre/[teamId]` | la scheda squadra, con il selettore di stagione | viva |
+| `/arbitri` | competizioni con arbitri, tre letture e la classifica | viva |
+| `/arbitri/[refereeId]` | medie, metro dei colleghi, posizione, storico, con il selettore di stagione | viva |
+| `/giocatori` | la classifica di stagione per minuti, tiri, falli, cartellini e parate | viva |
+| `/giocatori/[playerId]` | la scheda del calciatore: stagione in corso, precedente, carriera | viva |
+| `/cerca` | ricerca di squadre e arbitri, e **l'assistente** quando la domanda è una frase | viva |
+| `/expected` | i gol attesi, raggiunta dalla dashboard | viva |
+| `/metodo` | il metodo, con **il consuntivo completo delle letture** | viva |
+| `/accedi`, `/privacy`, `/termini`, `/account` | accesso, pagine legali, profilo e fatturazione | vive |
 
-**Riordino del 23 agosto.** `/oggi` rimanda a `/partite`, che mostrava già le stesse
-gare; `/giocate` e `/database` erano segnaposto senza contenuto e rimandano alla
-dashboard. Tutti e tre con un 308 permanente, verificato: nessun collegamento vecchio
-si rompe. La barra ha tre voci — Home, Partite, Metodo — perché sono le tre pagine che
-esistono: le entità entrano quando la loro pagina esiste.
+**La barra ha cinque voci** — Oggi, Pronostici, Squadre, Arbitri, Metodo — e resta a cinque:
+il 3 settembre erano sei e su telefono andavano su due righe, coprendo il fondo della pagina.
+`/giocatori`, `/cerca` ed `/expected` si raggiungono da dentro le pagine, non dalla barra.
 
-**Da dove arrivano i dati delle gare.** Non dal database: undici moduli server chiedono alla
-fonte a ogni visita, con una cache breve in memoria (gare 120 s, contesto gara 300 s, elenco
-campionati 3.600 s). Il gateway che leggerebbe da Postgres esiste ma in produzione **resta
-spento**, perché accetta la connessione solo su indirizzo locale.
+**Da dove arrivano i dati.** Da tutte e due le parti, e non è più come ad agosto:
 
-**L'unico automatismo in linea** è la sveglia su GitHub Actions
-(`.github/workflows/sveglia-formazioni.yml`): chiama `POST /api/interno/rinfresca` per tenere
-calda la cache delle formazioni nella fascia 11–21 UTC. Le ultime otto esecuzioni del 22
-agosto sono tutte riuscite, in 9–17 secondi; gli intervalli reali sono di 14–34 minuti, non i
-dieci nominali, perché GitHub ritarda i cron pianificati.
+- **dalla fonte, a ogni visita**, il calendario, il dossier, le quote e le formazioni, con una
+  cache breve in memoria (gare 120 s, contesto 300 s, campionati 3.600 s);
+- **dal nostro livello dati in linea** il motore, gli arbitri, le classifiche di squadra e di
+  giocatore, la copertura e la vetrina. La versione precedente diceva che il gateway Postgres
+  «in produzione resta spento»: **è falso dal 4 settembre**, e si verifica in un colpo solo —
+  `/giocatori` in produzione scrive «557 gare con il dato», che è una lettura del database.
+
+**L'unico automatismo in linea** resta la sveglia su GitHub Actions
+(`.github/workflows/sveglia-formazioni.yml`), che chiama `POST /api/interno/rinfresca` per
+tenere calda la cache delle formazioni. *Non rimisurata oggi: gli ultimi numeri sono del 22
+agosto.*
 
 ## 2. Che cosa c'è nel database in linea
 
-Progetto Supabase `iqStats`, **179 MB su 500** del piano gratuito, misurati il 23 agosto
-dopo la passata autonoma.
+Progetto Supabase `iqStats`, schema `football` a **210 MB**, misurato il 6 settembre.
 
 | Contenuto | Righe |
 | --- | ---: |
-| Statistiche per giocatore (`player_match_observations`) | 437.059 su 10.482 gare, **senza nome e senza gol** |
-| Osservazioni squadra-gara del motore (`team_match_observations`) | 21.158, dal 22 febbraio 2025 al 23 agosto 2026 |
-| Di cui con `expected_goals` · `shots_inside_box` · `referee_id` | 18.340 · 18.310 · 18.596 |
-| Gare, squadre, arbitri, stagioni, competizioni | 10.540 · 590 · 681 · 55 · 29 |
-| Di cui ancora senza nome vero | 0 arbitri e 0 competizioni dal 23 agosto; restano **55 stagioni** e **3 squadre** |
-| Accesso e abbonamenti (profili, piani, feature, entitlement) | 4 profili · 4 piani · 7 feature · 26 righe di matrice |
-| Classifiche (`standing_rows`, `standing_snapshots`) | **0** |
+| Statistiche per giocatore (`player_match_observations`) | **457.416** su 10.968 gare, 21.667 giocatori, 57 stagioni |
+| Osservazioni squadra-gara del motore (`team_match_observations`) | **22.132**, dal 22 febbraio 2025 al 5 settembre 2026 |
+| Tiri per gara (`team_match_shots`) | **19.739** |
+| Gare, squadre, arbitri, stagioni, competizioni | 11.066 · 599 · 696 · 57 · 29 |
+| Classifiche (`standing_rows`) | **0** |
 
-Le tavole `football` in linea contengono **il perimetro del motore**, non quello del prodotto:
-l'archivio DATA-1 del 9 agosto — 9.548 gare e 591 squadre — vive **solo sul PC**, nel
-container locale, e nessuna pagina lo legge.
+**Le statistiche per giocatore non hanno i gol.** Le sette colonne sono minuti, tiri, tiri in
+porta, falli, gialli, rossi e parate: nessuna tavola di episodi, quindi una classifica
+marcatori da qui non si può fare, e alla fonte costerebbe una chiamata per gara — trecentottanta
+per la sola Serie A. `/giocatori` lo dichiara invece di sostituire i gol con i tiri.
 
 ## 3. Che cosa gira sul tuo PC, e non altrove
 
+*Sezione non rimisurata oggi: vale quanto scritto il 23 agosto.*
+
 | Cosa | Quando | Conseguenza se il PC è spento |
 | --- | --- | --- |
-| Passata notturna (`sync_nightly.ps1`) | 03:00, attività Windows | la storia del motore non avanza; la sezione proiezione resta ferma all'ultima notte utile |
-| Archivio grezzo della fonte, dataset, quattordici modelli addestrati | a mano | niente, non servono all'app |
-| Container `supabase_db_IQstatS` (205 MB) | sempre acceso | niente per la produzione: serve allo sviluppo e ai test |
+| Passata notturna (`sync_nightly.ps1`) | 03:00, attività Windows | la storia del motore non avanza |
+| Archivio grezzo, dataset, modelli addestrati | a mano | niente, non servono all'app |
+| Container `supabase_db_IQstatS` | sempre acceso | niente per la produzione: serve allo sviluppo e alle misure |
 
-**Che cosa fa la passata, in parole semplici.** Chiede alla fonte le partite finite, si segna
-com'è andata ogni squadra — tiri, tiri in porta, corner, falli, ammoniti, fuorigioco, parate —
-e archivia quelle righe. Serve al motore per dire «stasera questa squadra tirerà circa 17
-volte», guardando com'è andata prima. **Non aggiorna i risultati che vedi in pagina**: quelli
-arrivano in diretta dalla fonte.
-
-Dal 22 agosto scrive su **due destinazioni**, il container locale e Supabase, con una riga di
-giornale ciascuna: prima scriveva solo in locale e la produzione non avanzava mai.
+Dal 22 agosto la passata scrive su **due destinazioni**, il container locale e Supabase.
 
 ## 4. Il motore di proiezione, in chiaro
 
-Sette modelli **in produzione**, presenti nel pacchetto come artefatti verificati byte per
-byte: tiri e falli con `ridge`, tiri in porta, corner, ammoniti, fuorigioco e parate con
-`poisson_glm`. Altri sette restano validati ma non promossi.
+Sette modelli **in produzione**, verificati byte per byte contro l'uscita di Python da
+`test:projection-artefatti`: tiri e falli con `ridge`, tiri in porta, corner, ammoniti,
+fuorigioco e parate con `poisson_glm`.
 
-**Due limiti che si vedono in pagina, e sono voluti:**
+**I limiti che si vedono in pagina, e sono voluti:**
 
-- serve almeno la **quarta giornata** di campionato: con meno di tre gare precedenti nella
-  stagione in corso la sezione non compare, e la gara mostra il pannello di prima. A fine
-  agosto quasi tutta l'Europa è in questa condizione;
-- **senza arbitro designato** tre bersagli su sette ripiegano: mostrano il valore senza
-  intervallo, senza linee e senza affidabilità.
+- serve storia nella **stagione in corso**: dove non c'è, la sezione non compare e la gara
+  mostra il motore di base;
+- **senza arbitro designato** tre bersagli su sette ripiegano: valore senza intervallo, senza
+  linee e senza affidabilità;
+- le letture in cima **si fermano all'ottanta per cento**: sopra quella soglia, su 1.200 gare
+  chiuse, il modello promette 81,5% e rende 74,7%.
 
 ## 5. Che cosa NON esiste ancora
 
-Sono le voci aperte del tuo piano, in ordine di valore per chi usa l'app:
+L'allineamento a PowerStats (`tasks/allineamento-powerstats.md`) ha **ventitré voci, e una
+sola resta davvero aperta**. Contate leggendo il corpo di ogni voce, non la barratura del
+titolo: cinque erano chiuse nei fatti ma il piano non lo diceva, e due di quelle — la scelta
+libera della data e il punteggio che si muove — sono state chiuse oggi con la loro misura.
 
-| Voce | Che cosa manca | Dove |
-| --- | --- | --- |
-| **APP-6B** | lo stesso confronto casa/trasferta **dove la proiezione non c'è** | `tasks/plan.md` fase 3 |
-| **APP-7** | mercati e probabilità spiegabili | fase 4 |
-| **APP-8** | gol, statistiche squadra e contesto, una famiglia alla volta | fase 4 |
-| **APP-9** | pagine competizione, squadra e giocatore come viste sul database | fase 4 |
-| **APP-10** | i segnali IQstatS versionati, con spiegazione e limiti | fase 4 |
-| **DATA-2 → DATA-5** | statistiche gara, quote, formazioni e rose dentro il database del prodotto | fase 1A |
-| **APP-3D** | il contratto dati operativo: freschezza, retention, ingest | fase 1 |
-| **Fase 6** | il quality gate di rilascio | fase 6 |
+| Voce | Che cosa manca |
+| --- | --- |
+| **7** | il *perché* accanto alla copertura di una gara: la targhetta dice «Solo calendario» ma non dice cosa manca. Il badge per campionato, che la voce chiedeva, è stato **scartato con una misura**: direbbe «Serie A sì» su una gara che dirà no |
+| **11, 12, 14** | chiuse a metà: preferiti, guida e schermata home vivono **su questo dispositivo**. Legarli all'account chiede una tavola nuova sul livello dati in linea, cioè una scrittura da autorizzare |
 
-**La proiezione vive solo dentro il dossier della gara**: non compare in `/partite`,
-in `/pronostici` né sulla scheda squadra.
+**Fuori dall'allineamento**, i debiti veri sono nel §7.
 
 ## 6. Come si verifica che non è rotto
 
-Dalla radice: `npm run test:projection` (53) · `test:asof` (14) · `test:production` (20) ·
-`test:snapshot` (16) · `test:match` (15).
-Da `apps/web`: `test:projection-artefatti` (3) · `test:projection-store` (1, serve
-`IQSTATS_DATABASE_URL`, altrimenti si salta) · `test:projection-osservato` (3) ·
-`test:projection-gol` (10) · `test:linea-scelta` (7) · `test:arbitri` (5, serve
-`IQSTATS_PROJECTION_DATABASE_URL`, altrimenti si salta) ·
-`test:gateway` (25) · `test:stat-engine` (9) · `test:media` (4) · `test:auth` ·
-`test:billing`, più `tsc --noEmit`, `eslint` e `build`.
+Da `apps/web`: **quarantasette suite, tutte verdi** il 6 settembre con il livello dati
+collegato. Le più grosse: `test:gateway` 25, `test:projection-gol` 19, `test:affronto` 17,
+`test:arbitro-scheda` 15, `test:dossier` 15, `test:ritmo-tempi` 11, `test:arbitri` 10.
+Più `tsc --noEmit`, `eslint` e `next build`.
 
-**La sezione Gol non si vede in locale senza una variabile.** Il motore legge da
-`IQSTATS_PROJECTION_DATABASE_URL`, che **non e' in `apps/web/.env.local`**: senza, ne' la
-proiezione ne' i gol compaiono in sviluppo, e non e' un difetto del codice. Per provarli in
-locale si passa la connessione del container `supabase_db_IQstatS` sulla 54322, che ha le
-stesse 21.158 righe con gli stessi 18.340 `expected_goals` del database in linea.
+**Molte suite si saltano senza connessione al livello dati** e lo dicono: per eseguirle tutte
+serve `IQSTATS_PROJECTION_DATABASE_URL`, che **non sta in `.env.local`** e si ricava dal
+container locale. Senza, quelle prove risultano «saltate» e non «passate»: è una differenza
+che conta, ed è il motivo per cui una prova è rimasta rossa dal 5 settembre senza che nessuno
+la vedesse.
 
 ## 7. Debiti dichiarati, non nascosti
 
-- **Il nome della fonte è esposto**: `apps/web/src/app/api/matches/route.ts` importa
-  `@/lib/bsd` e la risposta pubblica contiene `"source":"bsd"`. Il vincolo del progetto dice
-  che quel nome non deve comparire in percorsi, moduli, log o interfaccia.
-- ~~**La quota del database**~~ **sciolto il 23 agosto**: dopo la passata autonoma il
-  database è a **179 MB su 500**, cioè +4 rispetto ai 175 del giorno prima, non +58. La
-  riscrittura completa delle righe non fa crescere il peso: la quota non è a rischio.
-- **La passata gira solo a sessione aperta** e **non scrive un log**: dell'esecuzione delle
-  03:00 si sa soltanto il codice di uscita.
-- **Stripe è in test mode**: nessun pagamento reale è mai stato incassato.
-- Il resto — copertura dell'intervallo ottimista, fascia EARLY non misurabile, divergenza del
-  lato che addestra — è elencato con i numeri in
+- **Il nome della fonte è ancora esposto**, verificato oggi: `/api/matches` risponde con
+  `"source":"bsd"` e `apps/web/src/app/api/matches/route.ts` importa `@/lib/bsd`. Il vincolo
+  del progetto dice che quel nome non deve comparire in percorsi, moduli, log o interfaccia.
+- **La vetrina legge un artefatto**, non calcola a richiesta: una lettura costa una proiezione
+  e un giorno di calcio sono oltre cento gare, cioè quindici secondi. Finché nessuno rigenera
+  `vetrina-letture.json`, la sezione invecchia; le gare già cominciate escono da sole e se non
+  ne resta nessuna la sezione non compare.
+- **La passata gira solo a sessione aperta** e non scrive un log.
+- **Stripe è in test mode**. *Non rimisurato oggi.*
+- **Due numeri della stessa gara non coincidono**: la riga dei tiri dice 6-2, la mappa sotto
+  conta 6 e 3. Sono due campi diversi della stessa risposta della fonte, e la differenza va
+  misurata prima di dichiarare quale ha ragione.
+- Il resto — copertura dell'intervallo, fascia EARLY, divergenza del lato che addestra — è in
   `docs/architecture/architettura-motore-proiezione.md`.

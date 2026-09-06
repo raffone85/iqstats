@@ -71,9 +71,13 @@ piede; i termini invece sono una pagina sul loro dominio.
 
 ## Blocco 2 — il calendario, dove si entra
 
-6. **Scelta libera della data**, avanti e **indietro**. Oggi ci sono sette giorni in avanti
-   e nessun passato: la verifica costruita oggi è quasi irraggiungibile. *Criterio:* si
-   arriva a una gara di un mese fa in due tocchi.
+6. ~~**Scelta libera della data**, avanti e **indietro**.~~ — **c'era gia'**, verificato il
+   6 settembre 2026. La barra si centra sulla data mostrata, con tre giorni indietro e tre
+   avanti, e accanto c'e' un `input type="date"` che salta a qualunque giorno: il criterio
+   «una gara di un mese fa in due tocchi» e' soddisfatto da un tocco sul campo e uno sulla
+   data. *Misurato in produzione:* `/partite?date=2026-08-06` mostra **74 gare e 10
+   competizioni**, con la barra centrata su quel giorno. Il piano descriveva uno stato
+   superato, come per la voce 9.
 7. **Badge di copertura per campionato**, con la spiegazione accanto al nome della lega.
    *Criterio:* compare quando il campione della lega è sotto la soglia del motore, e dice
    perché.
@@ -86,10 +90,13 @@ piede; i termini invece sono una pagina sul loro dominio.
    *Verificato:* con **zero** gare in corso (161 gare del 30 agosto: 123 da giocare, 37
    finite, 0 live) la riga non compare e in venti secondi d'ascolto **zero** richieste alla
    pagina, quindi nessun timer armato a vuoto.
-   **Non verificato:** che il punteggio cambi davvero senza ricaricare. Alle 10:18 non c'era
-   nessuna gara in corso e la prima era alle 12:00. **Si misura con una gara in corso**,
-   aprendo il dossier di quella gara e contando le richieste alla pagina in quattro minuti:
-   devono essere due.
+   **Verificato il 6 settembre 2026, e la ragione del ritardo non era l'ora.** La riga non
+   compariva mai perche' **non riconoscevamo le gare in corso**: la fonte non manda «live»
+   ne' «inprogress», manda `1st_half`, `2nd_half` e `halftime`, e su sette giorni di
+   calendario erano trentasette gare che finivano in `unknown`. Corretto il normalizzatore,
+   il tabellone scrive «39 gare sono in corso. Il punteggio si aggiorna da solo ogni 2
+   minuti» e il filtro Live passa da **zero righe a 78**. Lo stesso difetto teneva spenta la
+   riga del dossier.
 
 ## Blocco 3 — la navigazione
 
