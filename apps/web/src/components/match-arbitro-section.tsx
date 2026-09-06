@@ -328,7 +328,21 @@ export function MatchArbitroSection({
         </p>
       )}
 
-      {scheda ?? null}
+      {/* **Lo storico dell'arbitro sta chiuso, come il testa a testa.** Le due tavole -
+          falli e cartellini per competizione, e le ultime gare dirette - sono 2.091 px a
+          375 px sulla gara 213553, misurati il 6 settembre 2026: meta' di questo capitolo,
+          che e' il piu' alto del dossier e sta al nono posto su dieci. Sono un fatto
+          storico, non la lettura della gara: quella e' il giudizio qui sopra, che resta in
+          pagina con il suo campione e il suo metro. Chi vuole i numeri li apre. */}
+      {scheda === null || scheda === undefined ? null : (
+        <details className="dossier-spiega">
+          <summary>
+            Lo storico: falli e cartellini per competizione, le ultime gare dirette e
+            l&apos;elenco in {profilo.competizione}
+          </summary>
+          {scheda}
+        </details>
+      )}
 
       <p className="dossier-src">
         Tutto su <b>{profilo.gare} gare</b> dirette in {profilo.competizione}
