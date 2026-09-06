@@ -1284,7 +1284,17 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             perche' qui comincia la prima: assetto, quando spingono, come si presentano e
             il ritmo per tempo stanno tutte dentro questo capitolo. */}
         {insight.allowed && finestra !== null ? (
-          <FinestraStagione matchId={id} scelta={finestra} />
+          <FinestraStagione
+            scelta={finestra}
+            cosaGuarda="Assetto, quando spingono, come si presentano e il ritmo per tempo guardano"
+            voci={[
+              // «corrente» e' il valore predefinito: il suo collegamento non porta il
+              // parametro, cosi' l'indirizzo condiviso piu' spesso resta quello pulito.
+              { chiave: "corrente", nome: "Questa stagione", href: `/match/${id}` },
+              { chiave: "scorsa", nome: "La scorsa", href: `/match/${id}?stagione=scorsa` },
+              { chiave: "tutto", nome: "Tutto l'archivio", href: `/match/${id}?stagione=tutto` },
+            ]}
+          />
         ) : null}
 
         {/* Il pannello sta fuori dalla condizione delle letture perche' il ritmo per tempo

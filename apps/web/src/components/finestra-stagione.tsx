@@ -8,26 +8,24 @@ import type { StagioniScelte } from "@/server/iqstats/finestra-stagione";
  * collegamento mostra a un altro esattamente quello che si sta guardando. La stessa
  * forma delle capsule dei capitoli, che sono gia' link e gia' alte 44 px.
  *
- * **Governa tutto il capitolo insieme.** Assetto, quando spingono, come si presentano e
- * il ritmo per tempo leggono la stessa finestra: se ciascuno avesse la sua, due sezioni
- * della stessa pagina risponderebbero su periodi diversi senza che si veda.
+ * **Governa tutto il capitolo insieme.** Le sezioni che dipendono dalla stagione leggono la
+ * stessa finestra: se ciascuna avesse la sua, due parti della stessa pagina risponderebbero
+ * su periodi diversi senza che si veda.
+ *
+ * **Gli indirizzi li costruisce chi lo usa**, perche' ogni pagina ha i suoi parametri da
+ * conservare: il dossier ha solo la gara, la scheda squadra ha anche competizione e
+ * stagione, e una funzione qui dentro avrebbe dovuto conoscerli tutti.
  *
  * **«La scorsa» sostituisce, «Tutto» somma.** La prima e' un confronto - come si sono
  * comportate l'anno prima - la seconda un campione piu' largo. Sono due domande diverse
  * e per questo sono due voci e non un interruttore.
  */
-export function FinestraStagione({ matchId, scelta }: {
-  readonly matchId: string;
+export function FinestraStagione({ voci, scelta, cosaGuarda }: {
+  readonly voci: readonly { readonly chiave: string; readonly nome: string; readonly href: string }[];
   readonly scelta: StagioniScelte;
+  /** Che cosa cambia scegliendo, scritto per la pagina che lo mostra. */
+  readonly cosaGuarda: string;
 }) {
-  // «corrente» e' il valore predefinito: il suo collegamento non porta il parametro,
-  // cosi' l'indirizzo condiviso piu' spesso resta quello pulito.
-  const voci = [
-    { chiave: "corrente", nome: "Questa stagione", href: `/match/${matchId}` },
-    { chiave: "scorsa", nome: "La scorsa", href: `/match/${matchId}?stagione=scorsa` },
-    { chiave: "tutto", nome: "Tutto l'archivio", href: `/match/${matchId}?stagione=tutto` },
-  ] as const;
-
   return (
     <nav className="finestra-stagione" aria-label="Periodo delle letture di stagione">
       <ul>
@@ -43,8 +41,7 @@ export function FinestraStagione({ matchId, scelta }: {
         ))}
       </ul>
       <p className="finestra-stagione-nota">
-        Assetto, quando spingono, come si presentano e il ritmo per tempo guardano{" "}
-        <b>{scelta.etichetta}</b>.{" "}
+        {cosaGuarda} <b>{scelta.etichetta}</b>.{" "}
         {scelta.stagioni.length === 0
           ? "Per questa scelta non ci sono gare in archivio, quindi quelle letture non compaiono."
           : "Le altre sezioni non cambiano."}
