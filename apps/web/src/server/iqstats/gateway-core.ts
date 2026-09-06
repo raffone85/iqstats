@@ -3,12 +3,15 @@ import {
   aggregateTeamSquad,
   indexCompetitions,
   normalizeCompetitionCatalog,
+  aggregatePlayerStats,
   normalizeEventPlayerStats,
   normalizeHeadToHead,
   normalizeMatchDetail,
   normalizeMatchList,
   normalizeObservedMatchStats,
   normalizeOddsPages,
+  normalizePlayerProfile,
+  normalizePlayerStatsPage,
   normalizeRefereeDirectory,
   normalizeRefereeProfile,
   normalizeSeasonCatalog,
@@ -26,6 +29,8 @@ import {
   type ObservedMatchStatsCollection,
   type OddsCollection,
   type PlayerMatchStats,
+  type PlayerProfile,
+  type PlayerStatsBlock,
   type RefereeDirectory,
   type RefereeProfile,
   type SeasonSummary,
@@ -64,6 +69,14 @@ const TEAM_EVENTS_PAGE_SIZE = 50;
 const TEAM_SEASON_MATCH_LIMIT = TEAM_EVENTS_PAGE_SIZE;
 const TEAM_FIXTURES_LIMIT = 10;
 const TEAM_STATS_CONCURRENCY = 4;
+/**
+ * `players/{id}/stats/` pagina a cinquanta e taglia a duecento qualunque `limit` più
+ * alto: misurato su David Neres, `limit=300` e `limit=500` rendono comunque 200 righe
+ * su un `count` di 359. Tre pagine coprono 600 gare di carriera; oltre, il blocco si
+ * dichiara parziale invece di allungare l'attesa.
+ */
+const PLAYER_STATS_PAGE_SIZE = 200;
+const PLAYER_STATS_MAX_PAGES = 3;
 /** Una pagina copre tutti gli arbitri di una lega: 42 osservati in Serie A. */
 const REFEREE_DIRECTORY_LIMIT = 100;
 
@@ -622,6 +635,64 @@ export class IqstatsGateway {
       envelope = markPartial(envelope, "eventPlayerStats", covered.length, selected.length);
     }
     return envelope;
+  }
+
+  /** Anagrafica del giocatore. I derivati della fonte non entrano nel contratto. */
+  async getPlayerProfile(playerId: string): Promise<DataEnvelope<PlayerProfile>> {
+    const envelope = requireEnvelope(
+      normalizePlayerProfile(await this.#source.getJson(`/api/v2/players/${playerId}/`), {
+        capturedAt: this.#clock(),
+      }),
+    );
+    if (envelope.data?.playerId !== playerId) {
+      throw new GatewayError("source_invalid_response");
+    }
+    return envelope;
+  }
+
+  /**
+   * `players/{id}/stats/` è la carriera vista dalla parte del giocatore: le stesse righe
+   * di `events/{id}/player-stats/`, con `team_id` che cambia lungo la carriera e nessuna
+   * data propria. Con `season_id` la fonte filtra da sé, e una stagione costa un GET.
+   */
+  async getPlayerStats(
+    playerId: string,
+    seasonId: string | null,
+  ): Promise<DataEnvelope<PlayerStatsBlock>> {
+    const capturedAt = this.#clock();
+    const rows: PlayerMatchStats[] = [];
+    let declared = 0;
+    let last: DataEnvelope<{ readonly rows: readonly PlayerMatchStats[]; readonly declared: number }> | null =
+      null;
+
+    for (let page = 0; page < PLAYER_STATS_MAX_PAGES; page += 1) {
+      const params = new URLSearchParams({
+        limit: String(PLAYER_STATS_PAGE_SIZE),
+        offset: String(page * PLAYER_STATS_PAGE_SIZE),
+      });
+      if (seasonId !== null) params.set("season_id", seasonId);
+      last = requireEnvelope(
+        normalizePlayerStatsPage(
+          await this.#source.getJson(`/api/v2/players/${playerId}/stats/?${params.toString()}`),
+          { capturedAt },
+        ),
+      );
+      declared = last.data?.declared ?? declared;
+      const pageRows = last.data?.rows ?? [];
+      rows.push(...pageRows);
+      if (pageRows.length < PLAYER_STATS_PAGE_SIZE || rows.length >= declared) break;
+    }
+
+    const base = last as DataEnvelope<unknown>;
+    const envelope: DataEnvelope<PlayerStatsBlock> = {
+      data: aggregatePlayerStats(rows, declared),
+      availability: base.availability,
+      provenance: base.provenance,
+      calculation: null,
+    };
+    return rows.length < declared
+      ? markPartial(envelope, "playerStats", rows.length, declared)
+      : envelope;
   }
 
   /**

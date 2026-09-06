@@ -5,6 +5,7 @@ import {
   type TeamSquad,
   type TeamSquadEntry,
 } from "@iqstats/shared";
+import Link from "next/link";
 
 import { PLAYER_METRIC_LABELS, SQUAD_POSITION_LABELS } from "./team-labels";
 import { VerifiedMediaImage } from "./verified-media-image";
@@ -28,8 +29,8 @@ function initials(name: string): string {
 
 function formatTotal(value: number | null): string {
   if (value === null) return "n/d";
-  if (Number.isInteger(value)) return String(value);
-  return value.toFixed(2);
+  if (Number.isInteger(value)) return value.toLocaleString("it-IT");
+  return value.toFixed(2).replace(".", ",");
 }
 
 function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; minimumSample: number }>) {
@@ -49,7 +50,9 @@ function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; m
           />
         </span>
         <span className="squad-player-name">
-          <b>{profile.name}</b>
+          <b>
+            <Link href={`/giocatori/${profile.playerId}`}>{profile.name}</Link>
+          </b>
           <em>
             {profile.jerseyNumber !== null ? `#${profile.jerseyNumber}` : "senza numero"}
             {profile.nationality ? ` · ${profile.nationality}` : ""}

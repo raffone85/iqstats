@@ -428,7 +428,7 @@ const positions: Readonly<Record<string, SquadPosition>> = {
   F: "forward",
 };
 
-function normalizeSquadMember(raw: unknown): TeamSquadMember | null {
+export function normalizeSquadMember(raw: unknown): TeamSquadMember | null {
   if (!isRecord(raw)) return null;
   const playerId = stringId(raw.id);
   const name = nonEmptyString(raw.name);
@@ -478,7 +478,7 @@ export function normalizeTeamSquad(
   };
 }
 
-const playerMetricFields: Readonly<Record<PlayerMetricKey, string>> = Object.fromEntries(
+export const playerMetricFields: Readonly<Record<PlayerMetricKey, string>> = Object.fromEntries(
   PLAYER_METRIC_KEYS.map((key) => [key, key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)]),
 ) as Readonly<Record<PlayerMetricKey, string>>;
 

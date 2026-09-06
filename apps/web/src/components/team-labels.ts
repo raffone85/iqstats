@@ -90,6 +90,14 @@ export const SQUAD_POSITION_LABELS: Readonly<Record<SquadPosition, string>> = {
   forward: "Attaccanti",
 };
 
+/** Gli stessi ruoli al singolare: la rosa raggruppa, la scheda del giocatore nomina uno. */
+export const SQUAD_POSITION_SINGULAR: Readonly<Record<SquadPosition, string>> = {
+  goalkeeper: "Portiere",
+  defender: "Difensore",
+  midfielder: "Centrocampista",
+  forward: "Attaccante",
+};
+
 export const PLAYER_METRIC_LABELS: Readonly<Partial<Record<PlayerMetricKey, string>>> = {
   saves: "Parate",
   goalsConceded: "Gol subiti",
@@ -117,4 +125,6 @@ export const PLAYER_METRIC_LABELS: Readonly<Partial<Record<PlayerMetricKey, stri
   totalShots: "Tiri",
   shotsOnTarget: "Tiri in porta",
   bigChanceMissed: "Grandi occasioni fallite",
+  yellowCard: "Cartellini gialli",
+  fouls: "Falli commessi",
 };
