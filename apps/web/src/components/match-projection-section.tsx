@@ -393,9 +393,13 @@ type Props = {
   readonly proiezioni: ProiezioniDellaGara;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  /** I bersagli da cui esce la lettura in cima: restano aperti, gli altri si aprono a mano. */
+  readonly inCima?: readonly string[];
 };
 
-export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props) {
+export function MatchProjectionSection(
+  { proiezioni, homeTeam, awayTeam, inCima = [] }: Props,
+) {
   const mostrabili = proiezioni.bersagli.filter(
     (bersaglio) => bersaglio.casa.stato === "prevista" && bersaglio.trasferta.stato === "prevista",
   );
@@ -406,6 +410,17 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
   const senzaCopertura = proiezioni.bersagli
     .filter((bersaglio) => !mostrabili.includes(bersaglio))
     .map((bersaglio) => FAMIGLIE[bersaglio.target]?.nome ?? bersaglio.target);
+
+  // **Aperti i bersagli che reggono la lettura in cima, gli altri dietro un dettaglio.**
+  // Sette schede sono 3.271 px a 375 px, misurati il 6 settembre 2026 sulla gara 215986:
+  // quattro schermate di telefono per un capitolo che sta al quinto posto su dieci. Non si
+  // toglie niente - le altre restano, a un tocco - ma chi e' arrivato qui dal pronostico
+  // trova per primi i bersagli da cui quel pronostico esce. Senza `inCima` restano tutti
+  // aperti: il taglio nasce dalla lettura, e dove non c'e' una lettura non c'e' taglio.
+  const primi = inCima.length === 0
+    ? mostrabili
+    : mostrabili.filter((b) => inCima.includes(b.target));
+  const altri = primi === mostrabili ? [] : mostrabili.filter((b) => !primi.includes(b));
 
   // Il livello dell'intervallo non e' scelto qui: e' quello a cui la calibrazione del
   // bersaglio e' stata misurata, e sta scritto nell'artefatto. Si legge dal primo che ce
@@ -422,7 +437,7 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
       </h2>
 
       <ul className="engine-rows">
-        {mostrabili.map((bersaglio) => (
+        {primi.map((bersaglio) => (
           <Bersaglio
             key={bersaglio.target}
             bersaglio={bersaglio}
@@ -432,6 +447,27 @@ export function MatchProjectionSection({ proiezioni, homeTeam, awayTeam }: Props
           />
         ))}
       </ul>
+
+      {altri.length === 0 ? null : (
+        <details className="dossier-spiega">
+          <summary>
+            {altri.length === 1
+              ? "L\u2019altro bersaglio che il motore proietta su questa gara"
+              : `Gli altri ${altri.length} bersagli che il motore proietta su questa gara`}
+          </summary>
+          <ul className="engine-rows">
+            {altri.map((bersaglio) => (
+              <Bersaglio
+                key={bersaglio.target}
+                bersaglio={bersaglio}
+                casa={homeTeam}
+                trasferta={awayTeam}
+                osservato={proiezioni.osservate[bersaglio.target]}
+              />
+            ))}
+          </ul>
+        </details>
+      )}
 
       {/* **Le sei note di metodo si aprono.** Sono trecentocinquanta parole che spiegano
           come funziona la sezione, uguali su ogni gara: chi le ha lette una volta non le
