@@ -1,5 +1,26 @@
 # Backlog verificabile — IQstatS
 
+## Dove siamo, 6 settembre 2026
+
+**Questo file è un diario, non lo stato.** Lo stato vero sta in
+`docs/product/implementation-status.md`, riscritto oggi sui numeri misurati; l'allineamento a
+PowerStats, voce per voce con le sue misure, sta in `tasks/allineamento-powerstats.md`.
+
+Settembre in breve, tutto verificato in produzione:
+
+- **il blocco 4 dell'allineamento è chiuso**: scheda e classifica dei giocatori, matrice
+  esito × linea, elenco delle gare sotto ogni famiglia, più letture insieme, la vetrina con
+  il criterio che regge e l'assistente senza modello. Delle ventitré voci ne resta aperta
+  **una**, la 7, e per metà;
+- **le statistiche guardano la stagione in corso**: scheda squadra, confronto e scheda
+  arbitro leggevano finestre che sommavano due stagioni. Ora c'è il selettore *questa
+  stagione · la scorsa · tutto l'archivio*, e dove il campione è povero la pagina lo scrive;
+- **le gare in corso si vedono**: la fonte manda `1st_half`, `2nd_half` e `halftime`, che non
+  riconoscevamo. Il filtro Live passava da zero righe a 78, e il dossier di una gara in corso
+  mostra ora il suo tabellino;
+- **609 righe morte fuori dal repository** e una prova rossa dal 5 settembre tornata verde:
+  le quarantasette suite sono tutte verdi con il livello dati collegato.
+
 ## Stato attuale
 
 - [x] **CAL-0 — Discovery API.** Artefatti e note sanificate creati.
