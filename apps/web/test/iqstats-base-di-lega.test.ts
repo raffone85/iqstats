@@ -1,7 +1,7 @@
 // La base di lega e l'ordine che ne discende.
 //
-// Le prime due prove sono pure e girano sempre; le ultime due chiedono al livello dati e si
-// saltano senza connessione, come `test:lati`.
+// Le prime due prove sono pure e girano sempre; le ultime quattro chiedono al livello dati
+// e si saltano senza connessione, come `test:lati`.
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -24,11 +24,14 @@ function linea(
   };
 }
 
-test("una lettura piu' alta ma normale perde contro una piu' bassa ma inattesa", () => {
-  // Il difetto che ha fatto cambiare il criterio: «Under 5,5 fuorigioco al 70%» stava in
-  // cima, ma in quella lega succede l'87% delle volte. Al 70% il modello sta dicendo che
-  // succedera' **meno** del solito, e la vecchia forza - distanza dal cinquanta - la
-  // metteva davanti a una lettura al 63% che invece si scosta davvero.
+test("la base resta accanto alla lettura, sopra e sotto", () => {
+  // **Questa prova e' stata riscritta il 6 settembre 2026, non cancellata.** Verificava il
+  // criterio per forza: fra «Under 5,5 fuorigioco al 70%» in una lega dove succede l'87% e
+  // una lettura al 63% che si scosta davvero, vinceva la seconda. Da quel giorno l'ordine e'
+  // per probabilita' dentro la fascia tarata, perche' su 1.200 gare chiuse il criterio per
+  // forza portava in cima letture che rendevano 63,3% contro il 65,1% promesso. Quello che
+  // resta vero, e che questa prova difende, e' che **la base di lega viaggia con la lettura**
+  // in tutti e due i versi: senza, un 70% dove succede l'87% si leggerebbe come una notizia.
   const ovvia = linea("offsides", 5.5, 0.70, "Under");
   const inattesa = linea("total_shots", 10.5, 0.63);
   const basi = new Map([
@@ -36,28 +39,29 @@ test("una lettura piu' alta ma normale perde contro una piu' bassa ma inattesa",
     [chiaveDiLinea(inattesa), { quota: 45, gare: 235 }],
   ]);
 
-  const senzaBasi = ordinaLetture([ovvia, inattesa], [], null);
-  assert.equal(senzaBasi.letture[0]?.bersaglio, "offsides", "col vecchio criterio vinceva la piu' decisa");
-
   const conBasi = ordinaLetture([ovvia, inattesa], [], basi);
-  assert.equal(conBasi.letture[0]?.bersaglio, "total_shots", "ora vince quella che sorprende");
-  assert.equal(conBasi.letture[0]?.base, 45);
-  // La lettura sotto la base non sparisce: si mostra col suo numero, che si legge da solo.
-  assert.equal(conBasi.letture[1]?.base, 87);
+  assert.equal(conBasi.letture[0]?.bersaglio, "offsides", "l'ordine e' per probabilita'");
+  assert.equal(conBasi.letture[0]?.base, 87, "e porta con se' quanto e' normale in quella lega");
+  assert.equal(conBasi.letture[1]?.base, 45);
   assert.ok(
-    (conBasi.letture[1]?.probabilita ?? 1) * 100 < (conBasi.letture[1]?.base ?? 0),
-    "e resta sotto la base, che e' proprio l'informazione",
+    (conBasi.letture[0]?.probabilita ?? 1) * 100 < (conBasi.letture[0]?.base ?? 0),
+    "la prima sta sotto la sua base, ed e' proprio l'informazione da leggere",
+  );
+  assert.ok(
+    (conBasi.letture[1]?.probabilita ?? 0) * 100 > (conBasi.letture[1]?.base ?? 100),
+    "la seconda sta sopra la sua",
   );
 });
 
-test("senza base il riferimento resta cinquanta, cioe' il vecchio criterio", () => {
+test("chi non ha una base lo dichiara, invece di fingerla", () => {
   const a = linea("corner_kicks", 7.5, 0.80);
   const b = linea("fouls", 25.5, 0.60);
   const solaUna = new Map([[chiaveDiLinea(b), { quota: 10, gare: 200 }]]);
   const r = ordinaLetture([a, b], [], solaUna);
-  // `b` si scosta di 50 punti dalla sua base, `a` di 30 dal cinquanta di riserva.
-  assert.equal(r.letture[0]?.bersaglio, "fouls");
-  assert.equal(r.letture[1]?.base, null, "e chi non ha base lo dichiara invece di fingerla");
+  // L'ordine e' per probabilita': l'80% davanti al 60%, e la base non lo cambia.
+  assert.equal(r.letture[0]?.bersaglio, "corner_kicks");
+  assert.equal(r.letture[0]?.base, null, "chi non ha base lo dichiara invece di fingerla");
+  assert.equal(r.letture[1]?.base, 10);
 });
 
 test("la base e' quella misurata sulle nostre righe, ricontata a mano", opzioni, async () => {
