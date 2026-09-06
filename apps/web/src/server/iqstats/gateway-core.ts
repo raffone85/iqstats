@@ -40,6 +40,7 @@ import {
   type TeamProfile,
   type TeamSeasonSplits,
   type TeamSquad,
+  type TeamSquadMember,
 } from "@iqstats/shared";
 
 import { GatewayError } from "./errors.ts";
@@ -635,6 +636,19 @@ export class IqstatsGateway {
       envelope = markPartial(envelope, "eventPlayerStats", covered.length, selected.length);
     }
     return envelope;
+  }
+
+  /**
+   * Solo la rosa, senza le gare: serve a dare un nome agli identificativi che il livello
+   * dati tiene senza nome. Una chiamata per squadra invece di una per giocatore.
+   */
+  async getTeamRoster(teamId: string): Promise<DataEnvelope<readonly TeamSquadMember[]>> {
+    return requireEnvelope(
+      normalizeTeamSquad(await this.#source.getJson(`/api/v2/teams/${teamId}/squad/`), {
+        teamId,
+        capturedAt: this.#clock(),
+      }),
+    );
   }
 
   /** Anagrafica del giocatore. I derivati della fonte non entrano nel contratto. */

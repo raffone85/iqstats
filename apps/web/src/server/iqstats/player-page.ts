@@ -70,3 +70,21 @@ export const getPlayerDossier = cache(async (playerId: string): Promise<PlayerDo
 
   return { profile: profile.data, stagione: inCorso, precedente: scorsa, carriera };
 });
+
+/**
+ * Nomi dei giocatori a partire dalle squadre che li tesserano: una chiamata per squadra,
+ * mai una per giocatore. Il nome della squadra lo sa gia' il livello dati, quindi qui si
+ * chiede solo la rosa. Chi non compare nella rosa di oggi resta senza nome, e chi legge lo
+ * vede dichiarato invece di trovare un identificativo travestito da persona.
+ */
+export const nomiDeiGiocatori = cache(
+  async (teamSourceIds: readonly number[]): Promise<ReadonlyMap<number, string>> => {
+    const rose = await Promise.all(
+      [...new Set(teamSourceIds)].map(async (teamId) => {
+        const envelope = await safely(() => getTeamGateway().getTeamRoster(String(teamId)));
+        return envelope?.data ?? [];
+      }),
+    );
+    return new Map(rose.flat().map((membro) => [Number(membro.playerId), membro.name]));
+  },
+);

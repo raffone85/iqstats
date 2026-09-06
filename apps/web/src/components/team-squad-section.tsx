@@ -14,6 +14,9 @@ type TeamSquadSectionProps = Readonly<{
   squad: TeamSquad;
   availability: DataAvailability;
   minimumSample: number;
+  /** Competizione e stagione della fonte, per il rimando alla classifica di campionato. */
+  leagueId: string;
+  seasonId: string;
 }>;
 
 const ROLE_ORDER: readonly SquadPosition[] = ["goalkeeper", "defender", "midfielder", "forward"];
@@ -98,7 +101,13 @@ function PlayerRow({ entry, minimumSample }: Readonly<{ entry: TeamSquadEntry; m
   );
 }
 
-export function TeamSquadSection({ squad, availability, minimumSample }: TeamSquadSectionProps) {
+export function TeamSquadSection({
+  squad,
+  availability,
+  minimumSample,
+  leagueId,
+  seasonId,
+}: TeamSquadSectionProps) {
   const played = squad.entries.filter((entry) => entry.stats !== null).length;
 
   return (
@@ -112,7 +121,11 @@ export function TeamSquadSection({ squad, availability, minimumSample }: TeamSqu
         medie di squadra: una richiesta per gara, mai una per giocatore.{" "}
         <b>{played}</b> tesserati su {squad.entries.length} hanno almeno una presenza nel campione.
         Le metriche mostrate cambiano per ruolo; il voto medio compare da{" "}
-        {minimumSample} gare in su.
+        {minimumSample} gare in su.{" "}
+        <Link href={`/giocatori?competizione=${leagueId}&stagione=${seasonId}`}>
+          Come stanno rispetto agli altri del campionato
+        </Link>
+        .
       </p>
 
       {ROLE_ORDER.map((role) => {
