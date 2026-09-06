@@ -176,6 +176,42 @@ export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
  * A parita' di forza vince l'affidabilita' piu' alta: fra due letture che dicono la stessa
  * cosa con la stessa sorpresa, si preferisce quella del bersaglio che sbaglia meno.
  */
+/**
+ * Le candidate con il loro riferimento, la sorpresa e la forza, **senza filtrare niente**.
+ *
+ * Sta a parte da `ordinaLetture` per una ragione sola: misurare un criterio d'ordinamento
+ * diverso da quello di produzione richiede l'insieme intero, non quello che la forza
+ * minima ha gia' scremato. Chi vuole la vetrina passa da `ordinaLetture`; chi vuole
+ * misurare un criterio alternativo parte da qui. Nessuna delle due riscrive l'altra.
+ */
+export function arricchisci(
+  candidate: readonly LetturaForte[],
+  basi: Basi,
+  basiCasa: Basi = null,
+  basiFuori: Basi = null,
+): readonly LetturaForte[] {
+  return candidate.map((l) => {
+    const chiave = chiaveDiLinea(l);
+    const b = basi?.get(chiave) ?? null;
+    const riferimento = b === null ? 0.5 : b.quota / 100;
+    const sorpresa = Math.abs(l.probabilita - riferimento);
+    // Una linea di lato riguarda una squadra sola; una di totale le riguarda entrambe.
+    const squadre: BaseDiSquadra[] = [];
+    const dellaCasa = l.lato === "trasferta" ? undefined : basiCasa?.get(chiave);
+    if (dellaCasa !== undefined) squadre.push({ lato: "casa", ...dellaCasa });
+    const dellaFuori = l.lato === "casa" ? undefined : basiFuori?.get(chiave);
+    if (dellaFuori !== undefined) squadre.push({ lato: "trasferta", ...dellaFuori });
+    return {
+      ...l,
+      base: b === null ? null : b.quota,
+      gareDiBase: b === null ? null : b.gare,
+      squadre,
+      sorpresa,
+      forza: sorpresa * (l.affidabilita / 100),
+    };
+  });
+}
+
 export function ordinaLetture(
   candidate: readonly LetturaForte[],
   senzaMisura: readonly string[],
@@ -184,30 +220,10 @@ export function ordinaLetture(
   basiFuori: Basi = null,
   quante: number = QUANTE,
 ): LettureDellaGara {
-  const letture = candidate
-    .map((l) => {
-      const chiave = chiaveDiLinea(l);
-      const b = basi?.get(chiave) ?? null;
-      const riferimento = b === null ? 0.5 : b.quota / 100;
-      const sorpresa = Math.abs(l.probabilita - riferimento);
-      // Una linea di lato riguarda una squadra sola; una di totale le riguarda entrambe.
-      const squadre: BaseDiSquadra[] = [];
-      const dellaCasa = l.lato === "trasferta" ? undefined : basiCasa?.get(chiave);
-      if (dellaCasa !== undefined) squadre.push({ lato: "casa", ...dellaCasa });
-      const dellaFuori = l.lato === "casa" ? undefined : basiFuori?.get(chiave);
-      if (dellaFuori !== undefined) squadre.push({ lato: "trasferta", ...dellaFuori });
-      return {
-        ...l,
-        base: b === null ? null : b.quota,
-        gareDiBase: b === null ? null : b.gare,
-        squadre,
-        sorpresa,
-        forza: sorpresa * (l.affidabilita / 100),
-      };
-    })
-    .filter((l) => l.forza >= FORZA_MINIMA);
-
-  letture.sort((a, b) => (b.forza - a.forza) || (b.affidabilita - a.affidabilita));
+  const letture = arricchisci(candidate, basi, basiCasa, basiFuori)
+    .filter((l) => l.forza >= FORZA_MINIMA)
+    .slice()
+    .sort((a, b) => (b.forza - a.forza) || (b.affidabilita - a.affidabilita));
 
   // **Una lettura per bersaglio, e non e' una scelta estetica.** Su Bragantino contro
   // Gremio le prime quattro erano «Over 1,5 fuorigioco totale» al 81% e «Under 2,5

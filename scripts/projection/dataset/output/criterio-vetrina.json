@@ -1,0 +1,347 @@
+{
+  "schema": "criterio-vetrina/1",
+  "calcolato_il": "2026-09-06T14:08:29.140Z",
+  "gare_chieste": 1200,
+  "come_e_stato_misurato": "una sola passata sulle gare chiuse: le proiezioni si calcolano una volta e i cinque criteri scelgono sulle stesse candidate, quindi il confronto e' fra regole e non fra campioni. «tutte» conta ogni lettura mostrata, «in_vetrina» solo quella in cima a ogni gara, che e' cio' che la vetrina pubblicherebbe.",
+  "criteri": [
+    {
+      "criterio": "forza",
+      "spiegazione": "quello di produzione: |probabilita - base di lega| x affidabilita",
+      "tutte": {
+        "letture": 1601,
+        "prese": 1070,
+        "frequenza_osservata": 0.6683,
+        "probabilita_promessa": 0.6727,
+        "scarto": -0.0044,
+        "sopra_lega_e_squadra": 0.3673,
+        "scostamento_mediano_dalla_squadra": 0.1031,
+        "oltre_quaranta_punti_dalla_squadra": 0.0072
+      },
+      "in_vetrina": {
+        "letture": 552,
+        "prese": 349,
+        "frequenza_osservata": 0.6322,
+        "probabilita_promessa": 0.651,
+        "scarto": -0.0188,
+        "sopra_lega_e_squadra": 0.4402,
+        "scostamento_mediano_dalla_squadra": 0.1188,
+        "oltre_quaranta_punti_dalla_squadra": 0.009
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 276,
+          "prese": 170,
+          "frequenza_osservata": 0.6159,
+          "probabilita_promessa": 0.5863,
+          "scarto": 0.0297,
+          "sopra_lega_e_squadra": 0.3225,
+          "scostamento_mediano_dalla_squadra": 0.0955,
+          "oltre_quaranta_punti_dalla_squadra": 0.0086
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 759,
+          "prese": 472,
+          "frequenza_osservata": 0.6219,
+          "probabilita_promessa": 0.6451,
+          "scarto": -0.0232,
+          "sopra_lega_e_squadra": 0.3689,
+          "scostamento_mediano_dalla_squadra": 0.1135,
+          "oltre_quaranta_punti_dalla_squadra": 0.007
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 487,
+          "prese": 369,
+          "frequenza_osservata": 0.7577,
+          "probabilita_promessa": 0.7417,
+          "scarto": 0.016,
+          "sopra_lega_e_squadra": 0.3758,
+          "scostamento_mediano_dalla_squadra": 0.1,
+          "oltre_quaranta_punti_dalla_squadra": 0.008
+        },
+        {
+          "fascia": "80-90%",
+          "letture": 79,
+          "prese": 59,
+          "frequenza_osservata": 0.7468,
+          "probabilita_promessa": 0.8155,
+          "scarto": -0.0687,
+          "sopra_lega_e_squadra": 0.4557,
+          "scostamento_mediano_dalla_squadra": 0.0787,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        }
+      ]
+    },
+    {
+      "criterio": "probabilita",
+      "spiegazione": "la probabilita' piu' alta, senza guardare quanto si scosta dalla lega",
+      "tutte": {
+        "letture": 2055,
+        "prese": 1461,
+        "frequenza_osservata": 0.7109,
+        "probabilita_promessa": 0.7281,
+        "scarto": -0.0171,
+        "sopra_lega_e_squadra": 0.2613,
+        "scostamento_mediano_dalla_squadra": 0.0748,
+        "oltre_quaranta_punti_dalla_squadra": 0.0025
+      },
+      "in_vetrina": {
+        "letture": 560,
+        "prese": 431,
+        "frequenza_osservata": 0.7696,
+        "probabilita_promessa": 0.7996,
+        "scarto": -0.03,
+        "sopra_lega_e_squadra": 0.275,
+        "scostamento_mediano_dalla_squadra": 0.0619,
+        "oltre_quaranta_punti_dalla_squadra": 0
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 52,
+          "prese": 23,
+          "frequenza_osservata": 0.4423,
+          "probabilita_promessa": 0.5944,
+          "scarto": -0.152,
+          "sopra_lega_e_squadra": 0.2308,
+          "scostamento_mediano_dalla_squadra": 0.1171,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 618,
+          "prese": 389,
+          "frequenza_osservata": 0.6294,
+          "probabilita_promessa": 0.6329,
+          "scarto": -0.0034,
+          "sopra_lega_e_squadra": 0.2427,
+          "scostamento_mediano_dalla_squadra": 0.0994,
+          "oltre_quaranta_punti_dalla_squadra": 0.0022
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 955,
+          "prese": 710,
+          "frequenza_osservata": 0.7435,
+          "probabilita_promessa": 0.7537,
+          "scarto": -0.0103,
+          "sopra_lega_e_squadra": 0.2733,
+          "scostamento_mediano_dalla_squadra": 0.0734,
+          "oltre_quaranta_punti_dalla_squadra": 0.0041
+        },
+        {
+          "fascia": "80-90%",
+          "letture": 430,
+          "prese": 339,
+          "frequenza_osservata": 0.7884,
+          "probabilita_promessa": 0.8241,
+          "scarto": -0.0357,
+          "sopra_lega_e_squadra": 0.2651,
+          "scostamento_mediano_dalla_squadra": 0.0529,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        }
+      ]
+    },
+    {
+      "criterio": "probabilita-per-affidabilita",
+      "spiegazione": "probabilita' x affidabilita': alta e sul bersaglio che sbaglia meno",
+      "tutte": {
+        "letture": 2055,
+        "prese": 1461,
+        "frequenza_osservata": 0.7109,
+        "probabilita_promessa": 0.7281,
+        "scarto": -0.0171,
+        "sopra_lega_e_squadra": 0.2613,
+        "scostamento_mediano_dalla_squadra": 0.0748,
+        "oltre_quaranta_punti_dalla_squadra": 0.0025
+      },
+      "in_vetrina": {
+        "letture": 545,
+        "prese": 417,
+        "frequenza_osservata": 0.7651,
+        "probabilita_promessa": 0.7816,
+        "scarto": -0.0165,
+        "sopra_lega_e_squadra": 0.3064,
+        "scostamento_mediano_dalla_squadra": 0.0582,
+        "oltre_quaranta_punti_dalla_squadra": 0.0022
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 52,
+          "prese": 23,
+          "frequenza_osservata": 0.4423,
+          "probabilita_promessa": 0.5944,
+          "scarto": -0.152,
+          "sopra_lega_e_squadra": 0.2308,
+          "scostamento_mediano_dalla_squadra": 0.1171,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 618,
+          "prese": 389,
+          "frequenza_osservata": 0.6294,
+          "probabilita_promessa": 0.6329,
+          "scarto": -0.0034,
+          "sopra_lega_e_squadra": 0.2427,
+          "scostamento_mediano_dalla_squadra": 0.0994,
+          "oltre_quaranta_punti_dalla_squadra": 0.0022
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 955,
+          "prese": 710,
+          "frequenza_osservata": 0.7435,
+          "probabilita_promessa": 0.7537,
+          "scarto": -0.0103,
+          "sopra_lega_e_squadra": 0.2733,
+          "scostamento_mediano_dalla_squadra": 0.0734,
+          "oltre_quaranta_punti_dalla_squadra": 0.0041
+        },
+        {
+          "fascia": "80-90%",
+          "letture": 430,
+          "prese": 339,
+          "frequenza_osservata": 0.7884,
+          "probabilita_promessa": 0.8241,
+          "scarto": -0.0357,
+          "sopra_lega_e_squadra": 0.2651,
+          "scostamento_mediano_dalla_squadra": 0.0529,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        }
+      ]
+    },
+    {
+      "criterio": "fascia-tarata",
+      "spiegazione": "solo fino all'80%, dove il consuntivo dice che promesso e reso coincidono",
+      "tutte": {
+        "letture": 2055,
+        "prese": 1445,
+        "frequenza_osservata": 0.7032,
+        "probabilita_promessa": 0.7106,
+        "scarto": -0.0074,
+        "sopra_lega_e_squadra": 0.2574,
+        "scostamento_mediano_dalla_squadra": 0.0808,
+        "oltre_quaranta_punti_dalla_squadra": 0.0025
+      },
+      "in_vetrina": {
+        "letture": 561,
+        "prese": 437,
+        "frequenza_osservata": 0.779,
+        "probabilita_promessa": 0.7663,
+        "scarto": 0.0126,
+        "sopra_lega_e_squadra": 0.2585,
+        "scostamento_mediano_dalla_squadra": 0.0744,
+        "oltre_quaranta_punti_dalla_squadra": 0
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 52,
+          "prese": 23,
+          "frequenza_osservata": 0.4423,
+          "probabilita_promessa": 0.5944,
+          "scarto": -0.152,
+          "sopra_lega_e_squadra": 0.2308,
+          "scostamento_mediano_dalla_squadra": 0.1171,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 702,
+          "prese": 448,
+          "frequenza_osservata": 0.6382,
+          "probabilita_promessa": 0.6379,
+          "scarto": 0.0003,
+          "sopra_lega_e_squadra": 0.245,
+          "scostamento_mediano_dalla_squadra": 0.0986,
+          "oltre_quaranta_punti_dalla_squadra": 0.0019
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 1301,
+          "prese": 974,
+          "frequenza_osservata": 0.7487,
+          "probabilita_promessa": 0.7544,
+          "scarto": -0.0058,
+          "sopra_lega_e_squadra": 0.2652,
+          "scostamento_mediano_dalla_squadra": 0.0734,
+          "oltre_quaranta_punti_dalla_squadra": 0.003
+        }
+      ]
+    },
+    {
+      "criterio": "concorde-con-la-squadra",
+      "spiegazione": "scarta chi si scosta oltre venti punti dalla frequenza storica delle squadre in campo, poi ordina per probabilita'",
+      "tutte": {
+        "letture": 1790,
+        "prese": 1276,
+        "frequenza_osservata": 0.7128,
+        "probabilita_promessa": 0.72,
+        "scarto": -0.0072,
+        "sopra_lega_e_squadra": 0.3268,
+        "scostamento_mediano_dalla_squadra": 0.0698,
+        "oltre_quaranta_punti_dalla_squadra": 0
+      },
+      "in_vetrina": {
+        "letture": 492,
+        "prese": 377,
+        "frequenza_osservata": 0.7663,
+        "probabilita_promessa": 0.7947,
+        "scarto": -0.0285,
+        "sopra_lega_e_squadra": 0.3374,
+        "scostamento_mediano_dalla_squadra": 0.0609,
+        "oltre_quaranta_punti_dalla_squadra": 0
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 115,
+          "prese": 65,
+          "frequenza_osservata": 0.5652,
+          "probabilita_promessa": 0.5892,
+          "scarto": -0.024,
+          "sopra_lega_e_squadra": 0.2522,
+          "scostamento_mediano_dalla_squadra": 0.0867,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 542,
+          "prese": 345,
+          "frequenza_osservata": 0.6365,
+          "probabilita_promessa": 0.6353,
+          "scarto": 0.0012,
+          "sopra_lega_e_squadra": 0.3266,
+          "scostamento_mediano_dalla_squadra": 0.0813,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 800,
+          "prese": 602,
+          "frequenza_osservata": 0.7525,
+          "probabilita_promessa": 0.7529,
+          "scarto": -0.0004,
+          "sopra_lega_e_squadra": 0.3438,
+          "scostamento_mediano_dalla_squadra": 0.0684,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        },
+        {
+          "fascia": "80-90%",
+          "letture": 333,
+          "prese": 264,
+          "frequenza_osservata": 0.7928,
+          "probabilita_promessa": 0.8243,
+          "scarto": -0.0315,
+          "sopra_lega_e_squadra": 0.3123,
+          "scostamento_mediano_dalla_squadra": 0.0479,
+          "oltre_quaranta_punti_dalla_squadra": 0
+        }
+      ]
+    }
+  ]
+}
