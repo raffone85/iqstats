@@ -72,6 +72,21 @@ export interface GolDiSquadra {
   readonly multigol: readonly Intervallo[];
 }
 
+/**
+ * Una casella della matrice esito x linea.
+ *
+ * **`congiunta` non e' il prodotto di due probabilita': e' la somma delle caselle della
+ * griglia che soddisfano tutte e due le condizioni.** `prodotto` sta accanto proprio per
+ * dire di quanto le due letture sono legate: dove i due numeri divergono, moltiplicare le
+ * probabilita' separate darebbe un valore sbagliato, e di quel tanto.
+ */
+export interface CellaMatrice {
+  readonly esito: "uno" | "x" | "due";
+  readonly linea: number;
+  readonly congiunta: number;
+  readonly prodotto: number;
+}
+
 export interface MercatiGol {
   readonly casa: GolDiSquadra;
   readonly trasferta: GolDiSquadra;
@@ -88,6 +103,8 @@ export interface MercatiGol {
   /** I risultati esatti piu' probabili, dal primo al quinto. */
   readonly risultati: readonly Risultato[];
   readonly multigolPartita: readonly Intervallo[];
+  /** Esito e linea insieme, dalla stessa griglia: tre esiti per quattro linee. */
+  readonly matrice: readonly CellaMatrice[];
 }
 
 /**
@@ -161,13 +178,22 @@ export function mercatiGol(attesiCasa: number, attesiTrasferta: number): Mercati
   const risultati: Risultato[] = [];
   // La distribuzione del totale: la casella (i, j) contribuisce alla somma i + j.
   const totale = new Array<number>(MAX_GOL * 2 + 1).fill(0);
+  // Esito e linea insieme: la stessa casella risponde a tutte e due le domande, quindi la
+  // congiunta si somma qui e non si ricostruisce moltiplicando due numeri gia' separati.
+  const insieme = new Map<string, number>();
 
   for (let i = 0; i <= MAX_GOL; i += 1) {
     for (let j = 0; j <= MAX_GOL; j += 1) {
       const probabilita = pc[i] * pt[j];
-      if (i > j) uno += probabilita;
-      else if (i === j) x += probabilita;
+      const esito = i > j ? "uno" : i === j ? "x" : "due";
+      if (esito === "uno") uno += probabilita;
+      else if (esito === "x") x += probabilita;
       else due += probabilita;
+      for (const linea of LINEE_TOTALI) {
+        if (i + j <= linea) continue;
+        const chiave = `${esito}|${linea}`;
+        insieme.set(chiave, (insieme.get(chiave) ?? 0) + probabilita);
+      }
       totale[i + j] += probabilita;
       risultati.push({ casa: i, trasferta: j, probabilita });
     }
@@ -195,6 +221,15 @@ export function mercatiGol(attesiCasa: number, attesiTrasferta: number): Mercati
     multigolPartita: MULTIGOL_PARTITA.map(([da, a]) => ({
       da, a, probabilita: fra(totale, da, a),
     })),
+    matrice: (["uno", "x", "due"] as const).flatMap((esito) => {
+      const marginale = esito === "uno" ? uno : esito === "x" ? x : due;
+      return LINEE_TOTALI.map((linea) => ({
+        esito,
+        linea,
+        congiunta: insieme.get(`${esito}|${linea}`) ?? 0,
+        prodotto: marginale * fra(totale, Math.ceil(linea), totale.length - 1),
+      }));
+    }),
   };
 }
 
