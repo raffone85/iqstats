@@ -1376,6 +1376,29 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .engine-gara-quando { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 .engine-gara-chi { font-size: 12.5px; color: var(--card-ink-2); overflow-wrap: anywhere; }
 .engine-gara-valore { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); font-variant-numeric: tabular-nums; }
+/* Piu' letture della stessa gara, insieme. I chip sono controlli, quindi rispettano
+   l'altezza minima tattile e portano un anello di focus percepibile. */
+.combo { display: grid; gap: 12px; }
+.combo-gruppo { display: grid; gap: 6px; }
+.combo-nome { margin: 0; font: 700 10.5px/1.25 var(--font-inter, sans-serif); letter-spacing: .08em; text-transform: uppercase; color: var(--card-ink-3); }
+.combo-voci { display: flex; flex-wrap: wrap; gap: 6px; }
+.combo-chip { min-height: var(--h-control); padding: 0 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel); color: var(--card-ink-2); font: 500 13px/1.2 var(--font-inter, sans-serif); cursor: pointer; transition: border-color 180ms ease, background 180ms ease; }
+.combo-chip:hover { border-color: var(--card-brand); }
+.combo-chip.is-acceso { border-color: var(--card-brand); background: var(--card-brand); color: var(--card-on-brand); font-weight: 600; }
+.combo-esito { padding: 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); }
+.combo-invito { margin: 0; font-size: 13px; color: var(--card-ink-2); }
+.combo-quota { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.combo-quota b { font-family: var(--font-mono, monospace); font-size: 26px; font-weight: 700; color: var(--card-ink); font-variant-numeric: tabular-nums; }
+.combo-quota span { font-size: 12.5px; color: var(--card-ink-3); }
+.combo-nota { margin: 8px 0 0; font-size: 12.5px; color: var(--card-ink-2); }
+.combo-nota .is-sopra { color: var(--card-up); font-family: var(--font-mono, monospace); }
+.combo-nota .is-sotto { color: var(--card-down); font-family: var(--font-mono, monospace); }
+/* La risposta dell'assistente: un riquadro come gli altri, con le sue righe di numeri e il
+   comando che porta alla pagina che li mostra per esteso. */
+.assistente { margin: 0 0 20px; padding: var(--pad-panel); border: 1px solid var(--card-stroke); border-radius: var(--r-panel); background: var(--card-panel); }
+.assistente .squad-player-stats { margin-top: 10px; }
+.assistente-nota { display: block; font-style: normal; font-size: 11px; color: var(--card-ink-3); }
+.assistente-vai { display: inline-flex; align-items: center; margin-top: 6px; text-decoration: none; }
 .ref-stagione { text-align: left; font-family: var(--font-mono, monospace); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ref-data { text-align: left; font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 600; color: var(--card-brand-strong); white-space: nowrap; }
 .ref-ora { display: block; margin-top: 2px; font: 600 10px/1 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }

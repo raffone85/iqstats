@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { attesiDellaGara, mercatiGol } from "../src/server/iqstats/projection/gol.ts";
+import { attesiDellaGara, combinazione, mercatiGol } from "../src/server/iqstats/projection/gol.ts";
 
 /** Le probabilita' sono numeri fra zero e uno: nessun mercato puo' uscirne. */
 function fraZeroEUno(valore: number, dove: string) {
@@ -188,4 +188,55 @@ test("dove le due letture tirano nello stesso verso la congiunta supera il prodo
   // Una vittoria con piu' di 4,5 gol e' piu' probabile di quanto direbbe il prodotto:
   // osservato 7,60% contro 6,13% su 11.330 gare.
   assert.ok(cella.congiunta > cella.prodotto, `${cella.congiunta} contro ${cella.prodotto}`);
+});
+
+test("una condizione sola vale quanto il mercato che la nomina", () => {
+  const m = mercatiGol(1.51, 1.185);
+  const uno = combinazione(1.51, 1.185, [{ tipo: "esito", quale: "uno" }]);
+  assert.ok(Math.abs(uno.congiunta - m.esito.uno) < 1e-12);
+  const over = combinazione(1.51, 1.185, [{ tipo: "totale", verso: "sopra", linea: 2.5 }]);
+  const linea = m.overUnder.find((l) => l.linea === 2.5);
+  assert.ok(Math.abs(over.congiunta - (linea?.sopra ?? 0)) < 1e-12);
+  const gg = combinazione(1.51, 1.185, [{ tipo: "entrambe", segnano: true }]);
+  assert.ok(Math.abs(gg.congiunta - m.gg) < 1e-12);
+});
+
+test("due condizioni incompatibili danno zero, e il prodotto no", () => {
+  // Un pareggio non e' una vittoria interna: la congiunta e' zero, mentre moltiplicare
+  // 44,7% per 25,4% darebbe l'11,4% di una gara che non puo' esistere.
+  const esito = combinazione(1.51, 1.185, [
+    { tipo: "esito", quale: "uno" },
+    { tipo: "esito", quale: "x" },
+  ]);
+  assert.equal(esito.congiunta, 0);
+  assert.ok(esito.prodotto > 0.1, `prodotto ${esito.prodotto}`);
+});
+
+test("la combinazione non e' il prodotto delle sue condizioni", () => {
+  const c = combinazione(1.51, 1.185, [
+    { tipo: "esito", quale: "x" },
+    { tipo: "totale", verso: "sopra", linea: 2.5 },
+  ]);
+  // La stessa casella della matrice della voce 16: 6,61% contro il 12,9% del prodotto.
+  assert.ok(Math.abs(c.congiunta - 0.0661) < 0.005, `congiunta ${c.congiunta}`);
+  assert.ok(c.congiunta < c.prodotto * 0.6, `${c.congiunta} contro ${c.prodotto}`);
+});
+
+test("un risultato esatto implica il suo esito e il suo totale", () => {
+  const solo = combinazione(1.51, 1.185, [{ tipo: "risultato", casa: 2, trasferta: 1 }]);
+  const con = combinazione(1.51, 1.185, [
+    { tipo: "risultato", casa: 2, trasferta: 1 },
+    { tipo: "esito", quale: "uno" },
+    { tipo: "totale", verso: "sopra", linea: 2.5 },
+  ]);
+  // Aggiungere condizioni gia' implicate non cambia la congiunta: se cambiasse, la griglia
+  // non starebbe leggendo la stessa casella per tutte e tre.
+  assert.ok(Math.abs(solo.congiunta - con.congiunta) < 1e-15);
+  assert.ok(con.prodotto < con.congiunta, "il prodotto qui sottostima, e va detto");
+});
+
+test("senza condizioni non si risponde con una probabilita'", () => {
+  const vuota = combinazione(1.51, 1.185, []);
+  assert.equal(vuota.congiunta, 0);
+  assert.equal(vuota.prodotto, 0);
 });

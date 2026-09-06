@@ -7,6 +7,8 @@ import { readFeatureDecision } from "@/server/auth/authorization";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
+import { vetrinaDelleLetture } from "@/server/iqstats/vetrina";
+import { VetrinaSection } from "@/components/vetrina-section";
 import { getUpcomingPredictions, type DashboardPrediction } from "@/server/iqstats/predictions";
 
 export const dynamic = "force-dynamic";
@@ -208,6 +210,8 @@ export default async function PronosticiPage({
     league !== null ||
     order !== "orario";
 
+  const vetrina = vetrinaDelleLetture();
+
   return (
     <ProductShell activeSection="predictions">
       <section className="page-intro signals-intro" aria-labelledby="signals-title">
@@ -227,6 +231,14 @@ export default async function PronosticiPage({
           {result.lettoIl ? ` Lette dalla fonte alle ${ORA.format(new Date(result.lettoIl))}.` : ""}
         </p>
       </section>
+
+      {/* **La vetrina sta sopra i pronostici, e ha il consuntivo dentro.** Sono due letture
+          diverse della stessa attesa: qui la piu' probabile di ogni gara sui sette bersagli
+          del motore, sotto le gare una per una sui mercati dei gol. Se l'artefatto e' vecchio
+          e nessuna delle sue gare deve ancora giocarsi, la sezione non compare. */}
+      {vetrina === null ? null : (
+        <VetrinaSection letture={vetrina.letture} calcolataIl={vetrina.calcolataIl} />
+      )}
 
       <form className="signals-filters" method="get" aria-labelledby="signals-filters-title">
         <h2 id="signals-filters-title" className="signals-filters-title">

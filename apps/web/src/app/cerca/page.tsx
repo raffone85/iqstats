@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AssistenteScheda } from "@/components/assistente-scheda";
 import { ProductShell } from "@/components/product-shell";
+import { rispondi } from "@/server/iqstats/assistente";
 import { cerca } from "@/server/iqstats/ricerca";
 
 export const metadata: Metadata = {
@@ -51,6 +53,12 @@ export default async function CercaPage({ searchParams }: Props) {
   const risultati = await cerca(domanda);
   const quanti = risultati.squadre.length + risultati.arbitri.length;
 
+  // **Una parola sola resta una ricerca, una frase diventa una domanda.** L'assistente si
+  // sveglia solo davanti a piu' parole: cosi' chi scrive «Milan» ha l'elenco di sempre e chi
+  // scrive «come sta il Milan» ha la scheda, senza dover scegliere fra due caselle diverse.
+  const domandaVera = domanda.split(/\s+/).filter(Boolean).length > 1;
+  const risposta = domandaVera ? await rispondi(domanda) : null;
+
   return (
     <ProductShell activeSection="search">
       <div className="oggi-backdrop" aria-hidden="true" />
@@ -82,6 +90,8 @@ export default async function CercaPage({ searchParams }: Props) {
           <button type="submit" className="cerca-invia">Cerca</button>
         </form>
 
+        {risposta === null ? null : <AssistenteScheda risposta={risposta} />}
+
         {domanda === "" ? (
           <p className="dossier-src">
             Si cerca fra le squadre e gli arbitri che <b>abbiamo osservato</b>: sono quelli che
@@ -89,13 +99,19 @@ export default async function CercaPage({ searchParams }: Props) {
             per giorno, campionato e stato.
           </p>
         ) : quanti === 0 ? (
-          <div className="oggi-empty">
-            <h2>Nessun nome contiene «{domanda}»</h2>
-            <p>
-              Si cerca solo fra squadre e arbitri che abbiamo osservato, e il testo deve
-              essere di almeno due caratteri. Prova con una parte del nome.
-            </p>
-          </div>
+          // **Quando l'assistente ha risposto, questo blocco tace.** La frase intera non
+          // corrisponde a nessun nome per definizione - «come sta il Napoli» non e' una
+          // squadra - e dire «nessun nome contiene» sotto una risposta appena data era una
+          // contraddizione, vista guardando la cattura e non le misure.
+          risposta?.capito === true ? null : (
+            <div className="oggi-empty">
+              <h2>Nessun nome contiene «{domanda}»</h2>
+              <p>
+                Si cerca solo fra squadre e arbitri che abbiamo osservato, e il testo deve
+                essere di almeno due caratteri. Prova con una parte del nome.
+              </p>
+            </div>
+          )
         ) : (
           <>
             {risultati.squadre.length > 0 ? (
