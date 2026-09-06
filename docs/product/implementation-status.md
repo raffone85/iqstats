@@ -20,7 +20,7 @@ che dice il falso costa più di un documento che non esiste, perché chi lo legg
 
 ## 1. Che cosa è vivo, per chi apre il sito
 
-Tutte verificate in produzione il 6 settembre: **dodici indirizzi, dodici risposte 200**.
+Verificate in produzione il 6 settembre con una richiesta ciascuna: **diciassette indirizzi, diciassette risposte 200**, comprese le quattro pagine di dettaglio (`/match/210084`, `/squadre/62`, `/arbitri/1830`, `/giocatori/1090`) e `/account`.
 
 | Pagina | Che cosa mostra | Stato |
 | --- | --- | --- |
