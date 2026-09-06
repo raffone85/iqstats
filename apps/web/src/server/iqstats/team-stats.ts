@@ -226,9 +226,13 @@ export interface ProfiloPerLato {
  * Il subito e' la riga gemella della stessa gara - `g.team_id = o.opponent_id` - quindi
  * non e' una colonna nuova ne' una richiesta nuova: e' la stessa tavola, unita a se stessa.
  *
- * La finestra e' quella dichiarata dall'utente per le descrittive: 365 giorni.
+ * La finestra e' la stessa di `profiloSquadra`: le stagioni chieste, oppure i 365 giorni
+ * come ricaduta di chi non ne chiede nessuna.
  */
-export async function profiloPerLato(teamSourceId: number): Promise<ProfiloPerLato | null> {
+export async function profiloPerLato(
+  teamSourceId: number,
+  stagioni: readonly number[] | null = null,
+): Promise<ProfiloPerLato | null> {
   const sql = connessione();
   if (sql === null) return null;
 
@@ -254,8 +258,11 @@ export async function profiloPerLato(teamSourceId: number): Promise<ProfiloPerLa
       join football.team_match_observations g
         on g.match_id = o.match_id and g.team_id = o.opponent_id
       join football.teams t on t.id = o.team_id
+      join football.seasons s on s.id = o.season_id
       where t.source_id = ${teamSourceId}::bigint
-        and o.kickoff_at >= now() - ${FINESTRA_GIORNI}::int * interval '1 day'
+        and ${stagioni === null || stagioni.length === 0
+          ? sql`o.kickoff_at >= now() - ${FINESTRA_GIORNI}::int * interval '1 day'`
+          : sql`s.source_id = any(${sql.array([...stagioni])}::bigint[])`}
       group by o.side, t.name
     `;
     if (righe.length === 0) return null;
@@ -308,8 +315,19 @@ export async function profiloPerLato(teamSourceId: number): Promise<ProfiloPerLa
   }
 }
 
-/** Il profilo di una squadra sugli ultimi 365 giorni, o `null` se non ne ha abbastanza. */
-export async function profiloSquadra(teamSourceId: number): Promise<ProfiloSquadra | null> {
+/**
+ * Il profilo di una squadra, o `null` se non ha abbastanza gare.
+ *
+ * **La finestra e' la stagione, non l'anno.** Con `stagioni` si guardano quelle e basta:
+ * e' il comportamento che il prodotto chiede dal 6 settembre 2026, perche' una media che
+ * somma la stagione scorsa e quella in corso non risponde a «come sta arrivando questa
+ * squadra». Senza `stagioni` restano i 365 giorni, che e' la ricaduta di chi non sa ancora
+ * quale stagione chiedere: chi la usa deve dichiararlo in pagina.
+ */
+export async function profiloSquadra(
+  teamSourceId: number,
+  stagioni: readonly number[] | null = null,
+): Promise<ProfiloSquadra | null> {
   const sql = connessione();
   if (sql === null) return null;
 
@@ -332,8 +350,11 @@ export async function profiloSquadra(teamSourceId: number): Promise<ProfiloSquad
              ${sql.unsafe(medie)}
       from football.team_match_observations o
       join football.teams t on t.id = o.team_id
+      join football.seasons s on s.id = o.season_id
       where t.source_id = ${teamSourceId}::bigint
-        and o.kickoff_at >= now() - ${FINESTRA_GIORNI}::int * interval '1 day'
+        and ${stagioni === null || stagioni.length === 0
+          ? sql`o.kickoff_at >= now() - ${FINESTRA_GIORNI}::int * interval '1 day'`
+          : sql`s.source_id = any(${sql.array([...stagioni])}::bigint[])`}
       group by t.name
     `;
 

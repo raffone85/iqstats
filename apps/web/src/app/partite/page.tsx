@@ -1,3 +1,4 @@
+import { statoInGioco } from "@iqstats/shared";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -69,21 +70,40 @@ function initials(name: string): string {
  * in corso, ne' da giocare, ne' finite, e infilarle in uno dei tre gruppi farebbe sparire
  * dal conto una gara che esiste. Chi le cerca le trova dove ci sono tutte.
  */
+/**
+ * I filtri di stato, con gli stati **della fonte** perche' e' quello che l'elenco porta.
+ *
+ * «Live» non elenca piu' i due stati a mano: la fonte non manda mai «live» ne'
+ * «inprogress», manda `1st_half`, `halftime` e `2nd_half`, e con la lista scritta qui il
+ * filtro trovava zero gare su trentasette in corso. Ora la domanda la fa `statoInGioco`,
+ * che tiene quella lista in un posto solo.
+ */
 const STATI = [
   { chiave: "tutte", nome: "Tutte", stati: null },
-  { chiave: "live", nome: "Live", stati: ["inprogress", "live"] },
-  { chiave: "da-giocare", nome: "Da giocare", stati: ["notstarted", "upcoming"] },
+  { chiave: "live", nome: "Live", stati: "in-gioco" },
+  { chiave: "da-giocare", nome: "Da giocare", stati: ["notstarted", "upcoming", "delayed"] },
   { chiave: "finite", nome: "Finite", stati: ["finished"] },
 ] as const;
+
+/** Vero quando la gara passa il filtro scelto. */
+function passaIlFiltro(stato: string, ammessi: readonly string[] | "in-gioco" | null): boolean {
+  if (ammessi === null) return true;
+  if (ammessi === "in-gioco") return statoInGioco(stato);
+  return ammessi.includes(stato);
+}
 
 type ChiaveStato = (typeof STATI)[number]["chiave"];
 
 function statusInfo(status: string): { label: string; tone: string } {
+  // Gli stati del gioco - primo tempo, intervallo, secondo tempo, supplementari, rigori -
+  // sono tutti «Live»: elencarli qui uno per uno voleva dire dimenticarne tre.
+  if (statoInGioco(status)) return { label: "Live", tone: "live" };
   const map: Record<string, { label: string; tone: string }> = {
     notstarted: { label: "Prossima", tone: "next" },
     upcoming: { label: "Prossima", tone: "next" },
     inprogress: { label: "Live", tone: "live" },
     live: { label: "Live", tone: "live" },
+    delayed: { label: "In ritardo", tone: "warn" },
     finished: { label: "Conclusa", tone: "done" },
     postponed: { label: "Rinviata", tone: "warn" },
     cancelled: { label: "Annullata", tone: "warn" },
@@ -145,7 +165,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
     v.chiave,
     v.stati === null
       ? dellaLega.length
-      : dellaLega.filter((m) => (v.stati as readonly string[]).includes(m.status)).length,
+      : dellaLega.filter((m) => passaIlFiltro(m.status, v.stati)).length,
   ]));
   // **Quante gare non stanno in nessuno dei tre gruppi.** Rinviate, annullate, e quelle con
   // uno stato che la fonte non dichiara: misurato il 29 agosto 2026, sulle 161 gare del
@@ -159,7 +179,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
   const sceltoStati = STATI.find((v) => v.chiave === stato)?.stati ?? null;
   const shown = sceltoStati === null
     ? dellaLega
-    : dellaLega.filter((m) => (sceltoStati as readonly string[]).includes(m.status));
+    : dellaLega.filter((m) => passaIlFiltro(m.status, sceltoStati));
 
   /** L'indirizzo che cambia una cosa sola e conserva le altre due. */
   const indirizzo = (cambio: { date?: string; leagueId?: number | null; stato?: ChiaveStato }) => {
@@ -271,7 +291,7 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
             attivo non c'è nessun punteggio che si muove sotto gli occhi, e annunciare un
             aggiornamento che non si vedrebbe sarebbe una promessa vuota. */}
         <AggiornamentoLive
-          gareLive={shown.filter((m) => m.status === "inprogress" || m.status === "live").length}
+          gareLive={shown.filter((m) => statoInGioco(m.status)).length}
           ogniMs={MATCHES_TTL_MS}
         />
 

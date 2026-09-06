@@ -17,6 +17,7 @@ import {
   normalizeTeamMatchMetrics,
   normalizeTeamProfile,
   normalizeTeamSquad,
+  statoInGioco,
   type TeamMatchMetrics,
   type TeamMetricAverage,
   type TeamMetricKey,
@@ -391,4 +392,16 @@ test("una gara senza arbitro dichiarato non entra nel conteggio", () => {
   // `homeRows` non porta l'identificativo arbitro: nessun record, nessuna invenzione.
   assert.equal(splits.matchLog.every((entry) => entry.refereeId === null), true);
   assert.deepEqual(aggregateTeamReferees(splits.matchLog), []);
+});
+
+test("gli stati con cui la fonte dice «si sta giocando» sono riconosciuti", () => {
+  // Misurati sul calendario della fonte, sette giorni letti il 6 settembre 2026: gli stati
+  // in corso sono 1st_half (18 gare), 2nd_half (17) e halftime (2), e nessuno dei tre era
+  // riconosciuto. «live» e «inprogress» la fonte non li manda mai, ma restano ammessi.
+  for (const stato of ["1st_half", "2nd_half", "halftime", "1ST_HALF", "extra-time", "penalties", "live", "inprogress"]) {
+    assert.equal(statoInGioco(stato), true, `${stato} dovrebbe risultare in gioco`);
+  }
+  for (const stato of ["notstarted", "finished", "postponed", "cancelled", "delayed", "unresolved", "", null, undefined]) {
+    assert.equal(statoInGioco(stato), false, `${stato} non e' una gara in corso`);
+  }
 });

@@ -14,6 +14,8 @@ import { TeamRefereesSection } from "@/components/team-referees-section";
 import { TeamSquadSection } from "@/components/team-squad-section";
 import { VerifiedMediaImage } from "@/components/verified-media-image";
 import { countryCode } from "@/server/iqstats/country-names";
+import { FinestraStagione } from "@/components/finestra-stagione";
+import { finestraDa, stagioniScelte, type StagioniScelte } from "@/server/iqstats/finestra-stagione";
 import { metroDiLega } from "@/server/iqstats/team-metro";
 import { profiloPerLato, profiloSquadra } from "@/server/iqstats/team-stats";
 import {
@@ -37,11 +39,15 @@ type TeamPageProps = {
 };
 
 /**
- * Gare concluse che la stagione corrente deve avere per prendere il posto della
- * precedente: il doppio del campione minimo, così casa e trasferta lo raggiungono
- * entrambe invece di mostrare un blocco vuoto alla prima giornata.
+ * Gare concluse che la stagione corrente deve avere per prendere il posto della precedente.
+ *
+ * **Una, dal 6 settembre 2026.** Era il doppio del campione minimo, cioè sei, e con tre
+ * gare giocate la scheda del Napoli mostrava ancora la stagione 2025/26: corretta come
+ * campione, sbagliata come risposta alla domanda «come sta adesso». La stagione in corso è
+ * il riferimento appena esiste; il campione piccolo non si nasconde, sta scritto accanto a
+ * ogni numero, e chi vuole la stagione piena la sceglie dal selettore.
  */
-const CURRENT_SEASON_THRESHOLD = TEAM_MINIMUM_SAMPLE * 2;
+const CURRENT_SEASON_THRESHOLD = 1;
 
 const kickoffFormatter = new Intl.DateTimeFormat("it-IT", {
   weekday: "short",
@@ -188,8 +194,11 @@ async function MetroBlock({
  * Come `MetroBlock`, legge dalle nostre osservazioni e non dal provider: senza connessione,
  * o sotto le cinque gare, non compare niente invece di comparire vuoto.
  */
-async function StatsBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) {
-  const profilo = await profiloSquadra(teamSourceId);
+async function StatsBlock({ teamSourceId, stagioni }: Readonly<{
+  teamSourceId: number;
+  stagioni: readonly number[];
+}>) {
+  const profilo = await profiloSquadra(teamSourceId, stagioni);
   if (profilo === null) return null;
   return <TeamStatsSection profilo={profilo} />;
 }
@@ -201,8 +210,11 @@ async function StatsBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) 
  * totali perche' risponde alla stessa domanda con una risoluzione piu' fine: i totali
  * dicono la squadra, i lati dicono la squadra in casa e la squadra in trasferta.
  */
-async function PerLatoBlock({ teamSourceId }: Readonly<{ teamSourceId: number }>) {
-  const profilo = await profiloPerLato(teamSourceId);
+async function PerLatoBlock({ teamSourceId, stagioni }: Readonly<{
+  teamSourceId: number;
+  stagioni: readonly number[];
+}>) {
+  const profilo = await profiloPerLato(teamSourceId, stagioni);
   if (profilo === null) return null;
   return <TeamPerLatoSection profilo={profilo} />;
 }
@@ -374,6 +386,32 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
     { currentSeasonByLeague, currentSeasonThreshold: CURRENT_SEASON_THRESHOLD },
   );
 
+  // **La finestra di stagione, letta dall'indirizzo.** Senza competizione scelta non c'e'
+  // una stagione da cui partire: resta la ricaduta dei 365 giorni, e il selettore non
+  // compare invece di offrire una scelta che non cambierebbe niente.
+  const finestra: StagioniScelte = selected === null
+    ? { finestra: "corrente", stagioni: [], etichetta: "gli ultimi dodici mesi" }
+    : await stagioniScelte(
+        Number(selected.leagueId),
+        Number(selected.seasonId),
+        // `singleParam` ammette solo cifre, perche' serve agli identificativi: con «scorsa»
+        // tornava null e la finestra restava sempre quella corrente. Qui il valore e' una
+        // parola, e a validarla ci pensa `finestraDa`, che scarta quello che non conosce.
+        finestraDa(typeof query.stagione === "string" ? query.stagione : undefined),
+      );
+
+  /** Lo stesso indirizzo con un'altra finestra, conservando competizione e stagione. */
+  const indirizzoStagione = (quale: string | null): string => {
+    const p = new URLSearchParams();
+    if (selected !== null) {
+      p.set("leagueId", selected.leagueId);
+      p.set("seasonId", selected.seasonId);
+    }
+    if (quale !== null) p.set("stagione", quale);
+    const coda = p.toString();
+    return coda === "" ? `/squadre/${teamId}` : `/squadre/${teamId}?${coda}`;
+  };
+
   const standing = selected
     ? await getStandingRow(teamId, {
         leagueId: selected.leagueId,
@@ -491,7 +529,7 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           <p className="squad-notice">
             {currentSeasonMatches === 0
               ? `La stagione corrente (${currentSeason.name}) non ha ancora gare concluse.`
-              : `La stagione corrente (${currentSeason.name}) ha ${currentSeasonMatches === 1 ? "una sola gara conclusa" : `solo ${currentSeasonMatches} gare concluse`}, sotto le ${CURRENT_SEASON_THRESHOLD} che servono perché casa e trasferta abbiano entrambe un campione minimo.`}{" "}
+              : `La stagione corrente (${currentSeason.name}) non ha ancora gare concluse in questa competizione.`}{" "}
             I dati qui sotto sono di {competitionLabel} e non vengono mescolati con la nuova
             stagione. Diventerà lei il riferimento appena avrà gare a sufficienza, oppure
             selezionala subito dai filtri.
@@ -562,12 +600,27 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
           </Suspense>
         ) : null}
 
+        {/* **La finestra governa le due sezioni che leggono dalle nostre osservazioni.**
+            Prima guardavano gli ultimi 365 giorni, che a settembre sommano la stagione
+            scorsa e questa senza dirlo: «ultime 39 gare» del Napoli erano due stagioni in
+            un numero solo. Ora la stagione in corso e' il default e la scelta sta
+            nell'indirizzo. */}
+        <FinestraStagione
+          scelta={finestra}
+          cosaGuarda="Che cosa fa in una gara, in casa e in trasferta: le due sezioni qui sotto guardano"
+          voci={[
+            { chiave: "corrente", nome: "Questa stagione", href: indirizzoStagione(null) },
+            { chiave: "scorsa", nome: "La scorsa", href: indirizzoStagione("scorsa") },
+            { chiave: "tutto", nome: "Tutto l'archivio", href: indirizzoStagione("tutto") },
+          ]}
+        />
+
         <Suspense fallback={<PanelSkeleton label="Che cosa fa in una gara" />}>
-          <StatsBlock teamSourceId={Number(teamId)} />
+          <StatsBlock teamSourceId={Number(teamId)} stagioni={finestra.stagioni} />
         </Suspense>
 
         <Suspense fallback={<PanelSkeleton label="In casa e in trasferta" />}>
-          <PerLatoBlock teamSourceId={Number(teamId)} />
+          <PerLatoBlock teamSourceId={Number(teamId)} stagioni={finestra.stagioni} />
         </Suspense>
 
         {selected ? (

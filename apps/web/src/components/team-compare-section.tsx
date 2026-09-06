@@ -135,13 +135,18 @@ export function TeamCompareSection({ a, b }: Props) {
       </h2>
 
       <p className="dossier-src">
-        Medie per gara degli <b>ultimi 365 giorni</b>: {a.nome} su {a.gare} gare dal{" "}
-        {giorno(a.dal)} al {giorno(a.al)}, {b.nome} su {b.gare} gare dal {giorno(b.dal)} al{" "}
-        {giorno(b.al)}. La finestra scavalca il confine di stagione, ed è voluto: dentro la
-        sola stagione corrente le squadre hanno 7,1 gare di media e l&apos;errore della media
-        sui tiri vale 1,84, cioè l&apos;85% della differenza vera fra squadre. Su 365 giorni
-        le gare diventano 30,9 e l&apos;errore scende a 0,87. Le classifiche restano invece
-        dentro la stagione, dove la finestra non si sceglie.
+        Medie per gara della <b>stagione in corso</b>: {a.nome} su {a.gare}{" "}
+        {a.gare === 1 ? "gara" : "gare"} dal {giorno(a.dal)} al {giorno(a.al)}, {b.nome} su{" "}
+        {b.gare} {b.gare === 1 ? "gara" : "gare"} dal {giorno(b.dal)} al {giorno(b.al)}.{" "}
+        {/* **Il campione piccolo si dichiara, non si allarga.** Fino al 6 settembre 2026 la
+            finestra era di 365 giorni e scavalcava il confine di stagione: piu' gare, errore
+            piu' piccolo, ma la domanda diventava «come sono state in un anno» invece di
+            «come stanno adesso». Il numero dell'errore resta qui perche' e' la ragione per
+            cui una differenza piccola non si legge come differenza. */}
+        A inizio stagione le gare sono poche e l&apos;errore della media pesa: sui tiri, con
+        sette gare a testa, vale 1,84, cioè l&apos;85% della differenza vera fra due squadre.
+        Per questo ogni riga qui sotto dice se la differenza <b>regge</b> o resta dentro
+        l&apos;errore, invece di lasciar confrontare due numeri nudi.
       </p>
 
       {principali.length === 0 ? (

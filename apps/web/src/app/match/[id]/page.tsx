@@ -1,3 +1,4 @@
+import { statoInGioco } from "@iqstats/shared";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -1045,7 +1046,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             {/* A gara in corso il punteggio in testata si muove da solo. Fuori dalla gara in
                 corso il componente non rende nulla e non arma nessun timer. */}
             <AggiornamentoLive
-              gareLive={detail.status === "inprogress" || detail.status === "live" ? 1 : 0}
+              gareLive={statoInGioco(detail.status) ? 1 : 0}
               ogniMs={MATCHES_TTL_MS}
             />
           </div>
@@ -1283,7 +1284,17 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             perche' qui comincia la prima: assetto, quando spingono, come si presentano e
             il ritmo per tempo stanno tutte dentro questo capitolo. */}
         {insight.allowed && finestra !== null ? (
-          <FinestraStagione matchId={id} scelta={finestra} />
+          <FinestraStagione
+            scelta={finestra}
+            cosaGuarda="Assetto, quando spingono, come si presentano e il ritmo per tempo guardano"
+            voci={[
+              // «corrente» e' il valore predefinito: il suo collegamento non porta il
+              // parametro, cosi' l'indirizzo condiviso piu' spesso resta quello pulito.
+              { chiave: "corrente", nome: "Questa stagione", href: `/match/${id}` },
+              { chiave: "scorsa", nome: "La scorsa", href: `/match/${id}?stagione=scorsa` },
+              { chiave: "tutto", nome: "Tutto l'archivio", href: `/match/${id}?stagione=tutto` },
+            ]}
+          />
         ) : null}
 
         {/* Il pannello sta fuori dalla condizione delle letture perche' il ritmo per tempo

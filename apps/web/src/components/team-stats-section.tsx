@@ -1,4 +1,4 @@
-// Che cosa fa questa squadra in una gara, sugli ultimi 365 giorni.
+// Che cosa fa questa squadra in una gara, nella finestra di stagione scelta in pagina.
 //
 // **Non ripete «Casa contro trasferta».** Quella tabella viene dal provider, guarda la sola
 // stagione corrente e divide i due lati del campo. Qui si dice un'altra cosa: la media su
@@ -47,7 +47,7 @@ export function TeamStatsSection({ profilo }: Props) {
     <section className="dossier-panel" aria-labelledby="stat-squadra-title">
       <p className="dossier-kick">Che cosa fa in una gara</p>
       <h2 id="stat-squadra-title" className="sr-only-heading">
-        Medie per gara di {profilo.nome} negli ultimi 365 giorni
+        Medie per gara di {profilo.nome}, su {profilo.gare} {profilo.gare === 1 ? "gara" : "gare"} osservate
       </h2>
 
       <Caselle voci={principali} />

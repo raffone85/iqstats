@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductShell } from "@/components/product-shell";
+import { stagioneInCorso } from "@/server/iqstats/finestra-stagione";
 import { TeamCompareSection } from "@/components/team-compare-section";
 import {
   BERSAGLI_PUBBLICI,
@@ -113,8 +114,17 @@ export default async function SquadrePage({ searchParams }: Props) {
     (r) => r.sourceId === secondaScelta && r.sourceId !== primaId,
   )?.sourceId ?? classifica.find((r) => r.sourceId !== primaId)?.sourceId;
 
+  // **Il confronto guarda la stagione in corso, come la classifica sopra.** Guardava gli
+  // ultimi 365 giorni, che a settembre sommano due stagioni: il campione era piu' grande e
+  // la domanda un'altra. Se la competizione non ha una stagione in archivio restano i 365
+  // giorni, e la pagina lo dichiara.
+  const stagioneDelConfronto = confronto ? await stagioneInCorso(scelta.sourceId) : null;
+  const stagioniDelConfronto = stagioneDelConfronto === null ? null : [stagioneDelConfronto];
   const [profiloA, profiloB] = confronto && primaId !== undefined && secondaId !== undefined
-    ? await Promise.all([profiloSquadra(primaId), profiloSquadra(secondaId)])
+    ? await Promise.all([
+      profiloSquadra(primaId, stagioniDelConfronto),
+      profiloSquadra(secondaId, stagioniDelConfronto),
+    ])
     : [null, null];
 
   const indirizzo = (aggiunte: Record<string, string | number>) => {
@@ -147,8 +157,10 @@ export default async function SquadrePage({ searchParams }: Props) {
         <p className="home-lede">
           Ogni media è calcolata sulle nostre osservazioni, non su quelle di chi ci passa i
           dati, e porta accanto il campione su cui poggia. La classifica sta dentro la
-          stagione in corso della competizione; il confronto fra due squadre guarda invece gli
-          ultimi 365 giorni, dove il campione è tre volte più grande.
+          stagione in corso della competizione, e dal 6 settembre 2026 <b>anche il confronto
+          fra due squadre</b>: guardava gli ultimi 365 giorni, che a settembre sommano due
+          stagioni e rispondono a un&apos;altra domanda. Il campione è più piccolo e sta
+          scritto accanto a ogni numero.
         </p>
 
         <nav className="partite-index" aria-label="Vista">

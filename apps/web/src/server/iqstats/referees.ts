@@ -81,6 +81,11 @@ export interface ProfiloArbitro {
    * principale dell'arbitro.
    */
   readonly finestra: "stagione" | "competizione";
+  /**
+   * Le stagioni guardate davvero, con il loro nome, quando la scheda ne ha chiesta una sola.
+   * Vuoto quando si guardano tutte: allora la finestra e' la competizione intera.
+   */
+  readonly stagioniGuardate: readonly number[];
   readonly competitionSourceId: number | null;
   readonly gare: number;
   readonly media: MediaDiGara;
@@ -225,9 +230,60 @@ async function finestraDelProfilo(
  * domanda. Senza contesto - la scheda dell'arbitro - resta la competizione in cui ha diretto
  * di piu', che li' e' quella giusta.
  */
+/**
+ * La competizione in cui l'arbitro ha diretto di piu', e la stagione piu' recente che vi ha
+ * arbitrato.
+ *
+ * Sta a parte dalla scheda perche' la scheda ha bisogno di sapere **quale** stagione
+ * chiedere prima di chiederla, e rifare la query grande due volte per scoprirlo costerebbe
+ * il doppio. Qui si legge solo quello che serve alla scelta.
+ */
+export async function competizioneDellArbitro(
+  sourceId: number,
+): Promise<{ readonly competizione: number; readonly stagione: number } | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+  try {
+    const righe = await sql<Array<{ competizione: string | null; stagione: string | null }>>`
+      with per_gara as (${sql.unsafe(PER_GARA)}),
+      sua as (
+        select p.competition_id, p.season_id, max(p.quando) as ultima, count(*) as gare
+        from per_gara p
+        join football.referees r on r.id = p.referee_id
+        where r.source_id = ${sourceId}::bigint
+        group by 1, 2
+      ),
+      principale as (
+        select competition_id from sua group by 1 order by sum(gare) desc limit 1
+      )
+      select c.source_id::text as competizione, s.source_id::text as stagione
+      from sua
+      join principale p on p.competition_id = sua.competition_id
+      join football.competitions c on c.id = sua.competition_id
+      join football.seasons s on s.id = sua.season_id
+      order by sua.ultima desc
+      limit 1
+    `;
+    const riga = righe[0];
+    if (riga === undefined || riga.competizione === null || riga.stagione === null) return null;
+    return { competizione: Number(riga.competizione), stagione: Number(riga.stagione) };
+  } catch {
+    return null;
+  }
+}
+
 export async function profiloArbitro(
   sourceId: number,
   contesto?: ContestoDiGara,
+  /**
+   * Le stagioni da guardare, per la scheda dell'arbitro.
+   *
+   * **Serve perche' «come arbitra» e «come ha arbitrato in carriera» sono due domande.**
+   * Senza questo elenco la scheda mostrava tutte le stagioni della sua competizione, e a
+   * settembre quel numero e' la stagione scorsa travestita da presente. Vuoto o assente:
+   * tutte, che resta il comportamento del dossier.
+   */
+  stagioni: readonly number[] | null = null,
 ): Promise<ProfiloArbitro | null> {
   const sql = connessione();
   if (sql === null) return null;
@@ -239,7 +295,15 @@ export async function profiloArbitro(
     const finestra = contesto === undefined ? "competizione" : await finestraDelProfilo(
       sql, sourceId, contesto,
     );
-    const scelte = contesto === undefined ? sql`select * from per_gara` : sql`
+    const perStagioni = stagioni !== null && stagioni.length > 0;
+    const scelte = contesto === undefined
+      ? (perStagioni
+        ? sql`
+          select p.* from per_gara p
+          join football.seasons s on s.id = p.season_id
+          where s.source_id = any(${sql.array([...stagioni])}::bigint[])`
+        : sql`select * from per_gara`)
+      : sql`
       select * from per_gara
       where competition_id = (select id from football.competitions
                                where source_id = ${contesto.competitionSourceId}::bigint)
@@ -319,7 +383,8 @@ export async function profiloArbitro(
       nome: riga.name,
       paese: riga.country_name,
       competizione: riga.competizione,
-      finestra,
+      finestra: perStagioni ? "stagione" : finestra,
+      stagioniGuardate: perStagioni ? [...(stagioni ?? [])] : [],
       competitionSourceId: riga.competition_source_id === null
         ? null : Number(riga.competition_source_id),
       gare: Number(riga.gare),
