@@ -3,9 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArbitroScheda } from "@/components/arbitro-scheda";
+import { FinestraStagione } from "@/components/finestra-stagione";
 import { ProductShell } from "@/components/product-shell";
+import { finestraDa, stagioniScelte, type StagioniScelte } from "@/server/iqstats/finestra-stagione";
 import { getReferee } from "@/server/iqstats/match-context";
 import {
+  competizioneDellArbitro,
   gareDirette,
   medieDelPeriodo,
   metriDiLega,
@@ -21,7 +24,10 @@ export const metadata: Metadata = {
   description: "Falli e cartellini di un direttore di gara, con il campione e il metro dichiarati.",
 };
 
-type Props = { params: Promise<{ refereeId: string }> };
+type Props = {
+  params: Promise<{ refereeId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 const GIORNO: Intl.DateTimeFormatOptions = {
   day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Rome",
@@ -67,13 +73,31 @@ function Posizione({ posizione, cosa }: {
   );
 }
 
-export default async function ArbitroPage({ params }: Props) {
+export default async function ArbitroPage({ params, searchParams }: Props) {
   const { refereeId } = await params;
   const identificativo = Number(refereeId);
   if (!Number.isSafeInteger(identificativo) || identificativo <= 0) notFound();
 
-  const p = await profiloArbitro(identificativo);
+  // **La scheda parte dalla stagione in corso.** Prima guardava tutte le stagioni della sua
+  // competizione, e a settembre quel numero e' la stagione scorsa travestita da presente:
+  // sulla stagione in corso la mediana e' due gare dirette, e chi legge deve vedere quelle
+  // due con il loro campione, non una media di due anni. Chi vuole la storia la sceglie.
+  const query = await searchParams;
+  const dove = await competizioneDellArbitro(identificativo);
+  const finestra: StagioniScelte = dove === null
+    ? { finestra: "tutto", stagioni: [], etichetta: "tutte le sue gare" }
+    : await stagioniScelte(
+        dove.competizione,
+        dove.stagione,
+        finestraDa(typeof query.stagione === "string" ? query.stagione : undefined),
+      );
+
+  const p = await profiloArbitro(identificativo, undefined, finestra.stagioni);
   if (p === null) notFound();
+
+  /** Lo stesso indirizzo con un'altra finestra. */
+  const indirizzoStagione = (quale: string | null): string =>
+    quale === null ? `/arbitri/${refereeId}` : `/arbitri/${refereeId}?stagione=${quale}`;
 
   // Le gare si leggono una volta sola e servono a tre blocchi: la tabella per stagione e
   // competizione, le ultime cinque e l'elenco della competizione principale. La carriera
@@ -101,12 +125,31 @@ export default async function ArbitroPage({ params }: Props) {
           <span className="oggi-kick">{p.competizione}</span>
           <span className="oggi-line" aria-hidden="true" />
           <span className="oggi-src">
-            {p.gare} gare dirette
+            {p.gare} {p.gare === 1 ? "gara diretta" : "gare dirette"}
             {p.ultima === null ? "" : ` · fino al ${giorno(p.ultima)}`}
           </span>
         </div>
 
         <h1 id="arbitro-title" className="squad-title">{p.nome}</h1>
+
+        <FinestraStagione
+          scelta={finestra}
+          cosaGuarda="Le medie, il metro e la posizione fra i colleghi guardano"
+          voci={[
+            { chiave: "corrente", nome: "Questa stagione", href: indirizzoStagione(null) },
+            { chiave: "scorsa", nome: "La scorsa", href: indirizzoStagione("scorsa") },
+            { chiave: "tutto", nome: "Tutto l'archivio", href: indirizzoStagione("tutto") },
+          ]}
+        />
+
+        {p.gare < 5 ? (
+          <p className="squad-notice">
+            <b>Poche gare per una media.</b> {p.gare === 1 ? "Una sola gara diretta" : `${p.gare} gare dirette`}{" "}
+            in {finestra.etichetta}: un numero così racconta quelle serate, non il metro di
+            questo arbitro. Per giudicare come dirige, guarda la stagione scorsa o tutto
+            l&apos;archivio qui sopra.
+          </p>
+        ) : null}
         <p className="home-lede">
           {p.paese === null ? "Paese non dichiarato dalla fonte." : `Arbitro di ${p.paese}.`}{" "}
           Tutte le medie che seguono sono calcolate sulle <b>nostre</b> osservazioni, su{" "}
