@@ -232,7 +232,24 @@ piede; i termini invece sono una pagina sul loro dominio.
     giro su 1.200 gare: 547 con letture, **1.409 letture, 936 prese, 66,4% contro il 67,1%
     promesso**; per fascia 62,1 contro 58,6 (50-60%), 62,3 contro 64,4 (60-70%), 74,8 contro
     74,0 (70-80%), **72,9 contro 81,6 (80-90%)**. Due minuti e quattro secondi.
-    **La vetrina non e' pubblicata, e la ragione e' misurata.** `scripts/vetrina-letture.ts`
+    **La vetrina e' pubblicata il 6 settembre 2026, e il criterio e' cambiato per tutti.**
+    `npm run criterio-vetrina` ha confrontato cinque regole sulle stesse candidate di 1.200
+    gare chiuse, contando la lettura in cima a ogni gara: la forza rendeva **63,3% su 65,1%
+    promesso**, la regola nuova rende **77,3% su 76,6%** (intervallo di Wilson 73,7-80,6).
+    La regola nuova e' **la piu' probabile dentro la fascia fino all'ottanta per cento**, dove
+    il consuntivo dice che promesso e reso coincidono; a parita' di punto percentuale decide
+    l'affidabilita', perche' col tetto le prime si schiacciano contro il tetto e ordinarle per
+    il quarto decimale sarebbe ordinare rumore.
+    **Il controllo che aveva bocciato la vetrina, ora contato:** le letture sopra sia alla base
+    di lega sia alla storia della squadra scendono dal **44,3% al 26,1%**, e quelle oltre
+    quaranta punti dalla frequenza delle squadre da 0,9% a **zero**.
+    **Quello che il criterio non sistema, e sta scritto:** nella fascia 50-60% rende 41,8%
+    contro il 59,4% promesso, su 55 letture. E' l'unica fascia dove la promessa non regge, e il
+    consuntivo la mostra come mostra le altre.
+    Il consuntivo rifatto con la regola nuova: **2.055 letture su 581 gare, 1.445 prese, 70,3%
+    contro 71,1%**, e la fascia 80-90% non esiste piu'. La vetrina sta in cima a `/pronostici`,
+    legge l'artefatto di `npm run vetrina-letture`, e le gare gia' cominciate escono da sole.
+    **La storia di come si e' arrivati qui.** `scripts/vetrina-letture.ts`
     esiste e gira - 131 gare in arrivo in un giorno, 56 con una lettura, 14,8 s - ma la
     forza (`|probabilita - base| x affidabilita`) **seleziona per costruzione gli scostamenti
     piu' grandi**, e in cima finisce la coda degli errori del modello. Confrontate le sette
@@ -263,8 +280,22 @@ piede; i termini invece sono una pagina sul loro dominio.
     portano `aria-pressed` e sono alti **44 px**.
     *Costo:* **+54 px a porta chiusa** alle quattro larghezze; il blocco misura 678 px a 375,
     502 a 768, 415 a 1024 e 1440 quando si apre. Zero overflow e zero sotto AA.
-19. **Assistente conversazionale.** *Criterio:* risponde solo con numeri che la pagina
-    saprebbe mostrare, e dichiara che può sbagliare.
+19. ~~**Assistente conversazionale.**~~ — **fatto il 6 settembre 2026, senza modello.** Su
+    `/cerca` una parola sola resta una ricerca, una frase diventa una domanda: «come sta il
+    Napoli» apre la scheda della squadra, «come arbitra Maresca» quella dell'arbitro, «che
+    tempo fa» dichiara di non aver capito.
+    **Nessun modello, e non e' una rinuncia: e' il criterio.** Un modello che scrive la
+    risposta puo' sempre inventare una cifra e servirebbe una guardia da misurare; qui la
+    domanda sceglie **quale** scheda mostrare, e i numeri escono da `profiloSquadra` e
+    `profiloArbitro`, le stesse funzioni che disegnano le pagine. Inventare e' impossibile
+    perche' niente viene scritto: viene solo scelto. L'avviso dice anche **come** puo'
+    sbagliare, cioe' scegliendo la scheda sbagliata.
+    *Verificato incrociando i numeri:* «come sta il Napoli» scrive «Gol fatti 1,5 su 39 gare»,
+    e la stessa media interrogata sul livello dati da' 1,5 su 39.
+    **Due difetti trovati provando domande vere e guardando la cattura:** «quanti falli fischia
+    Orsato» cercava «falli orsato» e non trovava nessuno; e sotto la risposta la pagina
+    scriveva «Nessun nome contiene "come sta il Napoli"», contraddicendo la risposta appena
+    data. Corretti tutti e due, con una prova sul primo.
 
 ## Blocco 5 — i dati che loro non hanno
 
