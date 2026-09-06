@@ -157,6 +157,32 @@ piede; i termini invece sono una pagina sul loro dominio.
     `tasks/giocatori-cartellini-e-marcatori.md`**, con il segnale gia' misurato su 380 gare
     di Serie A: base del giallo 8,9% e fattore piu' forte 1,52x, base del gol 7,4% e fattore
     piu' forte 2,16x. Nessuna lettura in pagina prima della taratura.
+    **Quella lettura e' in pagina dal 31 agosto** (`match-giocatori-section.tsx`, importato da
+    `app/match/[id]/page.tsx`, fase 3 del documento del seguito): «interfaccia non iniziata»
+    valeva per la **scheda del giocatore**, non per il dossier.
+    **La scheda del giocatore e' fatta il 6 settembre 2026.** `/giocatori/[playerId]` con tre
+    blocchi in quest'ordine — stagione in corso, stagione precedente, carriera — raggiunta dai
+    nomi della rosa, che prima non portavano da nessuna parte.
+    **Il contratto e' misurato:** `players/{id}/stats/` pagina a cinquanta e **taglia a
+    duecento** qualunque `limit` piu' alto (su Neres `limit=500` rende comunque 200 righe su
+    `count` 359; con `offset` le 359 arrivano in **due chiamate, 1,3 s**), e le righe **non
+    portano data ne' competizione**: la separazione per stagione la fa la fonte con
+    `?season_id=`, una chiamata per stagione.
+    **Il contesto delle gare non viene dal nostro livello dati, ed e' misurato:** dei 359
+    `event_id` di Neres, `app_match_read_model` ne riconosce **3** e `football.matches` **20**,
+    perche' il read model dell'app tiene **solo la stagione in corso**. Da qui la forma a
+    totali e non a elenco di gare, che resta la voce 22.
+    *Misurato in pagina:* David Neres (1090) Serie A 26/27 tre gare e 38 minuti, Serie A 25/26
+    diciassette gare, 925 minuti, 3 gol e 3 assist, carriera 359 gare, 18.219 minuti, 70 gol e
+    cinque squadre; Alessandro Buongiorno (1085), infortunato e senza gare quest'anno, dichiara
+    l'assenza invece di mostrare una griglia di zeri. Zero overflow e zero sotto AA a 375, 768,
+    1024 e 1440 px; altezze 3.099 / 2.269 / 2.253 / 2.264 px.
+    **Errore vero corretto nel documento di copertura:** `docs/product/copertura-giocatori.md`
+    §1 diceva che i dati per giocatore non stanno nel nostro livello dati.
+    `football.player_match_observations` ne ha **457.416 righe su 10.968 gare e 57 stagioni**,
+    con sette colonne e **senza `goals`**.
+    **Resta aperta la classifica di stagione** del punto 3 del §8 di quel documento: marcatori,
+    ammoniti e falli per campionato, con le gare coperte su quelle giocate scritte accanto.
 16. **Combo e matrice esito × over/under.** *Criterio:* nessuna probabilità composta senza
     dichiarare la correlazione fra le due linee.
 17. **Vetrina dei prossimi giorni.** Le letture più forti in arrivo. *Criterio:* accanto
