@@ -225,6 +225,45 @@ export function mediaOsservata(
   return campione === 0 ? null : { media: somma / campione, campione };
 }
 
+export interface GaraOsservata {
+  readonly matchId: number;
+  readonly quando: string;
+  readonly avversarioId: number;
+  readonly valore: number;
+}
+
+/**
+ * Le gare che compongono `mediaOsservata`, una per una.
+ *
+ * **E' la stessa selezione, non una simile:** stesso lato, stessa stagione, stesso scarto
+ * dei valori mancanti. Il filtro e' ripetuto invece di essere condiviso, e non e' una
+ * svista: far calcolare la media da questa lista ne cambierebbe l'ordine di somma, e il
+ * motore ha una prova di parita' con Python che confronta quei numeri fino all'ultima
+ * cifra. Tre righe duplicate costano meno di una divergenza fra due linguaggi.
+ * La prova `l'elenco e la media dicono la stessa cosa` tiene insieme le due funzioni.
+ */
+export function gareOsservate(
+  righe: readonly OsservazioneSquadraGara[],
+  target: string,
+  lato: Lato,
+  stagione: number,
+): readonly GaraOsservata[] {
+  const gare: GaraOsservata[] = [];
+  for (const riga of righe) {
+    if (riga.lato !== lato || riga.stagione !== stagione) continue;
+    const valore = riga.prodotte[target];
+    if (valore === null || valore === undefined) continue;
+    gare.push({
+      matchId: riga.matchId,
+      quando: riga.quando,
+      avversarioId: riga.opponentId,
+      valore,
+    });
+  }
+  // Dalla piu' recente: e' l'ordine in cui si guarda la forma di una squadra.
+  return gare.sort((prima, dopo) => dopo.quando.localeCompare(prima.quando));
+}
+
 /**
  * Il livello dati del motore: dalle osservazioni conservate al materiale di una gara.
  *
@@ -238,6 +277,22 @@ export class ProjectionObservationStore {
 
   constructor(sql: Sql) {
     this.#sql = sql;
+  }
+
+  /**
+   * I nomi delle squadre che compaiono negli elenchi di gare.
+   *
+   * Le osservazioni tengono l'identificativo interno e non il nome: senza questa lettura
+   * l'elenco direbbe «contro 713», che non e' un avversario ma un numero. Una sola
+   * interrogazione per dossier, sugli identificativi che l'elenco nomina davvero.
+   */
+  async nomiDelleSquadre(ids: readonly number[]): Promise<ReadonlyMap<number, string>> {
+    const distinti = [...new Set(ids)];
+    if (distinti.length === 0) return new Map();
+    const righe = await this.#sql<{ id: string; name: string }[]>`
+      select id::text, name from football.teams where id = any(${this.#sql.array(distinti)}::bigint[])
+    `;
+    return new Map(righe.map((riga) => [Number(riga.id), riga.name]));
   }
 
   /** Le osservazioni di una gara, entrambe le squadre, per riempire il «concesso». */

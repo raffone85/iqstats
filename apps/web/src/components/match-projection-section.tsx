@@ -9,6 +9,7 @@ import type {
   OsservatoDelBersaglio,
   ProiezioniDellaGara,
 } from "@/server/iqstats/projection-runtime";
+import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match";
@@ -195,6 +196,60 @@ function Voce({ chi, atteso, intervallo, osservato, dove }: {
   );
 }
 
+const GIORNO_BREVE: Intl.DateTimeFormatOptions = {
+  day: "numeric", month: "short", timeZone: "Europe/Rome",
+};
+
+function giornoBreve(iso: string): string {
+  const data = new Date(iso);
+  return Number.isNaN(data.getTime()) ? "data assente" : data.toLocaleDateString("it-IT", GIORNO_BREVE);
+}
+
+/**
+ * Le gare che compongono le due medie osservate, una per una.
+ *
+ * **Non e' un secondo campione:** sono le stesse righe che fanno il numero scritto sopra,
+ * quindi la loro media e' quella media. Una porta sola per famiglia, come per le scale:
+ * due comandi per card costerebbero 88 px a famiglia, e sono sette.
+ */
+function Elenco({ casa, trasferta, gareCasa, gareTrasferta }: {
+  readonly casa: string;
+  readonly trasferta: string;
+  readonly gareCasa: readonly GaraOsservataConNome[];
+  readonly gareTrasferta: readonly GaraOsservataConNome[];
+}) {
+  const gruppi = [
+    { chi: casa, dove: "in casa", gare: gareCasa },
+    { chi: trasferta, dove: "fuori casa", gare: gareTrasferta },
+  ].filter((gruppo) => gruppo.gare.length > 0);
+  if (gruppi.length === 0) return null;
+  const quante = gruppi.reduce((totale, gruppo) => totale + gruppo.gare.length, 0);
+
+  return (
+    <details className="engine-scala">
+      <summary>
+        {quante === 1 ? "la gara che fa queste medie" : `le ${quante} gare che fanno queste medie`}
+      </summary>
+      {gruppi.map((gruppo) => (
+        <div className="engine-scala-gruppo" key={gruppo.chi}>
+          <p className="engine-scala-chi">
+            {gruppo.chi}, {gruppo.dove}
+          </p>
+          <ol className="engine-gare">
+            {gruppo.gare.map((gara) => (
+              <li key={`${gara.quando}-${gara.avversario}`}>
+                <span className="engine-gara-quando">{giornoBreve(gara.quando)}</span>
+                <span className="engine-gara-chi">{gara.avversario}</span>
+                <b className="engine-gara-valore">{valore(gara.valore)}</b>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </details>
+  );
+}
+
 /** Le scale delle soglie di una famiglia, tutte dietro un comando solo. */
 function Scale({ gruppi }: {
   readonly gruppi: readonly { readonly chi: string; readonly linee: readonly Linea[] | null }[];
@@ -322,6 +377,12 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
           { chi: trasferta, linee: bersaglio.linee.trasferta },
           { chi: "Totale gara", linee: bersaglio.totale?.linee ?? null },
         ]}
+      />
+      <Elenco
+        casa={casa}
+        trasferta={trasferta}
+        gareCasa={osservato?.gareCasa ?? []}
+        gareTrasferta={osservato?.gareTrasferta ?? []}
       />
       <Affidabilita bersaglio={bersaglio} />
     </li>

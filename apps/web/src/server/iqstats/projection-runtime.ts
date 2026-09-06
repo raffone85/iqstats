@@ -15,6 +15,7 @@ import { componiIngresso } from "./projection/snapshot.ts";
 import type { MaterialeDellaGara, OsservazioneSquadraGara } from "./projection/snapshot.ts";
 import type { Lato } from "./projection/asof/contratto.ts";
 import {
+  gareOsservate,
   mediaOsservata,
   ProjectionObservationStore,
   type GaraDaPrevedere,
@@ -137,6 +138,21 @@ export interface OsservatoDelBersaglio {
   readonly casa: MediaOsservata | null;
   /** La squadra ospite, nelle sue gare fuori casa. */
   readonly trasferta: MediaOsservata | null;
+  /**
+   * Le gare che compongono quelle due medie, una per una, dalla piu' recente.
+   *
+   * Non sono un secondo campione: sono **le stesse righe**, contate invece che mediate.
+   * Chi legge «12,4 su 5 gare» puo' vedere quali cinque, e con quale avversario.
+   */
+  readonly gareCasa: readonly GaraOsservataConNome[];
+  readonly gareTrasferta: readonly GaraOsservataConNome[];
+}
+
+export interface GaraOsservataConNome {
+  readonly quando: string;
+  /** Il nome dell'avversario, o il suo identificativo dove il livello dati non lo espone. */
+  readonly avversario: string;
+  readonly valore: number;
 }
 
 export interface GolDellaGara {
@@ -337,12 +353,31 @@ export async function proiezioniDellaGara(
     // L'osservato costa zero richieste e zero interrogazioni nuove: sono le stesse righe
     // gia' lette per proiettare, contate invece che modellate.
     const osservate: Record<string, OsservatoDelBersaglio> = {};
-    for (const bersaglio of completi) {
-      osservate[bersaglio.target] = {
-        casa: mediaOsservata(materialeCasa.squadra, bersaglio.target, "home", gara.seasonId),
+    const elenchi = completi.map((bersaglio) => ({
+      target: bersaglio.target,
+      casa: gareOsservate(materialeCasa.squadra, bersaglio.target, "home", gara.seasonId),
+      trasferta: gareOsservate(materialeTrasferta.squadra, bersaglio.target, "away", gara.seasonId),
+    }));
+    // Una lettura sola per tutto il dossier: gli avversari dei sette bersagli sono quasi
+    // sempre gli stessi, e chiederli bersaglio per bersaglio sarebbe sette volte lo stesso.
+    const nomi = await store.nomiDelleSquadre(
+      elenchi.flatMap((voce) => [...voce.casa, ...voce.trasferta].map((g) => g.avversarioId)),
+    );
+    const conNome = (gare: readonly { quando: string; avversarioId: number; valore: number }[]) =>
+      gare.map((g) => ({
+        quando: g.quando,
+        avversario: nomi.get(g.avversarioId) ?? `squadra ${g.avversarioId}`,
+        valore: g.valore,
+      }));
+
+    for (const voce of elenchi) {
+      osservate[voce.target] = {
+        casa: mediaOsservata(materialeCasa.squadra, voce.target, "home", gara.seasonId),
         trasferta: mediaOsservata(
-          materialeTrasferta.squadra, bersaglio.target, "away", gara.seasonId,
+          materialeTrasferta.squadra, voce.target, "away", gara.seasonId,
         ),
+        gareCasa: conNome(voce.casa),
+        gareTrasferta: conNome(voce.trasferta),
       };
     }
 
