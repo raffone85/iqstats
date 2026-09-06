@@ -1,5 +1,22 @@
-// Quale criterio puo' reggere una vetrina? Cinque regole d'ordinamento, misurate insieme
+// Quale criterio puo' reggere una vetrina? Sei regole d'ordinamento, misurate insieme
 // sulle stesse gare chiuse.
+//
+// **L'esito del 6 settembre 2026, su 1.200 gare chiuse** (preso su promesso, fra tutte le
+// letture e fra le sole prime di ogni gara):
+//
+//   forza                        66,4% su 67,1% (1409)  |  63,3% su 65,1% (540)
+//   probabilita                  71,1% su 72,8% (2055)  |  77,0% su 80,0% (560)
+//   probabilita-per-affidabilita 71,1% su 72,8% (2055)  |  76,5% su 78,2% (545)
+//   fascia-tarata                70,1% su 71,0% (2055)  |  77,3% su 76,6% (560)
+//   fascia-tarata-sopra-la-lega  65,1% su 69,1% (1782)  |  73,1% su 75,2% (550)
+//   concorde-con-la-squadra      71,3% su 72,0% (1790)  |  76,6% su 79,5% (492)
+//
+// **`fascia-tarata` resta**, ed e' il criterio di produzione: e' il solo che in vetrina
+// rende piu' di quanto promette. La sesta regola e' nata da un'obiezione ragionevole - una
+// lettura sotto la frequenza della lega dice meno di «gioca sempre quella linea in quel
+// campionato» - e la misura la boccia: togliendo le letture sotto la base si perdono cinque
+// punti di riuscita. La base di lega e' un metro del campionato, non una previsione della
+// singola gara, e usarla come filtro scarta le gare in cui il modello ha ragione.
 //
 // **Perche' esiste.** Il criterio di oggi - `|probabilita - base di lega| x affidabilita` -
 // seleziona per costruzione gli scostamenti piu' grandi, e il 6 settembre 2026 si e' visto
@@ -130,6 +147,22 @@ const CRITERI: readonly Criterio[] = [
       unaPerBersaglio(
         letture
           .filter((l) => l.probabilita <= 0.8)
+          .slice()
+          .sort((a, b) =>
+            (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))
+            || (b.affidabilita - a.affidabilita)),
+      ),
+  },
+  {
+    nome: "fascia-tarata-sopra-la-lega",
+    spiegazione:
+      "la fascia tarata, ma solo fra le letture che stanno sopra la frequenza della lega: "
+      + "una lettura sotto la base dice meno di «gioca sempre quella linea in quel campionato»",
+    scegli: (letture) =>
+      unaPerBersaglio(
+        letture
+          .filter((l) => l.probabilita <= 0.8)
+          .filter((l) => l.base !== null && l.probabilita * 100 > l.base)
           .slice()
           .sort((a, b) =>
             (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))

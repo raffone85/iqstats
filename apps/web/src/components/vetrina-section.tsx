@@ -11,6 +11,8 @@
 // in cima la coda degli errori del modello.
 import Link from "next/link";
 
+import { articoloDiPercentuale } from "@/lib/italiano";
+
 import type { VoceDiVetrina } from "@/server/iqstats/vetrina";
 
 import { FAMIGLIE } from "./match-projection-section";
@@ -80,7 +82,7 @@ export function VetrinaSection({ letture, calcolataIl }: Props) {
                     · {chi}
                     {voce.base === null
                       ? " · non sappiamo quanto sia normale in questa lega"
-                      : ` · in questa lega succede il ${Math.round(voce.base)}% delle volte`}
+                      : ` · in questa lega succede ${articoloDiPercentuale(voce.base)}${Math.round(voce.base)}% delle volte`}
                     {" · affidabilità "}{voce.affidabilita}/100
                   </span>
                 </span>

@@ -1,6 +1,6 @@
 {
   "schema": "criterio-vetrina/1",
-  "calcolato_il": "2026-09-06T14:47:32.231Z",
+  "calcolato_il": "2026-09-06T21:18:51.248Z",
   "gare_chieste": 1200,
   "come_e_stato_misurato": "una sola passata sulle gare chiuse: le proiezioni si calcolano una volta e i cinque criteri scelgono sulle stesse candidate, quindi il confronto e' fra regole e non fra campioni. «tutte» conta ogni lettura mostrata, «in_vetrina» solo quella in cima a ogni gara, che e' cio' che la vetrina pubblicherebbe.",
   "criteri": [
@@ -270,6 +270,65 @@
           "sopra_lega_e_squadra": 0.2679,
           "scostamento_mediano_dalla_squadra": 0.0758,
           "oltre_quaranta_punti_dalla_squadra": 0.004
+        }
+      ]
+    },
+    {
+      "criterio": "fascia-tarata-sopra-la-lega",
+      "spiegazione": "la fascia tarata, ma solo fra le letture che stanno sopra la frequenza della lega: una lettura sotto la base dice meno di «gioca sempre quella linea in quel campionato»",
+      "tutte": {
+        "letture": 1782,
+        "prese": 1161,
+        "frequenza_osservata": 0.6515,
+        "probabilita_promessa": 0.6909,
+        "scarto": -0.0393,
+        "sopra_lega_e_squadra": 0.5056,
+        "scostamento_mediano_dalla_squadra": 0.0825,
+        "oltre_quaranta_punti_dalla_squadra": 0.0049
+      },
+      "in_vetrina": {
+        "letture": 550,
+        "prese": 402,
+        "frequenza_osservata": 0.7309,
+        "probabilita_promessa": 0.7519,
+        "scarto": -0.021,
+        "sopra_lega_e_squadra": 0.4636,
+        "scostamento_mediano_dalla_squadra": 0.0734,
+        "oltre_quaranta_punti_dalla_squadra": 0.0046
+      },
+      "per_fascia": [
+        {
+          "fascia": "50-60%",
+          "letture": 185,
+          "prese": 104,
+          "frequenza_osservata": 0.5622,
+          "probabilita_promessa": 0.5866,
+          "scarto": -0.0244,
+          "sopra_lega_e_squadra": 0.5297,
+          "scostamento_mediano_dalla_squadra": 0.0935,
+          "oltre_quaranta_punti_dalla_squadra": 0.0065
+        },
+        {
+          "fascia": "60-70%",
+          "letture": 707,
+          "prese": 425,
+          "frequenza_osservata": 0.6011,
+          "probabilita_promessa": 0.6413,
+          "scarto": -0.0402,
+          "sopra_lega_e_squadra": 0.5304,
+          "scostamento_mediano_dalla_squadra": 0.097,
+          "oltre_quaranta_punti_dalla_squadra": 0.0035
+        },
+        {
+          "fascia": "70-80%",
+          "letture": 890,
+          "prese": 632,
+          "frequenza_osservata": 0.7101,
+          "probabilita_promessa": 0.7519,
+          "scarto": -0.0417,
+          "sopra_lega_e_squadra": 0.4809,
+          "scostamento_mediano_dalla_squadra": 0.0734,
+          "oltre_quaranta_punti_dalla_squadra": 0.0057
         }
       ]
     },

@@ -1995,6 +1995,20 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .insight-senza { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
 .insight-senza li { padding-left: 14px; border-left: 2px solid var(--card-stroke);
   font-size: 14.5px; line-height: 1.5; color: var(--card-ink-2); }
+/* **Il pronostico e' il primo blocco e il piu' pesante della pagina dopo la testata.**
+   Non aggiunge un secondo fondo ad alto contrasto - il master ne ammette uno solo, ed e'
+   l'hero: si distingue per il filetto di direzione a sinistra, per lo spazio sopra e per
+   il solo numero a trentaquattro. Il segnale principale, che prima portava il numero
+   grande, scende a venti: due numeri della stessa taglia erano due risposte. */
+.insight-pronostico {
+  margin: 14px 0 0; padding: 15px 15px 16px; border: 1px solid var(--card-stroke);
+  border-left: 3px solid var(--brand); border-radius: var(--r-control);
+  background: var(--card-panel-2);
+}
+.insight-pronostico .insight-prob { font-size: clamp(28px, 7vw, 34px); }
+.insight-pronostico .insight-titolo { font-size: clamp(16.5px, 4.4vw, 19px); }
+.insight-pronostico .insight-titolo em { font-style: normal; color: var(--card-ink-2); }
+.insight-segnale .insight-prob { font-size: 20px; }
 /* Il segnale principale e' il solo blocco con la superficie tenue: e' la risposta, e si
    distingue dai fratelli per fondo e spazio, non per un bordo piu' acceso. */
 .insight-segnale {

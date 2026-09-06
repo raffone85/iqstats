@@ -1,5 +1,9 @@
+import Link from "next/link";
+
+import { articoloDiPercentuale } from "@/lib/italiano";
 import type { CSSProperties } from "react";
 
+import type { ContoDelleLetture } from "@/server/iqstats/consuntivo";
 import type { Contesto } from "@/server/iqstats/contesto-gara";
 import type { Convergenza, MatchIntelligence, Segnale } from "@/server/iqstats/match-intelligence";
 import type { LetturaForte, LettureDellaGara } from "@/server/iqstats/projection/letture-forti";
@@ -153,7 +157,7 @@ function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
           {nome}
           {lettura.base === null
             ? " · non sappiamo quanto sia normale in questa lega"
-            : ` · in questa lega succede il ${Math.round(lettura.base)}% delle volte`}
+            : ` · in questa lega succede ${articoloDiPercentuale(lettura.base)}${Math.round(lettura.base)}% delle volte`}
           {squadre}
           {" · affidabilità "}{lettura.affidabilita}/100
         </em>
@@ -170,15 +174,83 @@ function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
   );
 }
 
+/**
+ * **Il pronostico: una riga, e la sola cosa che il dossier dichiara di giocare.**
+ *
+ * Fino al 6 settembre 2026 la testa del dossier rispondeva alla domanda «che partita sara'»
+ * ma non a quella che la gente fa davvero, «e allora?». Al posto della risposta c'era il
+ * segnale principale, che e' un'altra cosa: su Rizespor contro Alanyaspor era «Piu' di 1,5
+ * fuorigioco» all'88% con **tre gare di campione**, perche' i segnali si ordinano per
+ * convergenza e affidabilita' e il campione non entra mai in quell'ordine.
+ *
+ * **Non e' un criterio nuovo.** E' la lettura in cima, cioe' quella che la vetrina di
+ * `/pronostici` sceglie gia' e che il consuntivo di `/metodo` misura: probabilita' piu'
+ * alta dentro la fascia fino all'ottanta per cento, a parita' di punto il bersaglio che
+ * sbaglia meno. Un secondo criterio, scelto qui e misurato da nessuna parte, sarebbe stato
+ * un pronostico senza consuntivo.
+ *
+ * **Le due righe sotto il numero esistono per non essere banali.** La prima dice quanto ci
+ * scostiamo da quello che in quel campionato succede comunque: dove lo scarto e' zero la
+ * lettura e' la norma del torneo, e il pronostico lo dichiara invece di spacciarla per una
+ * lettura nostra. La seconda dice quanto quella famiglia ha reso sulle gare gia' chiuse,
+ * promesso contro osservato, che e' l'unica prova che il numero grande valga qualcosa.
+ */
+function Pronostico({ lettura, chi, resa, gare }: {
+  readonly lettura: LetturaForte;
+  readonly chi: string;
+  readonly resa: ContoDelleLetture | null;
+  readonly gare: number;
+}) {
+  const famiglia = FAMIGLIE[lettura.bersaglio];
+  const nostra = Math.round(lettura.probabilita * 100);
+  const base = lettura.base === null ? null : Math.round(lettura.base);
+  return (
+    <div className="insight-pronostico">
+      <p className="insight-rango">Il pronostico</p>
+      <div className="insight-testa">
+        <b className="insight-titolo">
+          {lettura.verso} {soglia(lettura.soglia)}{" "}
+          {famiglia?.nome.toLowerCase() ?? lettura.bersaglio}
+          <em> · {chi}</em>
+        </b>
+        <span className="insight-prob">{nostra}%</span>
+      </div>
+
+      <p className="insight-conv">
+        {base === null
+          ? "Di questa lega non sappiamo quanto sia normale: senza un metro, il numero qui accanto è tutto quello che abbiamo."
+          : nostra === base
+            ? `In questa lega succede ${articoloDiPercentuale(base)}${base}% delle volte: è esattamente la norma del torneo, e noi non ci aggiungiamo niente.`
+            : `In questa lega succede ${articoloDiPercentuale(base)}${base}% delle volte: ci scostiamo di ${Math.abs(nostra - base)} ${Math.abs(nostra - base) === 1 ? "punto" : "punti"} ${nostra > base ? "in più" : "in meno"}.`}
+        {" "}Affidabilità {lettura.affidabilita}/100.
+      </p>
+
+      <p className="insight-perche">
+        {resa === null
+          ? "Di questa famiglia non abbiamo ancora un consuntivo: quanto regga sulle gare chiuse non lo sappiamo."
+          : `Letture di questa famiglia sulle ${gare} gare chiuse che abbiamo misurato: promesse `
+            + `${(resa.probabilitaPromessa * 100).toFixed(1).replace(".", ",")}%, prese `
+            + `${(resa.frequenzaOsservata * 100).toFixed(1).replace(".", ",")}% su ${resa.letture}.`}
+      </p>
+    </div>
+  );
+}
+
 type Props = Readonly<{
   contesto: Contesto | null;
   dossier: MatchIntelligence;
   forti: LettureDellaGara | null;
   homeTeam: string;
   awayTeam: string;
+  /** Quanto ha reso finora la famiglia della lettura in cima, dal consuntivo. */
+  resa: ContoDelleLetture | null;
+  /** Su quante gare chiuse poggia quella resa. */
+  gareDelConsuntivo: number;
 }>;
 
-export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTeam }: Props) {
+export function MatchInsightSection(
+  { contesto, dossier, forti, homeTeam, awayTeam, resa, gareDelConsuntivo }: Props,
+) {
   if (!insightHaContenuto({ contesto, dossier, forti })) return null;
 
   const principale = dossier.principale;
@@ -197,6 +269,16 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
         La lettura principale di {homeTeam} contro {awayTeam}
       </h2>
 
+      {/* 0. Il pronostico: la cosa che si legge per prima, perche' e' la domanda vera. */}
+      {righe.length === 0 ? null : (
+        <Pronostico
+          lettura={righe[0]}
+          chi={chi(righe[0])}
+          resa={resa}
+          gare={gareDelConsuntivo}
+        />
+      )}
+
       {/* 1. Il verdetto: la riga che si legge in cinque secondi, e chi e' dato avanti. */}
       {contesto === null ? null : (
         <>
@@ -207,8 +289,11 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
         </>
       )}
 
-      {/* 2, 3, 6, 7. Il segnale principale con la sua forza, l'affidabilita' e il campione:
-          e' l'unico elemento che porta un numero grande, perche' e' la risposta. */}
+      {/* 2, 3, 6, 7. Il segnale principale con la sua forza, l'affidabilita' e il campione.
+          **Non e' piu' il numero grande della pagina**: quello e' il pronostico, sopra. I
+          segnali si ordinano per convergenza e affidabilita', e il campione non entra in
+          quell'ordine: qui puo' arrivare in cima una lettura su tre gare, lo dice la riga
+          del campione, e per questo non sta al posto della risposta. */}
       {principale === null ? null : (
         <div className={`insight-segnale intel-${principale.convergenza}`}>
           <p className="insight-rango">Segnale principale</p>
@@ -353,11 +438,14 @@ export function MatchInsightSection({ contesto, dossier, forti, homeTeam, awayTe
       {contesto === null ? null : <p className="insight-riserva">{contesto.riserva}</p>}
 
       <p className="dossier-src">
-        In cima non c&apos;è la percentuale più alta: c&apos;è la lettura che si scosta di più
-        da quanto succede di solito in questa lega, pesata per quanto quel bersaglio ci prende
-        fuori campione. Un segnale è forte quando almeno tre letture indipendenti dicono la
-        stessa cosa e nessuna dice il contrario; le letture tiepide non contano da nessuna
-        delle due parti.
+        In cima c&apos;è la lettura più probabile <b>dentro la fascia fino all&apos;ottanta
+        per cento</b>, dove promesso e reso coincidono: sopra quella soglia il modello
+        promette 81,5% e rende 74,7%, misurato su 1.200 gare chiuse. A parità di punto
+        percentuale viene prima il bersaglio che sbaglia meno. È lo stesso criterio della
+        vetrina in <Link href="/pronostici">Pronostici</Link>, e il suo consuntivo — prese e
+        sbagliate — sta in <Link href="/metodo#consuntivo-title">Metodo</Link>. Un segnale è
+        forte quando almeno tre letture indipendenti dicono la stessa cosa e nessuna dice il
+        contrario; le letture tiepide non contano da nessuna delle due parti.
         {forti !== null && forti.senzaMisura.length > 0 ? (
           <>
             {" "}Restano fuori{" "}
