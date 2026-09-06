@@ -243,8 +243,26 @@ piede; i termini invece sono una pagina sul loro dominio.
     Il consuntivo lo conferma da solo: la fascia 80-90%, dove la vetrina abita, promette 81,6
     e rende 72,9. **Deciso dall'utente il 6 settembre: lo script resta come strumento di
     misura, la pagina non si pubblica finche' il criterio della vetrina non regge.**
-18. **Generatore di multiple.** *Criterio:* la probabilità della combinazione dichiara la
-    correlazione; senza quella, non si mostra un numero.
+18. ~~**Generatore di multiple.**~~ — **fatto il 6 settembre 2026, dentro la singola gara.**
+    Nella sezione Gol si scelgono due o piu' letture della stessa gara — esito, doppia
+    chance, over/under, entrambe segnano — e la probabilita' che accadano insieme e' la
+    **somma delle caselle della griglia** che le soddisfano tutte. Accanto sta il prodotto
+    delle stesse letture prese una per una, con la differenza in punti.
+    **I sette bersagli del motore restano fuori, ed e' misurato su 11.066 gare:** nella stessa
+    gara tiri e tiri in porta stanno a **0,622**, tiri e parate a **0,556**, falli e gialli a
+    **0,413**, tiri e corner a 0,339, e tiri e falli a **-0,173**, cioe' negativa. La loro
+    congiunta non e' modellata: una combinazione fra bersagli diversi non avrebbe un numero
+    onesto, e la pagina lo scrive invece di calcolarlo.
+    **Fra gare diverse la correlazione non e' zero, ed e' piccola:** stessa competizione e
+    stagione, su over 2,5, **+0,0354** fra gare dello stesso giorno (18.865 coppie) contro
+    **+0,0149** fra giorni diversi (86.092), quindi l'effetto giornata netto vale circa
+    **+0,02**. Le multiple fra gare diverse restano fuori da questa versione.
+    *Provato con clic veri su Juventus-AC Milan a 375 px:* Pareggio 25,3%; Pareggio piu'
+    Over 2,5 **7,1%**, con la nota che moltiplicando verrebbe 13,3%, **-6,2 punti**;
+    aggiungendo Under 2,5 la pagina dichiara che le tre non possono accadere insieme. I chip
+    portano `aria-pressed` e sono alti **44 px**.
+    *Costo:* **+54 px a porta chiusa** alle quattro larghezze; il blocco misura 678 px a 375,
+    502 a 768, 415 a 1024 e 1440 quando si apre. Zero overflow e zero sotto AA.
 19. **Assistente conversazionale.** *Criterio:* risponde solo con numeri che la pagina
     saprebbe mostrare, e dichiara che può sbagliare.
 
