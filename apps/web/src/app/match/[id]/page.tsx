@@ -156,14 +156,19 @@ function initials(name: string): string {
 }
 
 function statusLabel(status: string): string {
+  // Gli stati del gioco - primo tempo, intervallo, secondo tempo, supplementari, rigori -
+  // sono tutti «In corso». Elencarne due a mano era il difetto del tabellone: la fonte non
+  // manda mai «live» ne' «inprogress», e una gara nel primo tempo finiva sotto «Stato non
+  // disponibile» mentre l'avviso accanto diceva che era in corso.
+  if (statoInGioco(status)) return "In corso";
   const map: Record<string, string> = {
     notstarted: "Programmata",
     upcoming: "Programmata",
-    inprogress: "In corso",
-    live: "In corso",
+    delayed: "In ritardo",
     finished: "Conclusa",
     postponed: "Rinviata",
     cancelled: "Annullata",
+    canceled: "Annullata",
   };
   return map[status] ?? "Stato non disponibile";
 }
@@ -679,7 +684,16 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       : null,
   ].filter((line): line is string => line !== null);
 
-  const finished = detail.homeScore != null && detail.awayScore != null;
+  /**
+   * **Ha un punteggio da mostrare**, che non vuol dire «e' finita».
+   *
+   * Si chiamava `finished` e serviva a due cose diverse: scrivere il risultato al posto di
+   * «contro», che e' giusto anche a gara in corso, e svuotare la formazione attesa, che a
+   * gara in corso e' sbagliato. Appena la fonte espone lo 0-0 le due letture dei giocatori
+   * sparivano, ed e' il difetto che l'utente ha visto: la partita comincia e «chi puo'
+   * segnare» se ne va proprio quando serve.
+   */
+  const conPunteggio = detail.homeScore != null && detail.awayScore != null;
 
   // **Chi rischia il cartellino e chi puo' segnare.** Serve un undici: senza formazione,
   // prevista o ufficiale, nominare qualcuno significherebbe nominare chi non gioca. E serve
@@ -687,7 +701,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // e non si mostra a zero. A gara finita non ha piu' senso: e' una lettura del prima.
   // Il ruolo viaggia con la formazione, che porta gia' `position`: e' il metro con cui la
   // lettura confronta un giocatore, e prenderlo da qui non costa una chiamata in piu'.
-  const rosaAttesa = finished ? [] : [
+  // `played` e' lo stato della fonte, non la presenza del punteggio: una gara nel primo
+  // tempo ha gia' un risultato ma non e' conclusa, e le due letture devono restare.
+  const rosaAttesa = played ? [] : [
     ...(lineups?.home?.starters ?? []).map((g) => ({
       id: g.id, nome: g.name, squadra: lineups?.home?.teamName ?? detail.homeTeam,
       ruolo: isRuolo(g.position) ? g.position : null,
@@ -1011,7 +1027,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
                 <Crest name={detail.homeTeam} teamId={detail.homeTeamId} className="oggi-crest" />
                 <TeamName name={detail.homeTeam} teamId={detail.homeTeamId} />
               </span>
-              <span className="oggi-vs">{finished ? `${detail.homeScore}–${detail.awayScore}` : "contro"}</span>
+              <span className="oggi-vs">{conPunteggio ? `${detail.homeScore}–${detail.awayScore}` : "contro"}</span>
               <span className="oggi-team oggi-team-away">
                 <TeamName name={detail.awayTeam} teamId={detail.awayTeamId} />
                 <Crest name={detail.awayTeam} teamId={detail.awayTeamId} className="oggi-crest" />

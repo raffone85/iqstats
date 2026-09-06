@@ -394,6 +394,13 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    non un valore, quindi niente blu e niente arancio. */
 .aggiornamento-live { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--card-brand); border-radius: 0 var(--r-inset) var(--r-inset) 0; background: var(--card-panel-2); color: var(--card-ink-2); font-size: 13px; line-height: 1.55; max-width: 74ch; }
 .aggiornamento-live b { color: var(--card-ink); }
+/* **Dentro la hero l'avviso cambia veste, e non e' un vezzo.** `.oggi-hero-body` ridefinisce
+   i token dell'inchiostro in chiaro, perche' li' il fondo e' verde scuro: l'avviso, che
+   nasce per la carta, si trovava con `--card-ink-2` = #D7E4DC sopra `--card-panel-2` =
+   #FAFBFA, cioe' quasi bianco su bianco, e in pagina non si leggeva. Qui prende lo stesso
+   fondo traslucido della fascia dell'arbitro, che nella hero e' gia' il trattamento dei
+   riquadri interni. */
+.oggi-hero-body .aggiornamento-live { background: rgba(4,38,26,.78); border-left-color: var(--card-ink-3); color: var(--card-ink-2); }
 
 /* Avvertenze in coda a ogni pagina di prodotto. Testo di servizio, non un allarme: niente
    verde e niente arancio, che qui significano un verso. Il filetto la separa dal contenuto
