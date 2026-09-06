@@ -57,8 +57,19 @@ test("i sette portati in produzione sono quelli che il registro promuove", () =>
 });
 
 test("i file portati sono identici a quelli generati, byte per byte", () => {
-  const portati = readdirSync(PORTATI).filter((nome) => nome.endsWith(".json"));
-  assert.equal(portati.length, 7, "attesi sette artefatti nella cartella del pacchetto");
+  // **Si guardano i sette modelli, non tutti i json della cartella.** La prova contava i
+  // file e pretendeva che fossero sette: da quando accanto ai modelli vivono anche il
+  // consuntivo delle letture, la base dei giocatori e la vetrina - artefatti veri ma non
+  // modelli - ne trovava dieci e falliva. Era rossa dal 5 settembre 2026 senza che nessuno
+  // la eseguisse. Il registro dice quali file sono modelli promossi: quelli, e solo quelli,
+  // devono coincidere byte per byte con l'uscita di Python.
+  // Il nome di un artefatto di modello porta sempre `<bersaglio>__<tipo>.json`: accanto ai
+  // modelli, nella stessa cartella, vivono il consuntivo delle letture, la base dei
+  // giocatori e la vetrina, che artefatti sono ma modelli no.
+  const portati = readdirSync(PORTATI).filter(
+    (nome) => nome.endsWith(".json") && nome.includes("__"),
+  );
+  assert.equal(portati.length, 7, "attesi sette modelli promossi, uno per bersaglio");
 
   for (const nome of portati) {
     const copia = readFileSync(join(PORTATI, nome));
