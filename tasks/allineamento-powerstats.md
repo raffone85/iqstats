@@ -283,7 +283,22 @@ piede; i termini invece sono una pagina sul loro dominio.
     la frequenza di squadra su tutte e quattro le letture. Costo in altezza sulla stessa
     pagina: +118 px a 375 e 768, +84 a 1024, +51 a 1440; zero overflow, zero sotto AA.
     Due prove nuove in `test:base-di-lega` che ricontano a mano sul livello dati.
-22. **Elenco gare per esteso** sotto ogni famiglia.
+22. ~~**Elenco gare per esteso** sotto ogni famiglia.~~ — **fatto il 6 settembre 2026.** Ogni
+    card delle sette famiglie porta una porta con le gare che compongono le due medie
+    osservate: giorno, avversario e valore, dalla piu' recente.
+    **Costa zero richieste alla fonte e zero interrogazioni nuove al motore:** sono le stesse
+    righe gia' lette per proiettare, elencate invece che mediate. L'unica lettura in piu' e'
+    una sola per dossier, che traduce gli identificativi delle squadre in nomi.
+    **Il filtro e' ripetuto e non condiviso, per una ragione misurata:** far calcolare la media
+    da questa lista ne cambierebbe l'ordine di somma, e il motore ha una prova di parita' con
+    Python che confronta quei numeri fino all'ultima cifra. A tenere insieme le due funzioni
+    c'e' la prova «l'elenco e la media dicono la stessa cosa».
+    *Verificato in pagina* su Juventus-AC Milan (210084): «osservato in casa 21,0 su 1 gara» e
+    l'elenco scrive 21,0 contro il Parma; fuori casa 19,0 e l'elenco 19,0 contro il Torino.
+    *Costo:* **+364 px a porte chiuse** alle quattro larghezze, 52 px per famiglia, e le sette
+    porte nascondono **928 px** gia' oggi con due gare per famiglia: 564 px netti risparmiati a
+    settembre, molti di piu' a stagione avanzata. Zero overflow e zero sotto AA a porte aperte
+    e chiuse.
 23. ~~**Taratura delle linee**: quando diciamo «over 7,5 al 71%», quante volte esce.~~ —
     **fatto il 6 settembre 2026, e la premessa del piano era sbagliata.** Il passaggio
     offline **esiste gia'**: `scripts/projection/models/lines.py` misura la calibrazione delle
