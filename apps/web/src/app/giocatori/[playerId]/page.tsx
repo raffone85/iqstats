@@ -64,6 +64,11 @@ function scopeOf(section: Section): string {
       : `${section.leagueName} · ${section.seasonName}`;
 }
 
+/**
+ * `injury_type` arriva dalla fonte in inglese («Meniscus Injury») e non entra in pagina:
+ * tradurlo vorrebbe dire mappare valori che non conosciamo tutti, e lasciarlo grezzo mette
+ * una parola inglese dentro una frase italiana. Della pastiglia restano il fatto e la data.
+ */
 export default async function PlayerPage({ params }: PlayerPageProps) {
   const { playerId } = await params;
   if (!/^[1-9]\d*$/.test(playerId)) {
@@ -134,7 +139,6 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               {profile.availabilityStatus === "injured" ? (
                 <span className="oggi-chip">
                   Infortunato
-                  {profile.injuryType ? ` · ${profile.injuryType}` : ""}
                   {profile.injuryExpectedReturn
                     ? ` · rientro atteso ${giorno(profile.injuryExpectedReturn)}`
                     : ""}
