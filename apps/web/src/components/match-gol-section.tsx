@@ -6,6 +6,8 @@
 //
 // Ogni scala evidenzia la voce più probabile. È una lettura, non un consiglio di giocata:
 // il limite del modello sta scritto in fondo alla sezione, non solo nel codice.
+import { MatchCombinazione } from "./match-combinazione";
+
 import type { GolDellaGara } from "@/server/iqstats/projection-runtime";
 import type { CellaMatrice, Intervallo } from "@/server/iqstats/projection/gol";
 
@@ -312,6 +314,23 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
           </ul>
         </Riga>
         </ul>
+      </details>
+
+      <details className="gol-derivati">
+        <summary>Più letture di questa gara, insieme</summary>
+        <MatchCombinazione
+          attesiCasa={m.casa.attesi}
+          attesiTrasferta={m.trasferta.attesi}
+          homeTeam={homeTeam}
+          awayTeam={awayTeam}
+        />
+        <p className="dossier-src">
+          I sette bersagli del motore &mdash; tiri, corner, falli, cartellini &mdash;{" "}
+          <b>non entrano qui</b>, e non è una dimenticanza: nella stessa gara sono legati fra
+          loro, misurato su 11.066 gare (tiri e tiri in porta 0,622, tiri e parate 0,556,
+          falli e gialli 0,413), e la loro probabilità congiunta non è modellata. Senza
+          quella, un numero composto sarebbe inventato.
+        </p>
       </details>
 
       {/* Le due note che spiegano **come** nasce il numero si aprono: sono uguali su ogni

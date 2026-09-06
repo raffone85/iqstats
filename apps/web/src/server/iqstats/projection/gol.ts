@@ -234,6 +234,89 @@ export function mercatiGol(attesiCasa: number, attesiTrasferta: number): Mercati
 }
 
 /**
+ * Una condizione che una gara puo' soddisfare o no, letta sulla griglia dei punteggi.
+ *
+ * Sono tutte e sole le domande a cui la griglia sa rispondere: esito, doppia chance,
+ * totale sopra o sotto una linea, entrambe a segno, multigol e risultato esatto. I sette
+ * bersagli del motore **non stanno qui**, e non e' una dimenticanza: sono modellati uno
+ * per uno e la loro congiunta non esiste, mentre nella stessa gara sono legati per davvero
+ * - misurato su 11.066 gare, tiri e tiri in porta stanno a 0,622 e falli e gialli a 0,413.
+ */
+export type Condizione =
+  | { readonly tipo: "esito"; readonly quale: "uno" | "x" | "due" }
+  | { readonly tipo: "doppia"; readonly quale: "unoX" | "xDue" | "unoDue" }
+  | { readonly tipo: "totale"; readonly verso: "sopra" | "sotto"; readonly linea: number }
+  | { readonly tipo: "entrambe"; readonly segnano: boolean }
+  | { readonly tipo: "multigol"; readonly da: number; readonly a: number }
+  | { readonly tipo: "risultato"; readonly casa: number; readonly trasferta: number };
+
+function soddisfa(condizione: Condizione, casa: number, trasferta: number): boolean {
+  const totale = casa + trasferta;
+  switch (condizione.tipo) {
+    case "esito":
+      return condizione.quale === "uno" ? casa > trasferta
+        : condizione.quale === "x" ? casa === trasferta : casa < trasferta;
+    case "doppia":
+      return condizione.quale === "unoX" ? casa >= trasferta
+        : condizione.quale === "xDue" ? casa <= trasferta : casa !== trasferta;
+    case "totale":
+      return condizione.verso === "sopra" ? totale > condizione.linea : totale < condizione.linea;
+    case "entrambe":
+      return condizione.segnano ? casa > 0 && trasferta > 0 : casa === 0 || trasferta === 0;
+    case "multigol":
+      return totale >= condizione.da && totale <= condizione.a;
+    case "risultato":
+      return casa === condizione.casa && trasferta === condizione.trasferta;
+  }
+}
+
+export interface Combinazione {
+  /** La probabilita' che **tutte** le condizioni accadano nella stessa gara. */
+  readonly congiunta: number;
+  /** Le stesse condizioni prese una per una e moltiplicate: il numero che non si mostra da solo. */
+  readonly prodotto: number;
+  /** Le probabilita' singole, nell'ordine in cui sono state chieste. */
+  readonly singole: readonly number[];
+}
+
+/**
+ * La probabilita' di piu' condizioni **nella stessa gara**, sommata sulla griglia.
+ *
+ * Non e' una moltiplicazione: si percorre la griglia una volta e si tiene ogni casella che
+ * le soddisfa tutte. `prodotto` viaggia accanto per dire di quanto la moltiplicazione
+ * sbaglierebbe - due condizioni della stessa gara non sono quasi mai indipendenti, e dove
+ * sono incompatibili la congiunta e' zero mentre il prodotto resta un numero positivo.
+ */
+export function combinazione(
+  attesiCasa: number,
+  attesiTrasferta: number,
+  condizioni: readonly Condizione[],
+): Combinazione {
+  const pc = distribuzione(attesiCasa);
+  const pt = distribuzione(attesiTrasferta);
+  let congiunta = 0;
+  const singole = new Array<number>(condizioni.length).fill(0);
+
+  for (let i = 0; i <= MAX_GOL; i += 1) {
+    for (let j = 0; j <= MAX_GOL; j += 1) {
+      const probabilita = pc[i] * pt[j];
+      let tutte = condizioni.length > 0;
+      condizioni.forEach((condizione, indice) => {
+        if (soddisfa(condizione, i, j)) singole[indice] += probabilita;
+        else tutte = false;
+      });
+      if (tutte) congiunta += probabilita;
+    }
+  }
+
+  return {
+    congiunta,
+    prodotto: singole.reduce((totale, singola) => totale * singola, condizioni.length === 0 ? 0 : 1),
+    singole,
+  };
+}
+
+/**
  * Quante gare fittizie alla media di lega si sommano al campione vero.
  *
  * Senza questo peso il conto moltiplicativo esplode sui campioni minuscoli: misurato su
