@@ -969,6 +969,17 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // e la usano sia l'indice sia le intestazioni: cosi' la barra non puo' promettere un
   // capitolo che sotto non esiste, e un'area riservata non compare fra le destinazioni di
   // chi non puo' aprirla - il suo riquadro d'accesso resta in pagina, al posto giusto.
+  // **I tre pannelli di contorno del capitolo Trend.** Classifica, come si presentano e
+  // forma in numeri sono schede di riferimento, non letture della gara: dove stanno in
+  // classifica e come sono andate ultimamente non dicono che partita sara'. Erano 1.989 px
+  // a 375 px dentro un capitolo da 4.825, misurati il 6 settembre 2026. La condizione sta
+  // qui e non accanto al dettaglio perche' e' la stessa che decide se il capitolo esiste:
+  // scritte in due posti divergono, ed e' gia' successo il 3 settembre.
+  const contornoDiTrend = (standings !== null && (standings.home !== null || standings.away !== null))
+    || (homeForm?.length ?? 0) > 0 || (awayForm?.length ?? 0) > 0
+    || (insight.allowed && ultimeDiLato !== null)
+    || proiezioni?.forma?.casa != null || proiezioni?.forma?.trasferta != null;
+
   const aree = {
     giocata: (played || inCorso) && (
       (finishedStats?.headline.length ?? 0) > 0
@@ -997,9 +1008,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       || (proiezioni !== null
         && (proiezioni.ritardi.casa.length > 0 || proiezioni.ritardi.trasferta.length > 0))
     ))
-      || (standings !== null && (standings.home !== null || standings.away !== null))
-      || (homeForm?.length ?? 0) > 0 || (awayForm?.length ?? 0) > 0
-      || proiezioni?.forma?.casa != null || proiezioni?.forma?.trasferta != null,
+      || contornoDiTrend,
     contesto: true,
     giocatori: Boolean(lineups && (lineups.home || lineups.away)) || giocatori !== null,
     arbitro: (insight.allowed && arbitroNostro !== null) || referee?.careerGames != null,
@@ -1361,28 +1370,39 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             subite contro il metro della competizione. I due componenti restano distinti
             perche' `MatchFormaSection` vive anche su `/expected`, dove quella striscia non
             c'e': qui li tiene insieme l'area, non una fusione che romperebbe l'altra pagina. */}
-        <MatchStandingsSection
-          standings={standings}
-          homeTeam={detail.homeTeam}
-          awayTeam={detail.awayTeam}
-          homeForm={homeForm}
-          awayForm={awayForm}
-        />
+        {/* **Il contorno di Trend si apre, le letture restano.** Classifica, come si
+            presentano e forma in numeri stanno insieme dietro una riga: sono lo stato delle
+            due squadre, non la lettura di questa gara. Restano in pagina l'incrocio dei due
+            lati, l'assetto e i ritardi, che invece parlano della partita che si gioca. */}
+        {!contornoDiTrend ? null : (
+          <details className="dossier-spiega">
+            <summary>
+              Come stanno le due squadre: classifica, come si presentano e la forma in numeri
+            </summary>
+            <MatchStandingsSection
+              standings={standings}
+              homeTeam={detail.homeTeam}
+              awayTeam={detail.awayTeam}
+              homeForm={homeForm}
+              awayForm={awayForm}
+            />
 
-        {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
+            {insight.allowed ? <MatchUltimeCinqueSection confronto={ultimeDiLato} homeTeam={detail.homeTeam} awayTeam={detail.awayTeam} /> : null}
+
+            {proiezioni?.forma ? (
+              <MatchFormaSection
+                casa={proiezioni.forma.casa}
+                trasferta={proiezioni.forma.trasferta}
+                homeTeam={detail.homeTeam}
+                awayTeam={detail.awayTeam}
+              />
+            ) : null}
+          </details>
+        )}
 
         {insight.allowed ? <MatchAssettoSection assetto={assetto} fasce={fasceDiGara} /> : null}
 
         {insight.allowed ? <MatchTiriSection tiri={tiri} /> : null}
-
-        {proiezioni?.forma ? (
-          <MatchFormaSection
-            casa={proiezioni.forma.casa}
-            trasferta={proiezioni.forma.trasferta}
-            homeTeam={detail.homeTeam}
-            awayTeam={detail.awayTeam}
-          />
-        ) : null}
 
         {/* Da quanto non succede, con la quota storica accanto: stesse righe della forma,
             contate in un altro modo. Chiude Trend, non apre un'area propria. */}
