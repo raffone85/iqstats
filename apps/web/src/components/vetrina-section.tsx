@@ -51,9 +51,10 @@ export function VetrinaSection({ letture, calcolataIl }: Props) {
       </h2>
       <p className="home-lede">
         Una lettura per gara, la più probabile <b>dentro la fascia dove promesso e reso
-        coincidono</b>: fino all&apos;ottanta per cento. Sopra quella soglia il modello
-        promette 81,5% e rende 74,7%, misurato su 1.200 gare chiuse, quindi lì la cima non si
-        prende. Le prime si assomigliano per forza di cose, tutte contro il tetto:{" "}
+        quasi coincidono</b>: fino all&apos;ottanta per cento, dove il modello promette 74,6%
+        e rende 73,8% su 2.204 letture. Sopra quella soglia promette 82,4% e rende 78,9%,
+        quindi lì la cima non si prende. Misurato su 1.200 gare chiuse, 599 con almeno una
+        lettura. Le prime si assomigliano per forza di cose, tutte contro il tetto:{" "}
         <b>a parità di punto percentuale viene prima il bersaglio che sbaglia meno</b>, e
         l&apos;affidabilità sta scritta accanto a ciascuna.{" "}
         <Link href="/metodo#consuntivo-title">Quanto ci prendiamo, comprese le volte in cui

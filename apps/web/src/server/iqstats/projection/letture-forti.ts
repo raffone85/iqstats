@@ -44,14 +44,15 @@ type Basi = ReadonlyMap<string, { readonly quota: number; readonly gare: number 
 /**
  * Oltre questa probabilita' una lettura non entra, e non e' prudenza generica.
  *
- * Il consuntivo su 1.200 gare chiuse dice dove la taratura tiene e dove cede: nella fascia
- * 60-70% il modello promette 63,8% e rende 63,8%, nella 70-80% promette 75,4% e rende
- * 74,9%, ma nella 80-90% promette 81,5% e rende 74,7%. La cima non si prende dove il
- * modello sbaglia di piu': **le letture sopra l'80% restano nella card della loro famiglia,
- * non salgono in cima.**
+ * Il consuntivo su 1.200 gare chiuse - 599 con almeno una lettura - dice dove la taratura
+ * tiene e dove cede: nella fascia 60-70% il modello promette 66,5% e rende 64,4%, nella
+ * 70-80% promette 75,7% e rende 75,0%, ma sopra l'80% promette 82,4% e rende 78,9% su 660
+ * candidate. La cima non si prende dove il modello sbaglia di piu': **le letture sopra
+ * l'80% restano nella card della loro famiglia, non salgono in cima.**
  *
- * Misurato il 6 settembre 2026 con `npm run criterio-vetrina`, cinque criteri a confronto
- * sulle stesse candidate.
+ * Il criterio e' stato scelto il 6 settembre 2026 con `npm run criterio-vetrina`, cinque a
+ * confronto sulle stesse candidate. Le fasce vengono dal consuntivo rifatto il 7 settembre
+ * 2026 dopo il fix dell'arbitro: i valori di prima erano di gare ricostruite senza.
  */
 const FASCIA_MASSIMA = 0.8;
 

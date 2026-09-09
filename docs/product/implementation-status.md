@@ -101,8 +101,10 @@ fuorigioco e parate con `poisson_glm`.
   mostra il motore di base;
 - **senza arbitro designato** tre bersagli su sette ripiegano: valore senza intervallo, senza
   linee e senza affidabilità;
-- le letture in cima **si fermano all'ottanta per cento**: sopra quella soglia, su 1.200 gare
-  chiuse, il modello promette 81,5% e rende 74,7%.
+- le letture in cima **si fermano all'ottanta per cento**: sopra quella soglia il modello
+  promette 82,4% e rende 78,9% su 660 letture, contro 74,6% promesso e 73,8% reso sulle 2.204
+  dentro la fascia. Misurato su 1.200 gare chiuse, 599 con almeno una lettura, sette famiglie
+  su sette.
 
 ## 5. Che cosa NON esiste ancora
 
