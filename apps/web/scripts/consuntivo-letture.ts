@@ -93,6 +93,8 @@ interface Esito {
   readonly bersaglio: string;
   readonly probabilita: number;
   readonly presa: boolean;
+  /** Vera per le candidate sopra l'ottanta per cento, che il tetto tiene fuori dalle letture. */
+  readonly fuoriFascia: boolean;
 }
 
 /** Le letture che la pagina avrebbe messo in cima a quella gara, con il loro esito. */
@@ -134,6 +136,25 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
       bersaglio: lettura.bersaglio,
       probabilita: lettura.probabilita,
       presa: lettura.verso === "Over" ? sopra : !sopra,
+      fuoriFascia: false,
+    });
+  }
+
+  // **Le candidate che il tetto dell'ottanta per cento lascia fuori, contate lo stesso.**
+  // Il prodotto dichiara in due pagine che sopra quella soglia il modello promette piu' di
+  // quanto rende, ed e' la ragione per cui il tetto esiste: quel numero deve uscire da
+  // questo artefatto, non da un commento in uno script di confronto. Sono candidate, non
+  // letture: non finiscono in cima a nessuna gara, e restano contate a parte.
+  for (const candidata of candidate) {
+    if (candidata.probabilita <= 0.8) continue;
+    const vero = valoreVero(reale, candidata.bersaglio, candidata.lato);
+    if (vero === null) continue;
+    const sopra = vero > candidata.soglia;
+    esiti.push({
+      bersaglio: candidata.bersaglio,
+      probabilita: candidata.probabilita,
+      presa: candidata.verso === "Over" ? sopra : !sopra,
+      fuoriFascia: true,
     });
   }
   return esiti;
@@ -165,7 +186,13 @@ async function main(): Promise<number> {
     select g.source_id::text as gara,
            th.source_id::text as casa, ta.source_id::text as fuori,
            s.source_id::text as stagione, c.source_id::text as competizione,
-           o.referee_id::text as arbitro,
+           -- Il source_id, non la chiave interna: o.referee_id punta a
+           -- football.referees.id, mentre il motore risolve l'arbitro per source_id.
+           -- Passandogli l'uno per l'altro la risoluzione non trovava mai nessuno e ogni
+           -- gara veniva ricostruita senza arbitro; falli, cartellini gialli e tiri in
+           -- porta ripiegano quando l'arbitro manca, e infatti non comparivano in
+           -- nessuna delle letture misurate.
+           (select r.source_id from football.referees r where r.id = o.referee_id)::text as arbitro,
            to_char(o.kickoff_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS."000Z"') as kickoff,
            o.coach_source_id::text as allenatore_casa,
            o.opponent_coach_source_id::text as allenatore_fuori,
@@ -195,7 +222,9 @@ async function main(): Promise<number> {
   }
   process.stdout.write("\n");
 
-  const complessivo = conta(tutti);
+  const dentro = tutti.filter((e) => !e.fuoriFascia);
+  const oltre = tutti.filter((e) => e.fuoriFascia);
+  const complessivo = conta(dentro);
   if (complessivo === null) {
     console.error("nessuna lettura ricostruita: il consuntivo non si scrive vuoto");
     return 1;
@@ -203,12 +232,12 @@ async function main(): Promise<number> {
 
   const perFascia = FASCE.map((f) => ({
     fascia: f.nome,
-    ...conta(tutti.filter((e) => e.probabilita >= f.da && e.probabilita < f.a)),
+    ...conta(dentro.filter((e) => e.probabilita >= f.da && e.probabilita < f.a)),
   })).filter((v) => v.letture !== undefined);
 
-  const bersagli = [...new Set(tutti.map((e) => e.bersaglio))].sort();
+  const bersagli = [...new Set(dentro.map((e) => e.bersaglio))].sort();
   const perBersaglio = bersagli
-    .map((b) => ({ bersaglio: b, ...conta(tutti.filter((e) => e.bersaglio === b)) }))
+    .map((b) => ({ bersaglio: b, ...conta(dentro.filter((e) => e.bersaglio === b)) }))
     .filter((v) => v.letture !== undefined);
 
   const rapporto = {
@@ -225,6 +254,9 @@ async function main(): Promise<number> {
     complessivo,
     per_fascia: perFascia,
     per_bersaglio: perBersaglio,
+    // Le candidate sopra l'ottanta per cento: non entrano in nessuna lettura, e sono la
+    // ragione misurata per cui il tetto sta li'.
+    oltre_la_fascia: conta(oltre),
   };
 
   const percorso = path.join(
@@ -236,6 +268,14 @@ async function main(): Promise<number> {
     + ` (${(complessivo.frequenza_osservata * 100).toFixed(1)}%)`
     + ` contro il ${(complessivo.probabilita_promessa * 100).toFixed(1)}% promesso`,
   );
+  const fuori = conta(oltre);
+  if (fuori !== null) {
+    console.log(
+      `oltre l'80%: ${fuori.prese}/${fuori.letture} = `
+      + `${(fuori.frequenza_osservata * 100).toFixed(1)}% contro `
+      + `${(fuori.probabilita_promessa * 100).toFixed(1)}% promesso`,
+    );
+  }
   for (const v of perFascia) {
     console.log(
       `  ${v.fascia}: ${v.prese}/${v.letture} = ${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}%`

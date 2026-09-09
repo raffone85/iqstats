@@ -330,7 +330,13 @@ async function main(): Promise<number> {
     select g.source_id::text as gara,
            th.source_id::text as casa, ta.source_id::text as fuori,
            s.source_id::text as stagione, c.source_id::text as competizione,
-           o.referee_id::text as arbitro,
+           -- Il source_id, non la chiave interna: o.referee_id punta a
+           -- football.referees.id, mentre il motore risolve l'arbitro per source_id.
+           -- Passandogli l'uno per l'altro la risoluzione non trovava mai nessuno e ogni
+           -- gara veniva ricostruita senza arbitro; falli, cartellini gialli e tiri in
+           -- porta ripiegano quando l'arbitro manca, e infatti non comparivano in
+           -- nessuna delle letture misurate.
+           (select r.source_id from football.referees r where r.id = o.referee_id)::text as arbitro,
            to_char(o.kickoff_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS."000Z"') as kickoff,
            o.coach_source_id::text as allenatore_casa,
            o.opponent_coach_source_id::text as allenatore_fuori,

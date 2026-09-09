@@ -439,9 +439,10 @@ export function MatchInsightSection(
 
       <p className="dossier-src">
         In cima c&apos;è la lettura più probabile <b>dentro la fascia fino all&apos;ottanta
-        per cento</b>, dove promesso e reso coincidono: sopra quella soglia il modello
-        promette 81,5% e rende 74,7%, misurato su 1.200 gare chiuse. A parità di punto
-        percentuale viene prima il bersaglio che sbaglia meno. È lo stesso criterio della
+        per cento</b>, dove promesso e reso quasi coincidono: 74,6% promesso contro 73,8%
+        reso su 2.204 letture. Sopra quella soglia il modello promette 82,4% e rende 78,9% su
+        660 letture. Misurato su 1.200 gare chiuse, 599 con almeno una lettura, sette famiglie
+        su sette. A parità di punto percentuale viene prima il bersaglio che sbaglia meno. È lo stesso criterio della
         vetrina in <Link href="/pronostici">Pronostici</Link>, e il suo consuntivo — prese e
         sbagliate — sta in <Link href="/metodo#consuntivo-title">Metodo</Link>. Un segnale è
         forte quando almeno tre letture indipendenti dicono la stessa cosa e nessuna dice il

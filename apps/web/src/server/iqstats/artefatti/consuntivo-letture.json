@@ -1,74 +1,105 @@
 {
   "schema": "consuntivo-letture/1",
-  "calcolato_il": "2026-09-06T14:16:04.286Z",
+  "calcolato_il": "2026-09-07T06:05:59.432Z",
   "gare_chieste": 1200,
-  "gare_con_almeno_una_lettura": 581,
+  "gare_con_almeno_una_lettura": 599,
   "come_e_stato_misurato": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, ordinaLetture - rifatte girare sulle gare chiuse; il motore legge solo cio' che esisteva prima del calcio d'inizio, quindi la lettura ricostruita e' quella che la pagina avrebbe mostrato. Contate tutte, prese e sbagliate: nessuna selezione.",
   "complessivo": {
-    "letture": 2055,
-    "prese": 1445,
-    "frequenza_osservata": 0.7032,
-    "probabilita_promessa": 0.7106,
-    "scarto": -0.0074
+    "letture": 2204,
+    "prese": 1627,
+    "frequenza_osservata": 0.7382,
+    "probabilita_promessa": 0.7462,
+    "scarto": -0.008
   },
   "per_fascia": [
     {
       "fascia": "50-60%",
-      "letture": 52,
-      "prese": 23,
-      "frequenza_osservata": 0.4423,
-      "probabilita_promessa": 0.5944,
-      "scarto": -0.152
+      "letture": 4,
+      "prese": 3,
+      "frequenza_osservata": 0.75,
+      "probabilita_promessa": 0.5953,
+      "scarto": 0.1547
     },
     {
       "fascia": "60-70%",
-      "letture": 702,
-      "prese": 448,
-      "frequenza_osservata": 0.6382,
-      "probabilita_promessa": 0.6379,
-      "scarto": 0.0003
+      "letture": 250,
+      "prese": 161,
+      "frequenza_osservata": 0.644,
+      "probabilita_promessa": 0.6654,
+      "scarto": -0.0214
     },
     {
       "fascia": "70-80%",
-      "letture": 1301,
-      "prese": 974,
-      "frequenza_osservata": 0.7487,
-      "probabilita_promessa": 0.7544,
-      "scarto": -0.0058
+      "letture": 1950,
+      "prese": 1463,
+      "frequenza_osservata": 0.7503,
+      "probabilita_promessa": 0.7569,
+      "scarto": -0.0066
     }
   ],
   "per_bersaglio": [
     {
       "bersaglio": "corner_kicks",
-      "letture": 438,
-      "prese": 326,
-      "frequenza_osservata": 0.7443,
-      "probabilita_promessa": 0.7265,
-      "scarto": 0.0178
+      "letture": 288,
+      "prese": 221,
+      "frequenza_osservata": 0.7674,
+      "probabilita_promessa": 0.7388,
+      "scarto": 0.0285
+    },
+    {
+      "bersaglio": "fouls",
+      "letture": 141,
+      "prese": 81,
+      "frequenza_osservata": 0.5745,
+      "probabilita_promessa": 0.6792,
+      "scarto": -0.1047
     },
     {
       "bersaglio": "goalkeeper_saves",
-      "letture": 553,
-      "prese": 412,
-      "frequenza_osservata": 0.745,
-      "probabilita_promessa": 0.7491,
-      "scarto": -0.0041
+      "letture": 472,
+      "prese": 357,
+      "frequenza_osservata": 0.7564,
+      "probabilita_promessa": 0.7568,
+      "scarto": -0.0004
     },
     {
       "bersaglio": "offsides",
-      "letture": 493,
-      "prese": 361,
-      "frequenza_osservata": 0.7323,
-      "probabilita_promessa": 0.758,
-      "scarto": -0.0257
+      "letture": 462,
+      "prese": 337,
+      "frequenza_osservata": 0.7294,
+      "probabilita_promessa": 0.7618,
+      "scarto": -0.0324
+    },
+    {
+      "bersaglio": "shots_on_target",
+      "letture": 351,
+      "prese": 264,
+      "frequenza_osservata": 0.7521,
+      "probabilita_promessa": 0.7502,
+      "scarto": 0.0019
     },
     {
       "bersaglio": "total_shots",
-      "letture": 571,
-      "prese": 346,
-      "frequenza_osservata": 0.606,
-      "probabilita_promessa": 0.6201,
-      "scarto": -0.0141
+      "letture": 55,
+      "prese": 35,
+      "frequenza_osservata": 0.6364,
+      "probabilita_promessa": 0.6234,
+      "scarto": 0.013
+    },
+    {
+      "bersaglio": "yellow_cards",
+      "letture": 435,
+      "prese": 332,
+      "frequenza_osservata": 0.7632,
+      "probabilita_promessa": 0.7571,
+      "scarto": 0.0061
     }
-  ]
+  ],
+  "oltre_la_fascia": {
+    "letture": 660,
+    "prese": 521,
+    "frequenza_osservata": 0.7894,
+    "probabilita_promessa": 0.8238,
+    "scarto": -0.0344
+  }
 }
