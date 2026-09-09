@@ -56,6 +56,22 @@ type Basi = ReadonlyMap<string, { readonly quota: number; readonly gare: number 
  */
 const FASCIA_MASSIMA = 0.8;
 
+/**
+ * I falli non salgono in cima, e la ragione e' misurata.
+ *
+ * Sul consuntivo rifatto il 7 settembre 2026, dopo il fix dell'arbitro, i falli promettono
+ * 67,9% e rendono 57,5% su 141 letture: **dieci punti e mezzo di scarto**, dove le altre sei
+ * famiglie stanno entro 3,3 - fuorigioco -3,2, corner +2,9, parate -0,0. E' la stessa forma
+ * del tetto qui sopra, una lettura che promette piu' di quanto rende, e la risposta e' la
+ * stessa: **restano nella card della loro famiglia, non diventano il pronostico e non
+ * entrano in vetrina.**
+ *
+ * Il campione e' un terzo di quello dei fuorigioco, 141 contro 462, e da qui in avanti il
+ * consuntivo non contera' piu' queste letture: per riaprire la decisione si toglie il
+ * filtro e si rimisura.
+ */
+const FUORI_DALLA_CIMA = "fouls";
+
 /** Quante letture si mostrano. Oltre la quinta si torna a chiedere «e allora?». */
 const QUANTE = 4;
 
@@ -240,7 +256,7 @@ export function ordinaLetture(
   quante: number = QUANTE,
 ): LettureDellaGara {
   const letture = arricchisci(candidate, basi, basiCasa, basiFuori)
-    .filter((l) => l.probabilita <= FASCIA_MASSIMA)
+    .filter((l) => l.probabilita <= FASCIA_MASSIMA && l.bersaglio !== FUORI_DALLA_CIMA)
     .slice()
     // **L'ordine e' per punto percentuale, non per decimale.** Con il tetto all'ottanta le
     // prime letture si schiacciano contro il tetto: sulla vetrina del 6 settembre le dieci

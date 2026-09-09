@@ -442,7 +442,10 @@ export function MatchInsightSection(
         per cento</b>, dove promesso e reso quasi coincidono: 74,6% promesso contro 73,8%
         reso su 2.204 letture. Sopra quella soglia il modello promette 82,4% e rende 78,9% su
         660 letture. Misurato su 1.200 gare chiuse, 599 con almeno una lettura, sette famiglie
-        su sette. A parità di punto percentuale viene prima il bersaglio che sbaglia meno. È lo stesso criterio della
+        su sette. <b>I falli restano fuori dalla cima</b>: promettono 67,9% e rendono 57,5%,
+        dieci punti e mezzo dove le altre sei famiglie stanno entro 3,3, e si leggono nella
+        card della loro famiglia. A parità di punto percentuale viene prima il bersaglio che
+        sbaglia meno. È lo stesso criterio della
         vetrina in <Link href="/pronostici">Pronostici</Link>, e il suo consuntivo — prese e
         sbagliate — sta in <Link href="/metodo#consuntivo-title">Metodo</Link>. Un segnale è
         forte quando almeno tre letture indipendenti dicono la stessa cosa e nessuna dice il

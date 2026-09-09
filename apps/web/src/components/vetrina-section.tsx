@@ -54,7 +54,9 @@ export function VetrinaSection({ letture, calcolataIl }: Props) {
         quasi coincidono</b>: fino all&apos;ottanta per cento, dove il modello promette 74,6%
         e rende 73,8% su 2.204 letture. Sopra quella soglia promette 82,4% e rende 78,9%,
         quindi lì la cima non si prende. Misurato su 1.200 gare chiuse, 599 con almeno una
-        lettura. Le prime si assomigliano per forza di cose, tutte contro il tetto:{" "}
+        lettura. <b>I falli restano fuori</b>: promettono 67,9% e rendono 57,5%, dieci punti e
+        mezzo dove le altre sei famiglie stanno entro 3,3, e si leggono nella card della loro
+        famiglia dentro la gara. Le prime si assomigliano per forza di cose, tutte contro il tetto:{" "}
         <b>a parità di punto percentuale viene prima il bersaglio che sbaglia meno</b>, e
         l&apos;affidabilità sta scritta accanto a ciascuna.{" "}
         <Link href="/metodo#consuntivo-title">Quanto ci prendiamo, comprese le volte in cui
