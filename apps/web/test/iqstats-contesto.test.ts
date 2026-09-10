@@ -40,7 +40,8 @@ function lettura(bersaglio: string, forza: number, soglia = 7.5, prob = 0.71): L
 }
 
 function forti(letture: readonly LetturaForte[]): LettureDellaGara {
-  return { letture, senzaMisura: [] } as LettureDellaGara;
+  // Il consigliato non entra in questi casi: qui si prova il contesto, non il criterio.
+  return { letture, consigliato: null, senzaMisura: [] } as LettureDellaGara;
 }
 
 function con(media: number, lega: number, dispersione: number | null): ConMetro {

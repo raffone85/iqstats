@@ -1,6 +1,6 @@
 {
   "schema": "expected-famiglie/1",
-  "calcolato_il": "2026-09-10T17:08:28.892Z",
+  "calcolato_il": "2026-09-10T17:58:35.912Z",
   "giorni": 2,
   "gare_in_arrivo": 52,
   "gare_con_proiezione": 24,
@@ -221,15 +221,15 @@
       "lega": "Liga Portugal Betclic",
       "kickoff": "2026-09-10T19:15:00+00:00",
       "consigliato": {
-        "bersaglio": "yellow_cards",
-        "lato": "totale",
+        "bersaglio": "shots_on_target",
+        "lato": "trasferta",
         "soglia": 2.5,
         "verso": "Over",
-        "probabilita": 0.7969,
-        "base": 76.19,
-        "gareDiBase": 42,
-        "affidabilita": 70,
-        "scarto": 3.5
+        "probabilita": 0.7775,
+        "base": 67.44,
+        "gareDiBase": 43,
+        "affidabilita": 66,
+        "scarto": 10.3
       },
       "famiglie": [
         {
@@ -382,17 +382,7 @@
       "legaId": 49,
       "lega": "J1 League",
       "kickoff": "2026-09-11T10:00:00+00:00",
-      "consigliato": {
-        "bersaglio": "corner_kicks",
-        "lato": "casa",
-        "soglia": 2.5,
-        "verso": "Over",
-        "probabilita": 0.7732,
-        "base": 78.33,
-        "gareDiBase": 60,
-        "affidabilita": 66,
-        "scarto": -1
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "corner_kicks",
@@ -451,15 +441,15 @@
       "lega": "J1 League",
       "kickoff": "2026-09-11T10:00:00+00:00",
       "consigliato": {
-        "bersaglio": "offsides",
+        "bersaglio": "goalkeeper_saves",
         "lato": "trasferta",
-        "soglia": 2.5,
+        "soglia": 3.5,
         "verso": "Under",
-        "probabilita": 0.7753,
-        "base": 75.86,
-        "gareDiBase": 58,
-        "affidabilita": 69,
-        "scarto": 1.7
+        "probabilita": 0.7434,
+        "base": 64.41,
+        "gareDiBase": 59,
+        "affidabilita": 56,
+        "scarto": 9.9
       },
       "famiglie": [
         {
@@ -722,17 +712,7 @@
       "legaId": 25,
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-11T16:00:00+00:00",
-      "consigliato": {
-        "bersaglio": "corner_kicks",
-        "lato": "trasferta",
-        "soglia": 2.5,
-        "verso": "Over",
-        "probabilita": 0.7727,
-        "base": 72.41,
-        "gareDiBase": 58,
-        "affidabilita": 66,
-        "scarto": 4.9
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "goalkeeper_saves",
@@ -858,17 +838,7 @@
       "legaId": 26,
       "lega": "Allsvenskan",
       "kickoff": "2026-09-11T17:00:00+00:00",
-      "consigliato": {
-        "bersaglio": "offsides",
-        "lato": "trasferta",
-        "soglia": 2.5,
-        "verso": "Under",
-        "probabilita": 0.792,
-        "base": 83.78,
-        "gareDiBase": 148,
-        "affidabilita": 73,
-        "scarto": -4.6
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "offsides",
@@ -1021,15 +991,15 @@
       "lega": "Superliga",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
-        "bersaglio": "offsides",
-        "lato": "trasferta",
-        "soglia": 2.5,
+        "bersaglio": "total_shots",
+        "lato": "casa",
+        "soglia": 9.5,
         "verso": "Under",
-        "probabilita": 0.7752,
-        "base": 91.07,
-        "gareDiBase": 56,
-        "affidabilita": 69,
-        "scarto": -13.5
+        "probabilita": 0.6291,
+        "base": 12.7,
+        "gareDiBase": 63,
+        "affidabilita": 57,
+        "scarto": 50.2
       },
       "famiglie": [
         {
@@ -1088,17 +1058,7 @@
       "legaId": 22,
       "lega": "Parva Liga",
       "kickoff": "2026-09-11T18:00:00+00:00",
-      "consigliato": {
-        "bersaglio": "goalkeeper_saves",
-        "lato": "casa",
-        "soglia": 1.5,
-        "verso": "Over",
-        "probabilita": 0.6854,
-        "base": 64.52,
-        "gareDiBase": 31,
-        "affidabilita": 56,
-        "scarto": 4
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "goalkeeper_saves",
@@ -1130,15 +1090,15 @@
       "lega": "Eredivisie",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
-        "bersaglio": "offsides",
-        "lato": "totale",
-        "soglia": 1.5,
+        "bersaglio": "goalkeeper_saves",
+        "lato": "trasferta",
+        "soglia": 3.5,
         "verso": "Over",
-        "probabilita": 0.7904,
-        "base": 80.49,
-        "gareDiBase": 41,
-        "affidabilita": 75,
-        "scarto": -1.4
+        "probabilita": 0.7754,
+        "base": 31.82,
+        "gareDiBase": 44,
+        "affidabilita": 57,
+        "scarto": 45.7
       },
       "famiglie": [
         {
@@ -1224,15 +1184,15 @@
       "lega": "Segunda División",
       "kickoff": "2026-09-11T18:30:00+00:00",
       "consigliato": {
-        "bersaglio": "goalkeeper_saves",
+        "bersaglio": "offsides",
         "lato": "casa",
-        "soglia": 1.5,
-        "verso": "Over",
-        "probabilita": 0.7215,
-        "base": 72.09,
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.71,
+        "base": 62.79,
         "gareDiBase": 43,
-        "affidabilita": 57,
-        "scarto": 0.1
+        "affidabilita": 75,
+        "scarto": 8.2
       },
       "famiglie": [
         {
@@ -1291,17 +1251,7 @@
       "legaId": 25,
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-11T18:30:00+00:00",
-      "consigliato": {
-        "bersaglio": "offsides",
-        "lato": "totale",
-        "soglia": 1.5,
-        "verso": "Over",
-        "probabilita": 0.7865,
-        "base": 80.36,
-        "gareDiBase": 56,
-        "affidabilita": 69,
-        "scarto": -1.7
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "goalkeeper_saves",
@@ -1360,15 +1310,15 @@
       "lega": "Pro League",
       "kickoff": "2026-09-11T18:45:00+00:00",
       "consigliato": {
-        "bersaglio": "corner_kicks",
-        "lato": "casa",
-        "soglia": 1.5,
+        "bersaglio": "shots_on_target",
+        "lato": "trasferta",
+        "soglia": 3.5,
         "verso": "Over",
-        "probabilita": 0.7698,
-        "base": 91.11,
+        "probabilita": 0.7704,
+        "base": 53.33,
         "gareDiBase": 45,
-        "affidabilita": 66,
-        "scarto": -14.1
+        "affidabilita": 64,
+        "scarto": 23.7
       },
       "famiglie": [
         {
@@ -1453,17 +1403,7 @@
       "legaId": 6,
       "lega": "Ligue 1",
       "kickoff": "2026-09-11T18:45:00+00:00",
-      "consigliato": {
-        "bersaglio": "yellow_cards",
-        "lato": "trasferta",
-        "soglia": 2.5,
-        "verso": "Under",
-        "probabilita": 0.7979,
-        "base": null,
-        "gareDiBase": null,
-        "affidabilita": 70,
-        "scarto": null
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "yellow_cards",
@@ -1548,15 +1488,15 @@
       "lega": "Serie A",
       "kickoff": "2026-09-11T18:45:00+00:00",
       "consigliato": {
-        "bersaglio": "shots_on_target",
+        "bersaglio": "goalkeeper_saves",
         "lato": "trasferta",
         "soglia": 2.5,
         "verso": "Over",
-        "probabilita": 0.7867,
-        "base": 86.67,
+        "probabilita": 0.7306,
+        "base": 56.67,
         "gareDiBase": 30,
-        "affidabilita": 66,
-        "scarto": -8
+        "affidabilita": 57,
+        "scarto": 16.4
       },
       "famiglie": [
         {
@@ -1642,15 +1582,15 @@
       "lega": "Championship",
       "kickoff": "2026-09-11T19:00:00+00:00",
       "consigliato": {
-        "bersaglio": "yellow_cards",
+        "bersaglio": "offsides",
         "lato": "casa",
         "soglia": 2.5,
         "verso": "Under",
-        "probabilita": 0.7746,
-        "base": 74.24,
-        "gareDiBase": 66,
-        "affidabilita": 70,
-        "scarto": 3.2
+        "probabilita": 0.7173,
+        "base": 66.67,
+        "gareDiBase": 69,
+        "affidabilita": 69,
+        "scarto": 5.1
       },
       "famiglie": [
         {
@@ -1736,15 +1676,15 @@
       "lega": "La Liga",
       "kickoff": "2026-09-11T19:00:00+00:00",
       "consigliato": {
-        "bersaglio": "offsides",
+        "bersaglio": "goalkeeper_saves",
         "lato": "trasferta",
         "soglia": 2.5,
-        "verso": "Under",
-        "probabilita": 0.7479,
-        "base": 70,
-        "gareDiBase": 40,
-        "affidabilita": 75,
-        "scarto": 4.8
+        "verso": "Over",
+        "probabilita": 0.6892,
+        "base": 56.1,
+        "gareDiBase": 41,
+        "affidabilita": 57,
+        "scarto": 12.8
       },
       "famiglie": [
         {

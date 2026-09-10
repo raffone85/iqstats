@@ -128,3 +128,30 @@ test("lo stesso bersaglio non compare due volte", () => {
     "le righe devono essere di bersagli diversi, dal piu' forte in giu'",
   );
 });
+
+// **La soglia di scarto dalla norma, aggiunta il 10 settembre 2026.** Il criterio
+// consigliava l'ovvio: su 1.200 gare chiuse lo scarto mediano della lettura in cima era
+// +0,5 punti, cioe' meta' dei pronostici era la frequenza del campionato. Sotto cinque
+// punti non si consiglia piu' niente, ma l'elenco resta intero: applicare la soglia anche
+// alle altre letture faceva scendere la riuscita da 74,9% a 64,8%, misurato.
+test("una lettura che e' la norma del campionato non diventa il consigliato", () => {
+  const basi = new Map([["norma|casa|10.5|Over", { quota: 72, gare: 40 }]]);
+  const { letture, consigliato } = lettureForti([bersaglio("norma", 0.75, 80)], basi);
+
+  assert.equal(letture.length, 1, "la lettura resta nell'elenco: si toglie il consiglio, non il dato");
+  assert.equal(consigliato, null, "75% su una linea che esce il 72% delle volte non e' un consiglio");
+});
+
+test("una lettura che si stacca dalla norma diventa il consigliato", () => {
+  const basi = new Map([["staccata|casa|10.5|Over", { quota: 60, gare: 40 }]]);
+  const { consigliato } = lettureForti([bersaglio("staccata", 0.75, 80)], basi);
+
+  assert.equal(consigliato?.bersaglio, "staccata", "quindici punti sopra la norma vanno consigliati");
+});
+
+test("senza base di lega non si consiglia: non si sa quanto sia normale", () => {
+  const { letture, consigliato } = lettureForti([bersaglio("senza_base", 0.75, 80)]);
+
+  assert.equal(letture.length, 1);
+  assert.equal(consigliato, null, "senza base lo scarto non si calcola, e un consiglio non si inventa");
+});

@@ -81,8 +81,12 @@ async function letturaDi(gara: MatchListItem): Promise<VoceDiVetrina | null> {
     candidate.map((c) => ({ target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso })),
   );
   const forti = ordinaLetture(candidate, senzaMisura, basi);
-  const prima = forti.letture[0];
-  if (prima === undefined) return null;
+  // Il consigliato, non la piu' probabile: quella era quasi sempre la norma del campionato,
+  // e una vetrina di norme non e' una vetrina. Vedi `SCARTO_MINIMO` in `letture-forti.ts`.
+  const prima = forti.consigliato;
+  // `null`, non `undefined`: la gara ha letture ma nessuna si stacca dalla norma, e in
+  // vetrina non ci va. E' il caso che prima non esisteva, perche' la prima c'era sempre.
+  if (prima === null) return null;
 
   return {
     gara: gara.eventId,

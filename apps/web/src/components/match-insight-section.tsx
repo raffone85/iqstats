@@ -269,11 +269,20 @@ export function MatchInsightSection(
         La lettura principale di {homeTeam} contro {awayTeam}
       </h2>
 
-      {/* 0. Il pronostico: la cosa che si legge per prima, perche' e' la domanda vera. */}
-      {righe.length === 0 ? null : (
+      {/* 0. Il pronostico: la cosa che si legge per prima, perche' e' la domanda vera.
+             **Non e' piu' la prima riga dell'elenco.** Quella era la piu' probabile, e la
+             piu' probabile e' quasi sempre la norma del campionato: su 1.200 gare chiuse il
+             suo scarto mediano dalla lega era +0,5 punti. Adesso e' `consigliato`, che deve
+             staccarsi di almeno cinque punti; dove non c'e', si dichiara. */}
+      {righe.length === 0 ? null : forti?.consigliato == null ? (
+        <p className="insight-riserva">
+          Nessuna lettura di questa gara si stacca abbastanza dalla norma del campionato:
+          niente pronostico, e le letture restano qui sotto.
+        </p>
+      ) : (
         <Pronostico
-          lettura={righe[0]}
-          chi={chi(righe[0])}
+          lettura={forti.consigliato}
+          chi={chi(forti.consigliato)}
           resa={resa}
           gare={gareDelConsuntivo}
         />

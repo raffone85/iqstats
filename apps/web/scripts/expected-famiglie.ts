@@ -140,7 +140,7 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
   if (migliori.size === 0) return null;
 
   // Il consigliato passa dal criterio della cima, che e' l'unico di cui si conosce la resa.
-  const prima = ordinaLetture(candidate, senzaMisura, basi).letture[0];
+  const prima = ordinaLetture(candidate, senzaMisura, basi).consigliato ?? undefined;
   const consigliato: Consigliato | null = prima === undefined ? null : {
     bersaglio: prima.bersaglio,
     lato: prima.lato,

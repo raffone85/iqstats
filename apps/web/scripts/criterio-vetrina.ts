@@ -169,6 +169,27 @@ const CRITERI: readonly Criterio[] = [
             || (b.affidabilita - a.affidabilita)),
       ),
   },
+  // **Le tre soglie d'ingresso.** Non sono un ordinamento diverso - quello fu misurato e
+  // bocciato il 6 settembre - ma un rifiuto: sotto N punti di scarto dalla lega non si
+  // consiglia niente. Nascono da una misura sulle gare in arrivo: quattordici consigli su
+  // ventiquattro stavano entro cinque punti dalla norma del campionato, e sette sotto.
+  // Costano riuscita e coprono meno gare: il confronto serve a vedere quanto.
+  ...[5, 8, 10].map((punti) => ({
+    nome: `fascia-tarata-scarto-${punti}`,
+    spiegazione:
+      `la fascia tarata, ma si consiglia solo dove ci si stacca di almeno ${punti} punti `
+      + "dalla frequenza della lega: sotto quella distanza la lettura e' la norma del torneo",
+    scegli: (letture: readonly LetturaForte[]) =>
+      unaPerBersaglio(
+        letture
+          .filter((l) => l.probabilita <= 0.8)
+          .filter((l) => l.base !== null && l.probabilita * 100 - l.base >= punti)
+          .slice()
+          .sort((a, b) =>
+            (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))
+            || (b.affidabilita - a.affidabilita)),
+      ),
+  })),
   {
     nome: "concorde-con-la-squadra",
     spiegazione:
@@ -212,6 +233,13 @@ interface Esito {
    * il 6 settembre: sei letture su sette stavano sopra sia alla lega sia alla squadra.
    */
   readonly scostamentoDallaSquadra: number | null;
+  /**
+   * Quanti punti percentuali la lettura si stacca dalla frequenza della lega, con il segno.
+   * `null` dove la base manca. **E' la misura di quanto un consiglio sia scontato**: una
+   * lettura a 79% su una linea che in quel campionato esce il 72% delle volte aggiunge sette
+   * punti, non settantanove. Il banco misurava solo la riuscita, che e' l'altra meta'.
+   */
+  readonly scartoDallaLega: number | null;
   /** Vero quando la lettura sta sopra sia alla base di lega sia alla storia della squadra. */
   readonly sopraEntrambe: boolean;
 }
@@ -281,6 +309,7 @@ async function esitiDi(riga: RigaDiGara): Promise<readonly Esito[]> {
         presa: lettura.verso === "Over" ? sopra : !sopra,
         prima: indice === 0,
         scostamentoDallaSquadra: storia === null ? null : Math.abs(lettura.probabilita - storia),
+        scartoDallaLega: lega === null ? null : (lettura.probabilita - lega) * 100,
         sopraEntrambe:
           storia !== null && lega !== null
           && lettura.probabilita > storia && lettura.probabilita > lega,
@@ -311,6 +340,13 @@ function conta(esiti: readonly Esito[]) {
       (esiti.filter((e) => e.sopraEntrambe).length / esiti.length).toFixed(4),
     ),
     scostamento_mediano_dalla_squadra: mediana === null ? null : Number(mediana.toFixed(4)),
+    // Quanto un consiglio si stacca dalla norma del torneo: la meta' che dice se vale.
+    scarto_mediano_dalla_lega: (() => {
+      const s = esiti.map((e) => e.scartoDallaLega)
+        .filter((v): v is number => v !== null)
+        .sort((a, b) => a - b);
+      return s.length === 0 ? null : Number(s[Math.floor(s.length / 2)]!.toFixed(1));
+    })(),
     oltre_quaranta_punti_dalla_squadra: Number(
       (scostamenti.filter((v) => v > 0.4).length / Math.max(scostamenti.length, 1)).toFixed(4),
     ),
@@ -392,13 +428,21 @@ async function main(): Promise<number> {
   const uscita = path.resolve(process.cwd(), "..", "..", "scripts", "projection", "dataset", "output", "criterio-vetrina.json");
   writeFileSync(uscita, JSON.stringify(rapporto, null, 2) + "\n", "utf8");
 
-  console.log("\ncriterio                        | tutte: preso/promesso        | in vetrina: preso/promesso");
+  console.log(
+    "\ncriterio                        | in vetrina: preso/promesso | gare | scarto mediano",
+  );
   for (const voce of perCriterio) {
-    const t = voce.tutte;
     const v = voce.in_vetrina;
-    const scrivi = (c: typeof t) => c === null ? "nessuna lettura        "
-      : `${(c.frequenza_osservata * 100).toFixed(1)}% su ${(c.probabilita_promessa * 100).toFixed(1)}% (${c.letture})`.padEnd(24);
-    console.log(`${voce.criterio.padEnd(31)} | ${scrivi(t)} | ${scrivi(v)}`);
+    // Due colonne, non una: quanto ci prende **e** quanto si stacca dalla norma. Un
+    // criterio che vince sulla prima e perde sulla seconda consiglia l'ovvio.
+    const riuscita = v === null
+      ? "nessuna lettura           "
+      : `${(v.frequenza_osservata * 100).toFixed(1)}% su ${(v.probabilita_promessa * 100).toFixed(1)}%`.padEnd(26);
+    const gare = v === null ? "   0" : String(v.letture).padStart(4);
+    const scarto = v === null || v.scarto_mediano_dalla_lega === null
+      ? "    —"
+      : `${v.scarto_mediano_dalla_lega > 0 ? "+" : ""}${v.scarto_mediano_dalla_lega} punti`;
+    console.log(`${voce.criterio.padEnd(31)} | ${riuscita} | ${gare} | ${scarto}`);
   }
   console.log(`\nrapporto in ${uscita}`);
   return 0;

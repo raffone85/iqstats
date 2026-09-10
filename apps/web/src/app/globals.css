@@ -848,6 +848,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .partite-index { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 8px; margin-bottom: 6px; padding-bottom: 4px; }
 .partite-index-link { flex: 0 0 auto; }
 @media (min-width: 900px) { .partite-index { flex-wrap: wrap; overflow-x: visible; } }
+/* **Cinquantatre voci non sono una striscia.** `.partite-index` e' un nastro orizzontale
+   disegnato per gli otto campionati della fascia. Con l'elenco intero dentro il cassetto
+   diventava un nastro da scorrere di lato - misurato, 297x104 px con 53 campionati in
+   fila - che e' peggio del cassetto che sostituiva. Qui vanno a capo, e se sono troppi si
+   scorre in verticale, cioe' nel verso in cui si legge. */
+.giornata-altre .partite-index { flex-wrap: wrap; overflow-x: visible; max-height: 54vh; overflow-y: auto; }
 .partite-index-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--card-stroke); background: var(--card-panel-2); color: var(--card-ink-2); font-family: var(--font-display); font-size: 13px; transition: border-color 180ms ease, color 180ms ease; }
 .partite-index-link:hover { border-color: var(--card-brand); color: var(--card-brand-strong); }
 .partite-index-link i { font-style: normal; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }

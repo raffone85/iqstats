@@ -72,6 +72,35 @@ const FASCIA_MASSIMA = 0.8;
  */
 const FUORI_DALLA_CIMA = "fouls";
 
+/**
+ * Sotto questi punti di scarto dalla norma del campionato non si consiglia niente.
+ *
+ * **Il criterio in produzione consigliava l'ovvio, e c'e' il numero.** Sulle 1.200 gare
+ * chiuse lo scarto mediano della lettura in cima era **+0,5 punti**: meta' dei pronostici
+ * pubblicati aggiungeva mezzo punto o meno a quello che quel campionato fa da solo. Sulle
+ * gare in arrivo del 10 settembre 2026, quattordici consigli su ventiquattro stavano entro
+ * cinque punti dalla norma e sette erano *sotto*.
+ *
+ * **Perche' cinque e non otto o dieci**, misurato con `npm run criterio-vetrina`:
+ *
+ * | soglia | preso su promesso | gare | scarto mediano |
+ * | ---: | --- | ---: | ---: |
+ * | nessuna | 79,1% su 78,0% | 589 | +0,5 |
+ * | 5 punti | 73,3% su 74,1% | 587 | +9,2 |
+ * | 8 punti | 69,5% su 72,2% | 577 | +12,4 |
+ * | 10 punti | 66,4% su 70,8% | 557 | +14,3 |
+ *
+ * Oltre i cinque punti il modello **promette piu' di quanto rende** - a dieci, 70,8%
+ * promesso contro 66,4% reso - ed e' lo stesso difetto per cui i falli sono usciti dalla
+ * cima. A cinque resta onesto: -0,8, come il consuntivo intero.
+ *
+ * **La soglia vale solo per la lettura in cima, non per l'elenco.** Misurato: applicata a
+ * tutte le letture mostrate, la riuscita scende da 74,9% a 64,8% e il promesso sale sopra
+ * il reso di 4,2 punti. Una lettura sotto la norma resta informazione dentro la card della
+ * sua famiglia; quello che non puo' essere ovvio e' il pronostico.
+ */
+const SCARTO_MINIMO = 5;
+
 /** Quante letture si mostrano. Oltre la quinta si torna a chiedere «e allora?». */
 const QUANTE = 4;
 
@@ -122,6 +151,15 @@ export interface LetturaForte {
 
 export interface LettureDellaGara {
   readonly letture: readonly LetturaForte[];
+  /**
+   * La lettura da consigliare, o `null` quando nessuna si stacca abbastanza dalla norma.
+   *
+   * **Non e' `letture[0]`.** L'elenco resta ordinato per probabilita', che e' cio' che
+   * serve a leggere la gara; il consigliato e' la prima che supera `SCARTO_MINIMO`. Dove
+   * non c'e', la pagina lo dichiara invece di consigliare la norma del torneo: succede su
+   * due gare su 589, misurato.
+   */
+  readonly consigliato: LetturaForte | null;
   /** I bersagli lasciati fuori perche' non sanno dire quanto reggono. */
   readonly senzaMisura: readonly string[];
 }
@@ -279,7 +317,13 @@ export function ordinaLetture(
     return true;
   });
 
-  return { letture: distinte.slice(0, quante), senzaMisura };
+  // Il consigliato si sceglie fra le distinte, nello stesso ordine, ma deve staccarsi dalla
+  // norma del campionato. Senza base non si sa quanto sia normale, quindi non si consiglia.
+  const consigliato = distinte.find(
+    (l) => l.base !== null && l.probabilita * 100 - l.base >= SCARTO_MINIMO,
+  ) ?? null;
+
+  return { letture: distinte.slice(0, quante), consigliato, senzaMisura };
 }
 
 /** La chiave con cui una linea ritrova la sua base. Deve combaciare con `base-di-lega`. */

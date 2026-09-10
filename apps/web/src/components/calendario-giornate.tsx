@@ -175,22 +175,49 @@ export function CalendarioGiornate({ fascia, scelta, altre, coperture, giorni }:
         </>
       )}
 
-      {altre.length === 0 ? null : (
+      {fascia.length === 0 && altre.length === 0 ? null : (
+        /* **Un elenco solo, con tutti i campionati.** La fascia mostra gli otto di sempre;
+           chi ne cerca un altro doveva sapere che esisteva un secondo cassetto chiamato
+           «altri». Qui si apre l'elenco intero, quelli in fascia compresi, ognuno con il suo
+           stemma: sceglierne uno non deve richiedere di sapere in quale dei due gruppi sta. */
         <details className="giornata giornata-altre">
           <summary className="giornata-head">
-            Tutti gli altri campionati <i>{altre.length}</i>
+            Scegli il campionato <i>{fascia.length + altre.length}</i>
           </summary>
           {/* Qui dentro vanno i nomi, non i calendari. Con la finestra intera erano oltre
               seicento gare e la pagina pesava 1.234.203 byte: un cassetto che non apri non
-              deve costarti niente. Ogni voce porta al calendario filtrato. */}
-          <nav className="partite-index" aria-label="Altri campionati">
+              deve costarti niente. Quelli in fascia si aprono qui, gli altri portano al
+              calendario filtrato, che e' l'unico posto dove il loro turno esiste gia'. */}
+          <nav className="partite-index" aria-label="Tutti i campionati">
+            {fascia.map((g) => (
+              <Link
+                className="partite-index-link"
+                key={g.leagueId}
+                href={`/?lega=${g.leagueId}`}
+                aria-current={scelta !== null && g.leagueId === scelta.leagueId ? "page" : undefined}
+              >
+                <LeagueIdentity
+                  leagueId={g.leagueId}
+                  name={g.leagueName}
+                  code={g.leagueCountryCode}
+                  size="sm"
+                />
+                <i>{g.gare.length}</i>
+              </Link>
+            ))}
             {altre.map((g) => (
               <Link
                 className="partite-index-link"
                 key={g.leagueId}
                 href={`/partite?leagueId=${g.leagueId}`}
               >
-                {g.leagueName} <i>{g.gare.length}</i>
+                <LeagueIdentity
+                  leagueId={g.leagueId}
+                  name={g.leagueName}
+                  code={g.leagueCountryCode}
+                  size="sm"
+                />
+                <i>{g.gare.length}</i>
               </Link>
             ))}
           </nav>
