@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { CalendarioGiornate } from "@/components/calendario-giornate";
-import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
-import { TeamCrest } from "@/components/team-crest";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { prossimeGiornate } from "@/server/iqstats/giornate";
-import { getMatchesByDate, getMatchesInRange, type MatchListItem } from "@/server/iqstats/matches";
+import { getMatchesByDate, getMatchesInRange } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
 import { medieDiMercato, sbilanciDelGiorno } from "@/server/iqstats/sbilanci";
 
@@ -23,13 +21,6 @@ const KICKOFF_TIME: Intl.DateTimeFormatOptions = {
   timeZone: "Europe/Rome",
   hour: "2-digit",
   minute: "2-digit",
-};
-
-const LONG_DAY: Intl.DateTimeFormatOptions = {
-  timeZone: "Europe/Rome",
-  weekday: "long",
-  day: "numeric",
-  month: "long",
 };
 
 /** Quanto avanti si guarda per trovare la prossima giornata di ogni campionato. */
@@ -64,23 +55,6 @@ function todayKey(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Rome" });
 }
 
-/** Contatore di sezione: dice quanto contenuto c'è ora, al singolare o al plurale. */
-function counter(count: number, one: string, many: string) {
-  return (
-    <>
-      {count} {count === 1 ? one : many}
-    </>
-  );
-}
-
-/**
- * Il titolo risponde, non conta.
- *
- * Chi apre l'app non si chiede quante gare ci sono: si chiede dove il modello stia dicendo
- * qualcosa. Il numero di gare resta, ma come contorno del nome della gara che si stacca di
- * piu'. Senza scarti - niente medie, niente pronostici - si torna a dire quello che c'e',
- * perche' promettere una risposta che non abbiamo e' peggio di dichiarare un elenco.
- */
 /**
  * **Il titolo dice quante gare, non quale.** Diceva su quale gara il modello si sbilancia
  * di piu': la stessa che adesso e' la prima riga, subito sotto, con il suo scarto accanto.
@@ -94,24 +68,9 @@ function headline(available: boolean, count: number) {
     : <>Oggi ci sono {count} gare da leggere.</>;
 }
 
-/** La virgola al posto del punto, un decimale: e' la voce italiana dei numeri di questa pagina. */
-function virgola(valore: number): string {
-  return valore.toFixed(1).replace(".", ",");
-}
-
 /** Le cifre di uno scarto: un decimale, virgola, e il segno perche' e' una distanza con verso. */
 function punti(valore: number): string {
   return "+".concat(valore.toFixed(1).replace(".", ","));
-}
-
-/** Una squadra entra nell'indice solo se la fonte ne ha dato l'identificativo. */
-function collectTeams(matches: readonly MatchListItem[]) {
-  const teams = new Map<number, string>();
-  for (const match of matches) {
-    if (match.homeTeamId !== null) teams.set(match.homeTeamId, match.homeTeam);
-    if (match.awayTeamId !== null) teams.set(match.awayTeamId, match.awayTeam);
-  }
-  return [...teams].sort((a, b) => a[1].localeCompare(b[1], "it"));
 }
 
 type Props = {
@@ -152,8 +111,6 @@ export default async function HomePage({ searchParams }: Props) {
   const coperture = await coperturaDelleGare(scelta?.gare ?? []);
 
   const todayMatches = matchesResult.matches;
-  const matchIds = new Set(todayMatches.map((m) => m.eventId));
-  const readMatches = predictionsResult.predictions.filter((p) => matchIds.has(p.eventId)).length;
 
   // Sei righe: la prima nel riquadro protagonista, le altre cinque nell'elenco sotto.
   const sbilanci = medie === null
@@ -161,18 +118,6 @@ export default async function HomePage({ searchParams }: Props) {
     : sbilanciDelGiorno(predictionsResult.predictions, medie, 6);
   const primo = sbilanci[0];
 
-  const leagues = [
-    ...new Map(
-      todayMatches
-        .filter((m) => m.leagueId !== null && m.leagueName)
-        .map((m) => [
-          m.leagueId as number,
-          { name: m.leagueName as string, code: m.leagueCountryCode },
-        ]),
-    ),
-  ].sort((a, b) => a[1].name.localeCompare(b[1].name, "it"));
-
-  const teams = collectTeams(todayMatches);
   const available = matchesResult.source === "provider";
 
   return (
@@ -180,34 +125,23 @@ export default async function HomePage({ searchParams }: Props) {
       <div className="oggi-backdrop" aria-hidden="true" />
 
       <section className="home" aria-labelledby="home-title">
-        <div className="oggi-eyebrow">
-          <span className="oggi-kick">IQstatS</span>
-          <span className="oggi-line" aria-hidden="true" />
-          <span className="oggi-src">
-            {new Date().toLocaleDateString("it-IT", LONG_DAY)}
-            {matchesResult.lettoIl
-              ? ` · letto alle ${new Date(matchesResult.lettoIl).toLocaleTimeString("it-IT", KICKOFF_TIME)}`
-              : ""}
-          </span>
-        </div>
-
-        <h1 id="home-title" className="home-title">
+        {/* **Prima del primo dato non c'e' piu' niente da leggere.** C'erano tre blocchi -
+            la firma con la data, il titolo grande, la legenda dello scarto - per 149 px e
+            ventun parole, e su un telefono da 812 px erano un quinto della prima schermata
+            spesa in cose che non sono la gara. Il titolo resta per chi legge con la voce,
+            perche' una pagina senza intestazione non si naviga; smette di occupare spazio
+            per chi legge con gli occhi. */}
+        <h1 id="home-title" className="sr-only-heading">
           {headline(available, todayMatches.length)}
         </h1>
-        {/* **Una legenda, non un saggio.** Erano quarantacinque parole per dire che cosa e'
-            il numero in fondo a ogni riga, e poi ogni riga ripeteva la media - sei volte lo
-            stesso 44,3%. Qui la media sta scritta una volta sola, in cima, con il campione
-            accanto: la regola di `AGENTS.md` chiede fonte e campione, non una spiegazione. */}
-        <p className="home-lede home-legenda">
-          {medie === null ? (
-            "Le medie di lega non sono raggiungibili: senza, lo scarto non si calcola."
-          ) : (
-            <>
-              <b>Scarto dalla media di lega.</b> Media casa {virgola(medie.casa)}%, trasferta{" "}
-              {virgola(medie.trasferta)}% · n={medie.gare.toLocaleString("it-IT")} gare · 365 giorni
-            </>
-          )}
-        </p>
+        {/* La legenda dello scarto e' scesa dentro «Come si legge questa pagina»: serviva a
+            capire il numero, non a leggerlo, e chi apre l'app vuole la gara. Resta il caso
+            in cui le medie non ci sono, perche' li' non e' una spiegazione ma un'assenza. */}
+        {medie !== null ? null : (
+          <p className="home-lede home-legenda">
+            Le medie di lega non sono raggiungibili: senza, lo scarto non si calcola.
+          </p>
+        )}
 
         {/* **Le gare del giorno aprono la pagina.** Erano sotto il calendario e sotto un
             riquadro che ripeteva la prima: due forme per la stessa gara, e la risposta
@@ -222,7 +156,7 @@ export default async function HomePage({ searchParams }: Props) {
                   </span>
                   <span className="partite-teams">
                     {r.homeTeam} contro {r.awayTeam}
-                    {/* La media non si ripete riga per riga: sta nella legenda in cima, e
+                    {/* La media non si ripete riga per riga: sta dentro «Come si legge questa pagina», e
                         quale delle due valga lo dice l'esito a destra - Casa o Trasferta. */}
                     <span className="engine-obs">
                       {r.leagueName ?? "competizione non dichiarata"}
@@ -254,147 +188,6 @@ export default async function HomePage({ searchParams }: Props) {
             una media inventata sarebbe peggio di nessuna classifica. Restano le sezioni.
           </p>
         ) : null}
-
-        <div className="home-grid">
-          <Link className="home-tile" href="/pronostici">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Pronostici</span>
-              <span className="home-tile-count">
-                {available ? <>{readMatches} su {todayMatches.length}</> : "—"}
-              </span>
-            </span>
-            {/* Il rapporto è la copertura del modello: non tutte le gare hanno una lettura. */}
-            <span className="home-tile-sub">
-              {available
-                ? "Gare di oggi con una lettura del modello"
-                : "Le letture del modello, filtrabili"}
-            </span>
-            <span className="home-chips">
-              <span className="home-chip">Esito favorito</span>
-              <span className="home-chip">Over 2.5</span>
-              <span className="home-chip">Gol/Gol</span>
-            </span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-          <Link className="home-tile" href="/partite">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Partite</span>
-              <span className="home-tile-count">
-                {available ? counter(leagues.length, "competizione", "competizioni") : "—"}
-              </span>
-            </span>
-            <span className="home-tile-sub">
-              {available ? (
-                <>{todayMatches.length} gare oggi, calendario e ricerca per giorno</>
-              ) : (
-                "Calendario e ricerca per giorno"
-              )}
-            </span>
-            <span className="home-chips">
-              {leagues.slice(0, 3).map((league) => (
-                <span className="home-chip" key={league[0]}>
-                  <LeagueIdentity
-                    leagueId={league[0]}
-                    name={league[1].name}
-                    code={league[1].code}
-                    size="sm"
-                  />
-                </span>
-              ))}
-              {leagues.length === 0 ? <span className="home-chip">Nessuna competizione</span> : null}
-            </span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-          {/* Le squadre non hanno un indice proprio: qui l'indice sono le gare già scaricate. */}
-          <section className="home-tile home-tile-wide home-tile-index" aria-labelledby="home-teams">
-            <span className="home-tile-head">
-              <span className="home-tile-name" id="home-teams">
-                Squadre
-              </span>
-              <span className="home-tile-count">
-                {available ? counter(teams.length, "in campo", "in campo") : "—"}
-              </span>
-            </span>
-            <span className="home-tile-sub">
-              Scheda completa: medie, casa e trasferta, registro gara per gara, arbitri
-            </span>
-            <span className="home-teamlist">
-              {teams.slice(0, 10).map((team) => (
-                <Link className="home-team" key={team[0]} href={"/squadre/" + team[0]}>
-                  <TeamCrest name={team[1]} teamId={team[0]} />
-                  {team[1]}
-                </Link>
-              ))}
-              {teams.length === 0 ? (
-                <span className="home-tile-sub">Nessuna squadra nell&apos;elenco corrente.</span>
-              ) : null}
-            </span>
-          </section>
-
-          <Link className="home-tile" href="/metodo">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Metodo</span>
-              <span className="home-tile-count">guida</span>
-            </span>
-            <span className="home-tile-sub">Come si leggono i dati e cosa manca</span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-          <Link className="home-tile" href="/account/billing">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Piani</span>
-              <span className="home-tile-count">4 livelli</span>
-            </span>
-            <span className="home-tile-sub">Cosa include il tuo accesso</span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-          <div className="home-tile home-tile-soon">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Giocatori</span>
-              <span className="home-tile-count">in arrivo</span>
-            </span>
-            <span className="home-tile-sub">
-              Rendimento per giocatore su più gare, con il campione dichiarato
-            </span>
-          </div>
-
-          <Link className="home-tile" href="/arbitri">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Arbitri</span>
-              <span className="home-tile-count">681 direttori</span>
-            </span>
-            <span className="home-tile-sub">
-              Falli e cartellini di ogni direttore, con il metro della competizione accanto
-            </span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-          <Link className="home-tile home-tile-wide" href="/banco-di-prova">
-            <span className="home-tile-head">
-              <span className="home-tile-name">Banco di prova</span>
-              <span className="home-tile-count">due squadre a scelta</span>
-            </span>
-            <span className="home-tile-sub">
-              Due squadre qualsiasi e l&apos;arbitro che scegli tu, anche se non si incontrano
-            </span>
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-        </div>
 
         {/* **Le note stanno dietro un controllo, non nel flusso.** Erano tre paragrafi
             di fila, 122 parole senza un numero, sparsi fra i riquadri e il fondo: chi apre

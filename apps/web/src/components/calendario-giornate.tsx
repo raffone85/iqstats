@@ -126,54 +126,13 @@ export function CalendarioGiornate({ fascia, scelta, altre, coperture, giorni }:
 
   return (
     <section className="dossier-panel" aria-labelledby="giornate-title">
-      <p className="dossier-kick">Scegli la gara</p>
-      <h2 id="giornate-title" className="squad-section-title">
+      {/* **L'intestazione diceva quello che dice il controllo sotto.** «Scegli la gara» piu'
+          «La prossima giornata, campionato per campionato» erano otto parole sopra un
+          pulsante che si chiama «Scegli il campionato». Resta per chi legge con la voce,
+          perche' la sezione ha bisogno di un nome; sparisce dagli occhi. */}
+      <h2 id="giornate-title" className="sr-only-heading">
         La prossima giornata, campionato per campionato
       </h2>
-
-      <nav className="partite-index" aria-label="Campionato">
-        {fascia.map((g) => (
-          <Link
-            className="partite-index-link"
-            key={g.leagueId}
-            href={`/?lega=${g.leagueId}`}
-            aria-current={scelta !== null && g.leagueId === scelta.leagueId ? "page" : undefined}
-          >
-            <LeagueIdentity
-              leagueId={g.leagueId}
-              name={g.leagueName}
-              code={g.leagueCountryCode}
-              size="sm"
-            />
-            <i>{g.gare.length}</i>
-          </Link>
-        ))}
-      </nav>
-
-      {scelta === null ? (
-        <p className="squad-empty-inline">
-          Nessuna gara nei prossimi {giorni} giorni per i campionati in fascia.
-        </p>
-      ) : (
-        <>
-          <p className="giornata-head">
-            <span className="engine-obs">{etichetta(scelta)}</span>
-          </p>
-
-          <ol className="partite-rows">
-            {mostrate.map((g) => (
-              <Gara key={g.eventId} gara={g} copertura={coperture.get(g.eventId)} />
-            ))}
-          </ol>
-
-          {oltre === 0 ? null : (
-            <p className="dossier-src">
-              Altre {oltre} gare di questa competizione nella finestra:{" "}
-              <Link href={`/partite?leagueId=${scelta.leagueId}`}>vedile nel calendario</Link>.
-            </p>
-          )}
-        </>
-      )}
 
       {fascia.length === 0 && altre.length === 0 ? null : (
         /* **Un elenco solo, con tutti i campionati.** La fascia mostra gli otto di sempre;
@@ -222,6 +181,31 @@ export function CalendarioGiornate({ fascia, scelta, altre, coperture, giorni }:
             ))}
           </nav>
         </details>
+      )}
+
+      {scelta === null ? (
+        <p className="squad-empty-inline">
+          Nessuna gara nei prossimi {giorni} giorni per i campionati in fascia.
+        </p>
+      ) : (
+        <>
+          <p className="giornata-head">
+            <span className="engine-obs">{etichetta(scelta)}</span>
+          </p>
+
+          <ol className="partite-rows">
+            {mostrate.map((g) => (
+              <Gara key={g.eventId} gara={g} copertura={coperture.get(g.eventId)} />
+            ))}
+          </ol>
+
+          {oltre === 0 ? null : (
+            <p className="dossier-src">
+              Altre {oltre} gare di questa competizione nella finestra:{" "}
+              <Link href={`/partite?leagueId=${scelta.leagueId}`}>vedile nel calendario</Link>.
+            </p>
+          )}
+        </>
       )}
 
       <p className="dossier-src">
