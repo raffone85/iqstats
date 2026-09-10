@@ -40,6 +40,7 @@
     "test:analisi-finale": "node --experimental-strip-types --test test/iqstats-analisi-finale.test.ts",
     "test:lettura-arbitro": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-lettura-arbitro.test.ts",
     "vetrina-letture": "node --env-file=.env.local --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types scripts/vetrina-letture.ts",
+    "expected-famiglie": "node --env-file=.env.local --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types scripts/expected-famiglie.ts",
     "consuntivo-letture": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types scripts/consuntivo-letture.ts",
     "criterio-vetrina": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types scripts/criterio-vetrina.ts",
     "test:scontri-comuni": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-scontri-comuni.test.ts",

@@ -1,0 +1,1726 @@
+{
+  "schema": "expected-famiglie/1",
+  "calcolato_il": "2026-09-10T08:23:54.220Z",
+  "giorni": 2,
+  "gare_in_arrivo": 55,
+  "gare_con_proiezione": 24,
+  "righe": 114,
+  "come_e_stato_scelto": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' probabile fra i lati e le soglie di quella famiglia. Non si passa da ordinaLetture: quello e' il criterio della cima, che scarta le letture sopra l'ottanta per cento e i falli, e qui scartare direbbe il falso su una sezione che deve mostrare che cosa dice il motore.",
+  "gare": [
+    {
+      "gara": 222829,
+      "casa": "Neom SC",
+      "fuori": "Al-Fateh",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-10T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7941,
+        "base": 67.92,
+        "gareDiBase": 53,
+        "affidabilita": 69,
+        "scarto": 11.5
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7941,
+          "base": 67.92,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 3.5,
+          "verso": "Under",
+          "probabilita": 0.7429,
+          "base": 70.37,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Under",
+          "probabilita": 0.7099,
+          "base": 62.96,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 7.5,
+          "verso": "Over",
+          "probabilita": 0.6569,
+          "base": 87.04,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 222826,
+      "casa": "Al-Riyadh",
+      "fuori": "Al-Kholood",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-10T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "goalkeeper_saves",
+        "lato": "casa",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.7989,
+        "base": 66.67,
+        "gareDiBase": 54,
+        "affidabilita": 56,
+        "scarto": 13.2
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7989,
+          "base": 66.67,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7788,
+          "base": 86.79,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.7294,
+          "base": 62.96,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 11.5,
+          "verso": "Under",
+          "probabilita": 0.6183,
+          "base": 40.74,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 222821,
+      "casa": "Diriyah",
+      "fuori": "Abha",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-10T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7788,
+        "base": 67.92,
+        "gareDiBase": 53,
+        "affidabilita": 69,
+        "scarto": 10
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7788,
+          "base": 67.92,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "totale",
+          "soglia": 4.5,
+          "verso": "Over",
+          "probabilita": 0.7381,
+          "base": 70.37,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Under",
+          "probabilita": 0.684,
+          "base": 62.96,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 13.5,
+          "verso": "Over",
+          "probabilita": 0.615,
+          "base": 48.15,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 215509,
+      "casa": "CF Estrela Amadora",
+      "fuori": "Sporting Braga",
+      "lega": "Liga Portugal Betclic",
+      "kickoff": "2026-09-10T19:15:00+00:00",
+      "consigliato": {
+        "bersaglio": "yellow_cards",
+        "lato": "totale",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7969,
+        "base": 76.19,
+        "gareDiBase": 42,
+        "affidabilita": 70,
+        "scarto": 3.5
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8416,
+          "base": 82.05,
+          "gareDiBase": 39,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7969,
+          "base": 76.19,
+          "gareDiBase": 42,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7777,
+          "base": 67.44,
+          "gareDiBase": 43,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7775,
+          "base": 67.44,
+          "gareDiBase": 43,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.762,
+          "base": 79.07,
+          "gareDiBase": 43,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "casa",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.677,
+          "base": 81.4,
+          "gareDiBase": 43,
+          "affidabilita": 53
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 9.5,
+          "verso": "Over",
+          "probabilita": 0.6197,
+          "base": 46.51,
+          "gareDiBase": 43,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 602296,
+      "casa": "Pumas UNAM",
+      "fuori": "Club León",
+      "lega": "Liga MX Apertura",
+      "kickoff": "2026-09-11T03:05:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7896,
+        "base": 60,
+        "gareDiBase": 55,
+        "affidabilita": 69,
+        "scarto": 19
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7896,
+          "base": 60,
+          "gareDiBase": 55,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7687,
+          "base": 72.88,
+          "gareDiBase": 59,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7486,
+          "base": 72.88,
+          "gareDiBase": 59,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.6044,
+          "base": 66.1,
+          "gareDiBase": 59,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 212253,
+      "casa": "Vissel Kobe",
+      "fuori": "Kashima Antlers",
+      "lega": "J1 League",
+      "kickoff": "2026-09-11T10:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "corner_kicks",
+        "lato": "casa",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7732,
+        "base": 78.33,
+        "gareDiBase": 60,
+        "affidabilita": 66,
+        "scarto": -1
+      },
+      "famiglie": [
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7732,
+          "base": 78.33,
+          "gareDiBase": 60,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "totale",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.772,
+          "base": 83.05,
+          "gareDiBase": 59,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7556,
+          "base": 72.41,
+          "gareDiBase": 58,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 11.5,
+          "verso": "Over",
+          "probabilita": 0.6365,
+          "base": 65,
+          "gareDiBase": 60,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 212245,
+      "casa": "Kyoto Sanga FC",
+      "fuori": "Kashiwa Reysol",
+      "lega": "J1 League",
+      "kickoff": "2026-09-11T10:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7753,
+        "base": 75.86,
+        "gareDiBase": 58,
+        "affidabilita": 69,
+        "scarto": 1.7
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8062,
+          "base": 86.21,
+          "gareDiBase": 58,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "totale",
+          "soglia": 4.5,
+          "verso": "Over",
+          "probabilita": 0.7443,
+          "base": 69.49,
+          "gareDiBase": 59,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7064,
+          "base": 78.33,
+          "gareDiBase": 60,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 13.5,
+          "verso": "Over",
+          "probabilita": 0.6207,
+          "base": 53.33,
+          "gareDiBase": 60,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 214592,
+      "casa": "FCV Farul Constanța",
+      "fuori": "UTA Arad",
+      "lega": "Superliga",
+      "kickoff": "2026-09-11T15:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "corner_kicks",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7571,
+        "base": 69.84,
+        "gareDiBase": 63,
+        "affidabilita": 66,
+        "scarto": 5.9
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8085,
+          "base": 85.71,
+          "gareDiBase": 63,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7571,
+          "base": 69.84,
+          "gareDiBase": 63,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7379,
+          "base": 75,
+          "gareDiBase": 56,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 9.5,
+          "verso": "Over",
+          "probabilita": 0.6371,
+          "base": 71.43,
+          "gareDiBase": 63,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 222825,
+      "casa": "Al-Qadsiah",
+      "fuori": "Al-Ettifaq",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-11T15:25:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 3.5,
+        "verso": "Over",
+        "probabilita": 0.7666,
+        "base": 56.6,
+        "gareDiBase": 53,
+        "affidabilita": 69,
+        "scarto": 20.1
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8513,
+          "base": 67.92,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8277,
+          "base": 85.19,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8116,
+          "base": 87.04,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 7.5,
+          "verso": "Over",
+          "probabilita": 0.6187,
+          "base": 87.04,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 222822,
+      "casa": "Al Faisaly",
+      "fuori": "Al-Ittihad",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-11T15:45:00+00:00",
+      "consigliato": {
+        "bersaglio": "goalkeeper_saves",
+        "lato": "casa",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7795,
+        "base": 51.85,
+        "gareDiBase": 54,
+        "affidabilita": 56,
+        "scarto": 26.1
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.8215,
+          "base": 67.92,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7795,
+          "base": 51.85,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.7211,
+          "base": 62.96,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 8.5,
+          "verso": "Over",
+          "probabilita": 0.6432,
+          "base": 79.63,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 211900,
+      "casa": "Raków Częstochowa",
+      "fuori": "Motor Lublin",
+      "lega": "Ekstraklasa",
+      "kickoff": "2026-09-11T16:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "corner_kicks",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7727,
+        "base": 72.41,
+        "gareDiBase": 58,
+        "affidabilita": 66,
+        "scarto": 4.9
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8086,
+          "base": 75.86,
+          "gareDiBase": 58,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7727,
+          "base": 72.41,
+          "gareDiBase": 58,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 3.5,
+          "verso": "Under",
+          "probabilita": 0.7574,
+          "base": 75,
+          "gareDiBase": 56,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 12.5,
+          "verso": "Over",
+          "probabilita": 0.6316,
+          "base": 75.86,
+          "gareDiBase": 58,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 215990,
+      "casa": "Beşiktaş JK",
+      "fuori": "Erzurumspor FK",
+      "lega": "Trendyol Super Lig",
+      "kickoff": "2026-09-11T17:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7616,
+        "base": 57.14,
+        "gareDiBase": 35,
+        "affidabilita": 75,
+        "scarto": 19
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.7616,
+          "base": 57.14,
+          "gareDiBase": 35,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7298,
+          "base": 86.11,
+          "gareDiBase": 36,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.6893,
+          "base": 52.78,
+          "gareDiBase": 36,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 5.5,
+          "verso": "Over",
+          "probabilita": 0.6731,
+          "base": 94.44,
+          "gareDiBase": 36,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 46465,
+      "casa": "BK Häcken",
+      "fuori": "Mjällby AIF",
+      "lega": "Allsvenskan",
+      "kickoff": "2026-09-11T17:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.792,
+        "base": 83.78,
+        "gareDiBase": 148,
+        "affidabilita": 73,
+        "scarto": -4.6
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.847,
+          "base": 78.38,
+          "gareDiBase": 148,
+          "affidabilita": 73
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.7946,
+          "base": 81.13,
+          "gareDiBase": 159,
+          "affidabilita": 68
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7902,
+          "base": 76.1,
+          "gareDiBase": 159,
+          "affidabilita": 55
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7606,
+          "base": 80.5,
+          "gareDiBase": 159,
+          "affidabilita": 62
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.736,
+          "base": 77.36,
+          "gareDiBase": 159,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "trasferta",
+          "soglia": 11.5,
+          "verso": "Over",
+          "probabilita": 0.6821,
+          "base": 57.86,
+          "gareDiBase": 159,
+          "affidabilita": 55
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 8.5,
+          "verso": "Over",
+          "probabilita": 0.6496,
+          "base": 80.5,
+          "gareDiBase": 159,
+          "affidabilita": 61
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 222823,
+      "casa": "Al-Ahli",
+      "fuori": "Al-Hazem",
+      "lega": "Saudi Pro League",
+      "kickoff": "2026-09-11T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7826,
+        "base": 67.92,
+        "gareDiBase": 53,
+        "affidabilita": 69,
+        "scarto": 10.3
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7826,
+          "base": 67.92,
+          "gareDiBase": 53,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.7236,
+          "base": 62.96,
+          "gareDiBase": 54,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Under",
+          "probabilita": 0.7126,
+          "base": 75.93,
+          "gareDiBase": 54,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 9.5,
+          "verso": "Under",
+          "probabilita": 0.6092,
+          "base": 40.74,
+          "gareDiBase": 54,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 214596,
+      "casa": "FK Csíkszereda Miercurea Ciuc",
+      "fuori": "FC Dinamo București",
+      "lega": "Superliga",
+      "kickoff": "2026-09-11T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7752,
+        "base": 91.07,
+        "gareDiBase": 56,
+        "affidabilita": 69,
+        "scarto": -13.5
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8181,
+          "base": 75,
+          "gareDiBase": 56,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8117,
+          "base": 95.24,
+          "gareDiBase": 63,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.8037,
+          "base": 53.97,
+          "gareDiBase": 63,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 9.5,
+          "verso": "Under",
+          "probabilita": 0.6291,
+          "base": 12.7,
+          "gareDiBase": 63,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 211710,
+      "casa": "Cherno More Varna",
+      "fuori": "Lokomotiv Sofia",
+      "lega": "Parva Liga",
+      "kickoff": "2026-09-11T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "goalkeeper_saves",
+        "lato": "casa",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.6854,
+        "base": 64.52,
+        "gareDiBase": 31,
+        "affidabilita": 56,
+        "scarto": 4
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8327,
+          "base": 80.65,
+          "gareDiBase": 31,
+          "affidabilita": 56
+        }
+      ],
+      "senzaMisura": [
+        "total_shots",
+        "shots_on_target",
+        "corner_kicks",
+        "fouls",
+        "yellow_cards",
+        "offsides"
+      ]
+    },
+    {
+      "gara": 210844,
+      "casa": "AZ Alkmaar",
+      "fuori": "Willem II Tilburg",
+      "lega": "Eredivisie",
+      "kickoff": "2026-09-11T18:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.7904,
+        "base": 80.49,
+        "gareDiBase": 41,
+        "affidabilita": 75,
+        "scarto": -1.4
+      },
+      "famiglie": [
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8263,
+          "base": 95.45,
+          "gareDiBase": 44,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7904,
+          "base": 80.49,
+          "gareDiBase": 41,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.7754,
+          "base": 31.82,
+          "gareDiBase": 44,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Under",
+          "probabilita": 0.7291,
+          "base": 45.45,
+          "gareDiBase": 44,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7034,
+          "base": 69.77,
+          "gareDiBase": 43,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "trasferta",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.6826,
+          "base": 59.09,
+          "gareDiBase": 44,
+          "affidabilita": 53
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 7.5,
+          "verso": "Over",
+          "probabilita": 0.6426,
+          "base": 95.45,
+          "gareDiBase": 44,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 214810,
+      "casa": "Burgos Club de Fútbol",
+      "fuori": "AD Ceuta",
+      "lega": "Segunda División",
+      "kickoff": "2026-09-11T18:30:00+00:00",
+      "consigliato": {
+        "bersaglio": "goalkeeper_saves",
+        "lato": "casa",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.7215,
+        "base": 72.09,
+        "gareDiBase": 43,
+        "affidabilita": 57,
+        "scarto": 0.1
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8482,
+          "base": 88.37,
+          "gareDiBase": 43,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8334,
+          "base": 81.4,
+          "gareDiBase": 43,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.681,
+          "base": 77.27,
+          "gareDiBase": 44,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 8.5,
+          "verso": "Over",
+          "probabilita": 0.6339,
+          "base": 68.18,
+          "gareDiBase": 44,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 211901,
+      "casa": "Wisła Kraków",
+      "fuori": "Jagiellonia Białystok",
+      "lega": "Ekstraklasa",
+      "kickoff": "2026-09-11T18:30:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "totale",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.7865,
+        "base": 80.36,
+        "gareDiBase": 56,
+        "affidabilita": 69,
+        "scarto": -1.7
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8054,
+          "base": 75.86,
+          "gareDiBase": 58,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7865,
+          "base": 80.36,
+          "gareDiBase": 56,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7716,
+          "base": 72.41,
+          "gareDiBase": 58,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 11.5,
+          "verso": "Over",
+          "probabilita": 0.6052,
+          "base": 68.97,
+          "gareDiBase": 58,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    },
+    {
+      "gara": 211348,
+      "casa": "KV Mechelen",
+      "fuori": "RSC Anderlecht",
+      "lega": "Pro League",
+      "kickoff": "2026-09-11T18:45:00+00:00",
+      "consigliato": {
+        "bersaglio": "corner_kicks",
+        "lato": "casa",
+        "soglia": 1.5,
+        "verso": "Over",
+        "probabilita": 0.7698,
+        "base": 91.11,
+        "gareDiBase": 45,
+        "affidabilita": 66,
+        "scarto": -14.1
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.8089,
+          "base": 69.77,
+          "gareDiBase": 43,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.7704,
+          "base": 53.33,
+          "gareDiBase": 45,
+          "affidabilita": 64
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.7698,
+          "base": 91.11,
+          "gareDiBase": 45,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.7529,
+          "base": 91.11,
+          "gareDiBase": 45,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.743,
+          "base": 48.89,
+          "gareDiBase": 45,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 9.5,
+          "verso": "Over",
+          "probabilita": 0.6297,
+          "base": 84.44,
+          "gareDiBase": 45,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "casa",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.6283,
+          "base": 51.11,
+          "gareDiBase": 45,
+          "affidabilita": 66
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 210472,
+      "casa": "Stade Rennais",
+      "fuori": "Olympique de Marseille",
+      "lega": "Ligue 1",
+      "kickoff": "2026-09-11T18:45:00+00:00",
+      "consigliato": {
+        "bersaglio": "yellow_cards",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7979,
+        "base": null,
+        "gareDiBase": null,
+        "affidabilita": 70,
+        "scarto": null
+      },
+      "famiglie": [
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8401,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8041,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7902,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.79,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "casa",
+          "soglia": 8.5,
+          "verso": "Over",
+          "probabilita": 0.7159,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 53
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "probabilita": 0.6867,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 13.5,
+          "verso": "Under",
+          "probabilita": 0.6105,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 210096,
+      "casa": "Venezia",
+      "fuori": "Fiorentina",
+      "lega": "Serie A",
+      "kickoff": "2026-09-11T18:45:00+00:00",
+      "consigliato": {
+        "bersaglio": "shots_on_target",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Over",
+        "probabilita": 0.7867,
+        "base": 86.67,
+        "gareDiBase": 30,
+        "affidabilita": 66,
+        "scarto": -8
+      },
+      "famiglie": [
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "casa",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8063,
+          "base": 90,
+          "gareDiBase": 30,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7867,
+          "base": 86.67,
+          "gareDiBase": 30,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.767,
+          "base": null,
+          "gareDiBase": null,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7377,
+          "base": 70,
+          "gareDiBase": 30,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Under",
+          "probabilita": 0.6957,
+          "base": 60,
+          "gareDiBase": 30,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "casa",
+          "soglia": 12.5,
+          "verso": "Over",
+          "probabilita": 0.6438,
+          "base": 40,
+          "gareDiBase": 30,
+          "affidabilita": 53
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.6429,
+          "base": 63.33,
+          "gareDiBase": 30,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 214046,
+      "casa": "West Ham United",
+      "fuori": "Wrexham",
+      "lega": "Championship",
+      "kickoff": "2026-09-11T19:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "yellow_cards",
+        "lato": "casa",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7746,
+        "base": 74.24,
+        "gareDiBase": 66,
+        "affidabilita": 70,
+        "scarto": 3.2
+      },
+      "famiglie": [
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8601,
+          "base": 92.42,
+          "gareDiBase": 66,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.835,
+          "base": 85.51,
+          "gareDiBase": 69,
+          "affidabilita": 69
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8115,
+          "base": 88.41,
+          "gareDiBase": 69,
+          "affidabilita": 64
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8109,
+          "base": 69.57,
+          "gareDiBase": 69,
+          "affidabilita": 56
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7027,
+          "base": 82.61,
+          "gareDiBase": 69,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "trasferta",
+          "soglia": 10.5,
+          "verso": "Over",
+          "probabilita": 0.6722,
+          "base": 57.97,
+          "gareDiBase": 69,
+          "affidabilita": 66
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 8.5,
+          "verso": "Over",
+          "probabilita": 0.6341,
+          "base": 81.16,
+          "gareDiBase": 69,
+          "affidabilita": 57
+        }
+      ],
+      "senzaMisura": []
+    },
+    {
+      "gara": 213568,
+      "casa": "Sevilla",
+      "fuori": "Valencia",
+      "lega": "La Liga",
+      "kickoff": "2026-09-11T19:00:00+00:00",
+      "consigliato": {
+        "bersaglio": "offsides",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.7479,
+        "base": 70,
+        "gareDiBase": 40,
+        "affidabilita": 75,
+        "scarto": 4.8
+      },
+      "famiglie": [
+        {
+          "bersaglio": "offsides",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.7479,
+          "base": 70,
+          "gareDiBase": 40,
+          "affidabilita": 75
+        },
+        {
+          "bersaglio": "goalkeeper_saves",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.6892,
+          "base": 56.1,
+          "gareDiBase": 41,
+          "affidabilita": 57
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.6868,
+          "base": 78.05,
+          "gareDiBase": 41,
+          "affidabilita": 74
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 7.5,
+          "verso": "Over",
+          "probabilita": 0.637,
+          "base": 70.73,
+          "gareDiBase": 41,
+          "affidabilita": 60
+        }
+      ],
+      "senzaMisura": [
+        "shots_on_target",
+        "fouls",
+        "yellow_cards"
+      ]
+    }
+  ]
+}
