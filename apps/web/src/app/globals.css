@@ -121,12 +121,26 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .product-wordmark strong, .product-wordmark small { display: block; }
 .product-wordmark strong { font-size: 17px; letter-spacing: -.035em; }
 .product-wordmark small { color: var(--product-muted); font-size: 11px; }
-.product-nav { display: flex; align-items: stretch; gap: 20px; height: 68px; }
-.product-nav-link { display: inline-flex; min-height: 44px; min-width: 44px; justify-content: center; align-items: center; border-bottom: 3px solid transparent; color: var(--product-muted); font-size: 14px; font-weight: 700; transition: border-color 180ms ease, color 180ms ease; }
-.product-nav-link:hover { color: var(--product-primary-deep); }
-.product-nav-link-active { border-color: var(--product-primary); color: var(--product-primary-deep); }
+/* **Il cassetto: tutte le destinazioni in un posto solo, senza JavaScript.**
+   La barra aveva un tetto di cinque voci, e sotto quel tetto restavano fuori Partite,
+   Giocatori, Expected e Cerca: pagine che esistono e che nessuno trovava. Un `<details>`
+   nativo non ha tetto, e apre, chiude e risponde alla tastiera da solo. */
+.menu-cassetto { position: relative; justify-self: start; }
+.menu-cassetto > summary { display: inline-flex; min-height: 44px; min-width: 44px; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid var(--product-border); border-radius: var(--r-inset); color: var(--product-primary-deep); font-family: var(--font-display); font-size: 14px; font-weight: 700; cursor: pointer; list-style: none; transition: background-color 180ms ease; }
+.menu-cassetto > summary::-webkit-details-marker { display: none; }
+.menu-cassetto > summary:hover { background: var(--product-surface-soft); }
+.menu-hamburger { display: grid; width: 16px; gap: 3px; }
+.menu-hamburger i { display: block; height: 2px; border-radius: 2px; background: currentColor; }
+.menu-pannello { position: absolute; z-index: 30; top: calc(100% + 10px); left: 0; display: grid; width: min(292px, calc(100vw - 32px)); padding: 8px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); box-shadow: 0 18px 44px rgb(5 48 31 / .16); }
+.menu-voce { display: flex; min-height: 44px; align-items: center; justify-content: space-between; padding: 0 12px; border-radius: var(--r-inset); color: var(--product-text); font-family: var(--font-display); font-size: 15px; font-weight: 700; cursor: pointer; list-style: none; }
+.menu-voce::-webkit-details-marker { display: none; }
+.menu-voce:hover { background: var(--product-surface-soft); }
+.menu-voce-attiva { background: var(--product-surface-soft); color: var(--card-brand-strong); }
+.menu-gruppo > .menu-voce::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translate(-2px, -2px); transition: transform 180ms ease; }
+.menu-gruppo[open] > .menu-voce::after { transform: rotate(225deg) translate(-2px, -2px); }
+.menu-sotto { display: flex; min-height: 44px; align-items: center; padding: 0 12px 0 26px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 14px; font-weight: 600; }
+.menu-sotto:hover { background: var(--product-surface-soft); color: var(--product-primary-deep); }
 .product-main { width: min(1180px, calc(100% - 32px)); min-width: 0; margin: 0 auto; padding: clamp(32px, 6vw, 72px) 0 76px; }
-.product-mobile-nav { display: none; }
 .eyebrow { margin-bottom: 10px; color: var(--product-primary); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .page-intro { max-width: 790px; }
 .page-intro h1, .data-state h1 { margin-bottom: 17px; color: var(--product-primary-deep); font-size: clamp(2.25rem, 6vw, 4.6rem); letter-spacing: -.07em; line-height: .98; overflow-wrap: anywhere; }
@@ -250,7 +264,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    chiaro — perché i componenti dell'identità non lo seguivano. Rimosso. */
 
 @media (max-width: 900px) {
-  .product-header-inner { grid-template-columns: auto 1fr; gap: 18px; }
+  .product-header-inner { grid-template-columns: auto 1fr auto; gap: 18px; }
   .match-row { grid-template-columns: 120px minmax(0, 1fr) auto; }
   .match-competition { grid-column: 2; }
   .match-score { grid-column: 1; }
@@ -260,16 +274,15 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 
 @media (max-width: 640px) {
   .product-header { position: static; }
-  .product-header-inner { width: min(100% - 32px, 1180px); min-height: 62px; grid-template-columns: 1fr; }
-  .product-nav { display: none; }
-  /* Le destinazioni sono cinque e stanno su una riga sola, quindi il contenuto lascia
-     sotto lo spazio di una barra bassa invece che di due righe: dal 3 settembre 2026
-     «Cerca» e' un'azione nella testata e «Partite» si raggiunge da Oggi. */
-  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 92px; }
+  /* Tre figli, tre colonne, una riga: menu, marchio, conto. Impilarli faceva una testata
+     alta 171 px a 375, misurata - due terzi di schermo prima del contenuto. */
+  .product-header-inner { width: min(100% - 32px, 1180px); min-height: 62px; grid-template-columns: auto 1fr auto; gap: 10px; }
+  .product-wordmark small { display: none; }
+  .menu-hamburger-testo { display: none; }
+  /* La barra bassa non c'e' piu': la navigazione sta nel cassetto, e il contenuto non deve
+     piu' lasciare sotto lo spazio di una barra fissa. */
+  .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 40px; }
   .email-access-secondary-actions { grid-template-columns: minmax(0, 1fr); }
-  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 56px; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 6px 6px env(safe-area-inset-bottom); }
-  .product-mobile-nav a { display: grid; min-width: 0; min-height: 44px; place-items: center; padding: 0 2px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 12px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; transition: background-color 180ms ease, color 180ms ease; }
-  .product-mobile-nav a[aria-current="page"] { background: var(--product-surface-soft); color: var(--product-primary-deep); }
   .page-intro h1, .data-state h1 { font-size: clamp(2rem, 9.5vw, 2.8rem); }
   .page-intro h1 { max-inline-size: 13ch; }
   .page-intro > p:last-child { font-size: 16px; }
@@ -352,9 +365,15 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .product-shell .product-wordmark small { color: var(--card-ink-3); }
 
 /* Nav primaria */
-.product-shell .product-nav-link { color: var(--card-ink-2); font-family: var(--font-display); border-bottom-width: 2px; }
-.product-shell .product-nav-link:hover { color: var(--card-ink); }
-.product-shell .product-nav-link-active { border-color: var(--card-brand); color: var(--card-brand-strong); }
+/* Il cassetto nella pelle del prodotto: stessi caratteri e stessi verdi delle schede. */
+.product-shell .menu-cassetto > summary { border-color: var(--card-stroke); color: var(--card-brand-strong); }
+.product-shell .menu-cassetto > summary:hover { background: var(--card-brand-pale); }
+.product-shell .menu-pannello { border-color: var(--card-stroke); background: var(--card-ground); }
+.product-shell .menu-voce { color: var(--card-ink); }
+.product-shell .menu-voce:hover { background: var(--card-brand-pale); }
+.product-shell .menu-voce-attiva { background: var(--card-brand-pale); color: var(--card-brand-strong); }
+.product-shell .menu-sotto { color: var(--card-ink-3); }
+.product-shell .menu-sotto:hover { background: var(--card-brand-pale); color: var(--card-brand-strong); }
 
 /* Cluster destro: secondarie + Accedi */
 .product-header-right { display: flex; align-items: center; gap: 18px; justify-self: end; }
@@ -448,9 +467,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    cambiarne una sola non si vedeva in pagina. Il commento diceva «5 voci» mentre la griglia
    ne teneva tre per riga: erano sei da quando «Cerca» era entrata in barra. */
 @media (max-width: 640px) {
-  .product-shell .product-mobile-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; border-top: 1px solid var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
-  .product-shell .product-mobile-nav a { color: var(--card-ink-3); font-size: 11px; font-weight: 700; }
-  .product-shell .product-mobile-nav a[aria-current="page"] { background: var(--card-brand-pale); color: var(--card-brand-strong); }
 }
 
 /* ============================================================

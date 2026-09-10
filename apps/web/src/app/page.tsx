@@ -194,19 +194,17 @@ export default async function HomePage({ searchParams }: Props) {
         <h1 id="home-title" className="home-title">
           {headline(available, todayMatches.length)}
         </h1>
-        <p className="home-lede">
-          {primo === undefined || medie === null ? (
-            <>
-              Ogni riquadro apre una sezione. Quelli spenti non hanno ancora dati veri: restano
-              visibili perché tu sappia dove sta andando il prodotto, non perché siano pronti.
-            </>
+        {/* **Una legenda, non un saggio.** Erano quarantacinque parole per dire che cosa e'
+            il numero in fondo a ogni riga, e poi ogni riga ripeteva la media - sei volte lo
+            stesso 44,3%. Qui la media sta scritta una volta sola, in cima, con il campione
+            accanto: la regola di `AGENTS.md` chiede fonte e campione, non una spiegazione. */}
+        <p className="home-lede home-legenda">
+          {medie === null ? (
+            "Le medie di lega non sono raggiungibili: senza, lo scarto non si calcola."
           ) : (
             <>
-              <b>Non è la percentuale più alta, è la più staccata dalla media.</b> La squadra
-              di casa vince il {virgola(medie.casa)}% delle volte, quella in trasferta il{" "}
-              {virgola(medie.trasferta)}%: «Casa al 54%» dice meno di «Trasferta al 45%»,
-              anche se il numero è più grande. Le medie sono nostre, misurate su{" "}
-              {medie.gare.toLocaleString("it-IT")} gare degli ultimi 365 giorni.
+              <b>Scarto dalla media di lega.</b> Media casa {virgola(medie.casa)}%, trasferta{" "}
+              {virgola(medie.trasferta)}% · n={medie.gare.toLocaleString("it-IT")} gare · 365 giorni
             </>
           )}
         </p>
@@ -224,9 +222,10 @@ export default async function HomePage({ searchParams }: Props) {
                   </span>
                   <span className="partite-teams">
                     {r.homeTeam} contro {r.awayTeam}
+                    {/* La media non si ripete riga per riga: sta nella legenda in cima, e
+                        quale delle due valga lo dice l'esito a destra - Casa o Trasferta. */}
                     <span className="engine-obs">
-                      {r.leagueName ?? "competizione non dichiarata"} · media di questo esito{" "}
-                      {virgola(r.media)}%
+                      {r.leagueName ?? "competizione non dichiarata"}
                     </span>
                   </span>
                   <span className="partite-read">

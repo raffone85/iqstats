@@ -35,26 +35,47 @@ type ProductShellProps = Readonly<{
 }>;
 
 /**
- * Cinque destinazioni, e il tetto torna quello dichiarato.
+ * L'albero del cassetto laterale: tutte le destinazioni in un posto solo.
  *
- * **Erano sei, contro il tetto di cinque scritto qui sopra dal 24 agosto.** Su telefono
- * diventavano sei bersagli su due righe, e la barra copriva il fondo della pagina.
+ * **Perche' un cassetto e non una barra piu' lunga.** La barra ha un tetto di cinque voci -
+ * scritto qui sopra dal 24 agosto - e sotto quel tetto restano fuori Partite, Giocatori,
+ * Expected e Cerca, che esistono e nessuno trova. Un cassetto non ha tetto: si apre, si
+ * legge tutto, si chiude.
  *
- * Due cambi, il 3 settembre 2026. **«Cerca» esce**: cercare e' un'azione, non un posto dove
- * si va, e ora sta nella testata di ogni pagina - la route `/cerca` non cambia.
- * **«Pronostici» entra**: era una pagina intera raggiungibile solo dalle tessere della home,
- * quindi chi arrivava da un dossier condiviso non sapeva che esistesse.
+ * **Solo `<details>` nativi.** Niente stato client, niente libreria, niente JavaScript: la
+ * shell e' un componente server e resta tale. Tastiera e lettori di schermo funzionano
+ * senza che ci si metta mano.
  *
- * **«Partite» esce dalla barra ma non dall'app**: `/` e' la porta del giorno - porta la gara
- * in evidenza e il calendario - e da li' e dal dossier si arriva all'elenco completo, che
- * resta a `/partite` con i suoi filtri.
+ * **Le voci sono solo quelle che esistono.** Classifiche, Confronto e Quote sono nella
+ * ricognizione di PowerStats e nella raccolta quote, ma le loro pagine non ci sono ancora:
+ * una voce che apre il vuoto e' peggio di una voce che non c'e'. Entrano quando la pagina
+ * esiste, come e' entrata Squadre.
  */
-const PRIMARY_NAV: ReadonlyArray<{ section: ProductSection; href: string; label: string; short: string }> = [
-  { section: "home", href: "/", label: "Oggi", short: "Oggi" },
-  { section: "predictions", href: "/pronostici", label: "Pronostici", short: "Pronostici" },
-  { section: "teams", href: "/squadre", label: "Squadre", short: "Squadre" },
-  { section: "referees", href: "/arbitri", label: "Arbitri", short: "Arbitri" },
-  { section: "method", href: "/metodo", label: "Metodo", short: "Metodo" },
+const MENU: ReadonlyArray<{
+  readonly label: string;
+  readonly href?: string;
+  readonly section?: ProductSection;
+  readonly voci?: ReadonlyArray<{ label: string; href: string; section: ProductSection }>;
+}> = [
+  { label: "Oggi", href: "/", section: "home" },
+  { label: "Pronostici", href: "/pronostici", section: "predictions" },
+  {
+    label: "Partite",
+    voci: [
+      { label: "Calendario", href: "/partite", section: "match" },
+      { label: "Expected", href: "/expected", section: "expected" },
+    ],
+  },
+  {
+    label: "Squadre",
+    voci: [
+      { label: "Elenco", href: "/squadre", section: "teams" },
+      { label: "Cerca", href: "/cerca", section: "search" },
+    ],
+  },
+  { label: "Giocatori", href: "/giocatori", section: "teams" },
+  { label: "Arbitri", href: "/arbitri", section: "referees" },
+  { label: "Metodo", href: "/metodo", section: "method" },
 ];
 
 /** L'iniziale sostituisce una fotografia che non abbiamo: nessun avatar inventato. */
@@ -77,6 +98,42 @@ export async function ProductShell({ children, activeSection = "match" }: Produc
       </a>
       <header className="product-header">
         <div className="product-header-inner">
+          <details className="menu-cassetto">
+            <summary aria-label="Menu">
+              <span className="menu-hamburger" aria-hidden="true">
+                <i /><i /><i />
+              </span>
+              <span className="menu-hamburger-testo">Menu</span>
+            </summary>
+            <nav className="menu-pannello" aria-label="Navigazione">
+              {MENU.map((voce) => (
+                voce.voci === undefined ? (
+                  <Link
+                    key={voce.label}
+                    className={`menu-voce${activeSection === voce.section ? " menu-voce-attiva" : ""}`}
+                    href={voce.href ?? "/"}
+                    aria-current={activeSection === voce.section ? "page" : undefined}
+                  >
+                    {voce.label}
+                  </Link>
+                ) : (
+                  <details className="menu-gruppo" key={voce.label}>
+                    <summary className="menu-voce">{voce.label}</summary>
+                    {voce.voci.map((sotto) => (
+                      <Link
+                        key={sotto.href}
+                        className={`menu-sotto${activeSection === sotto.section ? " menu-voce-attiva" : ""}`}
+                        href={sotto.href}
+                        aria-current={activeSection === sotto.section ? "page" : undefined}
+                      >
+                        {sotto.label}
+                      </Link>
+                    ))}
+                  </details>
+                )
+              ))}
+            </nav>
+          </details>
           <Link className="product-wordmark" href="/" aria-label="IQstatS, home">
             <span className="product-mark" aria-hidden="true">IQ</span>
             <span>
@@ -84,18 +141,6 @@ export async function ProductShell({ children, activeSection = "match" }: Produc
               <small>football intelligence</small>
             </span>
           </Link>
-          <nav className="product-nav" aria-label="Navigazione primaria">
-            {PRIMARY_NAV.map((item) => (
-              <Link
-                key={item.section}
-                className={`product-nav-link${activeSection === item.section ? " product-nav-link-active" : ""}`}
-                href={item.href}
-                aria-current={activeSection === item.section ? "page" : undefined}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
           <div className="product-header-right">
             {/* **Cercare e' un'azione, non una destinazione.** Sta nella testata di ogni
                 pagina e non nella barra, dove occupava uno dei cinque posti riservati alle
@@ -199,17 +244,6 @@ export async function ProductShell({ children, activeSection = "match" }: Produc
           <a href={TITOLARE.telegramUrl}>Assistenza</a>
         </p>
       </footer>
-      <nav className="product-mobile-nav" aria-label="Navigazione primaria mobile">
-        {PRIMARY_NAV.map((item) => (
-          <Link
-            key={item.section}
-            href={item.href}
-            aria-current={activeSection === item.section ? "page" : undefined}
-          >
-            {item.short}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }
