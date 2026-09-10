@@ -9,7 +9,7 @@ import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { prossimeGiornate } from "@/server/iqstats/giornate";
 import { getMatchesByDate, getMatchesInRange, type MatchListItem } from "@/server/iqstats/matches";
 import { getPredictionsByDate } from "@/server/iqstats/predictions";
-import { medieDiMercato, sbilanciDelGiorno, type Sbilancio } from "@/server/iqstats/sbilanci";
+import { medieDiMercato, sbilanciDelGiorno } from "@/server/iqstats/sbilanci";
 
 export const dynamic = "force-dynamic";
 
@@ -81,20 +81,17 @@ function counter(count: number, one: string, many: string) {
  * piu'. Senza scarti - niente medie, niente pronostici - si torna a dire quello che c'e',
  * perche' promettere una risposta che non abbiamo e' peggio di dichiarare un elenco.
  */
-function headline(available: boolean, count: number, primo: Sbilancio | undefined) {
+/**
+ * **Il titolo dice quante gare, non quale.** Diceva su quale gara il modello si sbilancia
+ * di piu': la stessa che adesso e' la prima riga, subito sotto, con il suo scarto accanto.
+ * Quattordici parole per ripetere una riga. Il conteggio, invece, le righe non lo danno.
+ */
+function headline(available: boolean, count: number) {
   if (!available) return "Le sezioni di IQstatS.";
   if (count === 0) return "Oggi non ci sono gare in programma.";
-  if (primo === undefined) {
-    return count === 1
-      ? <>Oggi c&apos;è una gara da leggere.</>
-      : <>Oggi ci sono {count} gare da leggere.</>;
-  }
-  return (
-    <>
-      Oggi il modello si sbilancia di più su{" "}
-      {primo.homeTeam} contro {primo.awayTeam}.
-    </>
-  );
+  return count === 1
+    ? <>Oggi c&apos;è una gara da leggere.</>
+    : <>Oggi ci sono {count} gare da leggere.</>;
 }
 
 /** La virgola al posto del punto, un decimale: e' la voce italiana dei numeri di questa pagina. */
@@ -195,7 +192,7 @@ export default async function HomePage({ searchParams }: Props) {
         </div>
 
         <h1 id="home-title" className="home-title">
-          {headline(available, todayMatches.length, primo)}
+          {headline(available, todayMatches.length)}
         </h1>
         <p className="home-lede">
           {primo === undefined || medie === null ? (
