@@ -22,6 +22,9 @@ type ProductSection =
    *  «expected» fino al 10 settembre 2026, e il nome serve altrove: «Expected» da noi sono
    *  i pronostici statistici delle sette famiglie, non un simulatore di accoppiamenti. */
   | "banco"
+  /** Expected sono i pronostici statistici delle sette famiglie con le loro soglie: il
+   *  nome torna alla sezione che descrive, non al simulatore che lo occupava. */
+  | "expected"
   | "teams"
   | "referees"
   | "method"
@@ -61,6 +64,7 @@ const MENU: ReadonlyArray<{
   readonly voci?: ReadonlyArray<{ label: string; href: string; section: ProductSection }>;
 }> = [
   { label: "Oggi", href: "/", section: "home" },
+  { label: "Expected", href: "/expected", section: "expected" },
   { label: "Pronostici", href: "/pronostici", section: "predictions" },
   {
     label: "Partite",

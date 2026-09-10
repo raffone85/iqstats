@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { contestoExpected } from "../src/server/iqstats/expected.ts";
+import { contestoExpected } from "../src/server/iqstats/banco-di-prova.ts";
 import { competizioniConSquadre } from "../src/server/iqstats/team-stats.ts";
 
 const COLLEGATO = Boolean(process.env.IQSTATS_PROJECTION_DATABASE_URL?.trim());

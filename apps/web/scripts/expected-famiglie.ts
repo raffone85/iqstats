@@ -66,6 +66,10 @@ interface GaraExpected {
   readonly gara: number;
   readonly casa: string;
   readonly fuori: string;
+  /** Gli identificativi servono agli stemmi: senza, la riga mostra solo le iniziali. */
+  readonly casaId: number | null;
+  readonly fuoriId: number | null;
+  readonly legaId: number | null;
   readonly lega: string | null;
   readonly kickoff: string;
   readonly consigliato: Consigliato | null;
@@ -155,6 +159,9 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
     gara: gara.eventId,
     casa: detail.homeTeam,
     fuori: detail.awayTeam,
+    casaId: gara.homeTeamId,
+    fuoriId: gara.awayTeamId,
+    legaId: gara.leagueId,
     lega: gara.leagueName,
     kickoff: gara.kickoff,
     consigliato,

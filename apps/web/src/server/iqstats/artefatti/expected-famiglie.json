@@ -1,16 +1,19 @@
 {
   "schema": "expected-famiglie/1",
-  "calcolato_il": "2026-09-10T08:23:54.220Z",
+  "calcolato_il": "2026-09-10T17:08:28.892Z",
   "giorni": 2,
-  "gare_in_arrivo": 55,
+  "gare_in_arrivo": 52,
   "gare_con_proiezione": 24,
-  "righe": 114,
+  "righe": 117,
   "come_e_stato_scelto": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' probabile fra i lati e le soglie di quella famiglia. Non si passa da ordinaLetture: quello e' il criterio della cima, che scarta le letture sopra l'ottanta per cento e i falli, e qui scartare direbbe il falso su una sezione che deve mostrare che cosa dice il motore.",
   "gare": [
     {
       "gara": 222829,
       "casa": "Neom SC",
       "fuori": "Al-Fateh",
+      "casaId": 259,
+      "fuoriId": 268,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-10T18:00:00+00:00",
       "consigliato": {
@@ -76,6 +79,9 @@
       "gara": 222826,
       "casa": "Al-Riyadh",
       "fuori": "Al-Kholood",
+      "casaId": 263,
+      "fuoriId": 261,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-10T18:00:00+00:00",
       "consigliato": {
@@ -141,6 +147,9 @@
       "gara": 222821,
       "casa": "Diriyah",
       "fuori": "Abha",
+      "casaId": 3256,
+      "fuoriId": 2415,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-10T18:00:00+00:00",
       "consigliato": {
@@ -206,6 +215,9 @@
       "gara": 215509,
       "casa": "CF Estrela Amadora",
       "fuori": "Sporting Braga",
+      "casaId": 34,
+      "fuoriId": 31,
+      "legaId": 2,
       "lega": "Liga Portugal Betclic",
       "kickoff": "2026-09-10T19:15:00+00:00",
       "consigliato": {
@@ -297,6 +309,9 @@
       "gara": 602296,
       "casa": "Pumas UNAM",
       "fuori": "Club León",
+      "casaId": 313,
+      "fuoriId": 318,
+      "legaId": 19,
       "lega": "Liga MX Apertura",
       "kickoff": "2026-09-11T03:05:00+00:00",
       "consigliato": {
@@ -362,6 +377,9 @@
       "gara": 212253,
       "casa": "Vissel Kobe",
       "fuori": "Kashima Antlers",
+      "casaId": 1931,
+      "fuoriId": 1937,
+      "legaId": 49,
       "lega": "J1 League",
       "kickoff": "2026-09-11T10:00:00+00:00",
       "consigliato": {
@@ -427,6 +445,9 @@
       "gara": 212245,
       "casa": "Kyoto Sanga FC",
       "fuori": "Kashiwa Reysol",
+      "casaId": 1930,
+      "fuoriId": 1945,
+      "legaId": 49,
       "lega": "J1 League",
       "kickoff": "2026-09-11T10:00:00+00:00",
       "consigliato": {
@@ -492,6 +513,9 @@
       "gara": 214592,
       "casa": "FCV Farul Constanța",
       "fuori": "UTA Arad",
+      "casaId": 366,
+      "fuoriId": 358,
+      "legaId": 23,
       "lega": "Superliga",
       "kickoff": "2026-09-11T15:00:00+00:00",
       "consigliato": {
@@ -557,6 +581,9 @@
       "gara": 222825,
       "casa": "Al-Qadsiah",
       "fuori": "Al-Ettifaq",
+      "casaId": 272,
+      "fuoriId": 260,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-11T15:25:00+00:00",
       "consigliato": {
@@ -622,6 +649,9 @@
       "gara": 222822,
       "casa": "Al Faisaly",
       "fuori": "Al-Ittihad",
+      "casaId": 4909,
+      "fuoriId": 271,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-11T15:45:00+00:00",
       "consigliato": {
@@ -687,6 +717,9 @@
       "gara": 211900,
       "casa": "Raków Częstochowa",
       "fuori": "Motor Lublin",
+      "casaId": 428,
+      "fuoriId": 431,
+      "legaId": 25,
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-11T16:00:00+00:00",
       "consigliato": {
@@ -706,7 +739,7 @@
           "lato": "casa",
           "soglia": 1.5,
           "verso": "Over",
-          "probabilita": 0.8086,
+          "probabilita": 0.8119,
           "base": 75.86,
           "gareDiBase": 58,
           "affidabilita": 56
@@ -726,7 +759,7 @@
           "lato": "totale",
           "soglia": 3.5,
           "verso": "Under",
-          "probabilita": 0.7574,
+          "probabilita": 0.7487,
           "base": 75,
           "gareDiBase": 56,
           "affidabilita": 69
@@ -752,6 +785,9 @@
       "gara": 215990,
       "casa": "Beşiktaş JK",
       "fuori": "Erzurumspor FK",
+      "casaId": 196,
+      "fuoriId": 1346,
+      "legaId": 11,
       "lega": "Trendyol Super Lig",
       "kickoff": "2026-09-11T17:00:00+00:00",
       "consigliato": {
@@ -817,6 +853,9 @@
       "gara": 46465,
       "casa": "BK Häcken",
       "fuori": "Mjällby AIF",
+      "casaId": 407,
+      "fuoriId": 441,
+      "legaId": 26,
       "lega": "Allsvenskan",
       "kickoff": "2026-09-11T17:00:00+00:00",
       "consigliato": {
@@ -908,6 +947,9 @@
       "gara": 222823,
       "casa": "Al-Ahli",
       "fuori": "Al-Hazem",
+      "casaId": 258,
+      "fuoriId": 257,
+      "legaId": 17,
       "lega": "Saudi Pro League",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
@@ -973,6 +1015,9 @@
       "gara": 214596,
       "casa": "FK Csíkszereda Miercurea Ciuc",
       "fuori": "FC Dinamo București",
+      "casaId": 367,
+      "fuoriId": 368,
+      "legaId": 23,
       "lega": "Superliga",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
@@ -1038,6 +1083,9 @@
       "gara": 211710,
       "casa": "Cherno More Varna",
       "fuori": "Lokomotiv Sofia",
+      "casaId": 342,
+      "fuoriId": 341,
+      "legaId": 22,
       "lega": "Parva Liga",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
@@ -1076,6 +1124,9 @@
       "gara": 210844,
       "casa": "AZ Alkmaar",
       "fuori": "Willem II Tilburg",
+      "casaId": 180,
+      "fuoriId": 2053,
+      "legaId": 10,
       "lega": "Eredivisie",
       "kickoff": "2026-09-11T18:00:00+00:00",
       "consigliato": {
@@ -1167,6 +1218,9 @@
       "gara": 214810,
       "casa": "Burgos Club de Fútbol",
       "fuori": "AD Ceuta",
+      "casaId": 1401,
+      "fuoriId": 1458,
+      "legaId": 38,
       "lega": "Segunda División",
       "kickoff": "2026-09-11T18:30:00+00:00",
       "consigliato": {
@@ -1232,6 +1286,9 @@
       "gara": 211901,
       "casa": "Wisła Kraków",
       "fuori": "Jagiellonia Białystok",
+      "casaId": 1772,
+      "fuoriId": 420,
+      "legaId": 25,
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-11T18:30:00+00:00",
       "consigliato": {
@@ -1297,6 +1354,9 @@
       "gara": 211348,
       "casa": "KV Mechelen",
       "fuori": "RSC Anderlecht",
+      "casaId": 237,
+      "fuoriId": 240,
+      "legaId": 14,
       "lega": "Pro League",
       "kickoff": "2026-09-11T18:45:00+00:00",
       "consigliato": {
@@ -1388,6 +1448,9 @@
       "gara": 210472,
       "casa": "Stade Rennais",
       "fuori": "Olympique de Marseille",
+      "casaId": 97,
+      "fuoriId": 98,
+      "legaId": 6,
       "lega": "Ligue 1",
       "kickoff": "2026-09-11T18:45:00+00:00",
       "consigliato": {
@@ -1479,6 +1542,9 @@
       "gara": 210096,
       "casa": "Venezia",
       "fuori": "Fiorentina",
+      "casaId": 1285,
+      "fuoriId": 68,
+      "legaId": 4,
       "lega": "Serie A",
       "kickoff": "2026-09-11T18:45:00+00:00",
       "consigliato": {
@@ -1570,6 +1636,9 @@
       "gara": 214046,
       "casa": "West Ham United",
       "fuori": "Wrexham",
+      "casaId": 8,
+      "fuoriId": 206,
+      "legaId": 12,
       "lega": "Championship",
       "kickoff": "2026-09-11T19:00:00+00:00",
       "consigliato": {
@@ -1661,6 +1730,9 @@
       "gara": 213568,
       "casa": "Sevilla",
       "fuori": "Valencia",
+      "casaId": 52,
+      "fuoriId": 47,
+      "legaId": 3,
       "lega": "La Liga",
       "kickoff": "2026-09-11T19:00:00+00:00",
       "consigliato": {
@@ -1675,6 +1747,26 @@
         "scarto": 4.8
       },
       "famiglie": [
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.8078,
+          "base": 82.93,
+          "gareDiBase": 41,
+          "affidabilita": 70
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 1.5,
+          "verso": "Over",
+          "probabilita": 0.8034,
+          "base": 85.37,
+          "gareDiBase": 41,
+          "affidabilita": 66
+        },
         {
           "bersaglio": "offsides",
           "lato": "trasferta",
@@ -1714,13 +1806,19 @@
           "base": 70.73,
           "gareDiBase": 41,
           "affidabilita": 60
+        },
+        {
+          "bersaglio": "fouls",
+          "lato": "totale",
+          "soglia": 25.5,
+          "verso": "Over",
+          "probabilita": 0.6142,
+          "base": 48.78,
+          "gareDiBase": 41,
+          "affidabilita": 53
         }
       ],
-      "senzaMisura": [
-        "shots_on_target",
-        "fouls",
-        "yellow_cards"
-      ]
+      "senzaMisura": []
     }
   ]
 }

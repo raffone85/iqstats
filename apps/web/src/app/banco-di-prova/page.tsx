@@ -14,7 +14,7 @@ import {
   provenienzaInChiaro,
   type AllenatoreDellaSquadra,
 } from "@/server/iqstats/allenatore";
-import { contestoExpected } from "@/server/iqstats/expected";
+import { contestoExpected } from "@/server/iqstats/banco-di-prova";
 import { proiezioniDellaGara } from "@/server/iqstats/projection-runtime";
 import { classificaArbitri } from "@/server/iqstats/referees";
 import { competizioniConSquadre } from "@/server/iqstats/team-stats";

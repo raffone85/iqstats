@@ -141,6 +141,38 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .menu-sotto { display: flex; min-height: 44px; align-items: center; padding: 0 12px 0 26px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 14px; font-weight: 600; }
 .menu-sotto:hover { background: var(--product-surface-soft); color: var(--product-primary-deep); }
 .product-main { width: min(1180px, calc(100% - 32px)); min-width: 0; margin: 0 auto; padding: clamp(32px, 6vw, 72px) 0 76px; }
+
+/* **Expected: una gara e' una riga, i numeri si aprono.** Con tutto aperto ventiquattro
+   gare facevano 29.986 px a 375, misurati - piu' alto del dossier che questa sezione
+   doveva alleggerire. Il riepilogo porta la risposta, il dettaglio porta le prove. */
+.expected-gara { margin-top: 12px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); }
+.expected-gara > summary { display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border-radius: var(--r-panel); cursor: pointer; list-style: none; }
+.expected-gara > summary::-webkit-details-marker { display: none; }
+.expected-gara > summary:hover { background: var(--product-surface-soft); }
+.expected-gara[open] > summary { border-bottom: 1px solid var(--product-border); border-radius: var(--r-panel) var(--r-panel) 0 0; }
+.expected-gara-squadre { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--product-primary-deep); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.expected-sintesi { color: var(--product-text); font-size: 15px; }
+.expected-dettaglio { padding: 14px 16px 16px; }
+.expected-consiglio { padding: 12px 14px; border: 1px solid var(--product-border); border-radius: var(--r-inset); background: var(--product-surface-soft); }
+.expected-lettura { margin: 4px 0 8px; color: var(--product-primary-deep); font-size: 17px; }
+.expected-motivi { display: grid; gap: 4px; margin: 0; padding-left: 18px; color: var(--product-muted); font-size: 14px; line-height: 1.5; }
+/* **Due colonne, non tre.** Le righe delle famiglie riusavano `.partite-row`, che e' una
+   griglia da ora/squadre/lettura: con due figli il testo cadeva nella colonna da 120 px e
+   a 375 la percentuale finiva sopra le parole. Misurato nella cattura, non dedotto. */
+.expected-riga { display: grid; align-items: center; gap: 10px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--product-border); border-radius: var(--r-inset); grid-template-columns: minmax(0, 1fr) auto; }
+.expected-riga-linea { display: grid; gap: 2px; min-width: 0; color: var(--product-text); font-size: 15px; font-weight: 700; }
+.expected-riga-valore { display: grid; justify-items: end; gap: 2px; color: var(--product-primary-deep); font-size: 17px; font-weight: 800; white-space: nowrap; }
+.expected-riga-valore i { color: var(--product-muted); font-size: 12px; font-style: normal; font-weight: 600; }
+.product-shell .expected-riga { border-color: var(--card-stroke); }
+.product-shell .expected-riga-linea { color: var(--card-ink); }
+.product-shell .expected-riga-valore { color: var(--card-brand-strong); }
+.product-shell .expected-riga-valore i { color: var(--card-ink-3); }
+.expected-apri { margin: 12px 0 0; font-size: 14px; }
+.product-shell .expected-gara { border-color: var(--card-stroke); background: var(--card-ground); }
+.product-shell .expected-gara > summary:hover { background: var(--card-brand-pale); }
+.product-shell .expected-gara-squadre, .product-shell .expected-lettura { color: var(--card-brand-strong); }
+.product-shell .expected-consiglio { border-color: var(--card-stroke); background: var(--card-brand-pale); }
+.product-shell .expected-motivi { color: var(--card-ink-2); }
 .eyebrow { margin-bottom: 10px; color: var(--product-primary); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .page-intro { max-width: 790px; }
 .page-intro h1, .data-state h1 { margin-bottom: 17px; color: var(--product-primary-deep); font-size: clamp(2.25rem, 6vw, 4.6rem); letter-spacing: -.07em; line-height: .98; overflow-wrap: anywhere; }
