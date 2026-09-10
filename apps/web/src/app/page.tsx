@@ -382,14 +382,13 @@ export default async function HomePage({ searchParams }: Props) {
             </span>
           </Link>
 
-          <Link className="home-tile home-tile-wide" href="/expected">
+          <Link className="home-tile home-tile-wide" href="/banco-di-prova">
             <span className="home-tile-head">
-              <span className="home-tile-name">Expected</span>
-              <span className="home-tile-count">banco di prova</span>
+              <span className="home-tile-name">Banco di prova</span>
+              <span className="home-tile-count">due squadre a scelta</span>
             </span>
             <span className="home-tile-sub">
-              Due squadre qualsiasi e l&apos;arbitro che scegli tu, anche se non si incontrano:
-              un banco di prova, non il dossier di una gara in calendario
+              Due squadre qualsiasi e l&apos;arbitro che scegli tu, anche se non si incontrano
             </span>
             <span className="home-tile-go" aria-hidden="true">
               Apri

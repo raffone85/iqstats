@@ -18,7 +18,10 @@ type ProductSection =
    *  nella barra non c'e' piu': non accendeva nulla per coincidenza, non per intenzione. */
   | "match"
   | "predictions"
-  | "expected"
+  /** Il banco di prova - accostare due squadre che non si incontrano - si chiamava
+   *  «expected» fino al 10 settembre 2026, e il nome serve altrove: «Expected» da noi sono
+   *  i pronostici statistici delle sette famiglie, non un simulatore di accoppiamenti. */
+  | "banco"
   | "teams"
   | "referees"
   | "method"
@@ -63,7 +66,7 @@ const MENU: ReadonlyArray<{
     label: "Partite",
     voci: [
       { label: "Calendario", href: "/partite", section: "match" },
-      { label: "Expected", href: "/expected", section: "expected" },
+      { label: "Banco di prova", href: "/banco-di-prova", section: "banco" },
     ],
   },
   {

@@ -59,7 +59,7 @@ export default async function ExpectedPage({ searchParams }: Props) {
   const motore = await readFeatureDecision("engine.read");
   if (!motore.allowed) {
     return (
-      <ProductShell activeSection="expected">
+      <ProductShell activeSection="banco">
         <SezioneRiservata
           piano="Pro"
           id="riservata-pro-title"
@@ -80,7 +80,7 @@ export default async function ExpectedPage({ searchParams }: Props) {
 
   if (competizioni.length === 0) {
     return (
-      <ProductShell activeSection="expected">
+      <ProductShell activeSection="banco">
         <section className="page-intro" aria-labelledby="expected-title">
           <p className="eyebrow">Expected</p>
           <h1 id="expected-title">Nessuna competizione da cui scegliere.</h1>
@@ -145,7 +145,7 @@ export default async function ExpectedPage({ searchParams }: Props) {
   const motivo = typeof esito === "string" ? esito : null;
 
   return (
-    <ProductShell activeSection="expected">
+    <ProductShell activeSection="banco">
       <div className="oggi-backdrop" aria-hidden="true" />
       <div className="dossier">
         <section className="page-intro" aria-labelledby="expected-title">
