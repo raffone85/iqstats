@@ -5,7 +5,6 @@ import { CalendarioGiornate } from "@/components/calendario-giornate";
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
-import { competitionRank } from "@/server/iqstats/competition-rank";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { prossimeGiornate } from "@/server/iqstats/giornate";
 import { getMatchesByDate, getMatchesInRange, type MatchListItem } from "@/server/iqstats/matches";
@@ -65,12 +64,6 @@ function todayKey(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Rome" });
 }
 
-function formatWhen(iso: string): string {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return "Orario da definire";
-  return "Oggi alle ".concat(date.toLocaleTimeString("it-IT", KICKOFF_TIME));
-}
-
 /** Contatore di sezione: dice quanto contenuto c'è ora, al singolare o al plurale. */
 function counter(count: number, one: string, many: string) {
   return (
@@ -112,28 +105,6 @@ function virgola(valore: number): string {
 /** Le cifre di uno scarto: un decimale, virgola, e il segno perche' e' una distanza con verso. */
 function punti(valore: number): string {
   return "+".concat(valore.toFixed(1).replace(".", ","));
-}
-
-/**
- * In evidenza va la gara che conta di più fra quelle ancora da giocare oggi: prima il peso
- * della competizione, poi l'orario. Con centocinquanta gare al giorno il solo ordine di
- * orario metterebbe quasi sempre un'amichevole in vetrina. Niente gare rinviate o concluse;
- * se il giorno è tutto alle spalle resta l'ultima gara giocabile.
- */
-function featuredMatch(matches: readonly MatchListItem[]): MatchListItem | null {
-  const playable = matches.filter(
-    (m) => m.status !== "postponed" && m.status !== "cancelled" && m.status !== "finished",
-  );
-  const upcoming = playable.filter((m) => new Date(m.kickoff).getTime() > Date.now());
-  const pool = upcoming.length > 0 ? upcoming : playable;
-
-  return pool.reduce<MatchListItem | null>((best, m) => {
-    if (best === null) return m;
-    const rank = competitionRank(m.leagueId);
-    const bestRank = competitionRank(best.leagueId);
-    if (rank !== bestRank) return rank < bestRank ? m : best;
-    return m.kickoff < best.kickoff ? m : best;
-  }, null) ?? matches[matches.length - 1] ?? null;
 }
 
 /** Una squadra entra nell'indice solo se la fonte ne ha dato l'identificativo. */
@@ -193,23 +164,6 @@ export default async function HomePage({ searchParams }: Props) {
     : sbilanciDelGiorno(predictionsResult.predictions, medie, 6);
   const primo = sbilanci[0];
 
-  // Il protagonista e' la gara su cui il modello si stacca di piu'. Senza scarti - nessuna
-  // media, nessun pronostico - si ripiega sul peso della competizione, come prima.
-  const featureMatch = featuredMatch(todayMatches);
-  const feature = primo
-    ? {
-      eventId: primo.eventId,
-      homeTeam: primo.homeTeam,
-      awayTeam: primo.awayTeam,
-      homeTeamId: predictionsResult.predictions.find((p) => p.eventId === primo.eventId)?.homeTeamId ?? null,
-      awayTeamId: predictionsResult.predictions.find((p) => p.eventId === primo.eventId)?.awayTeamId ?? null,
-      leagueId: predictionsResult.predictions.find((p) => p.eventId === primo.eventId)?.leagueId ?? null,
-      leagueName: primo.leagueName,
-      leagueCountryCode: todayMatches.find((m) => m.eventId === primo.eventId)?.leagueCountryCode ?? null,
-      kickoff: primo.kickoff,
-    }
-    : featureMatch;
-
   const leagues = [
     ...new Map(
       todayMatches
@@ -260,77 +214,12 @@ export default async function HomePage({ searchParams }: Props) {
           )}
         </p>
 
-        <div className="home-grid">
-          {/* Riquadro protagonista: unico blocco ad alto contrasto, come la hero del sistema.
-              Porta dritto al dossier della gara in evidenza, che è dove «si apre tutto»;
-              se oggi non c'è una gara leggibile ripiega sul calendario. */}
-          <Link
-            className="home-tile home-tile-wide home-tile-feature"
-            href={feature ? `/match/${feature.eventId}` : "/partite"}
-          >
-            <span className="home-tile-head">
-              <span className="home-tile-name">
-                {primo ? "La più staccata di oggi" : feature ? "La gara di oggi" : "Partite"}
-              </span>
-              <span className="home-tile-count">
-                {!available
-                  ? "non disponibile"
-                  : todayMatches.length === 0
-                    ? "nessuna oggi"
-                    : counter(todayMatches.length, "gara", "gare")}
-              </span>
-            </span>
-            <span className="home-tile-sub">
-              {primo
-                ? `${primo.mercato} al ${Math.round(primo.probabilita)}%, contro il ${virgola(primo.media)}% di media: ${punti(primo.scarto)} punti`
-                : feature ? "Apri il dossier: gol, tiri, corner, falli, fuorigioco" : "Il calendario delle gare"}
-            </span>
-
-            <span className="home-feature">
-              {feature ? (
-                <>
-                  <span className="home-feature-league">
-                    <LeagueIdentity
-                      leagueId={feature.leagueId}
-                      name={feature.leagueName ?? "competizione non dichiarata"}
-                      code={feature.leagueCountryCode}
-                      size="sm"
-                    />
-                  </span>
-                  <span className="home-feature-teams">
-                    <TeamCrest name={feature.homeTeam} teamId={feature.homeTeamId} />
-                    {feature.homeTeam}
-                    <span className="home-feature-vs"> contro </span>
-                    <TeamCrest name={feature.awayTeam} teamId={feature.awayTeamId} />
-                    {feature.awayTeam}
-                  </span>
-                  <span className="home-feature-time">{formatWhen(feature.kickoff)}</span>
-                </>
-              ) : (
-                <span className="home-feature-time">
-                  Nessuna gara nell&apos;elenco corrente.
-                </span>
-              )}
-            </span>
-
-            <span className="home-tile-go" aria-hidden="true">
-              Apri
-            </span>
-          </Link>
-
-        </div>
-
-        <CalendarioGiornate
-          fascia={fascia}
-          scelta={scelta}
-          altre={altre}
-          coperture={coperture}
-          giorni={GIORNI_AVANTI}
-        />
-
-        {sbilanci.length > 1 ? (
+        {/* **Le gare del giorno aprono la pagina.** Erano sotto il calendario e sotto un
+            riquadro che ripeteva la prima: due forme per la stessa gara, e la risposta
+            arrivava dopo due schermate. Qui sono righe, dalla piu' staccata in giu'. */}
+        {sbilanci.length > 0 ? (
           <ol className="partite-rows">
-            {sbilanci.slice(1).map((r) => (
+            {sbilanci.map((r) => (
               <li key={r.eventId}>
                 <Link className="partite-row" href={`/match/${r.eventId}`}>
                   <span className="partite-time">
@@ -353,6 +242,15 @@ export default async function HomePage({ searchParams }: Props) {
           </ol>
         ) : null}
 
+        <CalendarioGiornate
+          fascia={fascia}
+          scelta={scelta}
+          altre={altre}
+          coperture={coperture}
+          giorni={GIORNI_AVANTI}
+        />
+
+
         {medie === null ? (
           <p className="home-note">
             Le medie dei mercati si leggono dal livello dati di IQstatS, che qui non è
@@ -360,11 +258,6 @@ export default async function HomePage({ searchParams }: Props) {
             una media inventata sarebbe peggio di nessuna classifica. Restano le sezioni.
           </p>
         ) : null}
-
-        <p className="home-note">
-          Ogni riquadro apre una sezione. Quelli spenti non hanno ancora dati veri: restano
-          visibili perché tu sappia dove sta andando il prodotto, non perché siano pronti.
-        </p>
 
         <div className="home-grid">
           <Link className="home-tile" href="/pronostici">
@@ -508,24 +401,34 @@ export default async function HomePage({ searchParams }: Props) {
           </Link>
         </div>
 
-        <p className="home-note">
-          {available
-            ? "I conteggi sono quelli del giorno intero in ora italiana, riletti a ogni apertura della pagina. Le gare senza una lettura del modello restano contate fra le gare: la differenza fra i due numeri è la copertura, non un errore."
-            : "L'elenco delle gare non è raggiungibile in questo momento. Le sezioni restano aperte, ma i riquadri non mostrano conteggi: un dato assente non diventa uno zero."}
-          {matchesResult.truncated ? " Oggi l'elenco è così lungo da essere stato interrotto: i conteggi sono un minimo, non un totale." : null}
-        </p>
-
-        {primo === undefined ? null : (
+        {/* **Le note stanno dietro un controllo, non nel flusso.** Erano tre paragrafi
+            di fila, 122 parole senza un numero, sparsi fra i riquadri e il fondo: chi apre
+            la dashboard vuole le gare, non le istruzioni. Restano intere, a un clic. */}
+        <details className="dossier-spiega">
+          <summary>Come si legge questa pagina</summary>
           <p className="home-note">
-            <b>Quello che questa classifica non sa dire.</b> Lo scarto misura quanto il
-            modello si stacca dalla media, non quanto ci prende. Una misura di quanto una
-            lettura regga fuori campione qui non c&apos;è: la fonte pubblica un campo
-            «confidenza» che, misurato su 200 letture, è esattamente la probabilità del
-            favorito, cioè lo stesso numero con un altro nome. L&apos;affidabilità vera esiste
-            solo dentro il dossier di una gara, dove la calcola il nostro motore sui suoi
-            sette bersagli.
+            Ogni riquadro apre una sezione. Quelli spenti non hanno ancora dati veri: restano
+            visibili perché tu sappia dove sta andando il prodotto, non perché siano pronti.
           </p>
-        )}
+          <p className="home-note">
+            {available
+              ? "I conteggi sono quelli del giorno intero in ora italiana, riletti a ogni apertura della pagina. Le gare senza una lettura del modello restano contate fra le gare: la differenza fra i due numeri è la copertura, non un errore."
+              : "L'elenco delle gare non è raggiungibile in questo momento. Le sezioni restano aperte, ma i riquadri non mostrano conteggi: un dato assente non diventa uno zero."}
+            {matchesResult.truncated ? " Oggi l'elenco è così lungo da essere stato interrotto: i conteggi sono un minimo, non un totale." : null}
+          </p>
+          {primo === undefined ? null : (
+            <p className="home-note">
+              <b>Quello che questa classifica non sa dire.</b> Lo scarto misura quanto il
+              modello si stacca dalla media, non quanto ci prende. Una misura di quanto una
+              lettura regga fuori campione qui non c&apos;è: la fonte pubblica un campo
+              «confidenza» che, misurato su 200 letture, è esattamente la probabilità del
+              favorito, cioè lo stesso numero con un altro nome. L&apos;affidabilità vera esiste
+              solo dentro il dossier di una gara, dove la calcola il nostro motore sui suoi
+              sette bersagli.
+            </p>
+          )}
+        </details>
+
       </section>
     </ProductShell>
   );

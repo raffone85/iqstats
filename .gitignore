@@ -28,6 +28,10 @@ scripts/projection/dataset/output/lotti-osservazioni/
 # Il caricamento dei due tempi: dati generati dall'archivio, non sorgente.
 scripts/app-ingestion/output/
 
+# Le quote raccolte: 16 MB per giornata, rifatte a comando. Lo script e' sorgente, la
+# raccolta no.
+scripts/quote/output/
+
 scripts/calibration/data/
 scripts/calibration/context/
 
