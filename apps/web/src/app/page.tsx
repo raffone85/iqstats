@@ -6,8 +6,8 @@ import { ProductShell } from "@/components/product-shell";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { prossimeGiornate } from "@/server/iqstats/giornate";
 import { getMatchesByDate, getMatchesInRange } from "@/server/iqstats/matches";
-import { getPredictionsByDate } from "@/server/iqstats/predictions";
-import { medieDiMercato, sbilanciDelGiorno } from "@/server/iqstats/sbilanci";
+import { VoceDiGara } from "@/components/expected-voce";
+import { expectedDelleGare, type GaraExpected } from "@/server/iqstats/expected-famiglie";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +15,6 @@ export const metadata: Metadata = {
   title: "IQstatS",
   description:
     "Le sezioni di IQstatS in una sola pagina: gare di oggi, letture del modello, calendario, squadre e metodo.",
-};
-
-const KICKOFF_TIME: Intl.DateTimeFormatOptions = {
-  timeZone: "Europe/Rome",
-  hour: "2-digit",
-  minute: "2-digit",
 };
 
 /** Quanto avanti si guarda per trovare la prossima giornata di ogni campionato. */
@@ -68,9 +62,29 @@ function headline(available: boolean, count: number) {
     : <>Oggi ci sono {count} gare da leggere.</>;
 }
 
-/** Le cifre di uno scarto: un decimale, virgola, e il segno perche' e' una distanza con verso. */
-function punti(valore: number): string {
-  return "+".concat(valore.toFixed(1).replace(".", ","));
+/**
+ * Le gare del primo giorno che ne ha ancora da giocare, e come si chiama quel giorno.
+ *
+ * **Non sempre e' oggi, e quando non lo e' si scrive.** L'artefatto copre tre giornate, e
+ * misurato l'11 settembre alle 20:30 le gare di oggi erano 7 con 5 ancora da giocare,
+ * contro 83 di domani: passata l'ultima, una sezione che dicesse «Oggi» sopra un elenco
+ * vuoto sarebbe peggio di una che dichiara il giorno che sta mostrando.
+ */
+function primoGiornoConGare(gare: readonly GaraExpected[]): {
+  readonly titolo: string;
+  readonly gare: readonly GaraExpected[];
+} | null {
+  const giorno = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-CA", { timeZone: "Europe/Rome" });
+  const primo = gare[0];
+  if (primo === undefined) return null;
+  const chiave = giorno(primo.kickoff);
+  const oggi = todayKey();
+  const domani = giornoPiu(oggi, 1);
+  const titolo = chiave === oggi ? "Oggi" : chiave === domani ? "Domani" : new Date(
+    `${chiave}T12:00:00Z`,
+  ).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" });
+  return { titolo, gare: gare.filter((g) => giorno(g.kickoff) === chiave) };
 }
 
 type Props = {
@@ -87,12 +101,15 @@ export default async function HomePage({ searchParams }: Props) {
   // Gare e letture dello stesso giorno: due grandezze diverse, e il loro rapporto è la
   // copertura del modello. Un numero solo mentirebbe su una delle due.
   const fino = giornoPiu(today, GIORNI_AVANTI);
-  const [matchesResult, predictionsResult, medie, finestra] = await Promise.all([
+  const [matchesResult, finestra] = await Promise.all([
     getMatchesByDate(today),
-    getPredictionsByDate(today),
-    medieDiMercato(),
     getMatchesInRange(today, fino),
   ]);
+  // Le stesse righe di Expected, dallo stesso artefatto: una gara si legge con il criterio
+  // del consigliato, che il consuntivo misura, e non con un secondo numero valido qui e
+  // in nessun altro posto del prodotto.
+  const expected = expectedDelleGare();
+  const inArrivo = expected === null ? null : primoGiornoConGare(expected.gare);
 
   // La prossima giornata di ogni competizione. In fascia i cinque principali e poi le
   // coppe europee, nell'ordine dichiarato: quello per peso, non per orario, cosi' la
@@ -112,12 +129,6 @@ export default async function HomePage({ searchParams }: Props) {
 
   const todayMatches = matchesResult.matches;
 
-  // Sei righe: la prima nel riquadro protagonista, le altre cinque nell'elenco sotto.
-  const sbilanci = medie === null
-    ? []
-    : sbilanciDelGiorno(predictionsResult.predictions, medie, 6);
-  const primo = sbilanci[0];
-
   const available = matchesResult.source === "provider";
 
   return (
@@ -134,43 +145,29 @@ export default async function HomePage({ searchParams }: Props) {
         <h1 id="home-title" className="sr-only-heading">
           {headline(available, todayMatches.length)}
         </h1>
-        {/* La legenda dello scarto e' scesa dentro «Come si legge questa pagina»: serviva a
-            capire il numero, non a leggerlo, e chi apre l'app vuole la gara. Resta il caso
-            in cui le medie non ci sono, perche' li' non e' una spiegazione ma un'assenza. */}
-        {medie !== null ? null : (
-          <p className="home-lede home-legenda">
-            Le medie di lega non sono raggiungibili: senza, lo scarto non si calcola.
+        {/* **Le gare aprono la pagina, con la lettura del motore.** Prima qui c'era lo
+            scarto sull'1x2 - sei gare, un numero che in tutto il resto del prodotto non
+            ricompare - e per capirlo bisognava aprire «Come si legge questa pagina». Ora
+            sono le righe di Expected: il consigliato di ogni gara, scelto dal criterio di
+            cui il consuntivo conosce la resa. */}
+        {inArrivo === null ? (
+          <p className="home-note">
+            Il calcolo offline non copre nessuna gara ancora da giocare. Le sezioni
+            restano, e <Link href="/expected">Expected</Link> dice quando è stato scritto
+            l&apos;ultimo.
           </p>
+        ) : (
+          <>
+            <p className="home-lede home-legenda">
+              <b>{inArrivo.titolo}</b> · {inArrivo.gare.length}{" "}
+              {inArrivo.gare.length === 1 ? "gara da leggere" : "gare da leggere"} ·{" "}
+              <Link href="/expected">tutte le gare in arrivo</Link>
+            </p>
+            <ol className="partite-rows">
+              {inArrivo.gare.map((g) => <VoceDiGara key={g.gara} g={g} />)}
+            </ol>
+          </>
         )}
-
-        {/* **Le gare del giorno aprono la pagina.** Erano sotto il calendario e sotto un
-            riquadro che ripeteva la prima: due forme per la stessa gara, e la risposta
-            arrivava dopo due schermate. Qui sono righe, dalla piu' staccata in giu'. */}
-        {sbilanci.length > 0 ? (
-          <ol className="partite-rows">
-            {sbilanci.map((r) => (
-              <li key={r.eventId}>
-                <Link className="partite-row" href={`/match/${r.eventId}`}>
-                  <span className="partite-time">
-                    {new Date(r.kickoff).toLocaleTimeString("it-IT", KICKOFF_TIME)}
-                  </span>
-                  <span className="partite-teams">
-                    {r.homeTeam} contro {r.awayTeam}
-                    {/* La media non si ripete riga per riga: sta dentro «Come si legge questa pagina», e
-                        quale delle due valga lo dice l'esito a destra - Casa o Trasferta. */}
-                    <span className="engine-obs">
-                      {r.leagueName ?? "competizione non dichiarata"}
-                    </span>
-                  </span>
-                  <span className="partite-read">
-                    <b>{punti(r.scarto)}</b>
-                    <i>{r.mercato} {Math.round(r.probabilita)}%</i>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        ) : null}
 
         <CalendarioGiornate
           fascia={fascia}
@@ -180,14 +177,6 @@ export default async function HomePage({ searchParams }: Props) {
           giorni={GIORNI_AVANTI}
         />
 
-
-        {medie === null ? (
-          <p className="home-note">
-            Le medie dei mercati si leggono dal livello dati di IQstatS, che qui non è
-            raggiungibile: senza di quelle non si può dire quanto una lettura si stacchi, e
-            una media inventata sarebbe peggio di nessuna classifica. Restano le sezioni.
-          </p>
-        ) : null}
 
         {/* **Le note stanno dietro un controllo, non nel flusso.** Erano tre paragrafi
             di fila, 122 parole senza un numero, sparsi fra i riquadri e il fondo: chi apre
@@ -204,17 +193,6 @@ export default async function HomePage({ searchParams }: Props) {
               : "L'elenco delle gare non è raggiungibile in questo momento. Le sezioni restano aperte, ma i riquadri non mostrano conteggi: un dato assente non diventa uno zero."}
             {matchesResult.truncated ? " Oggi l'elenco è così lungo da essere stato interrotto: i conteggi sono un minimo, non un totale." : null}
           </p>
-          {primo === undefined ? null : (
-            <p className="home-note">
-              <b>Quello che questa classifica non sa dire.</b> Lo scarto misura quanto il
-              modello si stacca dalla media, non quanto ci prende. Una misura di quanto una
-              lettura regga fuori campione qui non c&apos;è: la fonte pubblica un campo
-              «confidenza» che, misurato su 200 letture, è esattamente la probabilità del
-              favorito, cioè lo stesso numero con un altro nome. L&apos;affidabilità vera esiste
-              solo dentro il dossier di una gara, dove la calcola il nostro motore sui suoi
-              sette bersagli.
-            </p>
-          )}
         </details>
 
       </section>

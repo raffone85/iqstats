@@ -29,7 +29,13 @@ import Link from "next/link";
 
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
-import { FAMIGLIE } from "@/components/match-projection-section";
+import {
+  chiRiguarda,
+  linea,
+  nomeFamiglia,
+  soglia,
+  VoceDiGara,
+} from "@/components/expected-voce";
 import { resaDelBersaglio, GARE_DEL_CONSUNTIVO } from "@/server/iqstats/consuntivo";
 import {
   expectedDelleGare,
@@ -56,11 +62,6 @@ const QUANDO: Intl.DateTimeFormatOptions = {
   timeZone: "Europe/Rome",
 };
 
-/** Dentro un giorno la data e' gia' scritta nella testata: resta l'ora. */
-const ORA: Intl.DateTimeFormatOptions = {
-  hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome",
-};
-
 /**
  * Il giorno di Roma di un istante, come `2026-09-11`.
  *
@@ -76,11 +77,6 @@ const TESTATA: Intl.DateTimeFormatOptions = {
   weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Rome",
 };
 
-function ora(iso: string): string {
-  const data = new Date(iso);
-  return Number.isNaN(data.getTime()) ? "orario non disponibile" : data.toLocaleString("it-IT", ORA);
-}
-
 function quando(iso: string): string {
   const data = new Date(iso);
   return Number.isNaN(data.getTime())
@@ -88,26 +84,8 @@ function quando(iso: string): string {
     : data.toLocaleString("it-IT", QUANDO);
 }
 
-/** La virgola al posto del punto: e' la voce italiana delle soglie. */
-function soglia(valore: number): string {
-  return String(valore).replace(".", ",");
-}
-
 function virgola(valore: number): string {
   return valore.toFixed(1).replace(".", ",");
-}
-
-function nomeFamiglia(bersaglio: string): string {
-  return FAMIGLIE[bersaglio]?.nome ?? bersaglio;
-}
-
-function chiRiguarda(lato: RigaDiFamiglia["lato"], casa: string, fuori: string): string {
-  return lato === "casa" ? casa : lato === "trasferta" ? fuori : "Totale gara";
-}
-
-/** La linea come si legge: «Over 2,5 fuorigioco». */
-function linea(r: RigaDiFamiglia): string {
-  return `${r.verso} ${soglia(r.soglia)} ${nomeFamiglia(r.bersaglio)}`;
 }
 
 /** Lo scarto fra quanto diciamo noi e quanto succede in quel campionato, in punti. */
@@ -119,23 +97,6 @@ function scartoDi(r: RigaDiFamiglia): number | null {
 function unoSolo(valore: string | string[] | undefined): string | null {
   if (Array.isArray(valore)) return valore[0] ?? null;
   return valore ?? null;
-}
-
-/**
- * L'indirizzo della gara: `fixtureId` decide, il resto si legge.
- *
- * I nomi delle squadre e la data non entrano in nessuna ricerca — sono etichette, e una
- * gara resta la stessa anche se il nome cambia — ma un indirizzo che dice chi gioca si
- * condivide, e uno che dice solo un numero no.
- */
-function indirizzoDi(g: GaraExpected): string {
-  const q = new URLSearchParams();
-  if (g.lega !== null) q.set("league", g.lega);
-  q.set("home", g.casa);
-  q.set("away", g.fuori);
-  q.set("fixtureId", String(g.gara));
-  q.set("date", g.kickoff.slice(0, 10));
-  return `/expected?${q.toString()}`;
 }
 
 /**
@@ -736,32 +697,7 @@ function Indice({ gare, calcolatoIl }: {
             {titolo} <span className="engine-obs">{delGiorno.length} gare</span>
           </summary>
           <ol className="partite-rows">
-        {delGiorno.map((g) => (
-          <li key={g.gara}>
-            <Link className="expected-voce" href={indirizzoDi(g)}>
-              <span className="expected-gara-squadre">
-                <TeamCrest name={g.casa} teamId={g.casaId} />
-                {g.casa} contro <TeamCrest name={g.fuori} teamId={g.fuoriId} />
-                {g.fuori}
-              </span>
-              <span className="engine-obs">
-                {ora(g.kickoff)} · {g.lega ?? "competizione non dichiarata"}
-                {g.famiglie.length === 7 ? "" : ` · ${g.famiglie.length} famiglie su 7`}
-              </span>
-              {g.consigliato === null ? (
-                <span className="engine-obs">nessun consigliato per questa gara</span>
-              ) : (
-                <span className="expected-sintesi">
-                  <b>{linea(g.consigliato)}</b>
-                  {" · "}
-                  {chiRiguarda(g.consigliato.lato, g.casa, g.fuori)}
-                  {" · "}
-                  <b>{Math.round(g.consigliato.probabilita * 100)}%</b>
-                </span>
-              )}
-            </Link>
-          </li>
-        ))}
+        {delGiorno.map((g) => <VoceDiGara key={g.gara} g={g} />)}
           </ol>
         </details>
       ))}
