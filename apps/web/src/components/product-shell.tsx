@@ -85,6 +85,27 @@ const MENU: ReadonlyArray<{
   { label: "Metodo", href: "/metodo", section: "method" },
 ];
 
+/**
+ * La barra bassa: quattro destinazioni, sempre sotto il pollice.
+ *
+ * **Tolta e rimessa lo stesso giorno, e la ragione e' misurata.** Il 10 settembre 2026 e'
+ * stata sostituita dal cassetto, con l'idea che un menu solo bastasse. Non bastava: con la
+ * sola navigazione in alto, dalla home bisognava scorrere fino alla terza schermata per
+ * trovare le altre sezioni, e chi apriva l'app pensava che sotto non ci fosse niente.
+ * Il prodotto di riferimento tiene una barra bassa di quattro voci, e la tiene per questo.
+ *
+ * **Quattro e non cinque.** Erano cinque fino a stamattina - Oggi, Pronostici, Squadre,
+ * Arbitri, Metodo - cioe' la vecchia barra in alto copiata in basso. Qui stanno le quattro
+ * che si aprono ogni giorno; Pronostici, Arbitri, Giocatori e Metodo restano nel cassetto,
+ * che non ha tetto.
+ */
+const BASSO: ReadonlyArray<{ section: ProductSection; href: string; label: string }> = [
+  { section: "home", href: "/", label: "Oggi" },
+  { section: "expected", href: "/expected", label: "Expected" },
+  { section: "match", href: "/partite", label: "Partite" },
+  { section: "teams", href: "/squadre", label: "Squadre" },
+];
+
 /** L'iniziale sostituisce una fotografia che non abbiamo: nessun avatar inventato. */
 function initialOf(email: string) {
   const first = email.trim().charAt(0);
@@ -251,6 +272,17 @@ export async function ProductShell({ children, activeSection = "match" }: Produc
           <a href={TITOLARE.telegramUrl}>Assistenza</a>
         </p>
       </footer>
+      <nav className="product-mobile-nav" aria-label="Sezioni principali">
+        {BASSO.map((voce) => (
+          <Link
+            key={voce.href}
+            href={voce.href}
+            aria-current={activeSection === voce.section ? "page" : undefined}
+          >
+            {voce.label}
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }

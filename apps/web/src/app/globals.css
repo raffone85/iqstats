@@ -141,6 +141,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .menu-sotto { display: flex; min-height: 44px; align-items: center; padding: 0 12px 0 26px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 14px; font-weight: 600; }
 .menu-sotto:hover { background: var(--product-surface-soft); color: var(--product-primary-deep); }
 .product-main { width: min(1180px, calc(100% - 32px)); min-width: 0; margin: 0 auto; padding: clamp(32px, 6vw, 72px) 0 76px; }
+/* La barra bassa vive solo sul telefono: sul desktop il cassetto sta gia' sotto gli occhi. */
+.product-mobile-nav { display: none; }
 
 /* **Expected: una gara e' una riga, i numeri si aprono.** Con tutto aperto ventiquattro
    gare facevano 29.986 px a 375, misurati - piu' alto del dossier che questa sezione
@@ -311,9 +313,18 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   .product-header-inner { width: min(100% - 32px, 1180px); min-height: 62px; grid-template-columns: auto 1fr auto; gap: 10px; }
   .product-wordmark small { display: none; }
   .menu-hamburger-testo { display: none; }
-  /* La barra bassa non c'e' piu': la navigazione sta nel cassetto, e il contenuto non deve
-     piu' lasciare sotto lo spazio di una barra fissa. */
   .product-main { width: min(100% - 32px, 1180px); padding-top: 32px; padding-bottom: 40px; }
+  /* **Lo spazio per la barra va sulla cornice, non sul contenuto.** L'avevo messo su
+     `.product-main`, ma il piede e' suo fratello e non sta dentro: a pagina scorsa in fondo
+     i collegamenti legali finivano 36 px sotto il bordo della barra, misurato. Qui copre
+     qualunque cosa sia l'ultima. */
+  .product-shell { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .product-mobile-nav { position: fixed; z-index: 10; right: 0; bottom: 0; left: 0; display: grid; min-height: 56px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; border-top: 1px solid var(--product-border); background: color-mix(in srgb, var(--product-surface) 94%, transparent); backdrop-filter: blur(12px); padding: 6px 6px env(safe-area-inset-bottom); }
+  .product-mobile-nav a { display: grid; min-width: 0; min-height: 44px; place-items: center; padding: 0 2px; border-radius: var(--r-inset); color: var(--product-muted); font-size: 12px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; transition: background-color 180ms ease, color 180ms ease; }
+  .product-mobile-nav a[aria-current="page"] { background: var(--product-surface-soft); color: var(--product-primary-deep); }
+  .product-shell .product-mobile-nav { border-top-color: var(--card-stroke); background: color-mix(in srgb, var(--card-ground) 94%, white); }
+  .product-shell .product-mobile-nav a { color: var(--card-ink-3); font-size: 11px; }
+  .product-shell .product-mobile-nav a[aria-current="page"] { background: var(--card-brand-pale); color: var(--card-brand-strong); }
   .email-access-secondary-actions { grid-template-columns: minmax(0, 1fr); }
   .page-intro h1, .data-state h1 { font-size: clamp(2rem, 9.5vw, 2.8rem); }
   .page-intro h1 { max-inline-size: 13ch; }
