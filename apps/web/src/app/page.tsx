@@ -21,6 +21,16 @@ export const metadata: Metadata = {
 const GIORNI_AVANTI = 10;
 
 /**
+ * Quante gare entrano nella prima schermata.
+ *
+ * **Il giorno intero non ci sta.** Misurato l'11 settembre 2026 in produzione: con le 83
+ * gare di domani la home faceva **12.919 px a 375**, sedici schermate, quattro volte la
+ * pagina che sostituiva. Otto righe sono circa due schermate e mezzo, e il resto sta a un
+ * tocco in Expected, che quell'elenco lo mostra per giorno.
+ */
+const IN_HOME = 8;
+
+/**
  * I cinque campionati sempre aperti, con l'identificativo della fonte.
  *
  * Sono i cinque che il livello dati copre da piu' tempo: Premier League 389 gare, La Liga
@@ -73,6 +83,8 @@ function headline(available: boolean, count: number) {
 function primoGiornoConGare(gare: readonly GaraExpected[]): {
   readonly titolo: string;
   readonly gare: readonly GaraExpected[];
+  /** Quante ne ha quel giorno in tutto: il taglio si dichiara, non si nasconde. */
+  readonly quante: number;
 } | null {
   const giorno = (iso: string) =>
     new Date(iso).toLocaleDateString("en-CA", { timeZone: "Europe/Rome" });
@@ -84,7 +96,8 @@ function primoGiornoConGare(gare: readonly GaraExpected[]): {
   const titolo = chiave === oggi ? "Oggi" : chiave === domani ? "Domani" : new Date(
     `${chiave}T12:00:00Z`,
   ).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" });
-  return { titolo, gare: gare.filter((g) => giorno(g.kickoff) === chiave) };
+  const delGiorno = gare.filter((g) => giorno(g.kickoff) === chiave);
+  return { titolo, gare: delGiorno.slice(0, IN_HOME), quante: delGiorno.length };
 }
 
 type Props = {
@@ -159,9 +172,13 @@ export default async function HomePage({ searchParams }: Props) {
         ) : (
           <>
             <p className="home-lede home-legenda">
-              <b>{inArrivo.titolo}</b> · {inArrivo.gare.length}{" "}
-              {inArrivo.gare.length === 1 ? "gara da leggere" : "gare da leggere"} ·{" "}
-              <Link href="/expected">tutte le gare in arrivo</Link>
+              <b>{inArrivo.titolo}</b> · {inArrivo.quante}{" "}
+              {inArrivo.quante === 1 ? "gara da leggere" : "gare da leggere"} ·{" "}
+              <Link href="/expected">
+                {inArrivo.quante > inArrivo.gare.length
+                  ? `le altre ${inArrivo.quante - inArrivo.gare.length} in Expected`
+                  : "tutte le gare in arrivo"}
+              </Link>
             </p>
             <ol className="partite-rows">
               {inArrivo.gare.map((g) => <VoceDiGara key={g.gara} g={g} />)}
