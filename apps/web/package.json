@@ -20,6 +20,7 @@
     "test:projection-gol": "node --experimental-strip-types --test test/iqstats-projection-gol.test.ts",
     "test:metro-ruolo": "node --experimental-strip-types --test test/iqstats-metro-ruolo.test.ts",
     "test:linea-scelta": "node --experimental-strip-types --test test/iqstats-linea-scelta.test.ts",
+    "test:cause": "node --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-cause.test.ts",
     "test:pronostico": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-pronostico.test.ts",
     "test:vetrina": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-vetrina.test.ts",
     "test:assistente": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-assistente.test.ts",
@@ -70,7 +71,8 @@
     "stripe:catalog:apply": "node scripts/stripe/sync-test-catalog.mjs --apply",
     "stripe:webhook-secret:sync": "node scripts/stripe/sync-listener-secret.mjs",
     "test:valore": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-valore.test.ts",
-    "test:dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-dossier.test.ts"
+    "test:dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-dossier.test.ts",
+    "test:quote": "node --experimental-strip-types --test test/iqstats-quote.test.ts"
   },
   "dependencies": {
     "@iqstats/shared": "file:../../packages/shared",

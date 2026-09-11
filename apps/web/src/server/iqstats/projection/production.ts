@@ -23,12 +23,13 @@
 
 import type {
   ArtefattoModello,
+  Collegamento,
   FasciaDiMaturita,
   RipiegoMisurato,
   StratoCondizionale,
 } from './artifact-schema';
 import type { ValoreFeature } from './feature-transform';
-import type { Intervallo } from './predictor';
+import type { ContributoDiFeature, Intervallo } from './predictor';
 import { intervalloDaParametri, prevedi } from './predictor';
 
 /** Copertura dei dati su cui poggia la proiezione. */
@@ -94,6 +95,19 @@ export interface ProiezioneDiProduzione {
   readonly origineDelValore: OrigineDelValore;
   readonly pesoDelModello: number;
   readonly ripiegoUsato: boolean;
+  /**
+   * I contributi delle feature al valore del **modello**, o `null` sotto un ripiego, dove
+   * nessun modello ha parlato. Sotto una miscela restano i contributi del modello: valgono
+   * per la sua quota, che e' `pesoDelModello`, e chi li mostra deve dirlo.
+   */
+  readonly contributi: readonly ContributoDiFeature[] | null;
+  /**
+   * Il predittore lineare del modello e il suo collegamento: senza questi due un
+   * contributo non si converte in un effetto leggibile, perche' su `log` e' moltiplicativo
+   * e su `identita' e' gia' nell'unita' del bersaglio.
+   */
+  readonly predittoreLineare: number | null;
+  readonly collegamento: Collegamento;
   readonly copertura: Copertura;
   readonly campioneDiAddestramento: number;
   readonly evidenze: EvidenzeDiAffidabilita;
@@ -372,6 +386,10 @@ function conRipiego(
     origineDelValore: 'ripiego',
     pesoDelModello: 0,
     ripiegoUsato: true,
+    // Sotto un ripiego nessun modello ha parlato: non ci sono contributi da attribuirgli.
+    contributi: null,
+    predittoreLineare: null,
+    collegamento: artefatto.collegamento,
     copertura: 'ridotta',
     campioneDiAddestramento: artefatto.training_metadata.righe,
     evidenze: evidenzeDa(
@@ -444,6 +462,9 @@ export function proietta(
       origineDelValore: 'modello',
       pesoDelModello: 1,
       ripiegoUsato: false,
+      contributi: esito.contributi,
+      predittoreLineare: esito.predittoreLineare,
+      collegamento: artefatto.collegamento,
       copertura: 'piena',
       campioneDiAddestramento: artefatto.training_metadata.righe,
       evidenze: evidenzeDa(
@@ -483,6 +504,9 @@ export function proietta(
     origineDelValore: peso < 1 ? 'miscela' : 'modello',
     pesoDelModello: peso,
     ripiegoUsato: false,
+    contributi: esito.contributi,
+    predittoreLineare: esito.predittoreLineare,
+    collegamento: artefatto.collegamento,
     copertura: 'piena',
     campioneDiAddestramento: artefatto.training_metadata.righe,
     evidenze: evidenzeDa(

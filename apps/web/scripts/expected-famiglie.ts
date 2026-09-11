@@ -19,14 +19,32 @@
 // Uso, con il livello dati locale in ascolto e le variabili della fonte:
 //   node --env-file=.env.local --conditions=react-server --import ./test/risolutore-ts.mjs \
 //     --experimental-strip-types scripts/expected-famiglie.ts [--giorni 3] [--insieme 6]
-import { writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { gunzipSync } from "node:zlib";
 
 import { baseDiLega } from "../src/server/iqstats/base-di-lega.ts";
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import { getMatchDetail } from "../src/server/iqstats/match-context.ts";
 import { getMatchesByDate, type MatchListItem } from "../src/server/iqstats/matches.ts";
+import { ARTEFATTI_DI_PRODUZIONE } from "../src/server/iqstats/projection-artefatti.ts";
 import { proiezioniDellaGara } from "../src/server/iqstats/projection-runtime.ts";
+import { type Causa, causeDellaLettura } from "../src/server/iqstats/projection/cause.ts";
+import {
+  distribuzioniDeiGol,
+  type MercatiGol,
+  quotaFra,
+} from "../src/server/iqstats/projection/gol.ts";
+import { type ProiezioneDiGara, soglieDi } from "../src/server/iqstats/projection/match.ts";
+import { probabilitaSopra } from "../src/server/iqstats/projection/predictor.ts";
+import {
+  agganciaGara,
+  chiaveDiLinea,
+  eventoQuotato,
+  type EventoGrezzo,
+  type EventoQuotato,
+  type QuoteGol,
+} from "../src/server/iqstats/projection/quote.ts";
 import {
   arricchisci,
   candidateDiGara,
@@ -42,6 +60,219 @@ interface RigaDiFamiglia {
   readonly base: number | null;
   readonly gareDiBase: number | null;
   readonly affidabilita: number;
+  /** Il valore che il motore attende su quella scala: la soglia nasce da qui. */
+  readonly atteso: number;
+  readonly intervallo: { readonly basso: number; readonly alto: number } | null;
+  /**
+   * Da dove viene il numero e quanto ci mette il modello.
+   *
+   * Sotto una miscela l'atteso e' `peso x modello + (1 - peso) x baseline`, e chi legge
+   * le cause deve sapere che spiegano la quota del modello, non tutto il numero. Misurato
+   * l'11 settembre 2026: sulla gara 213568 **tutte e quattordici** le scale erano miscela,
+   * con peso da 0,75 a 0,95. Tacerlo e' l'errore che questa riga esiste per non fare.
+   */
+  readonly origine: "modello" | "miscela" | "ripiego";
+  readonly pesoDelModello: number;
+  /** Che cosa ha mosso l'atteso, dalla causa piu' grande. Vuoto sotto un ripiego. */
+  readonly cause: readonly Causa[];
+}
+
+/**
+ * Una linea che il banco quota, con la nostra probabilita' su **quella** soglia.
+ *
+ * **La soglia non e' nostra, il numero si'.** La quota non entra nel calcolo da nessuna
+ * parte: si prende il valore atteso del lato e la distribuzione calibrata del bersaglio,
+ * esattamente come per le cinque soglie del motore, e si chiede la probabilita' sulla
+ * soglia che il bookmaker ha aperto. Una probabilita' derivata dal prezzo sarebbe il banco
+ * confrontato con se stesso.
+ */
+interface RigaQuotata {
+  readonly bersaglio: string;
+  readonly lato: "casa" | "trasferta" | "totale";
+  readonly soglia: number;
+  readonly verso: "Over" | "Under";
+  readonly quota: number;
+  /**
+   * La nostra probabilita' su quella soglia, `null` quando la scala non ha una
+   * calibrazione: sotto un ripiego il motore non pubblica le proprie cinque linee, e non
+   * puo' pubblicarne una sesta solo perche' il banco l'ha quotata.
+   */
+  readonly probabilita: number | null;
+  /** Il valore che il motore attende su quella scala: dice quanto la soglia sia lontana. */
+  readonly atteso: number;
+  /**
+   * Se la soglia del banco cade fuori dalle cinque su cui la calibrazione e' stata
+   * misurata. Misurato l'11 settembre 2026: **51 righe su 448**, l'11,4%. La probabilita'
+   * esce lo stesso - la distribuzione e' definita ovunque - ma nessuno ha verificato che
+   * sia calibrata li', e la riga lo deve dire invece di far finta di niente.
+   */
+  readonly fuoriFinestra: boolean;
+}
+
+/**
+ * I mercati sui gol: le nostre probabilita' e le quote del banco, fianco a fianco.
+ *
+ * **Si tiene solo cio' che ha un prezzo accanto.** `MercatiGol` porta anche la matrice
+ * esito x linea, i risultati esatti e le distribuzioni per squadra: roba buona, che il
+ * dossier mostra, e che qui sarebbe 1 MB di artefatto senza una quota di fronte.
+ */
+interface GolConQuote {
+  readonly nostri: {
+    readonly attesiCasa: number;
+    readonly attesiTrasferta: number;
+    readonly esito: MercatiGol["esito"];
+    readonly doppiaChance: MercatiGol["doppiaChance"];
+    readonly overUnder: MercatiGol["overUnder"];
+    readonly gg: number;
+    readonly ng: number;
+    readonly multigolPartita: MercatiGol["multigolPartita"];
+    readonly multigolCasa: MercatiGol["casa"]["multigol"];
+    readonly multigolTrasferta: MercatiGol["trasferta"]["multigol"];
+  };
+  readonly quote: QuoteGol | null;
+}
+
+/**
+ * I nostri mercati sui gol, sulle righe che il banco quota davvero.
+ *
+ * **Le soglie e gli intervalli li detta il palinsesto, come per le famiglie.** `mercatiGol`
+ * produce le quattro linee e i quindici multigol che la pagina della gara mostra; il banco
+ * ne apre di piu', e senza questo passaggio **7.043 righe quotate su 12.100** restavano con
+ * un prezzo e un trattino al posto del nostro numero. Le probabilita' escono dalle stesse
+ * due distribuzioni di Poisson: cambia solo l'intervallo su cui si sommano.
+ */
+function golNostri(mercati: MercatiGol, quote: QuoteGol | null): GolConQuote["nostri"] {
+  const p = distribuzioniDeiGol(mercati.casa.attesi, mercati.trasferta.attesi);
+  const arrotonda = (v: number) => Number(v.toFixed(4));
+  const intervalli = (
+    chiesti: readonly { readonly da: number; readonly a: number }[],
+    dove: readonly number[],
+    difetto: readonly { readonly da: number; readonly a: number; readonly probabilita: number }[],
+  ) => (chiesti.length === 0
+    ? difetto
+    : chiesti.map((i) => ({ da: i.da, a: i.a, probabilita: arrotonda(quotaFra(dove, i.da, i.a)) })));
+
+  const soglie = quote === null
+    ? mercati.overUnder.map((l) => l.linea)
+    : [...new Set(quote.overUnder.map((q) => q.soglia))].sort((a, b) => a - b);
+
+  return {
+    attesiCasa: Number(mercati.casa.attesi.toFixed(2)),
+    attesiTrasferta: Number(mercati.trasferta.attesi.toFixed(2)),
+    esito: mercati.esito,
+    doppiaChance: mercati.doppiaChance,
+    overUnder: soglie.map((linea) => {
+      const sopra = arrotonda(quotaFra(p.totale, Math.ceil(linea), p.totale.length - 1));
+      return { linea, sopra, sotto: arrotonda(1 - sopra) };
+    }),
+    gg: mercati.gg,
+    ng: mercati.ng,
+    multigolPartita: intervalli(quote?.multigolPartita ?? [], p.totale, mercati.multigolPartita),
+    multigolCasa: intervalli(quote?.multigolCasa ?? [], p.casa, mercati.casa.multigol),
+    multigolTrasferta: intervalli(
+      quote?.multigolTrasferta ?? [], p.trasferta, mercati.trasferta.multigol,
+    ),
+  };
+}
+
+/**
+ * Quanto il motore attende da una famiglia, sui due lati e sul totale.
+ *
+ * **Serve al riepilogo, e non si ricava dalle righe.** Una riga di famiglia porta l'atteso
+ * del **suo** lato - quello su cui la lettura e' piu' decisa - e le righe quotate esistono
+ * solo dove il banco ha aperto un mercato: per dire «attesi 25 falli» servono tutti e tre i
+ * numeri di ogni famiglia, anche quando nessuno dei tre e' quotato da nessuno.
+ */
+interface AttesiDiFamiglia {
+  readonly bersaglio: string;
+  readonly casa: number | null;
+  readonly trasferta: number | null;
+  readonly totale: number | null;
+}
+
+function attesiDelleFamiglie(
+  bersagli: readonly ProiezioneDiGara[],
+): readonly AttesiDiFamiglia[] {
+  const arrotonda = (v: number | null) => (v === null ? null : Number(v.toFixed(2)));
+  return bersagli.flatMap((b) => {
+    const casa = scalaDi(b, "casa");
+    const trasferta = scalaDi(b, "trasferta");
+    const totale = scalaDi(b, "totale");
+    if (casa === null && trasferta === null && totale === null) return [];
+    return [{
+      bersaglio: b.target,
+      casa: arrotonda(casa?.atteso ?? null),
+      trasferta: arrotonda(trasferta?.atteso ?? null),
+      totale: arrotonda(totale?.atteso ?? null),
+    }];
+  });
+}
+
+/**
+ * Le linee quotate della gara, una per soglia e per verso.
+ *
+ * Si passa dai segnali che il motore produce gia': quando `linee[lato]` e' `null` quella
+ * scala non ha una calibrazione utilizzabile - un ripiego, o un totale che poggia su un
+ * ripiego - e la riga esce con la quota e senza il nostro numero.
+ */
+function quoteDellaGara(
+  evento: EventoQuotato,
+  bersagli: readonly ProiezioneDiGara[],
+): readonly RigaQuotata[] {
+  const righe: RigaQuotata[] = [];
+  for (const bersaglio of bersagli) {
+    const artefatto = ARTEFATTI_DI_PRODUZIONE.get(bersaglio.target);
+    if (artefatto === undefined) continue;
+    for (const lato of ["casa", "trasferta", "totale"] as const) {
+      const esiti = evento.linee.get(chiaveDiLinea(bersaglio.target, lato));
+      if (esiti === undefined || esiti.length === 0) continue;
+      const scala = scalaDi(bersaglio, lato);
+      if (scala === null) continue;
+
+      // La calibrazione del totale non e' quella dei lati: sono due grandezze diverse e
+      // due dispersioni misurate a parte.
+      const calibrata = lato === "totale"
+        ? (bersaglio.totale?.linee === null || bersaglio.totale === null
+          ? null
+          : artefatto.totale === null || artefatto.totale === undefined
+            ? null
+            : {
+              distribuzione: artefatto.totale.distribuzione,
+              dispersione: artefatto.totale.dispersione,
+            })
+        : (bersaglio.linee[lato] === null
+          ? null
+          : {
+            distribuzione: artefatto.calibration.distribuzione_intervallo,
+            dispersione: artefatto.calibration.dispersione,
+          });
+
+      const nostre = soglieDi(scala.atteso);
+      const minima = nostre[0];
+      const massima = nostre[nostre.length - 1];
+      for (const esito of esiti) {
+        const sopra = calibrata === null
+          ? null
+          : probabilitaSopra(
+            calibrata.distribuzione, calibrata.dispersione, scala.atteso, esito.soglia,
+          );
+        const probabilita = sopra === null
+          ? null
+          : Number((esito.verso === "Over" ? sopra : 1 - sopra).toFixed(4));
+        righe.push({
+          bersaglio: bersaglio.target,
+          lato,
+          soglia: esito.soglia,
+          verso: esito.verso,
+          quota: esito.quota,
+          probabilita,
+          atteso: Number(scala.atteso.toFixed(2)),
+          fuoriFinestra: esito.soglia < minima || esito.soglia > massima,
+        });
+      }
+    }
+  }
+  return righe;
 }
 
 /**
@@ -76,6 +307,18 @@ interface GaraExpected {
   readonly famiglie: readonly RigaDiFamiglia[];
   /** Le famiglie senza una misura di riscontro: si dichiarano, non si nascondono. */
   readonly senzaMisura: readonly string[];
+  /**
+   * Le linee che il banco quota, tutte, per i due lati e per il totale.
+   *
+   * Vuoto quando la gara non si aggancia al palinsesto: senza chiave comune l'aggancio
+   * passa da nomi e data, e le ambigue si buttano invece di rischiare il prezzo della
+   * gara sbagliata.
+   */
+  readonly quote: readonly RigaQuotata[];
+  /** Quanto il motore attende da ogni famiglia, sui due lati e sul totale. */
+  readonly attesi: readonly AttesiDiFamiglia[];
+  /** I mercati sui gol, nostri e del banco. `null` se manca il materiale per i nostri. */
+  readonly gol: GolConQuote | null;
 }
 
 function argomento(nome: string, difetto: number): number {
@@ -104,7 +347,50 @@ function giorniDaOggi(quanti: number): readonly string[] {
  * della famiglia dentro il dossier; qui servirebbero solo a fare quattro righe che dicono
  * la stessa partita.
  */
-async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
+/**
+ * Atteso, intervallo e provenienza della scala su cui sta la lettura scelta.
+ *
+ * **Sul totale la provenienza e' la peggiore dei due lati**, non la media: un totale che
+ * somma un lato dal modello e uno da un ripiego non e' meta' affidabile, e' un numero che
+ * poggia anche su un ripiego. Il peso e' il minore per la stessa ragione.
+ */
+function scalaDi(bersaglio: ProiezioneDiGara, lato: "casa" | "trasferta" | "totale"): {
+  readonly atteso: number;
+  readonly intervallo: { readonly basso: number; readonly alto: number } | null;
+  readonly origine: "modello" | "miscela" | "ripiego";
+  readonly pesoDelModello: number;
+} | null {
+  const lati = [bersaglio.casa, bersaglio.trasferta].filter((v) => v.stato === "prevista");
+  if (lati.length < 2) return null;
+  const origine = lati.some((v) => v.origineDelValore === "ripiego")
+    ? "ripiego"
+    : lati.some((v) => v.origineDelValore === "miscela") ? "miscela" : "modello";
+  const pesoDelModello = Math.min(...lati.map((v) => v.pesoDelModello));
+
+  if (lato === "totale") {
+    if (bersaglio.totale === null) return null;
+    const i = bersaglio.totale.intervallo;
+    return {
+      atteso: bersaglio.totale.valoreAtteso,
+      intervallo: i === null ? null : { basso: i.basso, alto: i.alto },
+      origine,
+      pesoDelModello,
+    };
+  }
+  const v = lato === "casa" ? bersaglio.casa : bersaglio.trasferta;
+  if (v.stato !== "prevista") return null;
+  return {
+    atteso: v.valoreAtteso,
+    intervallo: v.intervallo === null ? null : { basso: v.intervallo.basso, alto: v.intervallo.alto },
+    origine: v.origineDelValore,
+    pesoDelModello: v.pesoDelModello,
+  };
+}
+
+async function famiglieDi(
+  gara: MatchListItem,
+  palinsesto: readonly EventoQuotato[],
+): Promise<GaraExpected | null> {
   const esito = await getMatchDetail(gara.eventId);
   if (esito.stato !== "trovato") return null;
   const detail = esito.detail;
@@ -122,10 +408,15 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
     candidate.map((c) => ({ target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso })),
   );
 
+  const perBersaglio = new Map(proiezioni.bersagli.map((b) => [b.target, b]));
   const migliori = new Map<string, RigaDiFamiglia>();
   for (const l of arricchisci(candidate, basi)) {
     const gia = migliori.get(l.bersaglio);
     if (gia !== undefined && gia.probabilita >= l.probabilita) continue;
+    const bersaglio = perBersaglio.get(l.bersaglio);
+    if (bersaglio === undefined) continue;
+    const scala = scalaDi(bersaglio, l.lato);
+    if (scala === null) continue;
     migliori.set(l.bersaglio, {
       bersaglio: l.bersaglio,
       lato: l.lato,
@@ -135,13 +426,27 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
       base: l.base === null ? null : Number(l.base.toFixed(2)),
       gareDiBase: l.gareDiBase,
       affidabilita: l.affidabilita,
+      atteso: Number(scala.atteso.toFixed(2)),
+      intervallo: scala.intervallo,
+      origine: scala.origine,
+      pesoDelModello: scala.pesoDelModello,
+      cause: causeDellaLettura(l.lato, bersaglio.casa, bersaglio.trasferta)
+        .map((c) => ({ nome: c.nome, effetto: Number(c.effetto.toFixed(3)) })),
     });
   }
   if (migliori.size === 0) return null;
 
   // Il consigliato passa dal criterio della cima, che e' l'unico di cui si conosce la resa.
   const prima = ordinaLetture(candidate, senzaMisura, basi).consigliato ?? undefined;
-  const consigliato: Consigliato | null = prima === undefined ? null : {
+  // La lettura in cima non e' sempre la piu' probabile della sua famiglia - una sceglie
+  // sulla sorpresa, l'altra sulla probabilita' - quindi puo' stare su un altro lato, e la
+  // sua scala si chiede per il lato **suo**, non per quello della riga di famiglia.
+  const suo = prima === undefined ? null : perBersaglio.get(prima.bersaglio) ?? null;
+  const scalaConsigliata = suo === null || prima === undefined ? null : scalaDi(suo, prima.lato);
+  const consigliato: Consigliato | null = prima === undefined || suo === null
+    || scalaConsigliata === null
+    ? null
+    : {
     bersaglio: prima.bersaglio,
     lato: prima.lato,
     soglia: prima.soglia,
@@ -153,7 +458,15 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
     scarto: prima.base === null
       ? null
       : Number((prima.probabilita * 100 - prima.base).toFixed(1)),
+    atteso: Number(scalaConsigliata.atteso.toFixed(2)),
+    intervallo: scalaConsigliata.intervallo,
+    origine: scalaConsigliata.origine,
+    pesoDelModello: scalaConsigliata.pesoDelModello,
+    cause: causeDellaLettura(prima.lato, suo.casa, suo.trasferta)
+      .map((c) => ({ nome: c.nome, effetto: Number(c.effetto.toFixed(3)) })),
   };
+
+  const evento = agganciaGara(detail.homeTeam, detail.awayTeam, gara.kickoff, palinsesto);
 
   return {
     gara: gara.eventId,
@@ -169,7 +482,50 @@ async function famiglieDi(gara: MatchListItem): Promise<GaraExpected | null> {
     // che regge di piu' invece che sull'ordine alfabetico dei bersagli.
     famiglie: [...migliori.values()].sort((a, b) => b.probabilita - a.probabilita),
     senzaMisura,
+    quote: evento === null ? [] : quoteDellaGara(evento, proiezioni.bersagli),
+    attesi: attesiDelleFamiglie(proiezioni.bersagli),
+    gol: proiezioni.gol === null
+      ? null
+      : {
+        nostri: golNostri(proiezioni.gol.mercati, evento === null ? null : evento.gol),
+        quote: evento === null ? null : evento.gol,
+      },
   };
+}
+
+/**
+ * Il palinsesto piu' fresco che sta su disco, gia' normalizzato.
+ *
+ * L'archivio di `scripts/quote/output/` non entra in Git - 24 MB per giornata - quindi qui
+ * si legge quello che c'e' e, se non c'e' niente, l'artefatto si scrive **senza** quote
+ * invece di fallire: le probabilita' del motore non dipendono dal banco.
+ */
+function palinsestoPiuFresco(): {
+  readonly eventi: readonly EventoQuotato[];
+  /** Quando il palinsesto e' stato raccolto: una quota senza la sua ora non si legge. */
+  readonly raccoltoIl: string | null;
+} {
+  const cartella = path.join(import.meta.dirname, "..", "..", "..", "scripts", "quote", "output");
+  let file: string[];
+  try {
+    file = readdirSync(cartella).filter((n) => n.endsWith(".ndjson.gz")).sort();
+  } catch {
+    return { eventi: [], raccoltoIl: null };
+  }
+  const ultimo = file.at(-1);
+  if (ultimo === undefined) return { eventi: [], raccoltoIl: null };
+  const testo = gunzipSync(readFileSync(path.join(cartella, ultimo))).toString("utf8");
+  const eventi: EventoQuotato[] = [];
+  let raccoltoIl: string | null = null;
+  for (const riga of testo.split("\n")) {
+    if (riga.trim() === "") continue;
+    const grezzo = JSON.parse(riga) as EventoGrezzo & { readonly raccolto_il?: string };
+    // L'ultima riga scritta e' la piu' recente: e' quella l'ora che la pagina dichiara.
+    if (typeof grezzo.raccolto_il === "string") raccoltoIl = grezzo.raccolto_il;
+    eventi.push(eventoQuotato(grezzo));
+  }
+  console.log(`palinsesto ${ultimo}: ${eventi.length} eventi`);
+  return { eventi, raccoltoIl };
 }
 
 async function main(): Promise<number> {
@@ -194,10 +550,14 @@ async function main(): Promise<number> {
     return 1;
   }
 
+  const palinsesto = palinsestoPiuFresco();
+
   const voci: GaraExpected[] = [];
   for (let inizio = 0; inizio < gare.length; inizio += insieme) {
     const lotto = gare.slice(inizio, inizio + insieme);
-    const esiti = await Promise.all(lotto.map((g) => famiglieDi(g).catch(() => null)));
+    const esiti = await Promise.all(
+      lotto.map((g) => famiglieDi(g, palinsesto.eventi).catch(() => null)),
+    );
     for (const voce of esiti) if (voce !== null) voci.push(voce);
     process.stdout.write(`\r${Math.min(inizio + insieme, gare.length)}/${gare.length} gare`);
   }
@@ -206,13 +566,25 @@ async function main(): Promise<number> {
   voci.sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 
   const righe = voci.reduce((n, v) => n + v.famiglie.length, 0);
+  const righeQuotate = voci.reduce((n, v) => n + v.quote.length, 0);
+  const gareQuotate = voci.filter((v) => v.quote.length > 0).length;
   const rapporto = {
-    schema: "expected-famiglie/1",
+    schema: "expected-famiglie/2",
     calcolato_il: new Date().toISOString(),
     giorni,
     gare_in_arrivo: gare.length,
     gare_con_proiezione: voci.length,
     righe,
+    gare_con_quote: gareQuotate,
+    quote_raccolte_il: palinsesto.raccoltoIl,
+    righe_quotate: righeQuotate,
+    come_sono_arrivate_le_quote: (
+      "dal palinsesto Fastbet/Altenar raccolto da scripts/quote/fastbet-quote.py. Le soglie "
+      + "le detta il bookmaker e la nostra probabilita' si calcola su quelle, dalla stessa "
+      + "distribuzione calibrata delle cinque soglie del motore: la quota non entra nel "
+      + "calcolo. L'aggancio passa da parole significative piu' data e le gare ambigue si "
+      + "buttano; gli esiti sospesi, con quota a zero, non diventano un prezzo."
+    ),
     come_e_stato_scelto: (
       "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, "
       + "arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' "
@@ -229,7 +601,8 @@ async function main(): Promise<number> {
   );
   writeFileSync(percorso, JSON.stringify(rapporto, null, 2) + "\n", "utf8");
   console.log(
-    `${gare.length} gare in arrivo · ${voci.length} con proiezione · ${righe} righe di famiglia`,
+    `${gare.length} gare in arrivo · ${voci.length} con proiezione · ${righe} righe di famiglia`
+    + ` · ${gareQuotate} gare agganciate al palinsesto · ${righeQuotate} linee quotate`,
   );
   console.log(percorso);
   return 0;

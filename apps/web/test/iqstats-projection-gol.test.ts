@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { attesiDellaGara, combinazione, mercatiGol } from "../src/server/iqstats/projection/gol.ts";
+import {
+  attesiDellaGara,
+  combinazione,
+  distribuzioniDeiGol,
+  mercatiGol,
+  quotaFra,
+} from "../src/server/iqstats/projection/gol.ts";
 
 /** Le probabilita' sono numeri fra zero e uno: nessun mercato puo' uscirne. */
 function fraZeroEUno(valore: number, dove: string) {
@@ -239,4 +245,28 @@ test("senza condizioni non si risponde con una probabilita'", () => {
   const vuota = combinazione(1.51, 1.185, []);
   assert.equal(vuota.congiunta, 0);
   assert.equal(vuota.prodotto, 0);
+});
+
+// Le distribuzioni esposte servono a coprire le righe che il banco quota e `mercatiGol` no:
+// devono essere le **stesse** probabilita', non un secondo calcolo che gli somiglia.
+test("le distribuzioni esposte danno gli stessi numeri dei mercati", () => {
+  const m = mercatiGol(1.62, 1.24);
+  const p = distribuzioniDeiGol(1.62, 1.24);
+
+  for (const linea of m.overUnder) {
+    const sopra = quotaFra(p.totale, Math.ceil(linea.linea), p.totale.length - 1);
+    assert.ok(Math.abs(sopra - linea.sopra) < 1e-12, `linea ${linea.linea}`);
+  }
+  for (const intervallo of m.multigolPartita) {
+    const nostro = quotaFra(p.totale, intervallo.da, intervallo.a);
+    assert.ok(Math.abs(nostro - intervallo.probabilita) < 1e-12, `${intervallo.da}-${intervallo.a}`);
+  }
+  for (const intervallo of m.casa.multigol) {
+    const nostro = quotaFra(p.casa, intervallo.da, intervallo.a);
+    assert.ok(Math.abs(nostro - intervallo.probabilita) < 1e-12, `casa ${intervallo.da}`);
+  }
+  // Un intervallo che `mercatiGol` non produce esce lo stesso, ed e' il motivo dell'aggiunta.
+  assert.ok(quotaFra(p.totale, 0, 3) > 0 && quotaFra(p.totale, 0, 3) < 1);
+  // La massa totale resta uno: la coda troncata e' gia' rinormalizzata a monte.
+  assert.ok(Math.abs(quotaFra(p.totale, 0, p.totale.length - 1) - 1) < 1e-9);
 });

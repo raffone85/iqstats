@@ -163,6 +163,36 @@ function golDiSquadra(p: readonly number[]): GolDiSquadra {
 }
 
 /**
+ * Le tre distribuzioni discrete da cui ogni mercato sui gol e' una somma.
+ *
+ * **Esiste perche' il bookmaker quota piu' righe di quante `mercatiGol` ne produca.**
+ * `LINEE_TOTALI` e `MULTIGOL_PARTITA` sono le righe che la pagina della gara mostra, e sono
+ * poche di proposito; il palinsesto ne apre altre - «Under 5,5», «multigol 0-3», «6-7» - e
+ * misurato l'11 settembre 2026 **7.043 righe quotate su 12.100** restavano senza un nostro
+ * numero accanto. Le probabilita' sono le stesse: cambia solo su quale intervallo si somma.
+ *
+ * Chi chiama somma con `quotaFra`. Nessun mercato nuovo nasce qui: nasce dove si mostra.
+ */
+export function distribuzioniDeiGol(attesiCasa: number, attesiTrasferta: number): {
+  readonly casa: readonly number[];
+  readonly trasferta: readonly number[];
+  readonly totale: readonly number[];
+} {
+  const casa = distribuzione(attesiCasa);
+  const trasferta = distribuzione(attesiTrasferta);
+  const totale = new Array<number>(MAX_GOL * 2 + 1).fill(0);
+  for (let i = 0; i <= MAX_GOL; i += 1) {
+    for (let j = 0; j <= MAX_GOL; j += 1) totale[i + j] += casa[i] * trasferta[j];
+  }
+  return { casa, trasferta, totale };
+}
+
+/** La probabilita' che il conteggio cada fra `da` e `a`, estremi compresi. */
+export function quotaFra(p: readonly number[], da: number, a: number): number {
+  return fra(p, da, a);
+}
+
+/**
  * Tutti i mercati dei gol, dai gol attesi delle due squadre.
  *
  * Una griglia sola, percorsa una volta: ogni mercato e' una somma diversa sulle stesse

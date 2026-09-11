@@ -25,6 +25,20 @@ export interface Intervallo {
   readonly livelloDichiarato: number;
 }
 
+/**
+ * Quanto una feature ha spostato il predittore lineare: `coefficiente x valore
+ * standardizzato`.
+ *
+ * E' il contributo **esatto**, non una stima di importanza: i modelli sono lineari, e la
+ * somma dei contributi piu' l'intercetta da' `predittoreLineare`. L'unita' dipende dal
+ * collegamento e non si puo' mescolare: su `identita` e' gia' nell'unita' del bersaglio,
+ * su `log` e' moltiplicativa e diventa un numero di tiri solo dopo l'esponenziale.
+ */
+export interface ContributoDiFeature {
+  readonly nome: string;
+  readonly contributo: number;
+}
+
 export interface Proiezione {
   readonly stato: 'prevista';
   readonly modelId: string;
@@ -32,6 +46,8 @@ export interface Proiezione {
   readonly predittoreLineare: number;
   readonly valoreAtteso: number;
   readonly intervallo: Intervallo;
+  /** Tutti i contributi, nell'ordine dell'artefatto: chi legge sceglie quali mostrare. */
+  readonly contributi: readonly ContributoDiFeature[];
 }
 
 export interface NonPrevista {
@@ -234,10 +250,17 @@ function daEsitoFeature(artefatto: ArtefattoModello, esito: EsitoFeature): Esito
 
   const eta = predittoreLineare(esito.standardizzate, artefatto.coefficients, artefatto.intercept);
   const valoreAtteso = valoreAttesoDa(artefatto, eta);
+  // I contributi si prendono qui perche' qui il vettore standardizzato esiste: piu' avanti
+  // resta solo la somma, e ricostruirli vorrebbe dire rifare la standardizzazione.
+  const contributi = artefatto.feature_schema.ordine.map((nome, indice) => ({
+    nome,
+    contributo: esito.standardizzate[indice] * artefatto.coefficients[indice],
+  }));
   return {
     stato: 'prevista',
     modelId: artefatto.model_id,
     target: artefatto.target,
+    contributi,
     predittoreLineare: eta,
     valoreAtteso,
     intervallo: intervalloDi(artefatto, valoreAtteso),

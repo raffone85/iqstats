@@ -170,6 +170,64 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .product-shell .expected-riga-valore { color: var(--card-brand-strong); }
 .product-shell .expected-riga-valore i { color: var(--card-ink-3); }
 .expected-apri { margin: 12px 0 0; font-size: 14px; }
+/* Expected, indice: la riga intera e' il bersaglio del tocco, non solo il nome. */
+.expected-voce { display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); color: inherit; text-decoration: none; }
+.expected-voce:hover { background: var(--product-surface-soft); }
+.expected-voce:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: 2px; }
+/* Expected, gara: la famiglia e' la riga piu' la sua motivazione, che e' prosa. */
+.expected-famiglie { margin-top: 12px; }
+.expected-famiglia { display: grid; gap: 6px; }
+.expected-perche { margin: 0; color: var(--product-muted); font-size: 14px; line-height: 1.55; }
+.expected-perche .is-sopra { color: var(--card-up); }
+.expected-perche .is-sotto { color: var(--card-down); }
+.expected-motivi .is-sopra { color: var(--card-up); }
+.expected-motivi .is-sotto { color: var(--card-down); }
+.expected-mancanti { margin-top: 12px; }
+/* La motivazione e' una fila di dati, non un paragrafo: a 375 px va a capo da sola. */
+.expected-perche { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.expected-cause { display: contents; }
+.expected-dato { white-space: nowrap; }
+.expected-dato + .expected-dato::before { content: "·"; margin-right: 10px; color: var(--product-border); }
+.expected-metodo { margin-top: 16px; }
+/* Expected, mercato: tre colonne fisse - la linea, il prezzo, il nostro numero.
+   La griglia e' la stessa per le famiglie e per i gol, cosi' le colonne restano in
+   colonna anche saltando da un blocco all'altro, ed e' l'unica cosa che rende
+   confrontabili quaranta righe senza doverle leggere una per una. */
+.expected-mercato { margin-top: 18px; }
+.expected-mercato-nota { margin: 0 0 8px; color: var(--product-muted); font-size: 12px; }
+.quota-famiglia { margin-top: 10px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); }
+.quota-famiglia > summary { display: flex; align-items: center; min-height: 44px; padding: 10px 14px; border-radius: var(--r-panel); color: var(--product-primary-deep); cursor: pointer; font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: -.01em; list-style: none; }
+.quota-famiglia > summary::-webkit-details-marker { display: none; }
+.quota-famiglia > summary::after { content: "+"; margin-left: auto; color: var(--product-muted); font-family: var(--font-mono, monospace); font-size: 18px; }
+.quota-famiglia[open] > summary { border-bottom: 1px solid var(--product-border); border-radius: var(--r-panel) var(--r-panel) 0 0; }
+.quota-famiglia[open] > summary::after { content: "−"; }
+.quota-famiglia > summary:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: -2px; }
+.quota-lato { padding: 8px 14px 12px; }
+.quota-lato + .quota-lato { border-top: 1px solid var(--product-border); }
+.quota-lato-titolo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 6px; color: var(--product-text); font-size: 13px; font-weight: 700; }
+.quota-lato-titolo i { color: var(--product-muted); font-size: 12px; font-style: normal; font-weight: 600; }
+.quota-righe { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.quota-riga { display: grid; align-items: baseline; gap: 10px; padding: 5px 0; grid-template-columns: minmax(0, 1fr) 4.5rem 3rem; }
+.quota-riga + .quota-riga { border-top: 1px solid color-mix(in srgb, var(--product-border) 45%, transparent); }
+.quota-linea { min-width: 0; color: var(--product-text); font-size: 14px; }
+.quota-linea em { margin-left: 6px; color: var(--product-muted); font-size: 11px; font-style: normal; }
+.quota-prezzo { color: var(--product-primary-deep); font-size: 15px; font-variant-numeric: tabular-nums; font-weight: 800; text-align: right; }
+/* La nostra probabilita' non e' una nota a margine della quota: e' l'unico dei tre numeri
+   che abbiamo calcolato noi, e nella prima resa era il piu' tenue della riga. */
+.quota-nostra { color: var(--product-text); font-size: 15px; font-variant-numeric: tabular-nums; font-weight: 800; text-align: right; }
+.product-shell .quota-famiglia { border-color: var(--card-stroke); background: var(--card-ground); }
+.product-shell .quota-famiglia > summary { color: var(--card-brand-strong); }
+.product-shell .quota-famiglia[open] > summary, .product-shell .quota-lato + .quota-lato { border-color: var(--card-stroke); }
+.product-shell .quota-linea, .product-shell .quota-lato-titolo { color: var(--card-ink); }
+.product-shell .quota-prezzo { color: var(--card-brand-strong); }
+.product-shell .quota-nostra { color: var(--card-ink); }
+.product-shell .quota-lato-titolo i, .product-shell .quota-linea em { color: var(--card-ink-3); }
+/* Expected, indice: il giorno e' la testata, e resta visibile mentre si scorre. */
+.expected-giorno { margin-top: 18px; }
+.expected-giorno-titolo { position: sticky; top: 0; z-index: 1; display: flex; align-items: baseline; gap: 8px; min-height: 44px; margin: 0 0 8px; padding: 10px 0; background: var(--product-canvas, var(--canvas)); color: var(--product-primary-deep); cursor: pointer; font-family: var(--font-display); font-size: 17px; letter-spacing: -.02em; list-style: none; }
+.expected-giorno-titolo::-webkit-details-marker { display: none; }
+.expected-giorno-titolo::after { content: "+"; margin-left: auto; color: var(--product-muted); font-family: var(--font-mono, monospace); font-size: 18px; }
+.expected-giorno[open] > .expected-giorno-titolo::after { content: "−"; }
 .product-shell .expected-gara { border-color: var(--card-stroke); background: var(--card-ground); }
 .product-shell .expected-gara > summary:hover { background: var(--card-brand-pale); }
 .product-shell .expected-gara-squadre, .product-shell .expected-lettura { color: var(--card-brand-strong); }
@@ -2148,3 +2206,21 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   font-weight: 700; }
 .finestra-stagione-nota { margin: 8px 0 0;
   font: 400 12px/1.5 var(--font-inter, sans-serif); color: var(--card-ink-3); }
+/* Expected, riepilogo: la stessa gara detta in righe, in fondo a tutti i numeri.
+   Due colonne da 768 in su, una sola sotto: la voce e' un'etichetta breve, e stringerla
+   sotto i 96 px la manda a capo su ogni riga. */
+.expected-riepilogo { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); }
+.riepilogo-voci { display: grid; gap: 10px; margin: 8px 0 0; }
+.riepilogo-voce { display: grid; gap: 2px; }
+.riepilogo-voce + .riepilogo-voce { padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--product-border) 55%, transparent); }
+.riepilogo-voce dt { color: var(--product-primary-deep); font-family: var(--font-display); font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.riepilogo-voce dd { margin: 0; color: var(--product-text); font-size: 14px; line-height: 1.55; }
+.expected-riepilogo-nota { margin: 12px 0 0; }
+@media (min-width: 768px) {
+  .riepilogo-voce { align-items: baseline; gap: 4px 16px; grid-template-columns: 128px minmax(0, 1fr); }
+}
+.product-shell .expected-riepilogo { border-color: var(--card-stroke); background: var(--card-ground); }
+.product-shell .riepilogo-voce dt { color: var(--card-brand-strong); }
+.product-shell .riepilogo-voce dd { color: var(--card-ink); }
+.quota-assenza { margin: 0; padding: 8px 14px 0; color: var(--product-muted); font-size: 13px; line-height: 1.5; }
+.product-shell .quota-assenza { color: var(--card-ink-3); }
