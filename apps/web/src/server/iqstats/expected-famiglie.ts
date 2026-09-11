@@ -138,6 +138,15 @@ export interface GolDiGara {
   readonly nostri: {
     readonly attesiCasa: number;
     readonly attesiTrasferta: number;
+    /** Su quante gare per lato poggiano le forze, e su quante la media di lega. */
+    readonly campioneCasa: number;
+    readonly campioneTrasferta: number;
+    readonly campioneLega: number;
+    /** Gli xG delle stesse gare, e il metro della competizione: si mostrano, non contano. */
+    readonly xgCasa: number | null;
+    readonly xgTrasferta: number | null;
+    readonly xgLegaCasa: number | null;
+    readonly xgLegaTrasferta: number | null;
     readonly esito: { readonly uno: number; readonly x: number; readonly due: number };
     readonly doppiaChance: {
       readonly unoX: number;

@@ -161,6 +161,18 @@ export interface GolDellaGara {
   readonly campioneCasa: number;
   readonly campioneTrasferta: number;
   readonly campioneLega: number;
+  /**
+   * Gli expected goals delle stesse righe, con il metro della competizione accanto.
+   *
+   * **Non entrano nel calcolo**: le forze vengono dalle reti. Stanno qui perche' dove la
+   * fonte li popola dicono la qualita' delle occasioni, e perche' il confronto con la
+   * media di lega e' l'unico modo per distinguere una squadra che non crea da un campo
+   * che la fonte non riempie. `null` dove non ce n'e' nemmeno uno.
+   */
+  readonly xgCasa: number | null;
+  readonly xgTrasferta: number | null;
+  readonly xgLegaCasa: number | null;
+  readonly xgLegaTrasferta: number | null;
 }
 
 export interface ProiezioniDellaGara {
@@ -205,11 +217,49 @@ export interface ProiezioniDellaGara {
 }
 
 /**
- * La media di `expected_goals` sulle righe utili, prodotto o concesso.
+ * La media dei gol segnati o subiti sulle righe utili.
  *
- * Gemella di `mediaOsservata`, che guarda solo il prodotto: qui serve anche il concesso,
+ * **Erano `expected_goals`, e si sono rivelati inservibili.** Misurato l'11 settembre 2026
+ * sulle stagioni correnti, il rapporto fra xG medi e gol veri per competizione: 0,02 in
+ * LaLiga 2 su 88 osservazioni, 0,55 in J1 League su 120, 0,62 in Parva Liga, 0,75 in
+ * Ligue 1, contro un valore sano attorno a 1 nella maggior parte delle altre. Il campo
+ * arriva a zero o dimezzato dove la fonte non lo popola, e le forze costruite sopra
+ * davano **10 gare di Segunda Division con 0,02 gol attesi in tutto**: il prodotto
+ * dichiarava, accanto alle quote vere del banco, che in quelle partite non si segna.
+ *
+ * Che il campo non sia popolato era gia' scritto in `match-finished.ts`, dove per la
+ * stessa ragione resta fuori dal pannello della gara finita. Qui si usa quello che la
+ * fonte porta sempre: le reti.
+ *
+ * Gemella di `mediaOsservata`, che guarda solo il prodotto: qui serve anche il subito,
  * perche' i gol attesi di una squadra dipendono da quanto l'altra ne lascia fare. Stessi
  * due vincoli, lato e stagione, per la stessa ragione.
+ */
+function mediaGol(
+  righe: readonly OsservazioneSquadraGara[],
+  verso: "prodotte" | "concesse",
+  lato: Lato,
+  stagione: number,
+): { media: number; campione: number } | null {
+  let somma = 0;
+  let campione = 0;
+  for (const riga of righe) {
+    if (riga.lato !== lato || riga.stagione !== stagione) continue;
+    const valore = verso === "prodotte" ? riga.retiFatte : riga.retiSubite;
+    if (valore === null || valore === undefined) continue;
+    somma += valore;
+    campione += 1;
+  }
+  return campione === 0 ? null : { media: somma / campione, campione };
+}
+
+/**
+ * La media di `expected_goals` sulle stesse righe: non entra piu' nel calcolo, si mostra.
+ *
+ * Resta perche' dove la fonte lo popola davvero dice una cosa che le reti non dicono - la
+ * qualita' delle occasioni, non il loro esito - e chi legge deve poter confrontare i due
+ * numeri. Chi lo mostra ha il dovere di mostrare accanto la media di lega, altrimenti uno
+ * 0,02 sembra una squadra che non tira invece di un campo vuoto.
  */
 function mediaXg(
   righe: readonly OsservazioneSquadraGara[],
@@ -236,20 +286,36 @@ function mediaXg(
  * quattro ingredienti — attacco e difesa delle due squadre — o il metro di lega: una
  * probabilita' costruita su un pezzo mancante e' peggio di una sezione che non compare.
  */
+/**
+ * Il minimo di gare per lato sotto cui la sezione Gol non si pubblica.
+ *
+ * **Tre, la stessa soglia dei sette bersagli**, dove l'artefatto la scrive come
+ * `sotto_il_minimo`: «con meno di 3 gare precedenti il modello del bersaglio non si
+ * applica». I gol erano l'unica parte del prodotto senza quel pavimento, e con due gare
+ * per lato producevano 2,87 gol attesi in casa per una squadra di Segunda Division.
+ */
+const GARE_MINIME_PER_LATO = 3;
+
 function golDellaGara(
   materialeCasa: MaterialeDellaGara,
   materialeTrasferta: MaterialeDellaGara,
   stagione: number,
 ): GolDellaGara | null {
-  const attaccoCasa = mediaXg(materialeCasa.squadra, "prodotte", "home", stagione);
-  const difesaCasa = mediaXg(materialeCasa.squadra, "concesse", "home", stagione);
-  const attaccoTrasferta = mediaXg(materialeTrasferta.squadra, "prodotte", "away", stagione);
-  const difesaTrasferta = mediaXg(materialeTrasferta.squadra, "concesse", "away", stagione);
-  const legaCasa = mediaXg(materialeCasa.lega, "prodotte", "home", stagione);
-  const legaTrasferta = mediaXg(materialeCasa.lega, "prodotte", "away", stagione);
+  const attaccoCasa = mediaGol(materialeCasa.squadra, "prodotte", "home", stagione);
+  const difesaCasa = mediaGol(materialeCasa.squadra, "concesse", "home", stagione);
+  const attaccoTrasferta = mediaGol(materialeTrasferta.squadra, "prodotte", "away", stagione);
+  const difesaTrasferta = mediaGol(materialeTrasferta.squadra, "concesse", "away", stagione);
+  const legaCasa = mediaGol(materialeCasa.lega, "prodotte", "home", stagione);
+  const legaTrasferta = mediaGol(materialeCasa.lega, "prodotte", "away", stagione);
   if (
     attaccoCasa === null || difesaCasa === null || attaccoTrasferta === null
     || difesaTrasferta === null || legaCasa === null || legaTrasferta === null
+  ) return null;
+  // Sotto il minimo la sezione non compare: una media su due gare non e' una forza, e un
+  // numero fragile accanto a una quota vera pesa piu' di una sezione che manca.
+  if (
+    attaccoCasa.campione < GARE_MINIME_PER_LATO
+    || attaccoTrasferta.campione < GARE_MINIME_PER_LATO
   ) return null;
 
   const attesi = attesiDellaGara({
@@ -267,6 +333,11 @@ function golDellaGara(
     campioneCasa: attaccoCasa.campione,
     campioneTrasferta: attaccoTrasferta.campione,
     campioneLega: legaCasa.campione + legaTrasferta.campione,
+    xgCasa: mediaXg(materialeCasa.squadra, "prodotte", "home", stagione)?.media ?? null,
+    xgTrasferta:
+      mediaXg(materialeTrasferta.squadra, "prodotte", "away", stagione)?.media ?? null,
+    xgLegaCasa: mediaXg(materialeCasa.lega, "prodotte", "home", stagione)?.media ?? null,
+    xgLegaTrasferta: mediaXg(materialeCasa.lega, "prodotte", "away", stagione)?.media ?? null,
   };
 }
 

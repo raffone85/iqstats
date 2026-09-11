@@ -28,7 +28,10 @@ import { connessione } from "../src/server/iqstats/lettura.ts";
 import { getMatchDetail } from "../src/server/iqstats/match-context.ts";
 import { getMatchesByDate, type MatchListItem } from "../src/server/iqstats/matches.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "../src/server/iqstats/projection-artefatti.ts";
-import { proiezioniDellaGara } from "../src/server/iqstats/projection-runtime.ts";
+import {
+  type GolDellaGara,
+  proiezioniDellaGara,
+} from "../src/server/iqstats/projection-runtime.ts";
 import { type Causa, causeDellaLettura } from "../src/server/iqstats/projection/cause.ts";
 import {
   distribuzioniDeiGol,
@@ -120,6 +123,21 @@ interface GolConQuote {
   readonly nostri: {
     readonly attesiCasa: number;
     readonly attesiTrasferta: number;
+    /** Su quante gare per lato poggiano le due forze, e su quante la media di lega. */
+    readonly campioneCasa: number;
+    readonly campioneTrasferta: number;
+    readonly campioneLega: number;
+    /**
+     * Gli expected goals delle stesse gare, con il metro della competizione accanto.
+     *
+     * Non entrano nel calcolo - le forze vengono dalle reti - e si mostrano con la media
+     * di lega di fianco: senza quel confronto uno 0,00 sembra una squadra che non tira,
+     * mentre in LaLiga 2 e' la fonte che non popola il campo, su 88 osservazioni.
+     */
+    readonly xgCasa: number | null;
+    readonly xgTrasferta: number | null;
+    readonly xgLegaCasa: number | null;
+    readonly xgLegaTrasferta: number | null;
     readonly esito: MercatiGol["esito"];
     readonly doppiaChance: MercatiGol["doppiaChance"];
     readonly overUnder: MercatiGol["overUnder"];
@@ -141,8 +159,10 @@ interface GolConQuote {
  * un prezzo e un trattino al posto del nostro numero. Le probabilita' escono dalle stesse
  * due distribuzioni di Poisson: cambia solo l'intervallo su cui si sommano.
  */
-function golNostri(mercati: MercatiGol, quote: QuoteGol | null): GolConQuote["nostri"] {
+function golNostri(gol: GolDellaGara, quote: QuoteGol | null): GolConQuote["nostri"] {
+  const mercati = gol.mercati;
   const p = distribuzioniDeiGol(mercati.casa.attesi, mercati.trasferta.attesi);
+  const arrotonda2 = (v: number | null) => (v === null ? null : Number(v.toFixed(2)));
   const arrotonda = (v: number) => Number(v.toFixed(4));
   const intervalli = (
     chiesti: readonly { readonly da: number; readonly a: number }[],
@@ -159,6 +179,13 @@ function golNostri(mercati: MercatiGol, quote: QuoteGol | null): GolConQuote["no
   return {
     attesiCasa: Number(mercati.casa.attesi.toFixed(2)),
     attesiTrasferta: Number(mercati.trasferta.attesi.toFixed(2)),
+    campioneCasa: gol.campioneCasa,
+    campioneTrasferta: gol.campioneTrasferta,
+    campioneLega: gol.campioneLega,
+    xgCasa: arrotonda2(gol.xgCasa),
+    xgTrasferta: arrotonda2(gol.xgTrasferta),
+    xgLegaCasa: arrotonda2(gol.xgLegaCasa),
+    xgLegaTrasferta: arrotonda2(gol.xgLegaTrasferta),
     esito: mercati.esito,
     doppiaChance: mercati.doppiaChance,
     overUnder: soglie.map((linea) => {
@@ -487,7 +514,7 @@ async function famiglieDi(
     gol: proiezioni.gol === null
       ? null
       : {
-        nostri: golNostri(proiezioni.gol.mercati, evento === null ? null : evento.gol),
+        nostri: golNostri(proiezioni.gol, evento === null ? null : evento.gol),
         quote: evento === null ? null : evento.gol,
       },
   };

@@ -349,6 +349,26 @@ function MercatoDeiGol({ g, casa, fuori }: {
   return (
     <details className="quota-famiglia" open>
       <summary>Gol</summary>
+      {/* **Su che cosa poggiano questi numeri, e su che cosa no.** Le forze delle due
+          squadre vengono dalle reti segnate e subite, non dagli expected goals: misurato
+          l'11 settembre 2026, il campo xG della fonte vale 0,02 in LaLiga 2 su 88
+          osservazioni e 0,55 in J1 League su 120, e costruirci sopra dava dieci gare di
+          Segunda Division con 0,02 gol attesi in tutto. Gli xG restano scritti qui, con il
+          metro della loro competizione accanto, perche' dove sono popolati dicono la
+          qualita' delle occasioni - e perche' senza quel confronto uno 0,00 sembra una
+          squadra che non tira invece di un campo vuoto. */}
+      <p className="quota-assenza">
+        Forze dalle reti di {nostri.campioneCasa} gare in casa e{" "}
+        {nostri.campioneTrasferta} in trasferta, sulle {nostri.campioneLega} del campionato.
+        {nostri.xgCasa === null || nostri.xgTrasferta === null ? "" : (
+          ` Gli expected goals delle stesse gare dicono ${virgola(nostri.xgCasa)} e `
+          + `${virgola(nostri.xgTrasferta)}`
+          + (nostri.xgLegaCasa === null || nostri.xgLegaTrasferta === null
+            ? ", e non entrano nel calcolo."
+            : `, contro ${virgola(nostri.xgLegaCasa)} e ${virgola(nostri.xgLegaTrasferta)} `
+              + "del campionato: non entrano nel calcolo.")
+        )}
+      </p>
       {quote.esito === null ? null : (
         <div className="quota-lato">
           <p className="quota-lato-titolo">
