@@ -2224,3 +2224,56 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .product-shell .riepilogo-voce dd { color: var(--card-ink); }
 .quota-assenza { margin: 0; padding: 8px 14px 0; color: var(--product-muted); font-size: 13px; line-height: 1.5; }
 .product-shell .quota-assenza { color: var(--card-ink-3); }
+/* Expected, gara: il verdetto in cima. Quattro numeri grandi e nessuna prosa, perche' la
+   prima domanda aprendo una gara e' che partita sara', non come ci siamo arrivati. */
+.gara-verdetto { margin-top: 12px; }
+.verdetto-voci { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.verdetto-voci > li { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--product-border); border-radius: var(--r-inset); background: var(--product-surface); }
+.verdetto-titolo { color: var(--product-muted); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.verdetto-valore { color: var(--product-primary-deep); font-family: var(--font-display); font-size: 24px; font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.verdetto-sotto { color: var(--product-muted); font-size: 12px; line-height: 1.35; }
+@media (min-width: 768px) { .verdetto-voci { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Expected, gara: la famiglia e' un blocco solo - quanto se ne attende, la nostra lettura,
+   e tutte le linee che il banco quota li' sotto. Prima erano due sezioni lontane. */
+.famiglie-blocchi { margin-top: 16px; display: grid; gap: 10px; }
+.famiglia-blocco { border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); padding: 12px 14px 14px; }
+.famiglia-testa { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0 0 8px; color: var(--product-primary-deep); font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.famiglia-testa i { color: var(--product-muted); font-size: 12px; font-style: normal; font-variant-numeric: tabular-nums; font-weight: 600; }
+.famiglia-lettura { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0 0 10px; padding: 8px 10px; border-radius: var(--r-inset); background: var(--product-surface-soft, transparent); color: var(--product-text); font-size: 14px; }
+.famiglia-lettura > b:first-child { font-size: 15px; }
+.famiglia-lettura-lato { color: var(--product-muted); font-size: 12px; }
+.famiglia-lettura-valore { margin-left: auto; color: var(--product-primary-deep); font-size: 17px; font-variant-numeric: tabular-nums; }
+.famiglia-lettura .is-sopra { color: var(--card-up); font-size: 12px; font-weight: 700; }
+.famiglia-lettura .is-sotto { color: var(--card-down); font-size: 12px; font-weight: 700; }
+.famiglia-perche { margin-top: 8px; }
+.famiglia-perche > summary { min-height: 32px; color: var(--product-muted); cursor: pointer; font-size: 13px; }
+.famiglia-perche > summary:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: 2px; }
+.famiglie-fonte { margin: 4px 0 0; }
+.product-shell .verdetto-voci > li, .product-shell .famiglia-blocco { border-color: var(--card-stroke); background: var(--card-ground); }
+.product-shell .verdetto-valore, .product-shell .famiglia-testa, .product-shell .famiglia-lettura-valore { color: var(--card-brand-strong); }
+.product-shell .verdetto-titolo, .product-shell .verdetto-sotto, .product-shell .famiglia-testa i, .product-shell .famiglia-lettura-lato { color: var(--card-ink-3); }
+.product-shell .famiglia-lettura { background: var(--card-brand-pale); color: var(--card-ink); }
+/* I multigol stanno dietro un sommario: settantacinque righe non aprono una pagina. */
+.quota-multigol > summary { display: flex; align-items: center; gap: 8px; min-height: 36px; color: var(--product-text); cursor: pointer; font-size: 13px; font-weight: 700; list-style: none; }
+.quota-multigol > summary::-webkit-details-marker { display: none; }
+.quota-multigol > summary i { color: var(--product-muted); font-size: 12px; font-style: normal; font-weight: 600; }
+.quota-multigol > summary::after { content: "+"; margin-left: auto; color: var(--product-muted); font-family: var(--font-mono, monospace); font-size: 16px; }
+.quota-multigol[open] > summary::after { content: "−"; }
+.quota-multigol > summary:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: 2px; }
+.product-shell .quota-multigol > summary { color: var(--card-ink); }
+.product-shell .quota-multigol > summary i, .product-shell .quota-multigol > summary::after { color: var(--card-ink-3); }
+/* La famiglia e' una tendina: il sommario dice se vale la pena aprirla. */
+.famiglia-blocco > summary { list-style: none; cursor: pointer; }
+.famiglia-blocco > summary::-webkit-details-marker { display: none; }
+.famiglia-blocco > summary::after { content: "+"; margin-left: auto; color: var(--product-muted); font-family: var(--font-mono, monospace); font-size: 18px; font-weight: 400; }
+.famiglia-blocco[open] > summary::after { content: "−"; }
+.famiglia-blocco > summary:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: 2px; }
+.famiglia-blocco[open] > summary { margin-bottom: 10px; }
+.famiglia-testa { min-height: 44px; }
+.famiglia-nome { flex: 0 0 auto; }
+.famiglia-sintesi { flex: 1 1 100%; color: var(--product-text); font-family: var(--font-sans, inherit); font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.famiglia-sintesi b { color: var(--product-primary-deep); font-variant-numeric: tabular-nums; }
+.famiglia-testa em { color: var(--product-muted); font-size: 12px; font-style: normal; font-weight: 600; }
+.product-shell .famiglia-sintesi { color: var(--card-ink); }
+.product-shell .famiglia-sintesi b { color: var(--card-brand-strong); }
+.product-shell .famiglia-testa em, .product-shell .famiglia-blocco > summary::after { color: var(--card-ink-3); }

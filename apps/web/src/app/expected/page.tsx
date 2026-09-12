@@ -195,29 +195,6 @@ function ComeSiLegge() {
   );
 }
 
-/** Una famiglia: la linea, la probabilità, e la motivazione che la regge. */
-function Famiglia({ r, casa, fuori }: {
-  readonly r: RigaDiFamiglia;
-  readonly casa: string;
-  readonly fuori: string;
-}) {
-  return (
-    <li className="expected-famiglia">
-      <span className="expected-riga">
-        <span className="expected-riga-linea">
-          {linea(r)}
-          <span className="engine-obs">{chiRiguarda(r.lato, casa, fuori)}</span>
-        </span>
-        <span className="expected-riga-valore">
-          <b>{Math.round(r.probabilita * 100)}%</b>
-          <i>affidabilità {r.affidabilita}</i>
-        </span>
-      </span>
-      <Motivazione r={r} />
-    </li>
-  );
-}
-
 /** La quota come si scrive in Italia: due decimali e la virgola. */
 function prezzo(quota: number): string {
   return quota.toFixed(2).replace(".", ",");
@@ -250,26 +227,66 @@ function RigaDiMercato({ r }: { readonly r: RigaQuotata }) {
 }
 
 /**
- * Le linee di una famiglia, divise per lato, con l'atteso di ciascun lato in testa.
+ * Una famiglia, una volta sola: quanto ne attende il motore, la lettura, le linee quotate.
+ *
+ * **Prima erano due blocchi lontani.** Le sette famiglie aprivano la pagina con le loro
+ * cause, e piu' sotto «Le quote di Fastbet» ripeteva le stesse sette con i prezzi del
+ * banco: la stessa gara raccontata due volte, e la lettura in cima senza il prezzo accanto
+ * anche quando il banco quotava esattamente quella soglia - misurato sull'artefatto dell'11
+ * settembre 2026, **74 righe su 938**, il 7,9%. Qui la famiglia e' un posto solo.
  *
  * **Quando manca il nostro numero si dice perche'.** Il banco quota anche i bersagli che
- * dipendono dall'arbitro, e finche' la designazione non c'e' quelle scale ripiegano: il
- * motore non pubblica una probabilita' e la colonna resta vuota. Misurato l'11 settembre
- * 2026: **429 righe su 3.870**, l'11,1%. Una colonna di trattini senza una riga che ne
- * dica la ragione si legge come un guasto nostro.
+ * dipendono dall'arbitro, e finche' la designazione non c'e' quelle scale ripiegano: 429
+ * righe su 3.870. Una colonna di trattini senza la sua ragione si legge come un guasto.
  */
-function MercatoDiFamiglia({ bersaglio, righe, casa, fuori, senzaArbitro }: {
+function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senzaArbitro }: {
   readonly bersaglio: string;
+  readonly lettura: RigaDiFamiglia | null;
   readonly righe: readonly RigaQuotata[];
+  readonly atteso: number | null;
   readonly casa: string;
   readonly fuori: string;
   readonly senzaArbitro: boolean;
 }) {
   const lati: ReadonlyArray<RigaQuotata["lato"]> = ["casa", "trasferta", "totale"];
-  const mute = righe.every((r) => r.probabilita === null);
+  const mute = righe.length > 0 && righe.every((r) => r.probabilita === null);
+  const scarto = lettura === null ? null : scartoDi(lettura);
+  const quante = righe.length;
   return (
-    <details className="quota-famiglia" open>
-      <summary>{nomeFamiglia(bersaglio)}</summary>
+    <details className="famiglia-blocco">
+      {/* **Chiusa si legge la lettura, aperta si leggono le quote.** Il sommario porta
+          quello che serve a decidere se aprire - la famiglia, quanto se ne attende, la
+          nostra lettura con la sua probabilita' - e le linee del banco stanno dentro: su
+          una gara ben quotata sono trentasei, e tutte in vista facevano della pagina un
+          elenco invece di una lettura. */}
+      <summary className="famiglia-testa">
+        <span className="famiglia-nome">{nomeFamiglia(bersaglio)}</span>
+        {atteso === null ? null : <i>attesi {virgola(atteso)}</i>}
+        {lettura === null ? null : (
+          <span className="famiglia-sintesi">
+            {linea(lettura)} · <b>{Math.round(lettura.probabilita * 100)}%</b>
+          </span>
+        )}
+        {quante === 0 ? null : <em>{quante} linee</em>}
+      </summary>
+
+      {lettura === null ? null : (
+        <p className="famiglia-lettura">
+          <b>{linea(lettura)}</b>
+          <span className="famiglia-lettura-lato">
+            {chiRiguarda(lettura.lato, casa, fuori)}
+          </span>
+          <b className="famiglia-lettura-valore">
+            {Math.round(lettura.probabilita * 100)}%
+          </b>
+          {scarto === null ? null : (
+            <span className={scarto > 0 ? "is-sopra" : "is-sotto"}>
+              {scarto > 0 ? "+" : "−"}{virgola(Math.abs(scarto))} sul campionato
+            </span>
+          )}
+        </p>
+      )}
+
       {mute ? (
         <p className="quota-assenza">
           {senzaArbitro
@@ -277,15 +294,13 @@ function MercatoDiFamiglia({ bersaglio, righe, casa, fuori, senzaArbitro }: {
             : "Su questa scala il motore ripiega su una media, e sotto un ripiego non pubblica una probabilità: restano le quote del banco."}
         </p>
       ) : null}
+
       {lati.map((lato) => {
         const diLato = righe.filter((r) => r.lato === lato);
         if (diLato.length === 0) return null;
         return (
           <div key={lato} className="quota-lato">
-            <p className="quota-lato-titolo">
-              {chiRiguarda(lato, casa, fuori)}
-              <i>atteso {virgola(diLato[0].atteso)}</i>
-            </p>
+            <p className="quota-lato-titolo">{chiRiguarda(lato, casa, fuori)}</p>
             <ul className="quota-righe">
               {diLato.map((r) => (
                 <RigaDiMercato key={`${r.verso}-${r.soglia}`} r={r} />
@@ -294,6 +309,13 @@ function MercatoDiFamiglia({ bersaglio, righe, casa, fuori, senzaArbitro }: {
           </div>
         );
       })}
+
+      {lettura === null || lettura.cause.length === 0 ? null : (
+        <details className="famiglia-perche">
+          <summary>Perché questo numero</summary>
+          <Motivazione r={lettura} />
+        </details>
+      )}
     </details>
   );
 }
@@ -347,8 +369,19 @@ function MercatoDeiGol({ g, casa, fuori }: {
   ];
 
   return (
-    <details className="quota-famiglia" open>
-      <summary>Gol</summary>
+    <details className="famiglia-blocco">
+      {/* Il sommario dice la stessa cosa delle altre famiglie: quanto se ne attende e la
+          lettura piu' corta che si possa dare, cosi' chiuse si confrontano fra loro. */}
+      <summary className="famiglia-testa">
+        <span className="famiglia-nome">Gol</span>
+        <i>attesi {virgola(nostri.attesiCasa + nostri.attesiTrasferta)}</i>
+        <span className="famiglia-sintesi">
+          {nostri.esito.uno > nostri.esito.due ? casa : fuori} ·{" "}
+          <b>{Math.round(Math.max(nostri.esito.uno, nostri.esito.due) * 100)}%</b>
+          {" · Gol "}
+          <b>{Math.round(nostri.gg * 100)}%</b>
+        </span>
+      </summary>
       {/* **Su che cosa poggiano questi numeri, e su che cosa no.** Le forze delle due
           squadre vengono dalle reti segnate e subite, non dagli expected goals: misurato
           l'11 settembre 2026, il campo xG della fonte vale 0,02 in LaLiga 2 su 88
@@ -424,9 +457,16 @@ function MercatoDeiGol({ g, casa, fuori }: {
         </div>
       )}
 
+      {/* **I multigol si aprono, non stanno aperti.** Il banco ne quota ventisette per la
+          partita e ventiquattro per squadra: settantacinque righe che da sole facevano
+          meta' della pagina della gara, per una domanda che quasi nessuno si fa prima di
+          aver letto il resto. Il conteggio resta nel sommario, quindi non sparisce niente. */}
       {multigol.map((m) => (m.loro.length === 0 ? null : (
-        <div key={m.titolo} className="quota-lato">
-          <p className="quota-lato-titolo">{m.titolo}</p>
+        <details key={m.titolo} className="quota-lato quota-multigol">
+          <summary>
+            {m.titolo}
+            <i>{m.loro.length} linee</i>
+          </summary>
           <ul className="quota-righe">
             {m.loro.map((q) => (
               <RigaDiGol
@@ -437,55 +477,66 @@ function MercatoDeiGol({ g, casa, fuori }: {
               />
             ))}
           </ul>
-        </div>
+        </details>
       )))}
     </details>
   );
 }
 
 /**
- * Il mercato della gara: ogni linea che il banco quota, con il nostro numero accanto.
+ * Le famiglie della gara, una per blocco, con i gol in testa.
  *
- * **Il verso e' l'opposto delle famiglie qui sopra.** La', il motore sceglie la soglia dal
- * proprio atteso e mostra la lettura piu' decisa; qui le soglie le detta il bookmaker e noi
- * calcoliamo la probabilita' su ognuna, dalla stessa distribuzione calibrata. La quota non
- * entra nel nostro numero: se ci entrasse, il confronto sarebbe il banco contro se stesso.
+ * **L'ordine non e' alfabetico e non e' la probabilita'.** Prima i gol, che il banco quota
+ * su tutte le gare e sono la domanda che chiunque si fa per prima; poi le famiglie dove il
+ * motore ha una lettura, dalla piu' staccata dalla norma del campionato; infine quelle che
+ * hanno solo le quote del banco. Ordinare per probabilita' metterebbe in cima la cosa piu'
+ * ovvia, che e' lo stesso difetto per cui il consigliato passa dallo scarto.
  */
-function Mercato({ g, raccolteIl }: {
+function Famiglie({ g, raccolteIl }: {
   readonly g: GaraExpected;
   readonly raccolteIl: string | null;
 }) {
-  if (g.quote.length === 0 && g.gol?.quote == null) return null;
-
   const perFamiglia = new Map<string, RigaQuotata[]>();
   for (const r of g.quote) {
     const gia = perFamiglia.get(r.bersaglio);
     if (gia === undefined) perFamiglia.set(r.bersaglio, [r]);
     else gia.push(r);
   }
+  const letture = new Map(g.famiglie.map((r) => [r.bersaglio, r]));
+  const bersagli = [...new Set([...letture.keys(), ...perFamiglia.keys()])];
+  bersagli.sort((a, b) => {
+    const la = letture.get(a);
+    const lb = letture.get(b);
+    if ((la === undefined) !== (lb === undefined)) return la === undefined ? 1 : -1;
+    const sa = la === undefined ? 0 : Math.abs(scartoDi(la) ?? 0);
+    const sb = lb === undefined ? 0 : Math.abs(scartoDi(lb) ?? 0);
+    return sb - sa;
+  });
+
+  if (bersagli.length === 0 && g.gol === null) return null;
 
   return (
-    <section className="expected-mercato" aria-labelledby="expected-mercato-title">
-      <p className="eyebrow" id="expected-mercato-title">Le quote di Fastbet</p>
-      <p className="expected-perche expected-mercato-nota">
-        <span className="expected-dato">linea del banco</span>
-        <span className="expected-dato">quota</span>
-        <span className="expected-dato">nostra probabilità</span>
-        {raccolteIl === null
-          ? null
-          : <span className="expected-dato">raccolte il {quando(raccolteIl)}</span>}
-      </p>
+    <section className="famiglie-blocchi" aria-labelledby="famiglie-title">
+      <h2 id="famiglie-title" className="sr-only-heading">Le famiglie del motore</h2>
       {g.gol === null ? null : <MercatoDeiGol g={g.gol} casa={g.casa} fuori={g.fuori} />}
-      {[...perFamiglia.entries()].map(([bersaglio, righe]) => (
-        <MercatoDiFamiglia
+      {bersagli.map((bersaglio) => (
+        <BloccoDiFamiglia
           key={bersaglio}
           bersaglio={bersaglio}
-          righe={righe}
+          lettura={letture.get(bersaglio) ?? null}
+          righe={perFamiglia.get(bersaglio) ?? []}
+          atteso={attesoDi(g.attesi, bersaglio, "totale")}
           casa={g.casa}
           fuori={g.fuori}
           senzaArbitro={g.senzaMisura.includes(bersaglio)}
         />
       ))}
+      {raccolteIl === null ? null : (
+        <p className="engine-obs famiglie-fonte">
+          Le quote sono di Fastbet, raccolte il {quando(raccolteIl)}. Le probabilità sono
+          del nostro modello: nessuna delle due entra nel calcolo dell&apos;altra.
+        </p>
+      )}
     </section>
   );
 }
@@ -500,158 +551,59 @@ function attesoDi(
 }
 
 /**
- * La linea quotata piu' vicina all'atteso, fra quelle di quel bersaglio e di quel lato.
+ * Che partita sara': quattro numeri in cima, prima di ogni spiegazione.
  *
- * **La piu' vicina, non la piu' alta.** Una riga di riepilogo che scegliesse la probabilita'
- * piu' grande direbbe ogni volta la cosa scontata - «Over 0,5 corner al 99%» - che e' la
- * stessa ragione per cui il consigliato passa dallo scarto e non dalla probabilita' nuda.
+ * **E' la prima cosa che si legge aprendo una gara**, e non ripete niente di quello che
+ * sta sotto: la' ci sono le linee con le loro quote, qui c'e' il ritratto della partita.
+ * Prima questi stessi numeri stavano in fondo, dopo tredici schermate, e ripetevano gli
+ * attesi gia' scritti in ogni riga di famiglia.
+ *
+ * **Non e' un pronostico e non ne aggiunge uno.** Il consigliato ha il suo criterio, di
+ * cui il consuntivo conosce la resa; qui non si ordina niente per probabilita'.
  */
-function lineaVicina(
-  quote: readonly RigaQuotata[],
-  bersaglio: string,
-  lato: "casa" | "trasferta" | "totale",
-): RigaQuotata | null {
-  let vicina: RigaQuotata | null = null;
-  for (const r of quote) {
-    if (r.bersaglio !== bersaglio || r.lato !== lato || r.verso !== "Over") continue;
-    if (r.probabilita === null) continue;
-    if (vicina === null || Math.abs(r.soglia - r.atteso) < Math.abs(vicina.soglia - vicina.atteso)) {
-      vicina = r;
-    }
+function CheGaraSara({ g }: { readonly g: GaraExpected }) {
+  const nostri = g.gol?.nostri ?? null;
+  const voci: Array<{ readonly titolo: string; readonly valore: string; readonly sotto: string }> = [];
+
+  if (nostri !== null) {
+    const totali = nostri.attesiCasa + nostri.attesiTrasferta;
+    const forza = Math.abs(nostri.esito.uno - nostri.esito.due);
+    voci.push({
+      titolo: "Gol attesi",
+      valore: virgola(totali),
+      sotto: `${virgola(nostri.attesiCasa)} contro ${virgola(nostri.attesiTrasferta)}`,
+    });
+    voci.push({
+      titolo: forza < 0.08 ? "Equilibrio" : "Favorita",
+      valore: forza < 0.08
+        ? `${Math.round(nostri.esito.x * 100)}%`
+        : `${Math.round(Math.max(nostri.esito.uno, nostri.esito.due) * 100)}%`,
+      sotto: forza < 0.08
+        ? "il pareggio, e nessuna delle due si stacca"
+        : nostri.esito.uno > nostri.esito.due ? g.casa : g.fuori,
+    });
   }
-  return vicina;
-}
-
-/** «Over 9,5 al 47%, quota 2,05», oppure la sola probabilita' se il banco non la quota. */
-function DettoCosi({ r }: { readonly r: RigaQuotata | null }) {
-  if (r === null || r.probabilita === null) return null;
-  return (
-    <>
-      {" "}{r.verso} {soglia(r.soglia)} al <b>{Math.round(r.probabilita * 100)}%</b>,
-      quota {prezzo(r.quota)}.
-    </>
-  );
-}
-
-/**
- * Il riepilogo della gara: i numeri gia' mostrati sopra, detti in ordine di lettura.
- *
- * **Non e' un pronostico e non ne aggiunge uno.** Il consigliato sta in cima e ha il suo
- * criterio, di cui il consuntivo conosce la resa; qui si riassume che partita il motore si
- * aspetta - quanti gol, quanti corner, quanta disciplina - senza ordinare le letture per
- * probabilita', che e' il modo piu' rapido per mettere in cima la cosa piu' ovvia.
- *
- * Ogni numero viene dall'artefatto: nessuna frase qui sotto esiste senza il suo dato.
- */
-function Riepilogo({ g }: { readonly g: GaraExpected }) {
-  const { attesi, quote, gol } = g;
-  if (attesi.length === 0 && gol === null) return null;
-
-  const corner = attesoDi(attesi, "corner_kicks", "totale");
-  const falli = attesoDi(attesi, "fouls", "totale");
-  const cartellini = attesoDi(attesi, "yellow_cards", "totale");
-  const fuorigioco = attesoDi(attesi, "offsides", "totale");
-  const tiri = attesoDi(attesi, "total_shots", "totale");
-  const inPorta = attesoDi(attesi, "shots_on_target", "totale");
-  const nostri = gol?.nostri ?? null;
-  const quoteGol = gol?.quote ?? null;
-  const due = nostri === null ? null : nostri.overUnder.find((l) => l.linea === 2.5) ?? null;
-  const quotaDue = quoteGol?.overUnder.find((q) => q.soglia === 2.5 && q.verso === "Over") ?? null;
-  const favorita = nostri === null
-    ? null
-    : nostri.esito.uno > nostri.esito.due ? g.casa : g.fuori;
-  const forza = nostri === null ? 0 : Math.abs(nostri.esito.uno - nostri.esito.due);
+  for (const [bersaglio, titolo] of [
+    ["corner_kicks", "Corner"], ["fouls", "Falli"], ["yellow_cards", "Cartellini"],
+  ] as const) {
+    const atteso = attesoDi(g.attesi, bersaglio, "totale");
+    if (atteso === null || voci.length >= 5) continue;
+    voci.push({ titolo, valore: virgola(atteso), sotto: "attesi in tutto" });
+  }
+  if (voci.length === 0) return null;
 
   return (
-    <section className="expected-riepilogo" aria-labelledby="expected-riepilogo-title">
-      <p className="eyebrow" id="expected-riepilogo-title">In sintesi</p>
-      <dl className="riepilogo-voci">
-        {nostri === null || favorita === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Scenario</dt>
-            <dd>
-              {forza < 0.08 ? "Gara equilibrata" : `${favorita} favorita`}: vittoria{" "}
-              {g.casa} al <b>{Math.round(nostri.esito.uno * 100)}%</b>, pareggio al{" "}
-              <b>{Math.round(nostri.esito.x * 100)}%</b>, vittoria {g.fuori} al{" "}
-              <b>{Math.round(nostri.esito.due * 100)}%</b>. Gol attesi{" "}
-              {virgola(nostri.attesiCasa)} contro {virgola(nostri.attesiTrasferta)}.
-            </dd>
-          </div>
-        )}
-        {nostri === null || due === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Gol</dt>
-            <dd>
-              Il modello ne attende <b>{virgola(nostri.attesiCasa + nostri.attesiTrasferta)}</b>{" "}
-              in tutto. Over 2,5 al <b>{Math.round(due.sopra * 100)}%</b>, Under 2,5 al{" "}
-              <b>{Math.round(due.sotto * 100)}%</b>
-              {quotaDue === null ? "." : `, e il banco paga l'Over ${prezzo(quotaDue.quota)}.`}
-            </dd>
-          </div>
-        )}
-        {nostri === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Entrambe segnano</dt>
-            <dd>
-              Gol al <b>{Math.round(nostri.gg * 100)}%</b>, No gol al{" "}
-              <b>{Math.round(nostri.ng * 100)}%</b>
-              {quoteGol?.gol == null ? "." : `, quota ${prezzo(quoteGol.gol)} e ${
-                quoteGol.noGol === null ? "prezzo assente" : prezzo(quoteGol.noGol)}.`}
-            </dd>
-          </div>
-        )}
-        {corner === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Corner</dt>
-            <dd>
-              Attesi <b>{virgola(corner)}</b> in tutto
-              {attesoDi(attesi, "corner_kicks", "casa") === null ? "" : ` (${
-                virgola(attesoDi(attesi, "corner_kicks", "casa") ?? 0)} battuti da ${g.casa}, ${
-                virgola(attesoDi(attesi, "corner_kicks", "trasferta") ?? 0)} da ${g.fuori})`}.
-              <DettoCosi r={lineaVicina(quote, "corner_kicks", "totale")} />
-            </dd>
-          </div>
-        )}
-        {falli === null && cartellini === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Disciplina</dt>
-            <dd>
-              {falli === null ? "" : `Attesi ${virgola(falli)} falli`}
-              {falli !== null && cartellini !== null ? " e " : ""}
-              {cartellini === null ? "" : `${virgola(cartellini)} cartellini gialli`}.
-              <DettoCosi r={lineaVicina(quote, "yellow_cards", "totale")} />
-            </dd>
-          </div>
-        )}
-        {tiri === null && inPorta === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Tiri</dt>
-            <dd>
-              {tiri === null ? "" : `Attesi ${virgola(tiri)} tiri`}
-              {tiri !== null && inPorta !== null ? ", di cui " : ""}
-              {inPorta === null ? "" : `${virgola(inPorta)} nello specchio`}.
-              <DettoCosi r={lineaVicina(quote, "total_shots", "totale")} />
-            </dd>
-          </div>
-        )}
-        {fuorigioco === null ? null : (
-          <div className="riepilogo-voce">
-            <dt>Fuorigioco</dt>
-            <dd>
-              Attesi <b>{virgola(fuorigioco)}</b> in tutto.
-              <DettoCosi r={lineaVicina(quote, "offsides", "totale")} />
-            </dd>
-          </div>
-        )}
-      </dl>
-      {/* La resa vera al posto di un punteggio di fiducia: e' misurata, e sulle gare chiuse. */}
-      <p className="engine-obs expected-riepilogo-nota">
-        Quanto ha reso finora ciascuna di queste famiglie sta in{" "}
-        <Link href="/metodo">metodo</Link>, sulle{" "}
-        {GARE_DEL_CONSUNTIVO.toLocaleString("it-IT")} gare già chiuse. Le probabilità sono
-        del nostro modello, le quote sono di Fastbet: nessuna delle due entra nel calcolo
-        dell&apos;altra.
-      </p>
+    <section className="gara-verdetto" aria-labelledby="gara-verdetto-title">
+      <h2 id="gara-verdetto-title" className="sr-only-heading">Che partita sarà</h2>
+      <ul className="verdetto-voci">
+        {voci.map((v) => (
+          <li key={v.titolo}>
+            <span className="verdetto-titolo">{v.titolo}</span>
+            <b className="verdetto-valore">{v.valore}</b>
+            <span className="verdetto-sotto">{v.sotto}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -751,6 +703,8 @@ function Gara({ g, calcolatoIl, quoteIl }: {
         </p>
       </section>
 
+      <CheGaraSara g={g} />
+
       {g.consigliato === null ? (
         /* Un consigliato assente si dichiara: nessuna lettura di questa gara si stacca
            abbastanza dalla norma del campionato, e inventarne una sarebbe il pronostico
@@ -793,18 +747,7 @@ function Gara({ g, calcolatoIl, quoteIl }: {
         </section>
       )}
 
-      <ol className="partite-rows expected-famiglie">
-        {g.famiglie.map((r) => (
-          <Famiglia
-            key={`${r.bersaglio}-${r.lato}-${r.soglia}-${r.verso}`}
-            r={r}
-            casa={g.casa}
-            fuori={g.fuori}
-          />
-        ))}
-      </ol>
-
-      <Mercato g={g} raccolteIl={quoteIl} />
+      <Famiglie g={g} raccolteIl={quoteIl} />
 
       {g.senzaMisura.length === 0 ? null : (
         /* Una copertura assente si dichiara in una riga, non in tre blocchi vuoti: tre
@@ -814,8 +757,6 @@ function Gara({ g, calcolatoIl, quoteIl }: {
           {g.senzaMisura.map(nomeFamiglia).join(", ")} — l&apos;arbitro non è ancora designato.
         </p>
       )}
-
-      <Riepilogo g={g} />
 
       <ComeSiLegge />
 
