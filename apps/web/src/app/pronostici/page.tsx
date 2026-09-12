@@ -86,19 +86,15 @@ function shiftedDayKey(days: number): string {
 }
 
 /** Percentuale del modello: già 0–100. Un valore assente resta assente. */
+/** Quante gare stanno in vista prima del comando che apre le altre. */
+const IN_VISTA = 20;
+
 function pct(value: number | null): string {
   return value === null ? "—" : Math.round(value) + "%";
 }
 
 function decimal(value: number | null): string {
   return value === null ? "—" : value.toFixed(2).replace(".", ",");
-}
-
-function favouriteLabel(p: DashboardPrediction): string {
-  if (p.favorite === "H") return p.homeTeam;
-  if (p.favorite === "A") return p.awayTeam;
-  if (p.favorite === "D") return "Pareggio";
-  return "—";
 }
 
 /** Probabilità su cui agiscono soglia e ordinamento, secondo il mercato scelto. */
@@ -211,6 +207,74 @@ export default async function PronosticiPage({
     order !== "orario";
 
   const vetrina = vetrinaDelleLetture();
+
+  const riga = (p: DashboardPrediction) => {
+              const probs =
+                p.probHome !== null && p.probDraw !== null && p.probAway !== null
+                  ? { home: p.probHome, draw: p.probDraw, away: p.probAway }
+                  : null;
+              const kickoff = new Date(p.kickoff);
+              return (
+                <li key={p.eventId} className="signals-row">
+                  <Link className="signals-row-link" href={"/match/" + p.eventId}>
+                    <span className="signals-when">
+                      <strong>{kickoffTime.format(kickoff)}</strong>
+                      <em>{kickoffDay.format(kickoff)}</em>
+                    </span>
+
+                    <span className="signals-match">
+                      <span className="signals-teams">
+                        <TeamCrest name={p.homeTeam} teamId={p.homeTeamId} />
+                        {p.homeTeam} <span aria-hidden="true">·</span>
+                        <TeamCrest name={p.awayTeam} teamId={p.awayTeamId} />
+                        {p.awayTeam}
+                      </span>
+                      <LeagueIdentity
+                        leagueId={p.leagueId}
+                        name={p.leagueName ?? "Competizione non dichiarata"}
+                        code={p.leagueId === null ? null : leagueIndex.get(p.leagueId)?.countryCode ?? null}
+                        size="sm"
+                      />
+                    </span>
+
+                    <span className="signals-verdict">
+                      {probs ? (
+                        <span className="signals-thread" aria-hidden="true">
+                          <span className="signals-thread-home" style={{ flexGrow: probs.home }} />
+                          <span className="signals-thread-draw" style={{ flexGrow: probs.draw }} />
+                          <span className="signals-thread-away" style={{ flexGrow: probs.away }} />
+                        </span>
+                      ) : null}
+                      <em>
+                        {probs
+                          ? "1 " + pct(probs.home) + " · X " + pct(probs.draw) + " · 2 " + pct(probs.away)
+                          : "1X2 non coperto"}
+                      </em>
+                    </span>
+
+                    <span className="signals-figures">
+                      <span className="signals-figure">
+                        <em>Over 2.5</em>
+                        <strong>{pct(p.probOver25)}</strong>
+                      </span>
+                      <span className="signals-figure">
+                        <em>Gol/Gol</em>
+                        <strong>{pct(p.probBtts)}</strong>
+                      </span>
+                      <span className="signals-figure">
+                        <em>Gol attesi</em>
+                        <strong>{decimal(p.xgHome)} · {decimal(p.xgAway)}</strong>
+                      </span>
+                      <span className="signals-figure">
+                        <em>Più probabile</em>
+                        <strong>{p.mostLikelyScore ?? "—"}</strong>
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              );
+  };
+
 
   return (
     <ProductShell activeSection="predictions">
@@ -343,79 +407,22 @@ export default async function PronosticiPage({
             <p>Le percentuali sono letture di un modello statistico, non quote di mercato.</p>
           </div>
 
+          {/* **Venti in vista, il resto dietro un comando solo.** Cento schede da 288 px
+              facevano 34.490 px a 375, trentotto schermate, e le ultime ottanta nessuno le
+              scorreva: la porta costa 44 px e ne rende ventitremila. Il conteggio resta
+              scritto nel sommario, quindi non sparisce niente. */}
           <ol className="signals-list">
-            {sorted.map((p) => {
-              const probs =
-                p.probHome !== null && p.probDraw !== null && p.probAway !== null
-                  ? { home: p.probHome, draw: p.probDraw, away: p.probAway }
-                  : null;
-              const kickoff = new Date(p.kickoff);
-              return (
-                <li key={p.eventId} className="signals-row">
-                  <Link className="signals-row-link" href={"/match/" + p.eventId}>
-                    <span className="signals-when">
-                      <strong>{kickoffTime.format(kickoff)}</strong>
-                      <em>{kickoffDay.format(kickoff)}</em>
-                    </span>
-
-                    <span className="signals-match">
-                      <span className="signals-teams">
-                        <TeamCrest name={p.homeTeam} teamId={p.homeTeamId} />
-                        {p.homeTeam} <span aria-hidden="true">·</span>
-                        <TeamCrest name={p.awayTeam} teamId={p.awayTeamId} />
-                        {p.awayTeam}
-                      </span>
-                      <LeagueIdentity
-                        leagueId={p.leagueId}
-                        name={p.leagueName ?? "Competizione non dichiarata"}
-                        code={p.leagueId === null ? null : leagueIndex.get(p.leagueId)?.countryCode ?? null}
-                        size="sm"
-                      />
-                    </span>
-
-                    <span className="signals-verdict">
-                      {probs ? (
-                        <span className="signals-thread" aria-hidden="true">
-                          <span className="signals-thread-home" style={{ flexGrow: probs.home }} />
-                          <span className="signals-thread-draw" style={{ flexGrow: probs.draw }} />
-                          <span className="signals-thread-away" style={{ flexGrow: probs.away }} />
-                        </span>
-                      ) : null}
-                      <em>
-                        {probs
-                          ? "1 " + pct(probs.home) + " · X " + pct(probs.draw) + " · 2 " + pct(probs.away)
-                          : "1X2 non coperto"}
-                      </em>
-                    </span>
-
-                    <span className="signals-figures">
-                      <span className="signals-figure signals-figure-name">
-                        <em>Favorito</em>
-                        <strong>{favouriteLabel(p)}</strong>
-                        <i>{pct(p.favoriteProb)}</i>
-                      </span>
-                      <span className="signals-figure">
-                        <em>Over 2.5</em>
-                        <strong>{pct(p.probOver25)}</strong>
-                      </span>
-                      <span className="signals-figure">
-                        <em>Gol/Gol</em>
-                        <strong>{pct(p.probBtts)}</strong>
-                      </span>
-                      <span className="signals-figure">
-                        <em>Gol attesi</em>
-                        <strong>{decimal(p.xgHome)} · {decimal(p.xgAway)}</strong>
-                      </span>
-                      <span className="signals-figure">
-                        <em>Più probabile</em>
-                        <strong>{p.mostLikelyScore ?? "—"}</strong>
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
+            {sorted.slice(0, IN_VISTA).map(riga)}
           </ol>
+
+          {sorted.length <= IN_VISTA ? null : (
+            <details className="altre-voci">
+              <summary>
+                le altre {sorted.length - IN_VISTA} gare
+              </summary>
+              <ol className="signals-list">{sorted.slice(IN_VISTA).map(riga)}</ol>
+            </details>
+          )}
         </section>
       )}
 

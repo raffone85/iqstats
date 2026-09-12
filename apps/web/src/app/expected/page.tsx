@@ -93,6 +93,9 @@ function scartoDi(r: RigaDiFamiglia): number | null {
   return r.base === null ? null : Number((r.probabilita * 100 - r.base).toFixed(1));
 }
 
+/** Quante gare stanno in vista, per giorno, prima del comando che apre le altre. */
+const IN_VISTA = 20;
+
 /** Il primo parametro, quando la stessa chiave arriva ripetuta. */
 function unoSolo(valore: string | string[] | undefined): string | null {
   if (Array.isArray(valore)) return valore[0] ?? null;
@@ -239,7 +242,7 @@ function RigaDiMercato({ r }: { readonly r: RigaQuotata }) {
  * dipendono dall'arbitro, e finche' la designazione non c'e' quelle scale ripiegano: 429
  * righe su 3.870. Una colonna di trattini senza la sua ragione si legge come un guasto.
  */
-function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senzaArbitro }: {
+function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senzaArbitro, apri }: {
   readonly bersaglio: string;
   readonly lettura: RigaDiFamiglia | null;
   readonly righe: readonly RigaQuotata[];
@@ -247,13 +250,20 @@ function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senz
   readonly casa: string;
   readonly fuori: string;
   readonly senzaArbitro: boolean;
+  readonly apri: boolean;
 }) {
   const lati: ReadonlyArray<RigaQuotata["lato"]> = ["casa", "trasferta", "totale"];
   const mute = righe.length > 0 && righe.every((r) => r.probabilita === null);
   const scarto = lettura === null ? null : scartoDi(lettura);
   const quante = righe.length;
   return (
-    <details className="famiglia-blocco">
+    <details className="famiglia-blocco" open={apri}>
+      {/* **Una famiglia parte aperta, e non e' la prima dell'elenco.** Con tutte chiuse
+          non si vedeva nessun prezzo finche' non se ne apriva una. L'elenco pero' e'
+          ordinato per scarto dalla media, non per copertura del banco: sull'artefatto
+          dell'11 settembre 2026 la prima famiglia aveva almeno una linea quotata in 24
+          gare su 161, mentre la prima *quotata* ce l'ha per definizione in 128 su 161.
+          Si apre quella: mediana dieci righe. */}
       {/* **Chiusa si legge la lettura, aperta si leggono le quote.** Il sommario porta
           quello che serve a decidere se aprire - la famiglia, quanto se ne attende, la
           nostra lettura con la sua probabilita' - e le linee del banco stanno dentro: su
@@ -513,15 +523,19 @@ function Famiglie({ g, raccolteIl }: {
     return sb - sa;
   });
 
+  // La prima famiglia che ha davvero delle linee: e' quella che si apre da sola.
+  const primaQuotata = bersagli.findIndex((b) => (perFamiglia.get(b)?.length ?? 0) > 0);
+
   if (bersagli.length === 0 && g.gol === null) return null;
 
   return (
     <section className="famiglie-blocchi" aria-labelledby="famiglie-title">
       <h2 id="famiglie-title" className="sr-only-heading">Le famiglie del motore</h2>
       {g.gol === null ? null : <MercatoDeiGol g={g.gol} casa={g.casa} fuori={g.fuori} />}
-      {bersagli.map((bersaglio) => (
+      {bersagli.map((bersaglio, indice) => (
         <BloccoDiFamiglia
           key={bersaglio}
+          apri={indice === primaQuotata}
           bersaglio={bersaglio}
           lettura={letture.get(bersaglio) ?? null}
           righe={perFamiglia.get(bersaglio) ?? []}
@@ -668,9 +682,20 @@ function Indice({ gare, calcolatoIl }: {
           <summary className="expected-giorno-titolo">
             {titolo} <span className="engine-obs">{delGiorno.length} gare</span>
           </summary>
+          {/* **Venti in vista, il resto dietro un comando solo**, come su Pronostici. Il
+              giorno corrente ne porta settantatre, 9.075 px a 375: il sommario dice quante
+              restano, quindi non sparisce niente. */}
           <ol className="partite-rows">
-        {delGiorno.map((g) => <VoceDiGara key={g.gara} g={g} />)}
+            {delGiorno.slice(0, IN_VISTA).map((g) => <VoceDiGara key={g.gara} g={g} />)}
           </ol>
+          {delGiorno.length <= IN_VISTA ? null : (
+            <details className="altre-voci">
+              <summary>le altre {delGiorno.length - IN_VISTA} gare</summary>
+              <ol className="partite-rows">
+                {delGiorno.slice(IN_VISTA).map((g) => <VoceDiGara key={g.gara} g={g} />)}
+              </ol>
+            </details>
+          )}
         </details>
       ))}
     </>

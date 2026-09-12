@@ -211,6 +211,23 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
     g.matches.push(m);
   }
 
+  // **Che giornata e', prima dell'elenco.** Stessa forma della gara: pochi numeri in cima
+  // e la prosa dopo. I conteggi per stato non si ripetono qui, stanno gia' nei filtri, che
+  // in piu' sono cliccabili; queste quattro voci dicono cose che i filtri non dicono.
+  const conLettura = shown.filter((m) => readings.has(m.eventId)).length;
+  const prossima = shown.find((m) => passaIlFiltro(m.status, ["notstarted", "upcoming", "delayed"]));
+  const ultima = shown.length > 0 ? shown[shown.length - 1] : undefined;
+
+  // **Una lega sola resta aperta.** Con quarantadue campionati tutti aperti la pagina
+  // misurava 45.006 px a 375 px, cinquanta schermate, e il 91,8% erano le 184 righe di
+  // gara. Resta aperta quella della **stessa gara** che il verdetto chiama prossimo
+  // fischio: aprire la prima lega con una gara non finita apriva un campionato che
+  // comincia alle 00:15, e mostrava due risultati della notte mentre il verdetto sopra
+  // annunciava le 11:00. Senza gare da giocare - un giorno tutto concluso - si apre la
+  // prima, che li' e' la piu' vecchia del giorno ed e' l'unica scelta sensata.
+  const daVedere = prossima === undefined ? -1 : groups.findIndex((g) => g.matches.includes(prossima));
+  const legaAperta = daVedere === -1 ? 0 : daVedere;
+
   const dateBar = buildDateBar(activeDate);
   const dateLabel = new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })
     .format(new Date(`${activeDate}T12:00:00Z`));
@@ -225,8 +242,8 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           <span className="oggi-src">
             {result.source === "provider"
               ? [
-                String(allMatches.length).concat(" gare"),
-                String(leagueOptions.length).concat(" competizioni"),
+                // I conteggi sono passati al verdetto sotto il titolo: qui resta la sola
+                // provenienza, che e' la voce che il monospazio porta.
                 // L'endpoint del calendario non espone nessuna data di aggiornamento: l'unico
                 // istante vero e' quello in cui l'abbiamo letto, e la risposta resta in cache
                 // per 120 secondi, quindi non coincide con il momento del render.
@@ -236,6 +253,39 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
           </span>
         </div>
         <h1 id="partite-title" className="partite-title">{dateLabel}</h1>
+
+        {shown.length === 0 ? null : (
+          <ul className="verdetto-voci partite-verdetto">
+            <li>
+              <span className="verdetto-titolo">Gare</span>
+              <b className="verdetto-valore">{shown.length}</b>
+              <span className="verdetto-sotto">
+                in {groups.length === 1 ? "un campionato" : `${groups.length} campionati`}
+              </span>
+            </li>
+            <li>
+              <span className="verdetto-titolo">Con una lettura</span>
+              <b className="verdetto-valore">{conLettura}</b>
+              <span className="verdetto-sotto">
+                {conLettura === shown.length ? "tutte quelle del giorno" : `su ${shown.length} gare`}
+              </span>
+            </li>
+            {prossima === undefined ? null : (
+              <li>
+                <span className="verdetto-titolo">Prossimo fischio</span>
+                <b className="verdetto-valore">{formatTime(prossima.kickoff)}</b>
+                <span className="verdetto-sotto">{prossima.leagueName ?? "campionato non dichiarato"}</span>
+              </li>
+            )}
+            {ultima === undefined ? null : (
+              <li>
+                <span className="verdetto-titolo">Ultima in programma</span>
+                <b className="verdetto-valore">{formatTime(ultima.kickoff)}</b>
+                <span className="verdetto-sotto">{ultima.leagueName ?? "campionato non dichiarato"}</span>
+              </li>
+            )}
+          </ul>
+        )}
 
         {/* Sotto il titolo e sopra i comandi che descrive: si legge una volta, si salta, e
             chi la salta non la rivede. Non e' un velo sopra la pagina. */}
@@ -322,17 +372,20 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
               />
             ) : null}
 
-            {groups.map((g) => (
+            {groups.map((g, indice) => (
               <details
                 key={g.id ?? "unknown"}
                 id={"lega-".concat(String(g.id ?? "altre"))}
                 className="partite-group"
-                open
+                open={indice === legaAperta}
               >
                 <summary className="partite-group-head">
                   <LeagueIdentity leagueId={g.id} name={g.name} code={g.countryCode} />
+                  {/* «dalle» costava 38 px al nome, che a 375 px ne ha centocinquanta: senza,
+                      le teste che andavano a capo spezzando la parola - «NPL Queenslan d»,
+                      «USL Champions hip» - scendono, e l'orario da solo si legge lo stesso. */}
                   <span className="partite-group-count">
-                    {g.matches.length} · dalle {formatTime(g.matches[0]?.kickoff ?? "")}
+                    {g.matches.length} · {formatTime(g.matches[0]?.kickoff ?? "")}
                   </span>
                 </summary>
                 <ul className="partite-list">
@@ -364,7 +417,6 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                                     ? outcome
                                     : [reading?.headline, reading?.goals].filter(Boolean).join(" · ")}
                                 </em>
-                                <i aria-hidden="true">Apri l&apos;analisi ›</i>
                               </span>
                               {reading?.thread ? (
                                 <span className="signals-thread" aria-hidden="true">

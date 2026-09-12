@@ -935,7 +935,6 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .partite-group-head:hover { color: var(--card-brand-strong); }
 .partite-group-head:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: -2px; border-radius: var(--r-panel); }
 .partite-group-head em { font-style: normal; font-size: 12px; color: var(--card-ink-3); }
-.partite-group-name { min-width: 0; overflow-wrap: anywhere; }
 .partite-group-count { margin-left: auto; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); white-space: nowrap; }
 .partite-list { list-style: none; margin: 0; padding: 0 12px 12px; display: grid; gap: 8px; }
 /* Assaggio di lettura: la direzione in prosa, il filo 1X2 e l'invito ad aprire */
@@ -1268,6 +1267,17 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .signals-figure i { font-style: normal; font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
 /* Un nome di squadra è lettura, non provenienza: resta in prosa anche fra le cifre. */
 .signals-figure-name strong { font-family: var(--font-display); font-size: 14.5px; font-weight: 600; }
+/* Le voci oltre le prime venti, su Pronostici e sull'indice di Expected. Un comando solo
+   per ottanta schede: il sommario dice quante sono, e il segno del piu' e del meno
+   dichiara che il riquadro si apre. */
+.altre-voci { margin-top: 10px; }
+.altre-voci > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); cursor: pointer; list-style: none; font-family: var(--font-display); font-size: 14px; color: var(--card-ink-2); }
+.altre-voci > summary::-webkit-details-marker { display: none; }
+.altre-voci > summary::after { content: "+"; font-family: var(--font-mono, monospace); font-size: 17px; color: var(--card-brand); }
+.altre-voci[open] > summary::after { content: "−"; }
+.altre-voci > summary:hover { color: var(--card-ink); border-color: var(--card-brand); }
+.altre-voci > summary:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; }
+.altre-voci > .signals-list, .altre-voci > .partite-rows { margin-top: 10px; }
 .signals-method { margin-top: 32px; }
 
 @media (max-width: 760px) {
@@ -2277,3 +2287,4 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .product-shell .famiglia-sintesi { color: var(--card-ink); }
 .product-shell .famiglia-sintesi b { color: var(--card-brand-strong); }
 .product-shell .famiglia-testa em, .product-shell .famiglia-blocco > summary::after { color: var(--card-ink-3); }
+.partite-verdetto { margin: 0 0 18px; }
