@@ -220,6 +220,51 @@ export function quoteRaccolteIl(): string | null {
 }
 
 /**
+ * Fin quando arriva il palinsesto raccolto: il calcio d'inizio piu' lontano fra le gare
+ * che hanno almeno una linea quotata.
+ *
+ * **Perche' serve.** `fastbet-quote.py --giorni 3` prende gli eventi da adesso a tre
+ * giorni, quindi una gara piu' lontana non ha prezzi e non e' un difetto del dossier: e'
+ * fuori dalla finestra della raccolta. Senza questo dato la pagina non puo' distinguere
+ * «il banco non apre linee su questa gara» da «questa gara il banco non l'ha ancora
+ * aperta», e finora non distingueva: dove i prezzi mancavano, spariva anche la riga che
+ * dice da dove vengono. Misurato il 12 settembre 2026 sull'artefatto in produzione: 161
+ * gare, 128 con linee, copertura fino al 13 settembre.
+ */
+export function quoteCoperteFino(): string | null {
+  let fino: string | null = null;
+  for (const g of rapporto.gare) {
+    if (g.quote.length === 0) continue;
+    if (fino === null || g.kickoff > fino) fino = g.kickoff;
+  }
+  return fino;
+}
+
+/**
+ * Perche' una gara non ha prezzi: perche' e' oltre la finestra raccolta, o perche' il banco
+ * non apre nessuna delle linee che il motore proietta.
+ *
+ * `null` dove i prezzi ci sono, e anche dove la finestra non si conosce: senza sapere fin
+ * quando arriva il palinsesto non si puo' dire quale delle due assenze sia, e una ragione
+ * inventata sarebbe peggio del silenzio.
+ */
+export function motivoSenzaQuote(
+  quante: number,
+  kickoff: string,
+  fino: string | null = quoteCoperteFino(),
+): "fuori-copertura" | "banco-non-apre" | null {
+  if (quante > 0) return null;
+  if (fino === null) return null;
+  // Le due date arrivano dallo stesso artefatto e dalla stessa fonte, in ISO con la zona:
+  // il confronto e' sull'istante, non sulle stringhe, perche' «+00:00» e «Z» sono lo stesso
+  // momento scritto in due modi e l'ordine alfabetico li separerebbe.
+  const quando = new Date(kickoff).getTime();
+  const limite = new Date(fino).getTime();
+  if (!Number.isFinite(quando) || !Number.isFinite(limite)) return null;
+  return quando > limite ? "fuori-copertura" : "banco-non-apre";
+}
+
+/**
  * Le gare in arrivo che non sono ancora cominciate, o `null` se non ne resta nessuna.
  *
  * `adesso` si passa da fuori perche' la funzione resti verificabile senza aspettare che

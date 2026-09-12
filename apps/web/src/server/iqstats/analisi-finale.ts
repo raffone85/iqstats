@@ -44,6 +44,14 @@ function minuscola(testo: string): string {
   return `${testo.charAt(0).toLowerCase()}${testo.slice(1)}`;
 }
 
+/** Le quattro aree di un candidato di valore, nella parola che la pagina usa. */
+const AREA: Readonly<Record<string, string>> = {
+  esito: "sull'esito",
+  gol: "sui gol",
+  gioco: "sul gioco",
+  disciplina: "sulla disciplina",
+};
+
 export function analisiFinale(args: {
   /** Chi il modello da' avanti, senza la percentuale: quella sta nel quadro in cima. */
   readonly favorito: string | null;
@@ -60,10 +68,31 @@ export function analisiFinale(args: {
   readonly senzaGol: boolean;
   /** Vero quando la proiezione non gira e in pagina resta il motore di base. */
   readonly senzaProiezione: boolean;
+  /**
+   * Il candidato di valore, ridotto a cio' che qui si puo' scrivere: **l'area** e **il
+   * verso** del confronto con il prezzo. La sua etichetta porta una soglia, e in questa
+   * sezione una cifra non entra: chi vuole il numero apre Mercati.
+   */
+  readonly valore: {
+    /** Una delle quattro aree: `esito`, `gol`, `gioco`, `disciplina`. */
+    readonly area: string;
+    /** Vero dove il modello sta sopra il prezzo, falso dove sta sotto, `null` senza quota. */
+    readonly sopraIlPrezzo: boolean | null;
+  } | null;
+  /**
+   * Le metriche su cui gli scontri con gli stessi avversari separano davvero le due
+   * squadre, nude e minuscole. Vuoto quando nessuna supera l'errore delle due medie.
+   */
+  readonly comuni: { readonly separano: readonly string[] } | null;
+  /**
+   * Il pronostico della gara, ridotto a famiglia e verso: «i corner, verso l'alto». `null`
+   * dove nessuna lettura si stacca abbastanza dalla norma e il dossier non consiglia niente.
+   */
+  readonly pronostico: { readonly famiglia: string; readonly verso: "Over" | "Under" } | null;
 }): Analisi | null {
   const {
     favorito, famiglieForti, cappello, arbitroGiudizio, senzaArbitro, senzaMisura,
-    senzaGol, senzaProiezione,
+    senzaGol, senzaProiezione, valore, comuni, pronostico,
   } = args;
 
   const dice: Voce[] = [];
@@ -89,6 +118,26 @@ export function analisiFinale(args: {
     });
   }
 
+  // **Il confronto con il prezzo, che il prodotto di riferimento non ha.** Qui non si scrive
+  // ne' il margine ne' la quota - stanno in Mercati, con la loro fonte e la loro freschezza -
+  // ma il verso si', perche' e' l'unica cosa che distingue una lettura nostra da una che
+  // ripete il banco. Dove il mercato non quota quell'esito non c'e' nessun confronto da
+  // dichiarare, e la voce lo dice invece di tacere.
+  if (valore != null) {
+    const dove = AREA[valore.area] ?? "su un'area";
+    dice.push({
+      ancora: "cap-mercati",
+      capitolo: "Mercati",
+      testo: valore.sopraIlPrezzo === null
+        ? `Il candidato di valore sta ${dove}, ma quel bersaglio non e' quotato: non c'e' `
+          + "nessun prezzo con cui confrontarlo."
+        : valore.sopraIlPrezzo
+          ? `Sul confronto con il banco il modello sta sopra il prezzo ${dove}.`
+          : `Sul confronto con il banco il modello sta sotto il prezzo ${dove}, `
+            + "cioe' e' piu' prudente di chi quota.",
+    });
+  }
+
   // Il capitolo dei due lati parla di gioco, non di esito: la frase resta la sua.
   if (cappello !== null && cappello.tratti.length > 0) {
     dice.push({
@@ -100,12 +149,42 @@ export function analisiFinale(args: {
     });
   }
 
+  // **Gli stessi avversari, che togliono dal confronto la parte che e' calendario.** Due
+  // squadre possono avere medie diverse perche' hanno incontrato avversari diversi: questo
+  // capitolo guarda solo gli avversari in comune, e dichiara separate solo le metriche il
+  // cui scarto supera l'errore delle due medie. Dove non ne separa nessuna e' un'informazione
+  // vera, non un buco: vuol dire che su quel materiale le due squadre si somigliano.
+  if (comuni != null) {
+    dice.push({
+      ancora: "cap-precedenti",
+      capitolo: "Precedenti",
+      testo: comuni.separano.length === 0
+        ? "Contro gli stessi avversari nessuna metrica separa le due squadre oltre l'errore "
+          + "delle proprie medie: su quel materiale si somigliano."
+        : `Contro gli stessi avversari le due squadre si separano su ${elenco(comuni.separano)}.`,
+    });
+  }
+
   if (arbitroGiudizio !== null) {
     dice.push({
       ancora: "cap-arbitro",
       capitolo: "Arbitro",
       testo: `L'arbitro designato fischia ${arbitroGiudizio} rispetto ai colleghi che `
         + "dirigono questa competizione.",
+    });
+  }
+
+  // **La chiusura, che e' la domanda vera: «e allora?»** Nelle schermate di riferimento
+  // l'ultimo blocco e' lo scenario previsto, e qui la cosa piu' vicina e' il pronostico che
+  // il dossier dichiara in cima. La soglia non si ripete - una cifra qui non entra - e
+  // resta quello che serve a chiudere: su che cosa, e da che parte.
+  if (pronostico != null) {
+    dice.push({
+      ancora: "cap-insight",
+      capitolo: "Insight",
+      testo: `Il pronostico di questa gara sta su ${pronostico.famiglia}, e va verso `
+        + `${pronostico.verso === "Over" ? "l'alto" : "il basso"}: e' la lettura che si `
+        + "stacca abbastanza dalla norma del campionato per meritare di essere detta.",
     });
   }
 

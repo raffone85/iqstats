@@ -26,7 +26,9 @@ import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
-import { quoteDiGara, quoteRaccolteIl } from "@/server/iqstats/expected-famiglie";
+import {
+  motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteRaccolteIl,
+} from "@/server/iqstats/expected-famiglie";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
@@ -853,6 +855,13 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       idFuori === null ? null : baseDiSquadra(lega, idFuori, "away",
         candidate.filter((c) => c.lato !== "casa").map(richiesta)),
     ]);
+  // **Perche' il prezzo non c'e', quando non c'e'.** `fastbet-quote.py --giorni 3` raccoglie
+  // gli eventi di tre giorni: una gara piu' lontana non ha prezzi perche' sta fuori dalla
+  // finestra, non perche' il banco non la quoti. Sono due assenze diverse e la pagina le
+  // separa, invece di far sparire la riga della provenienza come faceva fino a oggi.
+  const quoteFinoA = quoteCoperteFino();
+  const assenzaDelPrezzo = motivoSenzaQuote(quoteDelBanco.length, detail.kickoff, quoteFinoA);
+
   const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi, basiCasa, basiFuori) : null;
   // **Gli eventi piu' probabili: le stesse letture, piu' i mercati dei gol che hanno un
   // consuntivo.** Il criterio e' quello di produzione esteso ai gol, scelto il 12 settembre
@@ -915,6 +924,24 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     senzaMisura: (forti?.senzaMisura ?? []).map(nomeFamiglia),
     senzaGol: proiezioni !== null && proiezioni.gol === null,
     senzaProiezione: proiezioni === null || proiezioni.bersagli.length === 0,
+    // **Tre voci in piu' dal 12 settembre 2026, e nessun numero nuovo.** Il prodotto di
+    // riferimento chiude la gara con sei blocchi di prosa; qui ce n'erano tre, e le altre
+    // tre nascono da giudizi che il dossier calcola gia' e non passava a questa sezione: il
+    // candidato di valore, gli scontri con gli stessi avversari, e il pronostico in cima.
+    // Di ognuno arriva solo la parte che si puo' scrivere senza una cifra.
+    valore: dossier.candidatoDiValore === null ? null : {
+      area: dossier.candidatoDiValore.area,
+      sopraIlPrezzo: dossier.candidatoDiValore.edge === null
+        ? null
+        : dossier.candidatoDiValore.edge > 0,
+    },
+    comuni: comuni === null ? null : {
+      separano: comuni.voci.filter((v) => v.diverse).map((v) => v.nome.toLowerCase()),
+    },
+    pronostico: forti?.consigliato == null ? null : {
+      famiglia: nomeFamiglia(forti.consigliato.bersaglio),
+      verso: forti.consigliato.verso,
+    },
   });
 
   // Il contenuto del riquadro arbitro nel banner, montato una volta sola: lo stesso corpo
@@ -1326,7 +1353,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             awayTeam={detail.awayTeam}
             inCima={(forti?.letture ?? []).map((l) => l.bersaglio)}
             quote={quoteDelBanco}
-            quoteIl={quoteDelBanco.length === 0 ? null : quoteRaccolteIl()}
+            quoteIl={quoteRaccolteIl()}
+            quoteFino={quoteFinoA}
+            assenzaDelPrezzo={assenzaDelPrezzo}
           />
         )}
 

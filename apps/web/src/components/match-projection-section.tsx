@@ -491,10 +491,22 @@ type Props = {
   readonly quote?: readonly RigaQuotata[];
   /** Quando il palinsesto e' stato raccolto: si scrive accanto ai prezzi. */
   readonly quoteIl?: string | null;
+  /** Fin quando arriva il palinsesto raccolto, per dichiarare una gara fuori finestra. */
+  readonly quoteFino?: string | null;
+  /**
+   * Perche' i prezzi non ci sono, quando non ci sono: `fuori-copertura` se la gara si gioca
+   * dopo la fine del palinsesto raccolto, `banco-non-apre` se la gara sta dentro la
+   * finestra ma nessuna delle linee del motore e' quotata. `null` dove i prezzi ci sono, o
+   * dove non si sa dire quale dei due casi sia.
+   */
+  readonly assenzaDelPrezzo?: "fuori-copertura" | "banco-non-apre" | null;
 };
 
 export function MatchProjectionSection(
-  { proiezioni, homeTeam, awayTeam, inCima = [], quote = [], quoteIl = null }: Props,
+  {
+    proiezioni, homeTeam, awayTeam, inCima = [], quote = [], quoteIl = null,
+    quoteFino = null, assenzaDelPrezzo = null,
+  }: Props,
 ) {
   const mostrabili = proiezioni.bersagli.filter(
     (bersaglio) => bersaglio.casa.stato === "prevista" && bersaglio.trasferta.stato === "prevista",
@@ -570,12 +582,33 @@ export function MatchProjectionSection(
       {/* **Il prezzo ha una provenienza e una data, come ogni altro numero della pagina.**
           Le quote non entrano nel calcolo: la probabilita' resta del nostro motore, il
           prezzo resta del banco, e la riga lo dichiara invece di lasciarlo intendere. */}
-      {quote.length === 0 ? null : (
+      {quote.length > 0 ? (
         <p className="engine-obs">
           Accanto a ogni soglia, dove il palinsesto la apre, c&apos;è la quota di Fastbet
           {quoteIl === null ? null : <> raccolta il {quando(quoteIl)}</>}. Sono{" "}
           {quote.length.toLocaleString("it-IT")} linee su questa gara. Le percentuali sono
           del nostro modello: nessuna delle due entra nel calcolo dell&apos;altra.
+        </p>
+      ) : assenzaDelPrezzo === null ? null : (
+        /* **Un'assenza si dichiara.** Fino al 12 settembre 2026, dove i prezzi mancavano
+           spariva anche la riga che dice da dove vengono: le soglie restavano senza quota e
+           senza una ragione, e chi apriva una gara lontana non poteva sapere se il dossier
+           fosse incompleto. Le due ragioni non sono la stessa cosa e la pagina le separa. */
+        <p className="engine-obs">
+          {assenzaDelPrezzo === "fuori-copertura" ? (
+            <>
+              Su questa gara non c&apos;è nessuna quota: il palinsesto
+              {quoteIl === null ? null : <> raccolto il {quando(quoteIl)}</>}
+              {quoteFino === null ? null : <> arriva fino al {quando(quoteFino)}</>}, e questa
+              si gioca dopo. Le percentuali restano quelle del nostro modello.
+            </>
+          ) : (
+            <>
+              Su questa gara il banco non apre nessuna delle linee che il motore proietta,
+              quindi accanto alle soglie non c&apos;è un prezzo da confrontare
+              {quoteIl === null ? null : <> nel palinsesto raccolto il {quando(quoteIl)}</>}.
+            </>
+          )}
         </p>
       )}
 

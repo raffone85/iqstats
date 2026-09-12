@@ -8,7 +8,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { quoteDiGara, quoteRaccolteIl, type RigaQuotata } from "../src/server/iqstats/expected-famiglie.ts";
+import {
+  motivoSenzaQuote, quoteDiGara, quoteRaccolteIl, type RigaQuotata,
+} from "../src/server/iqstats/expected-famiglie.ts";
 
 /** La stessa ricerca che fa la scala del dossier, tenuta qui per poterla provare. */
 function quotaDi(
@@ -74,4 +76,20 @@ test("le linee fuori dalla scala del motore sono quelle che restano, non tutte",
   // Con una scala che copre tutte le soglie non resta niente da mostrare sotto.
   const tutte = new Set(soglie);
   assert.equal(diQuestaScala.filter((q) => !tutte.has(q.soglia)).length, 0);
+});
+
+test("perché il prezzo non c'è: fuori dalla finestra, o il banco non apre quelle linee", () => {
+  // Il 12 settembre 2026 l'utente ha aperto Monza-Sassuolo del 18 e ha trovato le soglie
+  // senza prezzo e senza una ragione: il palinsesto raccolto l'11 arriva al 13, quindi la
+  // gara sta fuori dalla finestra. Le due assenze non sono la stessa cosa e restano distinte.
+  const fino = "2026-09-13T21:30:00+00:00";
+  assert.equal(motivoSenzaQuote(0, "2026-09-18T18:45:00+00:00", fino), "fuori-copertura");
+  assert.equal(motivoSenzaQuote(0, "2026-09-13T13:00:00+00:00", fino), "banco-non-apre");
+  // Dove i prezzi ci sono non si dichiara nessuna assenza.
+  assert.equal(motivoSenzaQuote(45, "2026-09-18T18:45:00+00:00", fino), null);
+  // «Z» e «+00:00» sono lo stesso istante: il confronto è sul tempo, non sulle stringhe.
+  assert.equal(motivoSenzaQuote(0, "2026-09-13T21:00:00Z", fino), "banco-non-apre");
+  assert.equal(motivoSenzaQuote(0, "2026-09-13T22:00:00Z", fino), "fuori-copertura");
+  // Senza finestra nota non si inventa una ragione.
+  assert.equal(motivoSenzaQuote(0, "2026-09-18T18:45:00+00:00", null), null);
 });
