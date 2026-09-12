@@ -197,6 +197,29 @@ function riga<T extends { lato: string }>(v: T): (T & { lato: LatoDiRiga }) | nu
 }
 
 /**
+ * Le linee quotate di una gara sola, per il dossier.
+ *
+ * **Perche' esiste.** Le 3.397 linee di Fastbet stavano solo nella pagina Expected, e il
+ * dossier - quello che si apre cliccando una gara dal tabellone - mostrava 101 soglie del
+ * motore senza un prezzo accanto. La stessa gara raccontata in due posti, e il prezzo in
+ * quello dove non si arriva cliccando.
+ *
+ * Non filtra per calcio d'inizio, a differenza di `expectedDelleGare`: il dossier si apre
+ * anche su una gara gia' cominciata, e li' il prezzo raccolto prima resta un fatto storico
+ * - la sezione dichiara **quando** e' stato raccolto.
+ */
+export function quoteDiGara(gara: number): readonly RigaQuotata[] {
+  const g = rapporto.gare.find((x) => x.gara === gara);
+  if (g === undefined) return [];
+  return g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
+}
+
+/** Quando il palinsesto e' stato raccolto, o `null` se l'artefatto non lo dichiara. */
+export function quoteRaccolteIl(): string | null {
+  return rapporto.quote_raccolte_il ?? null;
+}
+
+/**
  * Le gare in arrivo che non sono ancora cominciate, o `null` se non ne resta nessuna.
  *
  * `adesso` si passa da fuori perche' la funzione resti verificabile senza aspettare che

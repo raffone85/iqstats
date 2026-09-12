@@ -878,6 +878,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    a mente. Il lato che guida si distingue per peso e inchiostro, non per il solo colore. */
 .engine-side { display: block; }
 .engine-side.is-lead { color: var(--card-ink); font-weight: 600; }
+/* Il prezzo del banco accanto alla nostra percentuale. Sta in mono come ogni numero che
+   ha una provenienza, e in colore di servizio perche' la lettura resta la percentuale. */
+.engine-prezzo { font-style: normal; margin-left: 6px; color: var(--card-ink-2); font-variant-numeric: tabular-nums; }
 .engine-step.is-central .engine-side.is-lead { color: var(--card-brand-strong); }
 /* La seconda accensione: stessa forma, tono più tenue. Il tratteggio la distingue dalla
    prima anche senza colore, come vuole il master. */

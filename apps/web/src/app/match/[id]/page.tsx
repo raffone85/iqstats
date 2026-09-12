@@ -26,6 +26,7 @@ import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
+import { quoteDiGara, quoteRaccolteIl } from "@/server/iqstats/expected-famiglie";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
@@ -403,6 +404,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   if (!/^[1-9]\d*$/.test(id)) notFound();
 
   const eventId = Number(id);
+  // Le linee che il banco quota su questa gara: fino a oggi vivevano solo nella pagina
+  // Expected, e il dossier mostrava 101 soglie del motore senza un prezzo accanto.
+  const quoteDelBanco = quoteDiGara(eventId);
   const esito = await getMatchDetail(eventId);
 
   // **Una gara che non esiste e una fonte muta meritano risposte opposte.** Prima erano la
@@ -1313,6 +1317,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
             inCima={(forti?.letture ?? []).map((l) => l.bersaglio)}
+            quote={quoteDelBanco}
+            quoteIl={quoteDelBanco.length === 0 ? null : quoteRaccolteIl()}
           />
         )}
 

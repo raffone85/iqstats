@@ -72,7 +72,8 @@
     "stripe:webhook-secret:sync": "node scripts/stripe/sync-listener-secret.mjs",
     "test:valore": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-valore.test.ts",
     "test:dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-dossier.test.ts",
-    "test:quote": "node --experimental-strip-types --test test/iqstats-quote.test.ts"
+    "test:quote": "node --experimental-strip-types --test test/iqstats-quote.test.ts",
+    "test:quote-dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-quote-dossier.test.ts"
   },
   "dependencies": {
     "@iqstats/shared": "file:../../packages/shared",

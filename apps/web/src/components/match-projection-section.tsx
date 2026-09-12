@@ -4,6 +4,7 @@
 // Sostituisce la lettura del motore ENG-1 quando c'è, invece di affiancarla: due pannelli
 // con due numeri diversi per «tiri in casa» sarebbero due verità sullo stesso schermo.
 // Riusa le classi del pannello esistente, così l'aspetto resta quello e non nasce CSS.
+import type { LatoDiRiga, RigaQuotata } from "@/server/iqstats/expected-famiglie";
 import type { CSSProperties } from "react";
 import type {
   OsservatoDelBersaglio,
@@ -45,6 +46,31 @@ function valore(numero: number): string {
  */
 function estremo(numero: number): string {
   return Number.isInteger(numero) ? String(numero) : valore(numero);
+}
+
+/** Il prezzo del banco come lo scrive il banco: due decimali, virgola. */
+function prezzo(valore: number): string {
+  return valore.toFixed(2).replace(".", ",");
+}
+
+/**
+ * La quota di una soglia, o `null` dove il palinsesto non apre quella linea.
+ *
+ * **Non si arrotonda per avvicinarsi.** Una soglia vicina non e' quella soglia: Over 8,5 e
+ * Over 9,5 sono due scommesse diverse, e mostrare il prezzo dell'una accanto all'altra
+ * direbbe il falso. O la linea c'e', o la colonna resta vuota.
+ */
+function quotaDi(
+  quote: readonly RigaQuotata[],
+  bersaglio: string,
+  lato: LatoDiRiga,
+  soglia: number,
+  verso: string,
+): number | null {
+  const trovata = quote.find(
+    (q) => q.bersaglio === bersaglio && q.lato === lato && q.soglia === soglia && q.verso === verso,
+  );
+  return trovata === undefined ? null : trovata.quota;
 }
 
 function percento(quota: number): string {
@@ -130,9 +156,12 @@ function spiegazione(linee: readonly Linea[], scelta: Accensione) {
  * Prima se ne mostrava uno solo, il più probabile, lasciando l'altro implicito: chi legge
  * non poteva confrontare due linee senza fare il complemento a mente.
  */
-function Soglia({ linea, acceso }: {
+function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
   readonly linea: Linea;
   readonly acceso: "piena" | "tenue" | null;
+  /** La quota del banco per Over e per Under, dove il palinsesto apre quella soglia. */
+  readonly sopra: number | null;
+  readonly sotto: number | null;
 }) {
   const sopra = percento(linea.probabilitaSopra);
   const sotto = percento(linea.probabilitaSotto);
@@ -148,9 +177,11 @@ function Soglia({ linea, acceso }: {
       <span className="engine-step-prob">
         <span className={!pari && guidaSopra ? "engine-side is-lead" : "engine-side"}>
           O {sopra}
+          {qSopra === null ? null : <i className="engine-prezzo">{prezzo(qSopra)}</i>}
         </span>
         <span className={!pari && !guidaSopra ? "engine-side is-lead" : "engine-side"}>
           U {sotto}
+          {qSotto === null ? null : <i className="engine-prezzo">{prezzo(qSotto)}</i>}
         </span>
       </span>
     </li>
@@ -251,20 +282,26 @@ function Elenco({ casa, trasferta, gareCasa, gareTrasferta }: {
 }
 
 /** Le scale delle soglie di una famiglia, tutte dietro un comando solo. */
-function Scale({ gruppi }: {
-  readonly gruppi: readonly { readonly chi: string; readonly linee: readonly Linea[] | null }[];
+function Scale({ gruppi, quote, bersaglio }: {
+  readonly gruppi: readonly {
+    readonly chi: string;
+    readonly lato: LatoDiRiga;
+    readonly linee: readonly Linea[] | null;
+  }[];
+  readonly quote: readonly RigaQuotata[];
+  readonly bersaglio: string;
 }) {
   // Le soglie sotto zero non si mostrano: un conteggio non scende sotto zero, e
   // «Over -0,5 al 100%» entrerebbe fra le tre centrali che la regola confronta.
   const scale = gruppi
-    .map((g) => ({ chi: g.chi, scala: g.linee === null ? null : soglieReali(g.linee) }))
-    .filter((g): g is { chi: string; scala: readonly Linea[] } =>
+    .map((g) => ({ chi: g.chi, lato: g.lato, scala: g.linee === null ? null : soglieReali(g.linee) }))
+    .filter((g): g is { chi: string; lato: LatoDiRiga; scala: readonly Linea[] } =>
       g.scala !== null && g.scala.length > 0);
   if (scale.length === 0) return null;
   return (
     <details className="engine-scala">
       <summary>le cinque soglie, Over e Under</summary>
-      {scale.map(({ chi, scala }) => {
+      {scale.map(({ chi, lato, scala }) => {
         const scelta = daAccendere(scala);
         return (
           <div className="engine-scala-gruppo" key={chi}>
@@ -278,6 +315,8 @@ function Scale({ gruppi }: {
                     indice === scelta.prima ? "piena"
                       : indice === scelta.seconda ? "tenue" : null
                   }
+                  sopra={quotaDi(quote, bersaglio, lato, linea.soglia, "Over")}
+                  sotto={quotaDi(quote, bersaglio, lato, linea.soglia, "Under")}
                 />
               ))}
             </ol>
@@ -327,11 +366,12 @@ function Affidabilita({ bersaglio }: { readonly bersaglio: ProiezioneDiGara }) {
   );
 }
 
-function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
+function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
   readonly bersaglio: ProiezioneDiGara;
   readonly casa: string;
   readonly trasferta: string;
   readonly osservato: OsservatoDelBersaglio | undefined;
+  readonly quote: readonly RigaQuotata[];
 }) {
   const lCasa = bersaglio.casa;
   const lTrasferta = bersaglio.trasferta;
@@ -372,10 +412,12 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato }: {
           controlli da 44 px per card. La lettura piu' decisa di ogni scala sta gia' in
           «Dove il modello dice qualcosa»: qui c'e' la scala intera, per chi la vuole. */}
       <Scale
+        bersaglio={bersaglio.target}
+        quote={quote}
         gruppi={[
-          { chi: casa, linee: bersaglio.linee.casa },
-          { chi: trasferta, linee: bersaglio.linee.trasferta },
-          { chi: "Totale gara", linee: bersaglio.totale?.linee ?? null },
+          { chi: casa, lato: "casa", linee: bersaglio.linee.casa },
+          { chi: trasferta, lato: "trasferta", linee: bersaglio.linee.trasferta },
+          { chi: "Totale gara", lato: "totale", linee: bersaglio.totale?.linee ?? null },
         ]}
       />
       <Elenco
@@ -395,10 +437,14 @@ type Props = {
   readonly awayTeam: string;
   /** I bersagli da cui esce la lettura in cima: restano aperti, gli altri si aprono a mano. */
   readonly inCima?: readonly string[];
+  /** Le linee che il banco quota su questa gara, vuote dove l'artefatto non la copre. */
+  readonly quote?: readonly RigaQuotata[];
+  /** Quando il palinsesto e' stato raccolto: si scrive accanto ai prezzi. */
+  readonly quoteIl?: string | null;
 };
 
 export function MatchProjectionSection(
-  { proiezioni, homeTeam, awayTeam, inCima = [] }: Props,
+  { proiezioni, homeTeam, awayTeam, inCima = [], quote = [], quoteIl = null }: Props,
 ) {
   const mostrabili = proiezioni.bersagli.filter(
     (bersaglio) => bersaglio.casa.stato === "prevista" && bersaglio.trasferta.stato === "prevista",
@@ -444,6 +490,7 @@ export function MatchProjectionSection(
             casa={homeTeam}
             trasferta={awayTeam}
             osservato={proiezioni.osservate[bersaglio.target]}
+            quote={quote}
           />
         ))}
       </ul>
@@ -463,10 +510,23 @@ export function MatchProjectionSection(
                 casa={homeTeam}
                 trasferta={awayTeam}
                 osservato={proiezioni.osservate[bersaglio.target]}
+                quote={quote}
               />
             ))}
           </ul>
         </details>
+      )}
+
+      {/* **Il prezzo ha una provenienza e una data, come ogni altro numero della pagina.**
+          Le quote non entrano nel calcolo: la probabilita' resta del nostro motore, il
+          prezzo resta del banco, e la riga lo dichiara invece di lasciarlo intendere. */}
+      {quote.length === 0 ? null : (
+        <p className="engine-obs">
+          Accanto a ogni soglia, dove il palinsesto la apre, c&apos;è la quota di Fastbet
+          {quoteIl === null ? null : <> raccolta il {quando(quoteIl)}</>}. Sono{" "}
+          {quote.length.toLocaleString("it-IT")} linee su questa gara. Le percentuali sono
+          del nostro modello: nessuna delle due entra nel calcolo dell&apos;altra.
+        </p>
       )}
 
       {/* **Le sei note di metodo si aprono.** Sono trecentocinquanta parole che spiegano
