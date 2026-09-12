@@ -880,7 +880,10 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-side.is-lead { color: var(--card-ink); font-weight: 600; }
 /* Il prezzo del banco accanto alla nostra percentuale. Sta in mono come ogni numero che
    ha una provenienza, e in colore di servizio perche' la lettura resta la percentuale. */
-.engine-prezzo { font-style: normal; margin-left: 6px; color: var(--card-ink-2); font-variant-numeric: tabular-nums; }
+/* Il prezzo sta **sotto** la percentuale, non accanto: le colonne della scala sono larghe
+   60 px e affiancarlo tagliava i numeri a meta' - «1,1» invece di «1,10», e la colonna
+   dopo mozzata. Sotto, la cella cresce in altezza e ogni cifra si legge intera. */
+.engine-prezzo { display: block; font-style: normal; margin-left: 0; color: var(--card-ink-2); font-variant-numeric: tabular-nums; }
 /* Le linee che il banco apre e il motore non pubblica. Stanno sotto la scala e non dentro:
    le cinque soglie sopra sono la lettura del motore, queste sono mercati che esistono. */
 .engine-altre { display: grid; gap: 4px; margin: 8px 0 0; padding: 8px 0 0; list-style: none; border-top: 1px solid var(--card-stroke); }
