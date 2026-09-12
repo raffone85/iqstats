@@ -58,3 +58,20 @@ test("la raccolta del palinsesto ha una data da dichiarare", () => {
   const quando = quoteRaccolteIl();
   assert.ok(quando === null || !Number.isNaN(new Date(quando).getTime()));
 });
+
+test("le linee fuori dalla scala del motore sono quelle che restano, non tutte", () => {
+  const quote = quoteDiGara(214056);
+  const bersaglio = quote[0].bersaglio;
+  const lato = quote[0].lato;
+  const diQuestaScala = quote.filter((q) => q.bersaglio === bersaglio && q.lato === lato);
+  const soglie = [...new Set(diQuestaScala.map((q) => q.soglia))].sort((a, b) => a - b);
+  // Una scala finta che copre le prime due soglie del banco: le altre devono restare.
+  const scala = soglie.slice(0, 2).map((soglia) => ({ soglia }));
+  const nostre = new Set(scala.map((l) => l.soglia));
+  const restano = diQuestaScala.filter((q) => !nostre.has(q.soglia));
+  assert.ok(restano.length < diQuestaScala.length, "qualcosa e' stato coperto");
+  assert.ok(restano.every((q) => !nostre.has(q.soglia)), "nessuna coperta e' rimasta");
+  // Con una scala che copre tutte le soglie non resta niente da mostrare sotto.
+  const tutte = new Set(soglie);
+  assert.equal(diQuestaScala.filter((q) => !tutte.has(q.soglia)).length, 0);
+});

@@ -54,6 +54,28 @@ function prezzo(valore: number): string {
 }
 
 /**
+ * Le linee che il banco apre su una scala e che il motore non pubblica.
+ *
+ * **Perche' esistono.** Le due scale non coincidono: il motore pubblica cinque soglie per
+ * lato, il banco ne apre altre. Su Watford-Stoke, misurato il 12 settembre 2026, delle 36
+ * linee di Fastbet solo 16 cadevano su una soglia del dossier; le altre venti restavano
+ * visibili nella sola pagina Expected. La probabilita' accanto e' comunque nostra: dal 12
+ * settembre il motore la calcola **sulle soglie che il banco apre**, non sulle proprie.
+ */
+function linneNonCoperte(
+  quote: readonly RigaQuotata[],
+  bersaglio: string,
+  lato: LatoDiRiga,
+  scala: readonly Linea[],
+): readonly RigaQuotata[] {
+  const nostre = new Set(scala.map((l) => l.soglia));
+  return quote
+    .filter((q) => q.bersaglio === bersaglio && q.lato === lato && !nostre.has(q.soglia))
+    .slice()
+    .sort((a, b) => a.soglia - b.soglia || a.verso.localeCompare(b.verso));
+}
+
+/**
  * La quota di una soglia, o `null` dove il palinsesto non apre quella linea.
  *
  * **Non si arrotonda per avvicinarsi.** Una soglia vicina non e' quella soglia: Over 8,5 e
@@ -281,6 +303,33 @@ function Elenco({ casa, trasferta, gareCasa, gareTrasferta }: {
   );
 }
 
+/**
+ * Le linee del banco fuori dalla scala del motore, sotto la scala stessa.
+ *
+ * Stanno **sotto** e non mischiate: le cinque soglie del motore sono la sua lettura, queste
+ * sono mercati che esistono e su cui abbiamo un numero. Confonderle direbbe che il motore
+ * ha scelto anche queste.
+ */
+function AltreLinee({ linee }: { readonly linee: readonly RigaQuotata[] }) {
+  if (linee.length === 0) return null;
+  return (
+    <ul className="engine-altre">
+      {linee.map((l) => (
+        <li key={`${l.soglia}-${l.verso}`}>
+          <span className="engine-altra-linea">
+            {l.verso} {valore(l.soglia)}
+            {l.fuoriFinestra ? <em> fuori misura</em> : null}
+          </span>
+          <b className="engine-prezzo">{prezzo(l.quota)}</b>
+          <span className="engine-altra-prob">
+            {l.probabilita === null ? "—" : percento(l.probabilita)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** Le scale delle soglie di una famiglia, tutte dietro un comando solo. */
 function Scale({ gruppi, quote, bersaglio }: {
   readonly gruppi: readonly {
@@ -321,6 +370,7 @@ function Scale({ gruppi, quote, bersaglio }: {
               ))}
             </ol>
             <p className="engine-why">{spiegazione(scala, scelta)}</p>
+            <AltreLinee linee={linneNonCoperte(quote, bersaglio, lato, scala)} />
           </div>
         );
       })}

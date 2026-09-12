@@ -881,6 +881,14 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 /* Il prezzo del banco accanto alla nostra percentuale. Sta in mono come ogni numero che
    ha una provenienza, e in colore di servizio perche' la lettura resta la percentuale. */
 .engine-prezzo { font-style: normal; margin-left: 6px; color: var(--card-ink-2); font-variant-numeric: tabular-nums; }
+/* Le linee che il banco apre e il motore non pubblica. Stanno sotto la scala e non dentro:
+   le cinque soglie sopra sono la lettura del motore, queste sono mercati che esistono. */
+.engine-altre { display: grid; gap: 4px; margin: 8px 0 0; padding: 8px 0 0; list-style: none; border-top: 1px solid var(--card-stroke); }
+.engine-altre > li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: baseline; font-family: var(--font-mono, monospace); font-size: 11.5px; color: var(--card-ink-3); }
+.engine-altra-linea { min-width: 0; overflow-wrap: anywhere; }
+.engine-altra-linea em { font-style: normal; color: var(--card-ink-3); opacity: .8; }
+.engine-altre .engine-prezzo { margin-left: 0; font-weight: 600; color: var(--card-ink); }
+.engine-altra-prob { font-variant-numeric: tabular-nums; min-width: 34px; text-align: right; }
 .engine-step.is-central .engine-side.is-lead { color: var(--card-brand-strong); }
 /* La seconda accensione: stessa forma, tono più tenue. Il tratteggio la distingue dalla
    prima anche senza colore, come vuole il master. */
