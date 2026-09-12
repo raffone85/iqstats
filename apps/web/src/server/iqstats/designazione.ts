@@ -16,16 +16,34 @@
 // nove quelle entro quarantotto ore dal calcio d'inizio avevano gia' il designato - la piu'
 // lontana a quarantadue ore - e nessuna delle due oltre, la piu' vicina delle quali a
 // sessantasei ore. Chi legge trova quindi l'arbitro prima del momento promesso, non dopo.
-// Il campione e' piccolo e di un campionato solo: se un giorno una lega smentisse la
-// promessa, e' questo il numero da rimisurare.
+//
+// **Rimisurata su un secondo campionato il 12 settembre 2026, e regge.** L'utente ha chiesto
+// come fosse possibile che Monza-Sassuolo del 18 settembre dicesse ancora «non ancora
+// designato». Sulle sedici gare di Serie A in calendario fra il 13 e il 20 settembre:
+//
+// | quando | gare | con il designato |
+// | --- | ---: | ---: |
+// | giornata 4, entro 47 ore | 6 | **6** |
+// | giornata 5, oltre 142 ore | 10 | **0** |
+//
+// La piu' lontana con l'arbitro era Inter-Udinese a quarantasette ore; la piu' vicina senza
+// era proprio Monza-Sassuolo a centoquarantadue. **Manca la giornata intera, non quella
+// gara:** la designazione arriva per turno, non per singola partita, e la fonte risponde
+// `referee_id: null` su tutte e dieci. Il numero scritto in pagina resta ventiquattro perche'
+// promettere quarantasette vorrebbe dire legarsi al campionato piu' rapido dei due misurati:
+// una lega piu' lenta renderebbe falsa la promessa, mentre cosi' e' solo pessimista.
+//
+// Il campione resta piccolo, ma ora sono due campionati e due continenti: se un giorno una
+// lega smentisse la promessa, e' questo il numero da rimisurare.
 
 /**
  * Le ore prima del calcio d'inizio entro cui la designazione risulta pubblicata.
  *
  * E' anche il numero che la pagina scrive: promettere ventiquattro ore e' prudente rispetto
- * a quello che abbiamo misurato - le nove gare entro le quarantotto ore avevano gia' il
- * designato, la piu' lontana a quarantadue ore dal calcio d'inizio - e oltre questa soglia
- * la promessa scade, quindi non si fa piu'.
+ * a quello che abbiamo misurato - nel Brasileirao le nove gare entro le quarantotto ore
+ * avevano gia' il designato, la piu' lontana a quarantadue ore dal calcio d'inizio; in Serie
+ * A tutte e sei quelle entro quarantasette - e oltre questa soglia la promessa scade, quindi
+ * non si fa piu'.
  */
 const ORE_DELLA_DESIGNAZIONE = 24;
 
