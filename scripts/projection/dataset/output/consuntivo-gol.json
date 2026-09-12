@@ -1,0 +1,530 @@
+{
+  "schema": "consuntivo-gol/1",
+  "calcolato_il": "2026-09-12T18:31:46.552Z",
+  "gare_chieste": 1200,
+  "gare_con_esito": 1200,
+  "gare_con_mercati": 314,
+  "come_e_stato_misurato": "una passata sulle gare chiuse: per ogni gara il motore ricostruisce i mercati dei gol con il solo materiale anteriore al calcio d'inizio, e l'esito vero viene dalle stesse righe. «dichiarato» conta il solo ramo piu' probabile, che e' cio' che una pagina metterebbe in un elenco; «per_fascia» conta tutti i rami raggruppati per probabilita' promessa, ed e' li' che si legge la taratura. L'aggregato di tutti i rami non si conta: vale 1/k contro 1/k per costruzione. Risultati esatti, matrice e multigol restano fuori dal primo giro.",
+  "mercati": [
+    {
+      "mercato": "esito",
+      "dichiarato": {
+        "previsioni": 314,
+        "prese": 133,
+        "frequenza_osservata": 0.4236,
+        "probabilita_promessa": 0.5188,
+        "scarto": -0.0952
+      },
+      "per_fascia": [
+        {
+          "fascia": "0-10%",
+          "previsioni": 7,
+          "prese": 0,
+          "frequenza_osservata": 0,
+          "probabilita_promessa": 0.0846,
+          "scarto": -0.0846
+        },
+        {
+          "fascia": "10-20%",
+          "previsioni": 128,
+          "prese": 31,
+          "frequenza_osservata": 0.2422,
+          "probabilita_promessa": 0.1675,
+          "scarto": 0.0747
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 388,
+          "prese": 112,
+          "frequenza_osservata": 0.2887,
+          "probabilita_promessa": 0.2425,
+          "scarto": 0.0462
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 130,
+          "prese": 43,
+          "frequenza_osservata": 0.3308,
+          "probabilita_promessa": 0.3424,
+          "scarto": -0.0117
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 122,
+          "prese": 50,
+          "frequenza_osservata": 0.4098,
+          "probabilita_promessa": 0.4501,
+          "scarto": -0.0402
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 105,
+          "prese": 42,
+          "frequenza_osservata": 0.4,
+          "probabilita_promessa": 0.5446,
+          "scarto": -0.1446
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 46,
+          "prese": 25,
+          "frequenza_osservata": 0.5435,
+          "probabilita_promessa": 0.636,
+          "scarto": -0.0925
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 15,
+          "prese": 10,
+          "frequenza_osservata": 0.6667,
+          "probabilita_promessa": 0.7466,
+          "scarto": -0.0799
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 1,
+          "prese": 1,
+          "frequenza_osservata": 1,
+          "probabilita_promessa": 0.8101,
+          "scarto": 0.1899
+        }
+      ]
+    },
+    {
+      "mercato": "doppia-chance",
+      "dichiarato": {
+        "previsioni": 314,
+        "prese": 222,
+        "frequenza_osservata": 0.707,
+        "probabilita_promessa": 0.7877,
+        "scarto": -0.0807
+      },
+      "per_fascia": [
+        {
+          "fascia": "10-20%",
+          "previsioni": 1,
+          "prese": 0,
+          "frequenza_osservata": 0,
+          "probabilita_promessa": 0.1899,
+          "scarto": -0.1899
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 15,
+          "prese": 5,
+          "frequenza_osservata": 0.3333,
+          "probabilita_promessa": 0.2534,
+          "scarto": 0.0799
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 46,
+          "prese": 21,
+          "frequenza_osservata": 0.4565,
+          "probabilita_promessa": 0.364,
+          "scarto": 0.0925
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 105,
+          "prese": 63,
+          "frequenza_osservata": 0.6,
+          "probabilita_promessa": 0.4554,
+          "scarto": 0.1446
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 122,
+          "prese": 72,
+          "frequenza_osservata": 0.5902,
+          "probabilita_promessa": 0.5499,
+          "scarto": 0.0402
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 130,
+          "prese": 87,
+          "frequenza_osservata": 0.6692,
+          "probabilita_promessa": 0.6576,
+          "scarto": 0.0117
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 388,
+          "prese": 276,
+          "frequenza_osservata": 0.7113,
+          "probabilita_promessa": 0.7575,
+          "scarto": -0.0462
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 128,
+          "prese": 97,
+          "frequenza_osservata": 0.7578,
+          "probabilita_promessa": 0.8325,
+          "scarto": -0.0747
+        },
+        {
+          "fascia": "90-100%",
+          "previsioni": 7,
+          "prese": 7,
+          "frequenza_osservata": 1,
+          "probabilita_promessa": 0.9154,
+          "scarto": 0.0846
+        }
+      ]
+    },
+    {
+      "mercato": "over-under",
+      "dichiarato": {
+        "previsioni": 1256,
+        "prese": 879,
+        "frequenza_osservata": 0.6998,
+        "probabilita_promessa": 0.7215,
+        "scarto": -0.0216
+      },
+      "per_fascia": [
+        {
+          "fascia": "0-10%",
+          "previsioni": 91,
+          "prese": 10,
+          "frequenza_osservata": 0.1099,
+          "probabilita_promessa": 0.0698,
+          "scarto": 0.0401
+        },
+        {
+          "fascia": "10-20%",
+          "previsioni": 299,
+          "prese": 65,
+          "frequenza_osservata": 0.2174,
+          "probabilita_promessa": 0.1512,
+          "scarto": 0.0662
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 318,
+          "prese": 85,
+          "frequenza_osservata": 0.2673,
+          "probabilita_promessa": 0.2507,
+          "scarto": 0.0166
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 282,
+          "prese": 93,
+          "frequenza_osservata": 0.3298,
+          "probabilita_promessa": 0.3517,
+          "scarto": -0.0219
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 266,
+          "prese": 124,
+          "frequenza_osservata": 0.4662,
+          "probabilita_promessa": 0.4486,
+          "scarto": 0.0175
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 266,
+          "prese": 142,
+          "frequenza_osservata": 0.5338,
+          "probabilita_promessa": 0.5514,
+          "scarto": -0.0175
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 282,
+          "prese": 189,
+          "frequenza_osservata": 0.6702,
+          "probabilita_promessa": 0.6483,
+          "scarto": 0.0219
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 318,
+          "prese": 233,
+          "frequenza_osservata": 0.7327,
+          "probabilita_promessa": 0.7493,
+          "scarto": -0.0166
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 299,
+          "prese": 234,
+          "frequenza_osservata": 0.7826,
+          "probabilita_promessa": 0.8488,
+          "scarto": -0.0662
+        },
+        {
+          "fascia": "90-100%",
+          "previsioni": 91,
+          "prese": 81,
+          "frequenza_osservata": 0.8901,
+          "probabilita_promessa": 0.9302,
+          "scarto": -0.0401
+        }
+      ]
+    },
+    {
+      "mercato": "gol-nogol",
+      "dichiarato": {
+        "previsioni": 314,
+        "prese": 177,
+        "frequenza_osservata": 0.5637,
+        "probabilita_promessa": 0.6002,
+        "scarto": -0.0365
+      },
+      "per_fascia": [
+        {
+          "fascia": "10-20%",
+          "previsioni": 2,
+          "prese": 0,
+          "frequenza_osservata": 0,
+          "probabilita_promessa": 0.1961,
+          "scarto": -0.1961
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 36,
+          "prese": 13,
+          "frequenza_osservata": 0.3611,
+          "probabilita_promessa": 0.2626,
+          "scarto": 0.0985
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 97,
+          "prese": 38,
+          "frequenza_osservata": 0.3918,
+          "probabilita_promessa": 0.3557,
+          "scarto": 0.036
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 179,
+          "prese": 86,
+          "frequenza_osservata": 0.4804,
+          "probabilita_promessa": 0.4535,
+          "scarto": 0.027
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 179,
+          "prese": 93,
+          "frequenza_osservata": 0.5196,
+          "probabilita_promessa": 0.5465,
+          "scarto": -0.027
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 97,
+          "prese": 59,
+          "frequenza_osservata": 0.6082,
+          "probabilita_promessa": 0.6443,
+          "scarto": -0.036
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 36,
+          "prese": 23,
+          "frequenza_osservata": 0.6389,
+          "probabilita_promessa": 0.7374,
+          "scarto": -0.0985
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 2,
+          "prese": 2,
+          "frequenza_osservata": 1,
+          "probabilita_promessa": 0.8039,
+          "scarto": 0.1961
+        }
+      ]
+    },
+    {
+      "mercato": "multigol-partita",
+      "dichiarato": {
+        "previsioni": 314,
+        "prese": 282,
+        "frequenza_osservata": 0.8981,
+        "probabilita_promessa": 0.8957,
+        "scarto": 0.0024
+      },
+      "per_fascia": [
+        {
+          "fascia": "0-10%",
+          "previsioni": 100,
+          "prese": 14,
+          "frequenza_osservata": 0.14,
+          "probabilita_promessa": 0.0706,
+          "scarto": 0.0694
+        },
+        {
+          "fascia": "10-20%",
+          "previsioni": 295,
+          "prese": 58,
+          "frequenza_osservata": 0.1966,
+          "probabilita_promessa": 0.1559,
+          "scarto": 0.0407
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 412,
+          "prese": 113,
+          "frequenza_osservata": 0.2743,
+          "probabilita_promessa": 0.2524,
+          "scarto": 0.0218
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 673,
+          "prese": 245,
+          "frequenza_osservata": 0.364,
+          "probabilita_promessa": 0.3538,
+          "scarto": 0.0103
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 748,
+          "prese": 335,
+          "frequenza_osservata": 0.4479,
+          "probabilita_promessa": 0.4449,
+          "scarto": 0.0029
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 568,
+          "prese": 325,
+          "frequenza_osservata": 0.5722,
+          "probabilita_promessa": 0.5518,
+          "scarto": 0.0204
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 608,
+          "prese": 393,
+          "frequenza_osservata": 0.6464,
+          "probabilita_promessa": 0.6434,
+          "scarto": 0.003
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 583,
+          "prese": 428,
+          "frequenza_osservata": 0.7341,
+          "probabilita_promessa": 0.7451,
+          "scarto": -0.011
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 527,
+          "prese": 442,
+          "frequenza_osservata": 0.8387,
+          "probabilita_promessa": 0.8484,
+          "scarto": -0.0097
+        },
+        {
+          "fascia": "90-100%",
+          "previsioni": 196,
+          "prese": 177,
+          "frequenza_osservata": 0.9031,
+          "probabilita_promessa": 0.9113,
+          "scarto": -0.0082
+        }
+      ]
+    },
+    {
+      "mercato": "multigol-squadra",
+      "dichiarato": {
+        "previsioni": 628,
+        "prese": 506,
+        "frequenza_osservata": 0.8057,
+        "probabilita_promessa": 0.8233,
+        "scarto": -0.0176
+      },
+      "per_fascia": [
+        {
+          "fascia": "0-10%",
+          "previsioni": 15,
+          "prese": 0,
+          "frequenza_osservata": 0,
+          "probabilita_promessa": 0.0797,
+          "scarto": -0.0797
+        },
+        {
+          "fascia": "10-20%",
+          "previsioni": 127,
+          "prese": 43,
+          "frequenza_osservata": 0.3386,
+          "probabilita_promessa": 0.1662,
+          "scarto": 0.1724
+        },
+        {
+          "fascia": "20-30%",
+          "previsioni": 395,
+          "prese": 103,
+          "frequenza_osservata": 0.2608,
+          "probabilita_promessa": 0.2539,
+          "scarto": 0.0069
+        },
+        {
+          "fascia": "30-40%",
+          "previsioni": 582,
+          "prese": 235,
+          "frequenza_osservata": 0.4038,
+          "probabilita_promessa": 0.3538,
+          "scarto": 0.05
+        },
+        {
+          "fascia": "40-50%",
+          "previsioni": 713,
+          "prese": 329,
+          "frequenza_osservata": 0.4614,
+          "probabilita_promessa": 0.4481,
+          "scarto": 0.0133
+        },
+        {
+          "fascia": "50-60%",
+          "previsioni": 1054,
+          "prese": 567,
+          "frequenza_osservata": 0.538,
+          "probabilita_promessa": 0.5577,
+          "scarto": -0.0197
+        },
+        {
+          "fascia": "60-70%",
+          "previsioni": 565,
+          "prese": 379,
+          "frequenza_osservata": 0.6708,
+          "probabilita_promessa": 0.6526,
+          "scarto": 0.0182
+        },
+        {
+          "fascia": "70-80%",
+          "previsioni": 539,
+          "prese": 401,
+          "frequenza_osservata": 0.744,
+          "probabilita_promessa": 0.7326,
+          "scarto": 0.0114
+        },
+        {
+          "fascia": "80-90%",
+          "previsioni": 246,
+          "prese": 196,
+          "frequenza_osservata": 0.7967,
+          "probabilita_promessa": 0.8499,
+          "scarto": -0.0532
+        },
+        {
+          "fascia": "90-100%",
+          "previsioni": 160,
+          "prese": 139,
+          "frequenza_osservata": 0.8688,
+          "probabilita_promessa": 0.9346,
+          "scarto": -0.0658
+        }
+      ]
+    }
+  ]
+}

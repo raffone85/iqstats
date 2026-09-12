@@ -6,6 +6,9 @@ import type { CSSProperties } from "react";
 import type { ContoDelleLetture } from "@/server/iqstats/consuntivo";
 import type { Contesto } from "@/server/iqstats/contesto-gara";
 import type { Convergenza, MatchIntelligence, Segnale } from "@/server/iqstats/match-intelligence";
+import {
+  CONSUNTIVO_DI_MERCATO, MERCATI_DI_GOL, type EventoProbabile,
+} from "@/server/iqstats/projection/eventi-probabili";
 import type { LetturaForte, LettureDellaGara } from "@/server/iqstats/projection/letture-forti";
 import { FAMIGLIE } from "./match-projection-section";
 
@@ -175,6 +178,90 @@ function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
 }
 
 /**
+ * Una riga di mercato dei gol, nella stessa forma di una lettura di famiglia.
+ *
+ * **Quello che cambia e' cio' che la riga sa dire di se'.** Una famiglia porta
+ * l'affidabilita' del suo bersaglio e quante volte quella linea succede in quel campionato;
+ * un mercato dei gol non ha ne' l'una ne' l'altra, perche' non passa dai modelli e la
+ * `baseDiLega` non copre i gol. Al loro posto porta il consuntivo del suo mercato, misurato
+ * il 12 settembre 2026 su 1.200 gare chiuse: senza quello starebbe in un elenco che dichiara
+ * quanto regge senza sapere quanto regge lei.
+ *
+ * **Nessuna tinta nuova:** i quattro mercati usano la tinta di marca, perche' non sono una
+ * delle sette famiglie e inventare un colore per loro vorrebbe dire uscire dalla tabella
+ * dei token.
+ */
+function EventoDiGol({ evento, massima, homeTeam, awayTeam, campione }: {
+  readonly evento: Extract<EventoProbabile, { da: "gol" }>;
+  readonly massima: number;
+  readonly homeTeam: string;
+  readonly awayTeam: string;
+  /** Le gare per lato su cui poggiano i gol attesi; `null` quando non si sa. */
+  readonly campione: number | null;
+}) {
+  const consuntivo = CONSUNTIVO_DI_MERCATO[evento.mercato];
+  const chi = evento.lato === null ? null : evento.lato === "casa" ? homeTeam : awayTeam;
+  return (
+    <div
+      className="dossier-1x2-row"
+      style={{ "--famiglia": "var(--card-brand)" } as CSSProperties}
+    >
+      <span className="dossier-1x2-label">
+        {evento.voce.replace(".", ",")} · {MERCATI_DI_GOL[evento.mercato]}
+        <em className="engine-obs">
+          {chi === null ? "" : `${chi} · `}
+          {campione === null
+            ? "dai gol attesi delle due squadre"
+            : `dai gol attesi, su ${campione} gare per lato`}
+          {` · questo mercato ha reso ${consuntivo.reso.toFixed(1).replace(".", ",")}% `}
+          {`su ${consuntivo.promesso.toFixed(1).replace(".", ",")}% promesso, `}
+          {`${consuntivo.previsioni.toLocaleString("it-IT")} previsioni`}
+        </em>
+      </span>
+      <span className="dossier-bar" aria-hidden="true">
+        <i style={{ width: `${Math.round((evento.probabilita / massima) * 100)}%` }} />
+      </span>
+      <span className="dossier-1x2-val">{percento(evento.probabilita)}</span>
+    </div>
+  );
+}
+
+/** La chiave di riga: il bersaglio con il suo lato e la sua soglia, o il mercato con la voce. */
+function chiaveDiEvento(evento: EventoProbabile): string {
+  return evento.da === "famiglia"
+    ? `${evento.bersaglio}-${evento.lato}-${evento.soglia}`
+    : `${evento.mercato}-${evento.voce}-${evento.lato ?? "partita"}`;
+}
+
+/** Una riga dell'elenco, nella forma che la sua provenienza le consente. */
+function RigaDiEvento({ evento, chi, massima, homeTeam, awayTeam, campioneGol }: {
+  readonly evento: EventoProbabile;
+  readonly chi: (lettura: LetturaForte) => string;
+  readonly massima: number;
+  readonly homeTeam: string;
+  readonly awayTeam: string;
+  readonly campioneGol: number | null;
+}) {
+  return evento.da === "famiglia" ? (
+    <Lettura
+      lettura={evento}
+      nome={chi(evento)}
+      massima={massima}
+      homeTeam={homeTeam}
+      awayTeam={awayTeam}
+    />
+  ) : (
+    <EventoDiGol
+      evento={evento}
+      massima={massima}
+      homeTeam={homeTeam}
+      awayTeam={awayTeam}
+      campione={campioneGol}
+    />
+  );
+}
+
+/**
  * **Il pronostico: una riga, e la sola cosa che il dossier dichiara di giocare.**
  *
  * Fino al 6 settembre 2026 la testa del dossier rispondeva alla domanda «che partita sara'»
@@ -246,10 +333,17 @@ type Props = Readonly<{
   resa: ContoDelleLetture | null;
   /** Su quante gare chiuse poggia quella resa. */
   gareDelConsuntivo: number;
+  /** Le letture e i mercati dei gol ammessi, gia' ordinati da `eventiProbabili`. */
+  eventi: readonly EventoProbabile[];
+  /** Le gare per lato su cui poggiano i gol attesi; `null` dove i mercati non ci sono. */
+  campioneGol: number | null;
 }>;
 
 export function MatchInsightSection(
-  { contesto, dossier, forti, homeTeam, awayTeam, resa, gareDelConsuntivo }: Props,
+  {
+    contesto, dossier, forti, homeTeam, awayTeam, resa, gareDelConsuntivo, eventi,
+    campioneGol,
+  }: Props,
 ) {
   if (!insightHaContenuto({ contesto, dossier, forti })) return null;
 
@@ -258,7 +352,10 @@ export function MatchInsightSection(
   const conflitto = dossier.conflitti[0] ?? null;
   const valore = dossier.candidatoDiValore;
   const righe = forti?.letture ?? [];
-  const massima = righe[0]?.probabilita ?? 1;
+  // La barra si scala sulla riga piu' alta dell'elenco mostrato, che dal 12 settembre 2026
+  // puo' essere un mercato dei gol: scalare ancora sulle sole letture avrebbe dato barre
+  // piene oltre il bordo dove il multigol sta sopra la prima famiglia.
+  const massima = eventi[0]?.probabilita ?? righe[0]?.probabilita ?? 1;
   const chi = (lettura: LetturaForte) => lettura.lato === "casa" ? homeTeam
     : lettura.lato === "trasferta" ? awayTeam : "Totale gara";
 
@@ -402,39 +499,52 @@ export function MatchInsightSection(
         </>
       )}
 
-      {/* 9. Le letture che reggono: le prime in vista, le altre dietro un riepilogo, perche'
-          oltre la terza diventano un elenco da scorrere invece di una lettura. */}
-      {righe.length === 0 ? null : (
+      {/* 9. Gli eventi piu' probabili: le prime righe in vista, le altre dietro un
+          riepilogo, perche' oltre la terza diventano un elenco da scorrere invece di una
+          lettura.
+
+          **Dal 12 settembre 2026 questa lista non e' piu' di sole famiglie.** Accanto alle
+          letture dei sette bersagli stanno i quattro mercati dei gol che hanno superato il
+          consuntivo di `consuntivo-gol.ts`: multigol di partita, gol totali, multigol di
+          squadra e doppia chance. Fuori l'esito 1X2, che promette 58,8% e rende 46,4%, e
+          gol/nogol a -3,8: lo stesso metro per cui i falli non salgono in cima.
+
+          **Non e' una seconda lista.** Le stesse letture di prima, piu' i gol, nello stesso
+          ordine per probabilita': una lista nuova accanto a questa avrebbe mostrato due
+          volte le stesse righe. */}
+      {eventi.length === 0 ? null : (
         <>
-          <p className="insight-sotto">Le letture che reggono</p>
+          <p className="insight-sotto">Gli eventi più probabili</p>
           <div className="dossier-1x2">
-            {righe.slice(0, IN_VISTA).map((lettura) => (
-              <Lettura
-                key={`${lettura.bersaglio}-${lettura.lato}-${lettura.soglia}`}
-                lettura={lettura}
-                nome={chi(lettura)}
+            {eventi.slice(0, IN_VISTA).map((evento) => (
+              <RigaDiEvento
+                key={chiaveDiEvento(evento)}
+                evento={evento}
+                chi={chi}
                 massima={massima}
                 homeTeam={homeTeam}
                 awayTeam={awayTeam}
+                campioneGol={campioneGol}
               />
             ))}
           </div>
-          {righe.length > IN_VISTA ? (
+          {eventi.length > IN_VISTA ? (
             <details className="dossier-spiega">
               <summary>
-                {righe.length - IN_VISTA === 1
-                  ? "L'altra lettura che supera la forza minima"
-                  : `Le altre ${righe.length - IN_VISTA} letture che superano la forza minima`}
+                {eventi.length - IN_VISTA === 1
+                  ? "L’altro evento che il modello sa misurare"
+                  : `Gli altri ${eventi.length - IN_VISTA} eventi che il modello sa misurare`}
               </summary>
               <div className="dossier-1x2">
-                {righe.slice(IN_VISTA).map((lettura) => (
-                  <Lettura
-                    key={`${lettura.bersaglio}-${lettura.lato}-${lettura.soglia}`}
-                    lettura={lettura}
-                    nome={chi(lettura)}
+                {eventi.slice(IN_VISTA).map((evento) => (
+                  <RigaDiEvento
+                    key={chiaveDiEvento(evento)}
+                    evento={evento}
+                    chi={chi}
                     massima={massima}
                     homeTeam={homeTeam}
                     awayTeam={awayTeam}
+                    campioneGol={campioneGol}
                   />
                 ))}
               </div>

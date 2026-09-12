@@ -115,6 +115,7 @@ import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
 import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
+import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
 import { baseDiLega, baseDiSquadra } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
@@ -853,6 +854,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         candidate.filter((c) => c.lato !== "casa").map(richiesta)),
     ]);
   const forti = proiezioni ? ordinaLetture(candidate, senzaMisura, basi, basiCasa, basiFuori) : null;
+  // **Gli eventi piu' probabili: le stesse letture, piu' i mercati dei gol che hanno un
+  // consuntivo.** Il criterio e' quello di produzione esteso ai gol, scelto il 12 settembre
+  // 2026 dopo `consuntivo-gol.ts`: tetto all'80% e una riga per famiglia. Niente si ricalcola
+  // qui, si compone quello che `ordinaLetture` e `mercatiGol` hanno gia' prodotto.
+  const eventi = eventiProbabili(forti?.letture ?? [], proiezioni?.gol?.mercati ?? null);
   // Le due squadre contro gli stessi avversari: toglie dal confronto la parte di differenza
   // che e' calendario. Una lettura sola, e non si chiede se il piano non la fa vedere.
   const comuni = !insight.allowed || lega === null || idCasa === null || idFuori === null
@@ -1153,6 +1159,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
               ? null
               : resaDelBersaglio(forti.letture[0].bersaglio)}
             gareDelConsuntivo={GARE_DEL_CONSUNTIVO}
+            eventi={eventi}
+            campioneGol={campioneGol}
           />
         ) : (
           <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
