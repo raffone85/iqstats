@@ -12,7 +12,7 @@ import type {
 } from "@/server/iqstats/projection-runtime";
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
-import { etichettaPreliminare, letturaSemplice } from "@/components/match-projection-lettura";
+import { etichettaPreliminare, etichettaSenzaQuote, letturaSemplice } from "@/components/match-projection-lettura";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import { BERSAGLI_CON_ARBITRO, type Linea, type ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
@@ -417,13 +417,15 @@ function Affidabilita({ bersaglio }: { readonly bersaglio: ProiezioneDiGara }) {
   );
 }
 
-function Bersaglio({ bersaglio, casa, trasferta, osservato, quote, arbitroDesignato }: {
+function Bersaglio({ bersaglio, casa, trasferta, osservato, quote, arbitroDesignato, bancoApreQuote }: {
   readonly bersaglio: ProiezioneDiGara;
   readonly casa: string;
   readonly trasferta: string;
   readonly osservato: OsservatoDelBersaglio | undefined;
   readonly quote: readonly RigaQuotata[];
   readonly arbitroDesignato: boolean;
+  /** La gara ha prezzi su qualche famiglia: se sì, quella senza dichiara che il banco non l'apre. */
+  readonly bancoApreQuote: boolean;
 }) {
   const lCasa = bersaglio.casa;
   const lTrasferta = bersaglio.trasferta;
@@ -438,6 +440,13 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote, arbitroDesign
   const ripiego = lCasa.ripiegoUsato || lTrasferta.ripiegoUsato;
   const preliminare = ripiego
     ? etichettaPreliminare(BERSAGLI_CON_ARBITRO.includes(bersaglio.target), arbitroDesignato)
+    : null;
+  // Il banco quota altre famiglie ma non questa: si dichiara, così «le quote dove sono?»
+  // trova risposta. Non dove ripiega (lì la scaletta non c'è) né dove la gara è senza prezzi
+  // del tutto (lo dice già la copertura della sezione).
+  const haQuote = quote.some((q) => q.bersaglio === bersaglio.target);
+  const senzaQuote = !ripiego && bancoApreQuote && !haQuote
+    ? etichettaSenzaQuote(famiglia?.nome ?? bersaglio.target)
     : null;
 
   return (
@@ -471,6 +480,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote, arbitroDesign
         )}
       </ul>
       {preliminare === null ? null : <p className="engine-preliminare">{preliminare}</p>}
+      {senzaQuote === null ? null : <p className="engine-senza-quote">{senzaQuote}</p>}
       {/* **Una scala sola per famiglia, non tre.** Cinque soglie per due lati sono quindici
           numeri, e ripetere il comando di apertura per casa, trasferta e totale costava tre
           controlli da 44 px per card. La lettura piu' decisa di ogni scala sta gia' in
@@ -541,9 +551,16 @@ export function MatchProjectionSection(
   // toglie niente - le altre restano, a un tocco - ma chi e' arrivato qui dal pronostico
   // trova per primi i bersagli da cui quel pronostico esce. Senza `inCima` restano tutti
   // aperti: il taglio nasce dalla lettura, e dove non c'e' una lettura non c'e' taglio.
+  //
+  // **Anche i bersagli che il banco quota restano aperti (13 settembre 2026).** Su
+  // Mirassol-Vitoria le uniche due famiglie con un prezzo - corner e cartellini - finivano
+  // nel dettaglio, mentre in cima c'erano tiri in porta e fuorigioco senza quota: chi
+  // cercava le quote non le trovava. Le famiglie quotate si vedono per prime, con il loro
+  // prezzo, insieme a quelle della lettura.
+  const conQuote = new Set(quote.map((q) => q.bersaglio));
   const primi = inCima.length === 0
     ? mostrabili
-    : mostrabili.filter((b) => inCima.includes(b.target));
+    : mostrabili.filter((b) => inCima.includes(b.target) || conQuote.has(b.target));
   const altri = primi === mostrabili ? [] : mostrabili.filter((b) => !primi.includes(b));
 
   // Il livello dell'intervallo non e' scelto qui: e' quello a cui la calibrazione del
@@ -570,6 +587,7 @@ export function MatchProjectionSection(
             osservato={proiezioni.osservate[bersaglio.target]}
             quote={quote}
             arbitroDesignato={arbitroDesignato}
+            bancoApreQuote={quote.length > 0}
           />
         ))}
       </ul>
@@ -577,9 +595,10 @@ export function MatchProjectionSection(
       {altri.length === 0 ? null : (
         <details className="dossier-spiega">
           <summary>
-            {altri.length === 1
-              ? "L\u2019altro bersaglio che il motore proietta su questa gara"
-              : `Gli altri ${altri.length} bersagli che il motore proietta su questa gara`}
+            {/* I nomi delle famiglie nel titolo: \u00abGli altri 3 bersagli\u00bb non diceva quali, e
+                chi cercava falli o tiri totali li credeva assenti invece che chiusi. */}
+            {altri.length === 1 ? "Un\u2019altra giocata: " : `Altre ${altri.length} giocate: `}
+            {altri.map((b) => (FAMIGLIE[b.target]?.nome ?? b.target).toLowerCase()).join(", ")}
           </summary>
           <ul className="engine-rows">
             {altri.map((bersaglio) => (
@@ -591,6 +610,7 @@ export function MatchProjectionSection(
                 osservato={proiezioni.osservate[bersaglio.target]}
                 quote={quote}
                 arbitroDesignato={arbitroDesignato}
+                bancoApreQuote={quote.length > 0}
               />
             ))}
           </ul>

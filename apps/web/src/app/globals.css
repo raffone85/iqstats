@@ -912,6 +912,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
   margin: 11px 13px 0; padding: 8px 11px; border-left: 3px solid var(--card-stroke);
   background: var(--card-panel-2); font-size: 13px; line-height: 1.5; color: var(--card-ink-3);
 }
+/* Il banco non apre questa famiglia: nota di servizio leggera, senza filetto né sfondo. */
+.engine-senza-quote { margin: 10px 13px 0; font-size: 13px; line-height: 1.5; color: var(--card-ink-3); }
 .engine-row.is-famiglia .engine-splits { padding: 11px 13px 0; }
 .engine-row.is-famiglia .engine-badge { margin: 11px 13px 0; }
 @media (min-width: 768px) {

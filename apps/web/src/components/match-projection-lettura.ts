@@ -92,3 +92,16 @@ export function etichettaPreliminare(
   return "Stima preliminare: al modello manca un ingresso per questa gara. Resta l’atteso, "
     + "senza scaletta né affidabilità.";
 }
+
+/**
+ * La nota per una famiglia che il banco non quota su questa gara, mentre ne quota altre.
+ *
+ * La probabilità resta nostra e sta nella scaletta; il prezzo no, perché il banco quella
+ * linea non l'ha aperta. Dirlo evita la domanda «le quote dove sono?»: non mancano per un
+ * difetto, il banco non le apre. Si mostra solo quando la gara ha prezzi altrove — se non
+ * ne ha nessuno, lo dichiara già la riga di copertura della sezione.
+ */
+export function etichettaSenzaQuote(nomeFamiglia: string): string {
+  return `Il banco non apre linee di ${nomeFamiglia.toLowerCase()} su questa gara: `
+    + "resta la nostra probabilità, senza un prezzo accanto.";
+}

@@ -2,7 +2,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { etichettaPreliminare, letturaSemplice } from "../src/components/match-projection-lettura.ts";
+import {
+  etichettaPreliminare,
+  etichettaSenzaQuote,
+  letturaSemplice,
+} from "../src/components/match-projection-lettura.ts";
 
 test("dichiara il totale e chi è avanti quando lo scarto è netto", () => {
   const f = letturaSemplice("total_shots", "Atalanta", "Napoli", 14.6, 11.5, 26.1);
@@ -57,4 +61,13 @@ test("ripiego non legato all'arbitro: nota generica, senza nominarlo", () => {
 test("famiglia dell'arbitro ma arbitro designato: nota generica, non lo si incolpa", () => {
   const t = etichettaPreliminare(true, true);
   assert.doesNotMatch(t, /arbitro/);
+});
+
+test("la nota senza-quote nomina la famiglia in minuscolo e dichiara che resta la probabilità", () => {
+  const t = etichettaSenzaQuote("Tiri in porta");
+  assert.equal(
+    t,
+    "Il banco non apre linee di tiri in porta su questa gara: resta la nostra probabilità, "
+      + "senza un prezzo accanto.",
+  );
 });
