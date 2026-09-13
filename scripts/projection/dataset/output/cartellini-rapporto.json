@@ -1,62 +1,62 @@
 {
   "generato_da": "scripts/projection/dataset/reconstruct_cards.py",
   "sorgente": "/events/{id}/incidents/",
-  "gare_con_episodi_acquisiti": 10499,
-  "gare_ricostruite": 10499,
+  "gare_con_episodi_acquisiti": 11266,
+  "gare_ricostruite": 11266,
   "gare_con_lista_episodi_vuota": 0,
-  "righe_squadra_gara": 20998,
+  "righe_squadra_gara": 22532,
   "leghe_coperte": 29,
   "episodi_senza_lato": 0,
   "cartellini_non_attribuiti": {
-    "totale": 1888,
-    "gare_interessate": 1259,
+    "totale": 1949,
+    "gare_interessate": 1284,
     "trattamento": "fuori dai quattro conteggi, perche' il conteggio aggregato del pannello non li comprende; dichiarati in colonna propria"
   },
   "distribuzioni": {
     "yellow_cards": {
-      "media": 1.962092,
-      "sd": 1.402952,
-      "dispersione": 1.003151,
+      "media": 1.953089,
+      "sd": 1.398457,
+      "dispersione": 1.001327,
       "min": 0,
       "max": 12,
-      "quota_zeri": 0.151729,
-      "osservazioni": 20998
+      "quota_zeri": 0.152672,
+      "osservazioni": 22532
     },
     "second_yellow_red": {
-      "media": 0.03848,
-      "sd": 0.195544,
-      "dispersione": 0.993698,
+      "media": 0.037591,
+      "sd": 0.193214,
+      "dispersione": 0.993106,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.962139,
-      "osservazioni": 20998
+      "quota_zeri": 0.962986,
+      "osservazioni": 22532
     },
     "red_cards_direct": {
-      "media": 0.065197,
-      "sd": 0.259108,
-      "dispersione": 1.029763,
+      "media": 0.064042,
+      "sd": 0.256686,
+      "dispersione": 1.02882,
       "min": 0,
       "max": 3,
-      "quota_zeri": 0.937756,
-      "osservazioni": 20998
+      "quota_zeri": 0.938798,
+      "osservazioni": 22532
     },
     "bench_cards": {
-      "media": 0.002905,
-      "sd": 0.055562,
-      "dispersione": 1.062669,
+      "media": 0.006302,
+      "sd": 0.081348,
+      "dispersione": 1.050036,
       "min": 0,
       "max": 2,
-      "quota_zeri": 0.99719,
-      "osservazioni": 20998
+      "quota_zeri": 0.993875,
+      "osservazioni": 22532
     },
     "unattributed_cards": {
-      "media": 0.089913,
-      "sd": 0.379632,
-      "dispersione": 1.602883,
+      "media": 0.086499,
+      "sd": 0.37428,
+      "dispersione": 1.619504,
       "min": 0,
       "max": 6,
-      "quota_zeri": 0.930041,
-      "osservazioni": 20998
+      "quota_zeri": 0.933162,
+      "osservazioni": 22532
     }
   },
   "provenienza": "C"
