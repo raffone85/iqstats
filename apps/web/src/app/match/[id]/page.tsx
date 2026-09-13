@@ -123,6 +123,7 @@ import { baseDiLega, baseDiSquadra } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
 import { buildMatchPicks, comparabileDaGol } from "@/server/iqstats/match-picks";
+import { eventiDiValore } from "@/server/iqstats/eventi-di-valore";
 import { MatchValoreSection } from "@/components/match-valore-section";
 import { matchIntelligence } from "@/server/iqstats/match-intelligence";
 import { tempiDellaGara } from "@/server/iqstats/tempi";
@@ -1713,7 +1714,14 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
 
         {/* L'analisi finale chiude Precedenti invece di aprire un capitolo suo: e' la
             rilettura di tutto quello che sta sopra, non una decima domanda. */}
-        {!insight.allowed || analisi === null ? null : <AnalisiFinale analisi={analisi} />}
+        {!insight.allowed || analisi === null ? null : (
+          <AnalisiFinale
+            analisi={analisi}
+            eventiValore={proiezioni === null ? [] : eventiDiValore(proiezioni.bersagli, quoteDelBanco)}
+            casa={detail.homeTeam}
+            trasferta={detail.awayTeam}
+          />
+        )}
 
         <p className="dossier-note">
           Dati letti soltanto lato server. Le probabilità sono letture di un modello statistico, mai certezze; nessun consiglio finanziario.

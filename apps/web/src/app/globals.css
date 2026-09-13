@@ -914,6 +914,19 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 }
 /* Il banco non apre questa famiglia: nota di servizio leggera, senza filetto né sfondo. */
 .engine-senza-quote { margin: 10px 13px 0; font-size: 13px; line-height: 1.5; color: var(--card-ink-3); }
+/* Il valore di una soglia quotata, sotto la coppia O/U. Non è un verso: niente blu/arancio,
+   resta inchiostro; il positivo si distingue per peso, non per colore. */
+.engine-valore { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.engine-valore.is-valore { color: var(--card-ink); font-weight: 600; }
+
+/* Eventi di valore in cima all'analisi finale: schede su carta tenue, numeri in mono. */
+.analisi-vuoto { margin: 0 0 4px; font-size: 14px; line-height: 1.5; color: var(--card-ink-2); }
+.valore-eventi { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 10px; }
+.valore-evento { display: grid; gap: 3px; padding: 12px 14px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: var(--card-panel-2); }
+.valore-titolo { font-family: var(--font-display); font-size: 15px; color: var(--card-ink); }
+.valore-verdetto { font-size: 14px; line-height: 1.4; color: var(--card-ink-2); }
+.valore-numeri { font-family: var(--font-mono, monospace); font-size: 12px; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
+.analisi-recap { margin-top: 4px; }
 .engine-row.is-famiglia .engine-splits { padding: 11px 13px 0; }
 .engine-row.is-famiglia .engine-badge { margin: 11px 13px 0; }
 @media (min-width: 768px) {

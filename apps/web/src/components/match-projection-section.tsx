@@ -13,6 +13,7 @@ import type {
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
 import { etichettaPreliminare, etichettaSenzaQuote, letturaSemplice } from "@/components/match-projection-lettura";
+import { valoreSoglia } from "@/server/iqstats/projection/valore";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import { BERSAGLI_CON_ARBITRO, type Linea, type ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
@@ -194,6 +195,15 @@ function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
     ? "engine-step is-central"
     : acceso === "tenue" ? "engine-step is-quasi" : "engine-step";
 
+  // Il valore del lato più probabile, dove il banco quota entrambi i lati: quanti punti la
+  // nostra probabilità sta sopra il prezzo, ripulito dal margine. Su una linea sola per
+  // riga, così «se è il caso o no» si legge accanto alla quota, non altrove.
+  const valoreLinea = pari ? null : valoreSoglia(
+    guidaSopra ? linea.probabilitaSopra : linea.probabilitaSotto,
+    guidaSopra ? qSopra : qSotto,
+    guidaSopra ? qSotto : qSopra,
+  );
+
   return (
     <li className={classe}>
       <span className="engine-step-line">{valore(linea.soglia)}</span>
@@ -207,6 +217,11 @@ function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
           {qSotto === null ? null : <i className="engine-prezzo">{prezzo(qSotto)}</i>}
         </span>
       </span>
+      {valoreLinea === null ? null : (
+        <span className={valoreLinea > 0 ? "engine-valore is-valore" : "engine-valore"}>
+          {valoreLinea > 0 ? `valore +${valoreLinea}` : "senza valore"}
+        </span>
+      )}
     </li>
   );
 }

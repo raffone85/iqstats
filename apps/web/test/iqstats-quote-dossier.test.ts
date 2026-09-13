@@ -11,6 +11,18 @@ import test from "node:test";
 import {
   motivoSenzaQuote, quoteDiGara, quoteRaccolteIl, type RigaQuotata,
 } from "../src/server/iqstats/expected-famiglie.ts";
+import rapporto from "../src/server/iqstats/artefatti/expected-famiglie.json" with { type: "json" };
+
+/**
+ * Una gara quotata **presa dall'artefatto vivo**, non fissata: il palinsesto si rigenera e
+ * una gara passata esce, quindi un id scritto a mano manderebbe rosso il test a ogni
+ * raccolta. Si prende la prima gara che ha quote, qualunque sia.
+ */
+function unaGaraQuotata(): number {
+  const g = rapporto.gare.find((x) => x.quote.length > 0);
+  if (g === undefined) throw new Error("nessuna gara quotata nell'artefatto");
+  return g.gara;
+}
 
 /** La stessa ricerca che fa la scala del dossier, tenuta qui per poterla provare. */
 function quotaDi(
@@ -27,8 +39,8 @@ function quotaDi(
 }
 
 test("una gara coperta dall'artefatto porta le sue linee quotate", () => {
-  const quote = quoteDiGara(214056);
-  assert.ok(quote.length > 0, "Watford-Stoke e' nell'artefatto dell'11 settembre 2026");
+  const quote = quoteDiGara(unaGaraQuotata());
+  assert.ok(quote.length > 0, "la gara scelta dall'artefatto ha linee quotate");
   for (const q of quote) {
     assert.ok(q.quota > 1, `una quota e' sempre maggiore di 1, trovato ${q.quota}`);
     assert.ok(["casa", "trasferta", "totale"].includes(q.lato));
@@ -40,7 +52,7 @@ test("una gara che l'artefatto non copre non inventa prezzi", () => {
 });
 
 test("il prezzo va sulla riga esatta, e una soglia vicina non lo eredita", () => {
-  const quote = quoteDiGara(214056);
+  const quote = quoteDiGara(unaGaraQuotata());
   const riga = quote[0];
   assert.equal(
     quotaDi(quote, riga.bersaglio, riga.lato, riga.soglia, riga.verso),
@@ -62,7 +74,7 @@ test("la raccolta del palinsesto ha una data da dichiarare", () => {
 });
 
 test("le linee fuori dalla scala del motore sono quelle che restano, non tutte", () => {
-  const quote = quoteDiGara(214056);
+  const quote = quoteDiGara(unaGaraQuotata());
   const bersaglio = quote[0].bersaglio;
   const lato = quote[0].lato;
   const diQuestaScala = quote.filter((q) => q.bersaglio === bersaglio && q.lato === lato);
