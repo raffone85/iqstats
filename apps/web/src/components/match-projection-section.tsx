@@ -12,6 +12,7 @@ import type {
 } from "@/server/iqstats/projection-runtime";
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
+import { letturaSemplice } from "@/components/match-projection-lettura";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
@@ -427,6 +428,10 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
   const lTrasferta = bersaglio.trasferta;
   if (!prevista(lCasa) || !prevista(lTrasferta)) return null;
   const famiglia = FAMIGLIE[bersaglio.target];
+  const lettura = letturaSemplice(
+    bersaglio.target, casa, trasferta,
+    lCasa.valoreAtteso, lTrasferta.valoreAtteso, bersaglio.totale?.valoreAtteso ?? null,
+  );
 
   return (
     <li
@@ -434,6 +439,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
       style={{ "--famiglia": famiglia?.tinta ?? "var(--card-brand)" } as CSSProperties}
     >
       <p className="engine-metric">{famiglia?.nome ?? bersaglio.target}</p>
+      {lettura === null ? null : <p className="engine-lettura">{lettura}</p>}
       <ul className="engine-splits">
         <Voce
           chi={casa}

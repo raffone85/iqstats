@@ -904,6 +904,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
    sezione Gol e il motore ENG-1, che famiglie colorate non ne hanno. */
 .engine-row.is-famiglia { padding: 0 0 11px; overflow: hidden; background: var(--card-panel); }
 .engine-row.is-famiglia .engine-metric { margin: 0; padding: 10px 13px; background: var(--famiglia); color: var(--card-on-brand); }
+/* La riga in parole semplici, fra la fascia della famiglia e gli attesi: prosa, non dato. */
+.engine-lettura { margin: 0; padding: 10px 13px 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-2); }
 .engine-row.is-famiglia .engine-splits { padding: 11px 13px 0; }
 .engine-row.is-famiglia .engine-badge { margin: 11px 13px 0; }
 @media (min-width: 768px) {
