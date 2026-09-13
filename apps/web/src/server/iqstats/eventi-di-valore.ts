@@ -3,7 +3,7 @@ import "server-only";
 import type { LatoDiRiga, RigaQuotata } from "./expected-famiglie.ts";
 import { soglieReali } from "./projection/linea-scelta.ts";
 import type { Linea, ProiezioneDiGara } from "./projection/match.ts";
-import { implicitaSoglia, valoreSoglia } from "./projection/valore.ts";
+import { implicitaSoglia, TETTO_VALORE, valoreSoglia } from "./projection/valore.ts";
 
 /**
  * Gli eventi di valore per l'analisi finale: le poche soglie dove la nostra probabilità
@@ -65,17 +65,25 @@ export function eventiDiValore(
     ];
     for (const { lato, linee } of scale) {
       if (linee === null) continue;
-      // **Le stesse soglie della scaletta**, così il valore qui e il tag inline coincidono.
+      // **Le stesse soglie e lo stesso lato della scaletta**, così il valore qui e il tag
+      // inline coincidono: si valuta il lato che il banco quota (entrambi → quello che
+      // favoriamo, uno solo → quello aperto).
       for (const linea of soglieReali(linee)) {
         if (linea.probabilitaSopra === linea.probabilitaSotto) continue;
         const guidaSopra = linea.probabilitaSopra > linea.probabilitaSotto;
-        const verso = guidaSopra ? "Over" : "Under";
-        const probLead = guidaSopra ? linea.probabilitaSopra : linea.probabilitaSotto;
-        const quotaLead = quotaDi(quote, b.target, lato, linea.soglia, verso);
-        const quotaAltro = quotaDi(quote, b.target, lato, linea.soglia, guidaSopra ? "Under" : "Over");
-        const valore = valoreSoglia(probLead, quotaLead, quotaAltro);
-        const implicita = implicitaSoglia(quotaLead, quotaAltro);
-        if (valore === null || valore < EDGE_MINIMO || quotaLead === null || implicita === null) {
+        const qOver = quotaDi(quote, b.target, lato, linea.soglia, "Over");
+        const qUnder = quotaDi(quote, b.target, lato, linea.soglia, "Under");
+        const verso: "Over" | "Under" = qOver !== null && qUnder !== null
+          ? (guidaSopra ? "Over" : "Under")
+          : qOver !== null ? "Over" : "Under";
+        const quotaLato = verso === "Over" ? qOver : qUnder;
+        const quotaAltro = verso === "Over" ? qUnder : qOver;
+        if (quotaLato === null) continue;
+        const prob = verso === "Over" ? linea.probabilitaSopra : linea.probabilitaSotto;
+        const valore = valoreSoglia(prob, quotaLato, quotaAltro);
+        const implicita = implicitaSoglia(quotaLato, quotaAltro);
+        // Sotto la soglia è norma, sopra il tetto è un artefatto del prezzo: fuori entrambi.
+        if (valore === null || valore < EDGE_MINIMO || valore > TETTO_VALORE || implicita === null) {
           continue;
         }
         eventi.push({
@@ -83,8 +91,8 @@ export function eventiDiValore(
           lato,
           soglia: linea.soglia,
           verso,
-          nostra: probLead * 100,
-          quota: quotaLead,
+          nostra: prob * 100,
+          quota: quotaLato,
           implicita: implicita * 100,
           valore,
         });

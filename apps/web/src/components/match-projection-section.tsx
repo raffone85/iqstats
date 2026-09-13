@@ -13,7 +13,7 @@ import type {
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
 import { etichettaPreliminare, etichettaSenzaQuote, letturaSemplice } from "@/components/match-projection-lettura";
-import { valoreSoglia } from "@/server/iqstats/projection/valore";
+import { TETTO_VALORE, valoreSoglia } from "@/server/iqstats/projection/valore";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import { BERSAGLI_CON_ARBITRO, type Linea, type ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
@@ -195,13 +195,16 @@ function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
     ? "engine-step is-central"
     : acceso === "tenue" ? "engine-step is-quasi" : "engine-step";
 
-  // Il valore del lato più probabile, dove il banco quota entrambi i lati: quanti punti la
-  // nostra probabilità sta sopra il prezzo, ripulito dal margine. Su una linea sola per
-  // riga, così «se è il caso o no» si legge accanto alla quota, non altrove.
-  const valoreLinea = pari ? null : valoreSoglia(
-    guidaSopra ? linea.probabilitaSopra : linea.probabilitaSotto,
-    guidaSopra ? qSopra : qSotto,
-    guidaSopra ? qSotto : qSopra,
+  // Il lato da valutare: se il banco apre entrambi, quello che favoriamo; se ne apre uno
+  // solo, quello quotato. Così il verdetto compare **ovunque il book mostri un prezzo**,
+  // non solo dove ci sono tutte e due le quote.
+  const lato = qSopra !== null && qSotto !== null
+    ? (guidaSopra ? "sopra" : "sotto")
+    : qSopra !== null ? "sopra" : qSotto !== null ? "sotto" : null;
+  const valoreLinea = pari || lato === null ? null : valoreSoglia(
+    lato === "sopra" ? linea.probabilitaSopra : linea.probabilitaSotto,
+    lato === "sopra" ? qSopra : qSotto,
+    lato === "sopra" ? qSotto : qSopra,
   );
 
   return (
@@ -218,8 +221,10 @@ function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
         </span>
       </span>
       {valoreLinea === null ? null : (
-        <span className={valoreLinea > 0 ? "engine-valore is-valore" : "engine-valore"}>
-          {valoreLinea > 0 ? `valore +${valoreLinea}` : "senza valore"}
+        <span className={valoreLinea > 0 && valoreLinea <= TETTO_VALORE ? "engine-valore is-valore" : "engine-valore"}>
+          {valoreLinea > TETTO_VALORE
+            ? "valore non valutabile"
+            : valoreLinea > 0 ? `valore +${valoreLinea}` : "senza valore"}
         </span>
       )}
     </li>
