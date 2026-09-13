@@ -67,3 +67,28 @@ export function letturaSemplice(
   const leader = attesoCasa > attesoTrasferta ? casa : trasferta;
   return `${testa}. Avanti ${leader}.`;
 }
+
+/**
+ * L'etichetta per una famiglia in ripiego: dice che è una stima preliminare e perché la
+ * scaletta e l'affidabilità non ci sono ancora.
+ *
+ * Un ripiego è una baseline: il modello del bersaglio non ha girato, quindi non c'è un
+ * intervallo calibrato né un'affidabilità misurata. Restano gli attesi, che valgono come
+ * stima, ma vanno dichiarati per quello che sono. Quando il bersaglio dipende dall'arbitro
+ * (falli, cartellini, tiri in porta) e l'arbitro non è ancora designato, quella è la causa
+ * usuale prima della gara, e si nomina: il numero si affina alla designazione.
+ *
+ * @param dipendeDaArbitro il modello del bersaglio porta gli ingressi dell'arbitro
+ * @param arbitroDesignato l'arbitro di questa gara è già stato designato
+ */
+export function etichettaPreliminare(
+  dipendeDaArbitro: boolean,
+  arbitroDesignato: boolean,
+): string {
+  if (dipendeDaArbitro && !arbitroDesignato) {
+    return "Stima preliminare: l’arbitro non è ancora designato. La scaletta Over/Under "
+      + "e l’affidabilità arrivano con la designazione.";
+  }
+  return "Stima preliminare: al modello manca un ingresso per questa gara. Resta l’atteso, "
+    + "senza scaletta né affidabilità.";
+}

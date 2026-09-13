@@ -906,6 +906,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-row.is-famiglia .engine-metric { margin: 0; padding: 10px 13px; background: var(--famiglia); color: var(--card-on-brand); }
 /* La riga in parole semplici, fra la fascia della famiglia e gli attesi: prosa, non dato. */
 .engine-lettura { margin: 0; padding: 10px 13px 0; font-size: 14px; line-height: 1.5; color: var(--card-ink-2); }
+/* La nota di stima preliminare: prosa di servizio, staccata da un filetto, nessun colore di
+   verso. Spiega perché una famiglia in ripiego non porta scaletta né affidabilità. */
+.engine-preliminare {
+  margin: 11px 13px 0; padding: 8px 11px; border-left: 3px solid var(--card-stroke);
+  background: var(--card-panel-2); font-size: 13px; line-height: 1.5; color: var(--card-ink-3);
+}
 .engine-row.is-famiglia .engine-splits { padding: 11px 13px 0; }
 .engine-row.is-famiglia .engine-badge { margin: 11px 13px 0; }
 @media (min-width: 768px) {

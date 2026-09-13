@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { letturaSemplice } from "../src/components/match-projection-lettura.ts";
+import { etichettaPreliminare, letturaSemplice } from "../src/components/match-projection-lettura.ts";
 
 test("dichiara il totale e chi è avanti quando lo scarto è netto", () => {
   const f = letturaSemplice("total_shots", "Atalanta", "Napoli", 14.6, 11.5, 26.1);
@@ -40,4 +40,21 @@ test("un bersaglio fuori dalle sette famiglie non ha frase", () => {
 
 test("un atteso non finito non produce una frase con NaN", () => {
   assert.equal(letturaSemplice("total_shots", "Atalanta", "Napoli", Number.NaN, 11.5, null), null);
+});
+
+test("famiglia dell'arbitro senza designazione: la nota nomina l'arbitro", () => {
+  const t = etichettaPreliminare(true, false);
+  assert.match(t, /arbitro non è ancora designato/);
+  assert.match(t, /scaletta Over\/Under e l’affidabilità arrivano con la designazione/);
+});
+
+test("ripiego non legato all'arbitro: nota generica, senza nominarlo", () => {
+  const t = etichettaPreliminare(false, false);
+  assert.match(t, /manca un ingresso per questa gara/);
+  assert.doesNotMatch(t, /arbitro/);
+});
+
+test("famiglia dell'arbitro ma arbitro designato: nota generica, non lo si incolpa", () => {
+  const t = etichettaPreliminare(true, true);
+  assert.doesNotMatch(t, /arbitro/);
 });

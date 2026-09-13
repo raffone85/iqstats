@@ -12,9 +12,9 @@ import type {
 } from "@/server/iqstats/projection-runtime";
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
-import { letturaSemplice } from "@/components/match-projection-lettura";
+import { etichettaPreliminare, letturaSemplice } from "@/components/match-projection-lettura";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
-import type { Linea, ProiezioneDiGara } from "@/server/iqstats/projection/match";
+import { BERSAGLI_CON_ARBITRO, type Linea, type ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
 
 // Nome e tinta stanno nella **stessa** tabella apposta: due tabelle separate divergono al
@@ -417,12 +417,13 @@ function Affidabilita({ bersaglio }: { readonly bersaglio: ProiezioneDiGara }) {
   );
 }
 
-function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
+function Bersaglio({ bersaglio, casa, trasferta, osservato, quote, arbitroDesignato }: {
   readonly bersaglio: ProiezioneDiGara;
   readonly casa: string;
   readonly trasferta: string;
   readonly osservato: OsservatoDelBersaglio | undefined;
   readonly quote: readonly RigaQuotata[];
+  readonly arbitroDesignato: boolean;
 }) {
   const lCasa = bersaglio.casa;
   const lTrasferta = bersaglio.trasferta;
@@ -432,6 +433,12 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
     bersaglio.target, casa, trasferta,
     lCasa.valoreAtteso, lTrasferta.valoreAtteso, bersaglio.totale?.valoreAtteso ?? null,
   );
+  // Un lato in ripiego è una baseline: niente scaletta né affidabilità, e va detto. Per
+  // falli, cartellini e tiri in porta la causa usuale pre-partita è l'arbitro non designato.
+  const ripiego = lCasa.ripiegoUsato || lTrasferta.ripiegoUsato;
+  const preliminare = ripiego
+    ? etichettaPreliminare(BERSAGLI_CON_ARBITRO.includes(bersaglio.target), arbitroDesignato)
+    : null;
 
   return (
     <li
@@ -463,6 +470,7 @@ function Bersaglio({ bersaglio, casa, trasferta, osservato, quote }: {
           />
         )}
       </ul>
+      {preliminare === null ? null : <p className="engine-preliminare">{preliminare}</p>}
       {/* **Una scala sola per famiglia, non tre.** Cinque soglie per due lati sono quindici
           numeri, e ripetere il comando di apertura per casa, trasferta e totale costava tre
           controlli da 44 px per card. La lettura piu' decisa di ogni scala sta gia' in
@@ -506,12 +514,14 @@ type Props = {
    * dove non si sa dire quale dei due casi sia.
    */
   readonly assenzaDelPrezzo?: "fuori-copertura" | "banco-non-apre" | null;
+  /** L'arbitro della gara è già designato: se no, i bersagli che dipendono da lui ripiegano. */
+  readonly arbitroDesignato?: boolean;
 };
 
 export function MatchProjectionSection(
   {
     proiezioni, homeTeam, awayTeam, inCima = [], quote = [], quoteIl = null,
-    quoteFino = null, assenzaDelPrezzo = null,
+    quoteFino = null, assenzaDelPrezzo = null, arbitroDesignato = false,
   }: Props,
 ) {
   const mostrabili = proiezioni.bersagli.filter(
@@ -559,6 +569,7 @@ export function MatchProjectionSection(
             trasferta={awayTeam}
             osservato={proiezioni.osservate[bersaglio.target]}
             quote={quote}
+            arbitroDesignato={arbitroDesignato}
           />
         ))}
       </ul>
@@ -579,6 +590,7 @@ export function MatchProjectionSection(
                 trasferta={awayTeam}
                 osservato={proiezioni.osservate[bersaglio.target]}
                 quote={quote}
+                arbitroDesignato={arbitroDesignato}
               />
             ))}
           </ul>

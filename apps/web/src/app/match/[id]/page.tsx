@@ -1356,6 +1356,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             quoteIl={quoteRaccolteIl()}
             quoteFino={quoteFinoA}
             assenzaDelPrezzo={assenzaDelPrezzo}
+            arbitroDesignato={detail.refereeId !== null}
           />
         )}
 
