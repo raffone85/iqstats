@@ -155,12 +155,22 @@ def gia_raccolti(percorso):
     if not percorso.exists():
         return set()
     fatti = set()
-    with gzip.open(percorso, "rt", encoding="utf-8") as f:
-        for riga in f:
-            try:
-                fatti.add(json.loads(riga)["evento"])
-            except (ValueError, KeyError):
-                continue
+    righe = []
+    try:
+        with gzip.open(percorso, "rt", encoding="utf-8") as f:
+            for riga in f:
+                try:
+                    fatti.add(json.loads(riga)["evento"])
+                    righe.append(riga)
+                except (ValueError, KeyError):
+                    continue
+    except EOFError:
+        # Un processo ucciso lascia il gzip senza chiusura: aggiungere in coda renderebbe
+        # illeggibile tutto cio' che segue. Si riscrive il file con le righe intere e si
+        # riprende da li'. Successo il 13 settembre 2026: 1.292 eventi su 1.448.
+        with gzip.open(percorso, "wt", encoding="utf-8") as f:
+            f.writelines(righe)
+        print("file troncato, riscritto con " + str(len(righe)) + " eventi", flush=True)
     return fatti
 
 
