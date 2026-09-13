@@ -149,6 +149,27 @@ test("una lettura che si stacca dalla norma diventa il consigliato", () => {
   assert.equal(consigliato?.bersaglio, "staccata", "quindici punti sopra la norma vanno consigliati");
 });
 
+// **La soglia prima, poi una per bersaglio: il 13 settembre 2026.** Il criterio adottato era
+// stato misurato cosi', ma il codice teneva prima una lettura per bersaglio e cercava il
+// consigliato solo fra quelle: se il lato piu' probabile era la norma, l'altro lato non
+// veniva nemmeno guardato. Sulle stesse 1.200 gare chiuse: 69,8% su 74,1% in 503 gare
+// contro 71,1% su 74,2% in 606.
+test("se il lato piu' probabile e' la norma, si consiglia l'altro lato che se ne stacca", () => {
+  const linee = (x: number) => scala(10.5, x);
+  const dueLati: ProiezioneDiGara = {
+    ...bersaglio("fuorigioco", 0.75, 80),
+    linee: { casa: linee(0.75), trasferta: linee(0.72) },
+  };
+  const basi = new Map([
+    ["fuorigioco|casa|10.5|Over", { quota: 72, gare: 40 }],
+    ["fuorigioco|trasferta|10.5|Over", { quota: 60, gare: 40 }],
+  ]);
+  const { letture, consigliato } = lettureForti([dueLati], basi);
+
+  assert.deepEqual(letture.map((l) => l.lato), ["casa"], "l'elenco resta una riga per bersaglio");
+  assert.equal(consigliato?.lato, "trasferta", "dodici punti sopra la norma, sull'altro lato, vanno consigliati");
+});
+
 test("senza base di lega non si consiglia: non si sa quanto sia normale", () => {
   const { letture, consigliato } = lettureForti([bersaglio("senza_base", 0.75, 80)]);
 

@@ -190,6 +190,47 @@ const CRITERI: readonly Criterio[] = [
             || (b.affidabilita - a.affidabilita)),
       ),
   })),
+  // **Il percorso di produzione, per contare i consigli dopo il primo.** Come le soglie sopra,
+  // ma senza i falli, che `ordinaLetture` toglie dalla cima: il primo e' il consigliato di
+  // produzione e il secondo, il terzo e il quarto sono quelli che un «piu' consigli per
+  // gara» aggiungerebbe.
+  //
+  // Le due varianti separano le due differenze dal banco `fascia-tarata-scarto-5`. Il 13
+  // settembre 2026 la produzione teneva prima una lettura per bersaglio e rendeva 69,8% su
+  // 74,1% in 503 gare, contro 71,8% su 74,2% del banco: pesava l'ordine (-2,5 e -1,3 punti),
+  // non i falli (+-0,6). Da quel giorno la produzione applica prima la soglia.
+  ...[
+    { nome: "consigliati-di-produzione", bersaglioPrima: false, falliFuori: true },
+    { nome: "bersaglio-prima-falli-fuori", bersaglioPrima: true, falliFuori: true },
+    { nome: "bersaglio-prima-falli-dentro", bersaglioPrima: true, falliFuori: false },
+  ].map(({ nome, bersaglioPrima, falliFuori }) => ({
+    nome,
+    spiegazione:
+      `fino all'80%, falli ${falliFuori ? "fuori" : "dentro"}, `
+      + (bersaglioPrima
+        ? "una lettura per bersaglio e poi solo quelle ad almeno 5 punti dalla lega"
+        : "solo quelle ad almeno 5 punti dalla lega e poi una per bersaglio")
+      + "; il rango dice quale consiglio sarebbe",
+    scegli: (letture: readonly LetturaForte[]) => {
+      const visti = new Set<string>();
+      const unaSola = (l: LetturaForte) => {
+        if (visti.has(l.bersaglio)) return false;
+        visti.add(l.bersaglio);
+        return true;
+      };
+      const staccata = (l: LetturaForte) => l.base !== null && l.probabilita * 100 - l.base >= 5;
+      const ordinate = letture
+        .filter((l) => l.probabilita <= 0.8 && !(falliFuori && l.bersaglio === "fouls"))
+        .slice()
+        .sort((a, b) =>
+          (Math.round(b.probabilita * 100) - Math.round(a.probabilita * 100))
+          || (b.affidabilita - a.affidabilita));
+      return (bersaglioPrima
+        ? ordinate.filter(unaSola).filter(staccata)
+        : ordinate.filter(staccata).filter(unaSola)
+      ).slice(0, QUANTE);
+    },
+  })),
   {
     nome: "concorde-con-la-squadra",
     spiegazione:
@@ -227,6 +268,8 @@ interface Esito {
   readonly presa: boolean;
   /** Vero solo per la lettura in cima alla gara: e' quella che finirebbe in vetrina. */
   readonly prima: boolean;
+  /** La posizione nella gara, da 1: il secondo consiglio e' diverso dal primo. */
+  readonly rango: number;
   /**
    * Quanto la lettura si scosta dalla frequenza storica delle squadre in campo, in punti.
    * `null` dove nessuna delle due ha campione. E' il controllo che ha bocciato la vetrina
@@ -308,6 +351,7 @@ async function esitiDi(riga: RigaDiGara): Promise<readonly Esito[]> {
         probabilita: lettura.probabilita,
         presa: lettura.verso === "Over" ? sopra : !sopra,
         prima: indice === 0,
+        rango: indice + 1,
         scostamentoDallaSquadra: storia === null ? null : Math.abs(lettura.probabilita - storia),
         scartoDallaLega: lega === null ? null : (lettura.probabilita - lega) * 100,
         sopraEntrambe:
@@ -409,6 +453,10 @@ async function main(): Promise<number> {
         fascia: f.nome,
         ...conta(suoi.filter((e) => e.probabilita >= f.da && e.probabilita < f.a)),
       })).filter((v) => v.letture !== undefined),
+      per_rango: [1, 2, 3, 4].map((rango) => ({
+        rango,
+        ...conta(suoi.filter((e) => e.rango === rango)),
+      })).filter((v) => v.letture !== undefined),
     };
   });
 
@@ -443,6 +491,15 @@ async function main(): Promise<number> {
       ? "    —"
       : `${v.scarto_mediano_dalla_lega > 0 ? "+" : ""}${v.scarto_mediano_dalla_lega} punti`;
     console.log(`${voce.criterio.padEnd(31)} | ${riuscita} | ${gare} | ${scarto}`);
+  }
+  const produzione = perCriterio.find((v) => v.criterio === "consigliati-di-produzione");
+  console.log("\nconsigliati di produzione, per posizione nella gara:");
+  for (const r of produzione?.per_rango ?? []) {
+    console.log(
+      `${r.rango}° | ${((r.frequenza_osservata ?? 0) * 100).toFixed(1)}% su `
+      + `${((r.probabilita_promessa ?? 0) * 100).toFixed(1)}% | ${r.letture} | `
+      + `scarto dalla lega ${r.scarto_mediano_dalla_lega}`,
+    );
   }
   console.log(`\nrapporto in ${uscita}`);
   return 0;

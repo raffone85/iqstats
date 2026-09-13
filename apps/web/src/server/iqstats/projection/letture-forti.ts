@@ -155,9 +155,10 @@ export interface LettureDellaGara {
    * La lettura da consigliare, o `null` quando nessuna si stacca abbastanza dalla norma.
    *
    * **Non e' `letture[0]`.** L'elenco resta ordinato per probabilita', che e' cio' che
-   * serve a leggere la gara; il consigliato e' la prima che supera `SCARTO_MINIMO`. Dove
-   * non c'e', la pagina lo dichiara invece di consigliare la norma del torneo: succede su
-   * due gare su 589, misurato.
+   * serve a leggere la gara; il consigliato e' la prima che supera `SCARTO_MINIMO`, anche
+   * su un lato che l'elenco non mostra. Dove non c'e', la pagina lo dichiara invece di
+   * consigliare la norma del torneo. Il 13 settembre 2026, sulle gare chiuse di
+   * `criterio-vetrina`, il consigliato misurabile c'era in 606 gare e la prima lettura in 618.
    */
   readonly consigliato: LetturaForte | null;
   /** I bersagli lasciati fuori perche' non sanno dire quanto reggono. */
@@ -317,9 +318,15 @@ export function ordinaLetture(
     return true;
   });
 
-  // Il consigliato si sceglie fra le distinte, nello stesso ordine, ma deve staccarsi dalla
-  // norma del campionato. Senza base non si sa quanto sia normale, quindi non si consiglia.
-  const consigliato = distinte.find(
+  // Il consigliato si sceglie nello stesso ordine, ma deve staccarsi dalla norma del
+  // campionato. Senza base non si sa quanto sia normale, quindi non si consiglia.
+  //
+  // **Fra tutte le letture, non fra le distinte: il 13 settembre 2026.** La soglia era stata
+  // misurata applicandola prima di tenere una lettura per bersaglio, ma qui si cercava solo
+  // fra le distinte: se il lato piu' probabile di un bersaglio era la norma, gli altri lati
+  // non venivano guardati. Sulle stesse 1.200 gare chiuse di `criterio-vetrina` il percorso
+  // vecchio rendeva 69,8% su 74,1% e consigliava in 503 gare, questo 71,1% su 74,2% in 606.
+  const consigliato = letture.find(
     (l) => l.base !== null && l.probabilita * 100 - l.base >= SCARTO_MINIMO,
   ) ?? null;
 
