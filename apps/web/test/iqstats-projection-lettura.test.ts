@@ -6,7 +6,53 @@ import {
   etichettaPreliminare,
   etichettaSenzaQuote,
   letturaSemplice,
+  percheDellaLettura,
 } from "../src/components/match-projection-lettura.ts";
+
+// Casi veri dall'artefatto del 14 settembre 2026: Como-Parma e Gaziantep-Fenerbahçe.
+test("il perché dice il campionato, chi spinge e chi frena, con le squadre", () => {
+  const f = percheDellaLettura({
+    probabilita: 0.6344, base: 32.35, lato: "casa", verso: "Over", chi: "Como", altro: "Parma",
+    cause: [
+      { nome: "la classifica", effetto: 0.187 },
+      { nome: "il fattore campo", effetto: 0.083 },
+      { nome: "gli undici", effetto: -0.022 },
+    ],
+  });
+  assert.equal(f, "Diamo 63%, nel campionato succede nel 32% delle gare. A spingere il numero: "
+    + "la posizione in classifica (+19%) e giocare in casa (+8%). Frena la formazione attesa (−2%).");
+});
+
+test("se tutte le cause frenano non le spaccia per il motivo", () => {
+  const f = percheDellaLettura({
+    probabilita: 0.7894, base: 63.41, lato: "casa", verso: "Over", chi: "Gaziantep", altro: "Fenerbahçe",
+    cause: [
+      { nome: "il fattore campo", effetto: -0.056 },
+      { nome: "il livello della squadra", effetto: -0.033 },
+    ],
+  });
+  assert.equal(f, "Diamo 79%, nel campionato succede nel 63% delle gare, nonostante giocare in casa "
+    + "(−6%) e il rendimento abituale di Gaziantep (−3%) vadano nel verso opposto.");
+});
+
+test("sull'Under un effetto negativo è a favore, e l'avversaria ha il suo nome", () => {
+  const f = percheDellaLettura({
+    probabilita: 0.61, base: null, lato: "trasferta", verso: "Under", chi: "Roma", altro: "Torino",
+    cause: [{ nome: "quanto concede l'avversario", effetto: -0.07 }],
+  });
+  // Senza base la probabilità non si ripete: negli eventi di valore sta già nella riga sopra.
+  assert.equal(f, "A spingere il numero: quanto concede Torino (−7%).");
+  assert.equal(percheDellaLettura({
+    probabilita: 0.6, base: null, lato: "casa", verso: "Over", chi: "A", altro: "B",
+    cause: [{ nome: "il fattore campo", effetto: -0.05 }],
+  }), "La causa del modello va nel verso opposto: giocare in casa (−5%).");
+});
+
+test("senza cause, sotto un ripiego, non c'è un perché", () => {
+  assert.equal(percheDellaLettura({
+    probabilita: 0.6, base: 50, lato: "totale", verso: "Over", chi: "A", altro: "B", cause: [],
+  }), null);
+});
 
 test("dichiara il totale e chi è avanti quando lo scarto è netto", () => {
   const f = letturaSemplice("total_shots", "Atalanta", "Napoli", 14.6, 11.5, 26.1);

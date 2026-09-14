@@ -119,6 +119,8 @@ import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
+import { causeDellaLettura } from "@/server/iqstats/projection/cause";
+import { percheDellaLettura } from "@/components/match-projection-lettura";
 import { baseDiLega, baseDiSquadra } from "@/server/iqstats/base-di-lega";
 import { bersagliConArbitroEntrato } from "@/server/iqstats/projection/match";
 import { readMarket, readMatch } from "@/server/iqstats/match-reading";
@@ -914,6 +916,25 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // dagli stessi oggetti che i capitoli mostrano, quindi non puo' divergere da loro.
   const nomeFamiglia = (target: string) =>
     (FAMIGLIE[target]?.nome ?? target).toLowerCase();
+  // Il perché di una lettura, dalle cause del motore sullo stesso bersaglio: nessun calcolo
+  // nuovo, solo `causeDellaLettura` detto in parole semplici.
+  const perche = (l: {
+    readonly bersaglio: string;
+    readonly lato: "casa" | "trasferta" | "totale";
+    readonly verso: "Over" | "Under";
+    readonly probabilita: number;
+    readonly base: number | null;
+  }): string | null => {
+    const b = proiezioni?.bersagli.find((x) => x.target === l.bersaglio);
+    if (b === undefined) return null;
+    const fuori = l.lato === "trasferta";
+    return percheDellaLettura({
+      ...l,
+      cause: causeDellaLettura(l.lato, b.casa, b.trasferta),
+      chi: fuori ? detail.awayTeam : detail.homeTeam,
+      altro: fuori ? detail.homeTeam : detail.awayTeam,
+    });
+  };
   const analisi = analisiFinale({
     favorito: verdictFav?.name ?? null,
     // Una famiglia per lettura, senza ripetizioni, e non piu' di due: oltre e' un elenco.
@@ -1720,7 +1741,21 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         {!insight.allowed || analisi === null ? null : (
           <AnalisiFinale
             analisi={analisi}
-            eventiValore={proiezioni === null ? [] : eventiDiValore(proiezioni.bersagli, quoteDelBanco)}
+            eventiValore={proiezioni === null ? [] : eventiDiValore(proiezioni.bersagli, quoteDelBanco)
+              .map((e) => ({
+                ...e,
+                perche: perche({
+                  ...e,
+                  probabilita: e.nostra / 100,
+                  // La frequenza del campionato c'e' solo dove la stessa linea e' fra le letture.
+                  base: forti?.letture.find((l) => l.bersaglio === e.bersaglio && l.lato === e.lato
+                    && l.soglia === e.soglia && l.verso === e.verso)?.base ?? null,
+                }),
+              }))}
+            pronostico={proiezioni === null ? undefined : forti?.consigliato == null ? null : {
+              ...forti.consigliato,
+              perche: perche(forti.consigliato),
+            }}
             casa={detail.homeTeam}
             trasferta={detail.awayTeam}
           />

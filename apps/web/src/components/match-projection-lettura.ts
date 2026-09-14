@@ -105,3 +105,87 @@ export function etichettaSenzaQuote(nomeFamiglia: string): string {
   return `Il banco non apre linee di ${nomeFamiglia.toLowerCase()} su questa gara: `
     + "resta la nostra probabilità, senza un prezzo accanto.";
 }
+
+/** Una causa come esce da `causeDellaLettura`: il gruppo e la quota dell'atteso. */
+interface CausaDaDire {
+  readonly nome: string;
+  readonly effetto: number;
+}
+
+/**
+ * Il gruppo del motore detto con le squadre in campo. Sul totale le cause sono pesate sui
+ * due lati, quindi non appartengono a una squadra sola e si dicono al plurale.
+ */
+function nomeDellaCausa(nome: string, lato: "casa" | "trasferta" | "totale", chi: string, altro: string): string {
+  const totale = lato === "totale";
+  switch (nome) {
+    case "quanto concede l'avversario": return totale ? "quanto concedono le due difese" : `quanto concede ${altro}`;
+    case "quanto produce l'avversario": return totale ? "quanto producono le due squadre" : `quanto produce ${altro}`;
+    case "il riposo dell'avversario": return totale ? "il riposo delle due squadre" : `il riposo di ${altro}`;
+    case "l'incrocio fra attacco e difesa": return totale ? "l'incrocio fra attacchi e difese" : `${chi} contro la difesa di ${altro}`;
+    case "quanto subisce la squadra": return totale ? "quanto subiscono le due squadre" : `quanto subisce ${chi}`;
+    case "quanto produce la squadra": return totale ? "quanto producono le due squadre" : `quanto produce ${chi}`;
+    case "il livello della squadra": return totale ? "il rendimento abituale delle due squadre" : `il rendimento abituale di ${chi}`;
+    case "il fattore campo": return lato === "casa" ? "giocare in casa" : lato === "trasferta" ? "giocare fuori casa" : "il fattore campo";
+    case "la classifica": return "la posizione in classifica";
+    case "l'arbitro": return "l'arbitro designato";
+    case "gli undici": return "la formazione attesa";
+    case "la norma del campionato": return "il ritmo del campionato";
+    default: return nome;
+  }
+}
+
+function punti(effetto: number): string {
+  const n = Math.round(Math.abs(effetto) * 100);
+  return `${effetto >= 0 ? "+" : "−"}${n}%`;
+}
+
+function elenco(voci: readonly string[]): string {
+  return voci.length <= 1 ? (voci[0] ?? "") : `${voci.slice(0, -1).join(", ")} e ${voci.at(-1)}`;
+}
+
+/**
+ * Il perché di una lettura, in parole semplici, solo da quello che il motore ha già.
+ *
+ * **Due parti, e servono tutte e due.** Le cause dicono quanto ogni fattore sposta il
+ * modello rispetto a una squadra media, non perché la lettura batte il campionato: misurato
+ * il 14 settembre 2026, su 216 consigliati 19 avevano **tutte** le cause contro il verso. Per
+ * questo la frase dice prima dove cade il numero rispetto al campionato, e quando le cause
+ * frenano scrive «nonostante» invece di spacciarle per il motivo.
+ *
+ * `null` senza cause, sotto un ripiego: nessun modello ha parlato e non c'è un perché da dire.
+ *
+ * @param probabilita la nostra probabilità del verso, da 0 a 1
+ * @param base        quante volte quel verso succede nel campionato, da 0 a 100, o `null`
+ */
+export function percheDellaLettura(
+  { probabilita, base, cause, lato, verso, chi, altro }: {
+    readonly probabilita: number;
+    readonly base: number | null;
+    readonly cause: readonly CausaDaDire[];
+    readonly lato: "casa" | "trasferta" | "totale";
+    readonly verso: "Over" | "Under";
+    /** La squadra della lettura e l'avversaria; sul totale non contano. */
+    readonly chi: string;
+    readonly altro: string;
+  },
+): string | null {
+  if (cause.length === 0 || !Number.isFinite(probabilita)) return null;
+  const detta = (c: CausaDaDire) => `${nomeDellaCausa(c.nome, lato, chi, altro)} (${punti(c.effetto)})`;
+  // Un effetto positivo alza l'atteso: sta dalla parte dell'Over, contro l'Under.
+  const aFavore = cause.filter((c) => (c.effetto > 0) === (verso === "Over")).map(detta);
+  const contro = cause.filter((c) => (c.effetto > 0) !== (verso === "Over")).map(detta);
+
+  // Senza la frequenza del campionato la probabilità da sola ripeterebbe la riga sopra (negli
+  // eventi di valore sta già in «noi N%»): la frase parte dalle cause.
+  const dove = base === null || !Number.isFinite(base)
+    ? null
+    : `Diamo ${interoIt(probabilita * 100)}%, nel campionato succede nel ${interoIt(base)}% delle gare`;
+  if (aFavore.length === 0) {
+    return dove === null
+      ? `${contro.length === 1 ? "La causa del modello va" : "Le cause del modello vanno"} nel verso opposto: ${elenco(contro)}.`
+      : `${dove}, nonostante ${elenco(contro)} ${contro.length === 1 ? "vada" : "vadano"} nel verso opposto.`;
+  }
+  const frena = contro.length === 0 ? "" : ` ${contro.length === 1 ? "Frena" : "Frenano"} ${elenco(contro)}.`;
+  return `${dove === null ? "" : `${dove}. `}A spingere il numero: ${elenco(aFavore)}.${frena}`;
+}
