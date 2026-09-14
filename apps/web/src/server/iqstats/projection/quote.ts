@@ -52,6 +52,8 @@ export interface EventoQuotato {
   readonly fuori: string;
   /** Il giorno del calcio d'inizio in ISO, che e' meta' della chiave d'aggancio. */
   readonly giorno: string;
+  /** Il calcio d'inizio in millisecondi, per il ripiego sull'orario; `NaN` se illeggibile. */
+  readonly istante: number;
   /** Le linee per `bersaglio|lato`, gia' ripulite dai mercati combinati. */
   readonly linee: ReadonlyMap<string, readonly EsitoQuotato[]>;
   readonly gol: QuoteGol;
@@ -241,6 +243,7 @@ export function eventoQuotato(grezzo: EventoGrezzo): EventoQuotato {
     casa: grezzo.casa,
     fuori: grezzo.fuori,
     giorno: grezzo.inizio.slice(0, 10),
+    istante: new Date(grezzo.inizio).getTime(),
     linee: lineeDellEvento(grezzo.mercati),
     gol: golDellEvento(grezzo.mercati),
   };
@@ -273,6 +276,16 @@ function siIncontrano(a: ReadonlySet<string>, b: ReadonlySet<string>): boolean {
   return false;
 }
 
+/** Femminile, giovanili, riserve: un'altra squadra anche quando il nome e' lo stesso. */
+const SQUADRA_MINORE = /\((?:f|w)\)|\bwomen\b|\bu\s?\d{2}\b|\bii\b|\bb$/i;
+
+function minore(casa: string, fuori: string): boolean {
+  return SQUADRA_MINORE.test(casa.trim()) || SQUADRA_MINORE.test(fuori.trim());
+}
+
+/** Il ripiego sull'orario accetta solo eventi entro questa distanza dal nostro calcio d'inizio. */
+const TOLLERANZA_ORARIO_MS = 15 * 60_000;
+
 /**
  * L'evento del palinsesto che corrisponde alla nostra gara, `null` se non e' certo.
  *
@@ -280,6 +293,14 @@ function siIncontrano(a: ReadonlySet<string>, b: ReadonlySet<string>): boolean {
  * palinsesto porta solo nomi e data - e quando due eventi dello stesso giorno rispondono
  * ai due nomi, una quota attaccata alla gara sbagliata e' peggio di una quota assente.
  * Misurato sull'artefatto dell'11 settembre: 82 gare uniche su 102, 5 ambigue, 15 senza.
+ *
+ * **Ripiego sull'orario, solo se i due nomi non trovano niente.** Il palinsesto scrive le
+ * squadre a modo suo - «Zurigo», «Maiorca», «Sheffield Utd - Wolves», «Levadeiakos» - e
+ * misurato il 13 settembre 2026 sulle gare dal 13 al 16 la regola dei due nomi ne perdeva
+ * 19 su 105, 17 delle quali con linee di famiglia. Il ripiego vuole lo stesso calcio
+ * d'inizio (72 agganciate su 73 coincidono al minuto) e **una** delle due squadre; esclude
+ * femminile, giovanili e riserve quando la nostra gara non lo e', perche' «Zurich (F) -
+ * Basel (F)» alla stessa ora aveva agganciato FC Luzern-Basel. Ambiguo resta ambiguo.
  */
 export function agganciaGara(
   casa: string,
@@ -295,6 +316,21 @@ export function agganciaGara(
     if (evento.giorno !== giorno) continue;
     if (!siIncontrano(nostraCasa, paroleDiSquadra(evento.casa))) continue;
     if (!siIncontrano(nostraFuori, paroleDiSquadra(evento.fuori))) continue;
+    if (trovato !== null) return null;
+    trovato = evento;
+  }
+  if (trovato !== null) return trovato;
+
+  const istante = new Date(kickoff).getTime();
+  if (!Number.isFinite(istante)) return null;
+  const nostraMinore = minore(casa, fuori);
+  for (const evento of eventi) {
+    if (!(Math.abs(evento.istante - istante) <= TOLLERANZA_ORARIO_MS)) continue;
+    if (minore(evento.casa, evento.fuori) !== nostraMinore) continue;
+    if (
+      !siIncontrano(nostraCasa, paroleDiSquadra(evento.casa))
+      && !siIncontrano(nostraFuori, paroleDiSquadra(evento.fuori))
+    ) continue;
     if (trovato !== null) return null;
     trovato = evento;
   }

@@ -150,6 +150,20 @@ test("l'aggancio vuole entrambi i nomi e il giorno giusto", () => {
   );
 });
 
+test("se i due nomi non trovano niente, basta una squadra allo stesso orario", () => {
+  const palinsesto = [
+    eventoQuotato({ ...evento([]), casa: "Zurich (F)", fuori: "Basel (F)", inizio: "2026-09-13T14:30:00Z" }),
+    eventoQuotato({ ...evento([]), casa: "Zurigo", fuori: "Vaduz", inizio: "2026-09-13T12:00:00Z" }),
+  ];
+  assert.equal(
+    agganciaGara("FC Zürich", "FC Vaduz", "2026-09-13T12:00:00+00:00", palinsesto)?.casa, "Zurigo",
+  );
+  // Un'ora dopo non e' la stessa gara, anche con la stessa squadra.
+  assert.equal(agganciaGara("FC Zürich", "FC Vaduz", "2026-09-13T13:00:00+00:00", palinsesto), null);
+  // Il femminile alla stessa ora non e' la gara degli uomini.
+  assert.equal(agganciaGara("FC Luzern", "Basel", "2026-09-13T14:30:00+00:00", palinsesto), null);
+});
+
 test("una gara ambigua si butta invece di prendere il prezzo sbagliato", () => {
   const palinsesto = [
     eventoQuotato({ ...evento([]), casa: "Venezia", fuori: "Fiorentina" }),

@@ -916,7 +916,9 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .engine-senza-quote { margin: 10px 13px 0; font-size: 13px; line-height: 1.5; color: var(--card-ink-3); }
 /* Il valore di una soglia quotata, sotto la coppia O/U. Non è un verso: niente blu/arancio,
    resta inchiostro; il positivo si distingue per peso, non per colore. */
-.engine-valore { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: var(--card-ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Il verdetto va a capo: in una colonna da 60 px «senza valore» su una riga si tagliava a
+   «senza valo»; nei multigol anche «valore +11» non ci stava. */
+.engine-valore { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 10.5px; line-height: 1.25; color: var(--card-ink-3); font-variant-numeric: tabular-nums; }
 .engine-valore.is-valore { color: var(--card-ink); font-weight: 600; }
 
 /* Eventi di valore in cima all'analisi finale: schede su carta tenue, numeri in mono. */

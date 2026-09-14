@@ -27,7 +27,7 @@ import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import {
-  motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteRaccolteIl,
+  motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteGolDiGara, quoteRaccolteIl,
 } from "@/server/iqstats/expected-famiglie";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
@@ -1277,6 +1277,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             homeTeam={detail.homeTeam}
             awayTeam={detail.awayTeam}
             ultima={proiezioni.ultimaOsservazione}
+            odds={odds}
+            fastbet={quoteGolDiGara(eventId)}
+            fastbetIl={quoteRaccolteIl()}
           />
         ) : proiezioni === null ? null : (
           // La sezione Gol poggia sui gol attesi osservati. Dove quella colonna non e'

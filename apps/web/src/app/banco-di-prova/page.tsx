@@ -309,6 +309,10 @@ export default async function ExpectedPage({ searchParams }: Props) {
                 homeTeam={casa.nome}
                 awayTeam={trasferta.nome}
                 ultima={proiezioni.ultimaOsservazione}
+                // Un accostamento inventato non ha un palinsesto: nessun prezzo da mostrare.
+                odds={null}
+                fastbet={null}
+                fastbetIl={null}
               />
             ) : null}
 

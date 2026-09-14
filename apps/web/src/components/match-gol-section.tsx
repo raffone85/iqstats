@@ -8,8 +8,11 @@
 // il limite del modello sta scritto in fondo alla sezione, non solo nel codice.
 import { MatchCombinazione } from "./match-combinazione";
 
+import type { GolDiGara } from "@/server/iqstats/expected-famiglie";
+import type { MatchOdds } from "@/server/iqstats/odds";
 import type { GolDellaGara } from "@/server/iqstats/projection-runtime";
 import type { CellaMatrice, Intervallo } from "@/server/iqstats/projection/gol";
+import { TETTO_VALORE, testoValore, valoreInGruppo } from "@/server/iqstats/projection/valore";
 
 function valore(numero: number): string {
   return numero.toFixed(2).replace(".", ",");
@@ -17,6 +20,10 @@ function valore(numero: number): string {
 
 function percento(quota: number): string {
   return String(Math.round(quota * 100)) + "%";
+}
+
+function prezzo(quota: number): string {
+  return quota.toFixed(2).replace(".", ",");
 }
 
 /** Una gara, non «1 gare»: il campione si legge in italiano. */
@@ -27,6 +34,37 @@ function gare(quante: number, dove: string): string {
 interface Voce {
   readonly etichetta: string;
   readonly probabilita: number;
+  /** La quota dell'esito, dove una delle due fonti la apre. */
+  readonly quota?: number | null;
+  readonly valore?: number | null;
+}
+
+type QuoteFastbet = NonNullable<GolDiGara["quote"]>;
+
+/**
+ * Il prezzo di un esito e il suo valore, da **una** fonte sola per gruppo.
+ *
+ * Prima la quota di consenso; dove il consenso non ha quell'esito, Fastbet. Il gruppo con
+ * cui si toglie il margine viene dalla stessa fonte del prezzo: mescolare due banchi nella
+ * stessa somma darebbe una probabilità che non è di nessuno dei due.
+ */
+function conPrezzo(
+  etichetta: string,
+  probabilita: number,
+  consenso: { readonly quota: number | null; readonly gruppo: readonly (number | null)[] },
+  fastbet: { readonly quota: number | null; readonly gruppo: readonly (number | null)[] },
+  daFastbet: Set<string>,
+  mercato: string,
+  copertura = 1,
+): Voce {
+  const fonte = consenso.quota !== null ? consenso : fastbet;
+  if (fonte === fastbet && fastbet.quota !== null) daFastbet.add(mercato);
+  return {
+    etichetta,
+    probabilita,
+    quota: fonte.quota,
+    valore: valoreInGruppo(probabilita, fonte.quota, fonte.gruppo, copertura),
+  };
 }
 
 /**
@@ -45,7 +83,15 @@ function Scala({ voci, titolo }: { readonly voci: readonly Voce[]; readonly tito
           key={voce.etichetta}
         >
           <span className="engine-step-line">{voce.etichetta}</span>
-          <span className="engine-step-prob">{percento(voce.probabilita)}</span>
+          <span className="engine-step-prob">
+            {percento(voce.probabilita)}
+            {voce.quota == null ? null : <i className="engine-prezzo">{prezzo(voce.quota)}</i>}
+          </span>
+          {voce.valore == null ? null : (
+            <span className={voce.valore > 0 && voce.valore <= TETTO_VALORE ? "engine-valore is-valore" : "engine-valore"}>
+              {testoValore(voce.valore)}
+            </span>
+          )}
         </li>
       ))}
     </ul>
@@ -64,11 +110,25 @@ function Riga({ titolo, children }: {
   );
 }
 
-function daIntervalli(intervalli: readonly Intervallo[]): Voce[] {
-  return intervalli.map((i) => ({
-    etichetta: `${i.da}-${i.a}`,
-    probabilita: i.probabilita,
-  }));
+/**
+ * I multigol: la quota di consenso non li copre, quindi il prezzo è di Fastbet. Un
+ * intervallo non ha un lato opposto, e il valore si legge sulla quota grezza, prudente.
+ */
+function daIntervalli(
+  intervalli: readonly Intervallo[],
+  quotati: QuoteFastbet["multigolPartita"] | undefined,
+  daFastbet: Set<string>,
+): Voce[] {
+  return intervalli.map((i) => {
+    const quota = quotati?.find((q) => q.da === i.da && q.a === i.a)?.quota ?? null;
+    if (quota !== null) daFastbet.add("multigol");
+    return {
+      etichetta: `${i.da}-${i.a}`,
+      probabilita: i.probabilita,
+      quota,
+      valore: valoreInGruppo(i.probabilita, quota, [quota]),
+    };
+  });
 }
 
 const ESITI: ReadonlyArray<{ chiave: CellaMatrice["esito"]; nome: string }> = [
@@ -163,6 +223,11 @@ type Props = {
    * falsa come copertura di questa gara.
    */
   readonly ultima: string | null;
+  /** La quota di consenso della gara, `null` dove la fonte non ne ha. */
+  readonly odds: MatchOdds | null;
+  /** I prezzi di Fastbet sui gol, per quello che il consenso non copre. */
+  readonly fastbet: QuoteFastbet | null;
+  readonly fastbetIl: string | null;
 };
 
 const GIORNO: Intl.DateTimeFormatOptions = {
@@ -175,10 +240,56 @@ function giorno(iso: string): string {
     : data.toLocaleDateString("it-IT", GIORNO);
 }
 
-export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
+export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet, fastbetIl }: Props) {
   const m = gol.mercati;
   const esatti = (quali: readonly number[]): Voce[] =>
     quali.map((probabilita, gol) => ({ etichetta: `${gol}`, probabilita }));
+
+  const daFastbet = new Set<string>();
+  const consenso = (mercato: string, chiavi: readonly string[], chiave: string) => {
+    const esiti = odds?.markets[mercato];
+    const quota = (k: string) => esiti?.find((o) => o.key === k)?.consensusOdds ?? null;
+    return { quota: quota(chiave), gruppo: chiavi.map(quota) };
+  };
+  const banco = (quote: readonly (number | null)[], i: number) => ({ quota: quote[i], gruppo: quote });
+
+  const esitoFb = [fastbet?.esito?.uno ?? null, fastbet?.esito?.x ?? null, fastbet?.esito?.due ?? null];
+  const esito: Voce[] = ([["1", m.esito.uno, "HOME"], ["X", m.esito.x, "DRAW"], ["2", m.esito.due, "AWAY"]] as const)
+    .map(([etichetta, p, chiave], i) => conPrezzo(
+      etichetta, p, consenso("1x2", ["HOME", "DRAW", "AWAY"], chiave), banco(esitoFb, i), daFastbet, "esito",
+    ));
+
+  const over: Voce[] = m.overUnder.map((linea) => {
+    const soglia = String(linea.linea);
+    const fb = (verso: string) =>
+      fastbet?.overUnder.find((q) => q.soglia === linea.linea && q.verso === verso)?.quota ?? null;
+    return conPrezzo(
+      `Over ${soglia.replace(".", ",")}`, linea.sopra,
+      consenso(`over_under_${soglia.replace(".", "")}`, [`over@${soglia}`, `under@${soglia}`], `over@${soglia}`),
+      banco([fb("Over"), fb("Under")], 0), daFastbet, "gol totali",
+    );
+  });
+
+  const ggFb = [fastbet?.gol ?? null, fastbet?.noGol ?? null];
+  const entrambe: Voce[] = [
+    conPrezzo("Sì", m.gg, consenso("btts", ["yes", "no"], "yes"), banco(ggFb, 0), daFastbet, "gol/nogol"),
+    conPrezzo("No", m.ng, consenso("btts", ["yes", "no"], "no"), banco(ggFb, 1), daFastbet, "gol/nogol"),
+  ];
+
+  // Ogni risultato cade in due doppie chance su tre: le probabilità sommano a due, e il
+  // margine si toglie riportando a due la somma delle inverse.
+  const dcFb = [fastbet?.doppiaChance?.unoX ?? null, fastbet?.doppiaChance?.xDue ?? null, fastbet?.doppiaChance?.unoDue ?? null];
+  const doppia: Voce[] = ([["1X", m.doppiaChance.unoX], ["X2", m.doppiaChance.xDue], ["12", m.doppiaChance.unoDue]] as const)
+    .map(([etichetta, p], i) => conPrezzo(
+      etichetta, p, consenso("double_chance", ["1X", "X2", "12"], etichetta), banco(dcFb, i), daFastbet,
+      "doppia chance", 2,
+    ));
+
+  const multiPartita = daIntervalli(m.multigolPartita, fastbet?.multigolPartita, daFastbet);
+  const multiCasa = daIntervalli(m.casa.multigol, fastbet?.multigolCasa, daFastbet);
+  const multiTrasferta = daIntervalli(m.trasferta.multigol, fastbet?.multigolTrasferta, daFastbet);
+  const conQuota = [...esito, ...over, ...entrambe, ...doppia, ...multiPartita, ...multiCasa, ...multiTrasferta]
+    .some((v) => v.quota != null);
 
   return (
     <section className="dossier-panel" aria-labelledby="gol-title">
@@ -215,34 +326,36 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
           </ul>
         </Riga>
         <Riga titolo="Esito finale">
-          <Scala
-            titolo="Probabilità dei tre esiti"
-            voci={[
-              { etichetta: "1", probabilita: m.esito.uno },
-              { etichetta: "X", probabilita: m.esito.x },
-              { etichetta: "2", probabilita: m.esito.due },
-            ]}
-          />
+          <Scala titolo="Probabilità dei tre esiti" voci={esito} />
         </Riga>
         <Riga titolo="Gol totali, sopra la linea">
-          <Scala
-            titolo="Probabilità di superare ciascuna linea"
-            voci={m.overUnder.map((linea) => ({
-              etichetta: `Over ${String(linea.linea).replace(".", ",")}`,
-              probabilita: linea.sopra,
-            }))}
-          />
+          <Scala titolo="Probabilità di superare ciascuna linea" voci={over} />
         </Riga>
         <Riga titolo="Entrambe le squadre segnano">
-          <Scala
-            titolo="Probabilità che segnino entrambe"
-            voci={[
-              { etichetta: "Sì", probabilita: m.gg },
-              { etichetta: "No", probabilita: m.ng },
-            ]}
-          />
+          <Scala titolo="Probabilità che segnino entrambe" voci={entrambe} />
         </Riga>
       </ul>
+
+      {/* Da dove viene il prezzo, detto una volta per la sezione: il consenso prima, Fastbet
+          solo per i mercati che il consenso non apre. Senza prezzi lo si dice, senza zeri. */}
+      <p className="engine-obs">
+        {!conQuota ? (
+          <>Su questa gara nessuna fonte quota i mercati dei gol: le percentuali restano senza prezzo.</>
+        ) : (
+          <>
+            Accanto alle percentuali, dove esiste, la quota di consenso
+            {odds === null ? null : <> su {odds.bookmakers} operatori</>}
+            {daFastbet.size === 0 ? null : (
+              <>
+                ; per {[...daFastbet].join(", ")} la quota di Fastbet
+                {fastbetIl === null ? null : <> raccolta il {giorno(fastbetIl)}</>}
+              </>
+            )}
+            . Il valore dice di quanti punti la nostra probabilità supera quella del prezzo, al
+            netto del margine dove il mercato è completo: non dice che l&apos;esito accadrà.
+          </>
+        )}
+      </p>
 
       {/* **I quattro mercati derivati si aprono.** Doppia chance, gol esatti, risultati e
           multigol escono dalla stessa distribuzione dei quattro sopra: non sono
@@ -252,14 +365,7 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
         <summary>Doppia chance, gol esatti, risultati, esito con la linea e multigol</summary>
         <ul className="engine-rows">
         <Riga titolo="Doppia chance">
-          <Scala
-            titolo="Probabilità delle doppie chance"
-            voci={[
-              { etichetta: "1X", probabilita: m.doppiaChance.unoX },
-              { etichetta: "X2", probabilita: m.doppiaChance.xDue },
-              { etichetta: "12", probabilita: m.doppiaChance.unoDue },
-            ]}
-          />
+          <Scala titolo="Probabilità delle doppie chance" voci={doppia} />
         </Riga>
         <Riga titolo="Quanti gol segna ciascuna">
           <ul className="engine-splits">
@@ -299,17 +405,17 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima }: Props) {
             <li className="engine-split">
               <span className="engine-who">Totale gara</span>
               <span className="engine-exp" aria-hidden="true" />
-              <Scala titolo="Multigol di partita" voci={daIntervalli(m.multigolPartita)} />
+              <Scala titolo="Multigol di partita" voci={multiPartita} />
             </li>
             <li className="engine-split">
               <span className="engine-who">{homeTeam}</span>
               <span className="engine-exp" aria-hidden="true" />
-              <Scala titolo={`Multigol di ${homeTeam}`} voci={daIntervalli(m.casa.multigol)} />
+              <Scala titolo={`Multigol di ${homeTeam}`} voci={multiCasa} />
             </li>
             <li className="engine-split">
               <span className="engine-who">{awayTeam}</span>
               <span className="engine-exp" aria-hidden="true" />
-              <Scala titolo={`Multigol di ${awayTeam}`} voci={daIntervalli(m.trasferta.multigol)} />
+              <Scala titolo={`Multigol di ${awayTeam}`} voci={multiTrasferta} />
             </li>
           </ul>
         </Riga>

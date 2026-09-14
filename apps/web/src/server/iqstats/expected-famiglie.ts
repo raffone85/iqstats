@@ -214,6 +214,15 @@ export function quoteDiGara(gara: number): readonly RigaQuotata[] {
   return g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
 }
 
+/**
+ * I prezzi di Fastbet sui gol di una gara, per la card Gol del dossier: `null` dove la gara
+ * non si aggancia al palinsesto. Nel dossier se ne usano solo Over 4,5 e i multigol, i
+ * mercati che la quota di consenso non copre: un esito, un prezzo.
+ */
+export function quoteGolDiGara(gara: number): NonNullable<GolDiGara["quote"]> | null {
+  return rapporto.gare.find((x) => x.gara === gara)?.gol?.quote ?? null;
+}
+
 /** Quando il palinsesto e' stato raccolto, o `null` se l'artefatto non lo dichiara. */
 export function quoteRaccolteIl(): string | null {
   return rapporto.quote_raccolte_il ?? null;

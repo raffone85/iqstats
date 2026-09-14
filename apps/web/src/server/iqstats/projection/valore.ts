@@ -35,6 +35,47 @@ export function valoreSoglia(
  */
 export const TETTO_VALORE = 15;
 
+/**
+ * La probabilità implicita di un esito dentro il suo gruppo chiuso: 1X2 (tre esiti), doppia
+ * chance, gol/nogol, un Over con il suo Under, un intervallo di multigol da solo.
+ *
+ * Stessa regola di `implicitaSoglia`, estesa ai gruppi di più esiti: con il gruppo intero il
+ * margine si toglie riportando la somma delle inverse a `copertura` (1 per esiti che si
+ * escludono, 2 per la doppia chance, dove ogni risultato cade in due esiti su tre); se al
+ * gruppo manca un prezzo si usa `1/quota`, stima prudente. `null` senza la quota dell'esito.
+ *
+ * @param gruppo le quote di tutti gli esiti del gruppo, esito compreso, `null` dove mancano
+ */
+export function implicitaInGruppo(
+  quota: number | null,
+  gruppo: readonly (number | null)[],
+  copertura = 1,
+): number | null {
+  if (quota === null || !(quota > 0)) return null;
+  if (gruppo.length < 2 || gruppo.some((q) => q === null || !(q > 0))) return 1 / quota;
+  const somma = gruppo.reduce<number>((s, q) => s + 1 / (q as number), 0);
+  return (copertura / quota) / somma;
+}
+
+/** Il valore in punti di un esito nel suo gruppo, come `valoreSoglia`. */
+export function valoreInGruppo(
+  prob: number,
+  quota: number | null,
+  gruppo: readonly (number | null)[],
+  copertura = 1,
+): number | null {
+  const implicita = implicitaInGruppo(quota, gruppo, copertura);
+  if (implicita === null || !Number.isFinite(prob)) return null;
+  return Math.round((prob - implicita) * 100);
+}
+
+/** Il verdetto scritto accanto a un prezzo: una sola frase per tutto il dossier. */
+export function testoValore(valore: number): string {
+  return valore > TETTO_VALORE
+    ? "valore non valutabile"
+    : valore > 0 ? `valore +${valore}` : "senza valore";
+}
+
 export function implicitaSoglia(
   quotaLato: number | null,
   quotaAltro: number | null,

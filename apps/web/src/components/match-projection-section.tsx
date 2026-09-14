@@ -13,7 +13,7 @@ import type {
 import type { GaraOsservataConNome } from "@/server/iqstats/projection-runtime";
 import type { MediaOsservata } from "@/server/iqstats/projection-store";
 import { etichettaPreliminare, etichettaSenzaQuote, letturaSemplice } from "@/components/match-projection-lettura";
-import { TETTO_VALORE, valoreSoglia } from "@/server/iqstats/projection/valore";
+import { TETTO_VALORE, testoValore, valoreSoglia } from "@/server/iqstats/projection/valore";
 import { daAccendere, soglieReali, type Accensione } from "@/server/iqstats/projection/linea-scelta";
 import { BERSAGLI_CON_ARBITRO, type Linea, type ProiezioneDiGara } from "@/server/iqstats/projection/match";
 import type { ProiezioneDiProduzione } from "@/server/iqstats/projection/production";
@@ -222,9 +222,7 @@ function Soglia({ linea, acceso, sopra: qSopra, sotto: qSotto }: {
       </span>
       {valoreLinea === null ? null : (
         <span className={valoreLinea > 0 && valoreLinea <= TETTO_VALORE ? "engine-valore is-valore" : "engine-valore"}>
-          {valoreLinea > TETTO_VALORE
-            ? "valore non valutabile"
-            : valoreLinea > 0 ? `valore +${valoreLinea}` : "senza valore"}
+          {testoValore(valoreLinea)}
         </span>
       )}
     </li>
