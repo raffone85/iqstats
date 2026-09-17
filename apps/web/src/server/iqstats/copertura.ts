@@ -12,7 +12,7 @@
 // le squadre che compaiono, e poi ogni gara si risponde da sola.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import type { MatchListItem } from "./matches.ts";
 
 /** Sotto questo campione un arbitro non ha una scheda: la stessa soglia dell'area Arbitri. */
@@ -50,17 +50,60 @@ export async function coperturaDelleGare(
   gare: readonly MatchListItem[],
 ): Promise<ReadonlyMap<number, CoperturaDiGara>> {
   const vuota = new Map<number, CoperturaDiGara>();
-  const sql = connessione();
-  if (sql === null || gare.length === 0) return vuota;
+  if (gare.length === 0) return vuota;
 
+  // Ordinati: sono la chiave della cache, e lo stesso elenco deve dare la stessa chiave.
   const squadre = [...new Set(
     gare.flatMap((g) => [g.homeTeamId, g.awayTeamId]).filter((v): v is number => v !== null),
-  )];
+  )].sort((a, b) => a - b);
   const arbitri = [...new Set(
     gare.map((g) => g.refereeId).filter((v): v is number => v !== null),
-  )];
+  )].sort((a, b) => a - b);
   if (squadre.length === 0) return vuota;
 
+  const letto = await righeDiCopertura(squadre, arbitri);
+  if (letto === null) return vuota;
+
+  const perLato = new Map<string, { corrente: number; totale: number }>();
+  const perSquadra = new Map<string, number>();
+  for (const r of letto.righe) {
+    perLato.set(`${r.lega}:${r.squadra}:${r.side}`, {
+      corrente: Number(r.corrente),
+      totale: Number(r.totale),
+    });
+    perSquadra.set(r.squadra, (perSquadra.get(r.squadra) ?? 0) + Number(r.totale));
+  }
+  const conScheda = new Set(letto.conScheda);
+
+  const fuori = new Map<number, CoperturaDiGara>();
+  for (const g of gare) {
+    const casa = perLato.get(chiave(g.leagueId, g.homeTeamId, "home"));
+    const ospite = perLato.get(chiave(g.leagueId, g.awayTeamId, "away"));
+    const storiaCasa = perSquadra.get(String(g.homeTeamId)) ?? 0;
+    const storiaOspite = perSquadra.get(String(g.awayTeamId)) ?? 0;
+    fuori.set(g.eventId, {
+      proiezione: (casa?.corrente ?? 0) > 0 && (ospite?.corrente ?? 0) > 0,
+      storia: storiaCasa > 0 && storiaOspite > 0,
+      arbitro: g.refereeId !== null && conScheda.has(g.refereeId),
+    });
+  }
+  return fuori;
+}
+
+/**
+ * Le righe grezze della copertura, in JSON puro perche' passano dalla cache.
+ *
+ * **Sta in cache dal 17 settembre 2026, ed e' misurato.** `/partite` la chiamava a ogni
+ * render - 1.492 richieste in 45 minuti quel pomeriggio - e la query «recente» legge tutta la
+ * tabella delle osservazioni: 17 ms a database scarico, media 1,8 s e massimo 116 s in
+ * produzione, e il pooler da 15 posti saturo.
+ */
+async function righeDiCoperturaDaLeggere(
+  squadre: readonly number[],
+  arbitri: readonly number[],
+): Promise<{ righe: Riga[]; conScheda: number[] } | null> {
+  const sql = connessione();
+  if (sql === null) return null;
   try {
     const righe = await sql<Riga[]>`
       with recente as (
@@ -78,49 +121,26 @@ export async function coperturaDelleGare(
       join football.competitions c on c.id = o.competition_id
       join recente r on r.competition_id = o.competition_id
       join football.teams t on t.id = o.team_id
-      where t.source_id = any(${squadre}::bigint[])
+      where t.source_id = any(${[...squadre]}::bigint[])
       group by 1, 2, 3
     `;
-
-    const perLato = new Map<string, { corrente: number; totale: number }>();
-    const perSquadra = new Map<string, number>();
-    for (const r of righe) {
-      perLato.set(`${r.lega}:${r.squadra}:${r.side}`, {
-        corrente: Number(r.corrente),
-        totale: Number(r.totale),
-      });
-      const s = r.squadra;
-      perSquadra.set(s, (perSquadra.get(s) ?? 0) + Number(r.totale));
-    }
-
-    const conScheda = new Set<number>();
+    const conScheda: number[] = [];
     if (arbitri.length > 0) {
       const righeArbitro = await sql<Array<{ source_id: string }>>`
         select r.source_id::text
         from football.referees r
         join football.team_match_observations o on o.referee_id = r.id
-        where r.source_id = any(${arbitri}::bigint[])
+        where r.source_id = any(${[...arbitri]}::bigint[])
           and o.fouls is not null and o.yellow_cards is not null
         group by 1
         having count(distinct o.match_id) >= ${GARE_ARBITRO}
       `;
-      for (const r of righeArbitro) conScheda.add(Number(r.source_id));
+      for (const r of righeArbitro) conScheda.push(Number(r.source_id));
     }
-
-    const fuori = new Map<number, CoperturaDiGara>();
-    for (const g of gare) {
-      const casa = perLato.get(chiave(g.leagueId, g.homeTeamId, "home"));
-      const ospite = perLato.get(chiave(g.leagueId, g.awayTeamId, "away"));
-      const storiaCasa = perSquadra.get(String(g.homeTeamId)) ?? 0;
-      const storiaOspite = perSquadra.get(String(g.awayTeamId)) ?? 0;
-      fuori.set(g.eventId, {
-        proiezione: (casa?.corrente ?? 0) > 0 && (ospite?.corrente ?? 0) > 0,
-        storia: storiaCasa > 0 && storiaOspite > 0,
-        arbitro: g.refereeId !== null && conScheda.has(g.refereeId),
-      });
-    }
-    return fuori;
+    return { righe: [...righe].map((r) => ({ ...r })), conScheda };
   } catch {
-    return vuota;
+    return null;
   }
 }
+
+const righeDiCopertura = inCache("righeDiCopertura", righeDiCoperturaDaLeggere);
