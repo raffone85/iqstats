@@ -79,7 +79,8 @@ function Gara({ gara, copertura }: {
 }) {
   return (
     <li>
-      <Link className="partite-row giornata-row" href={`/match/${gara.eventId}`}>
+      {/* Senza prefetch: il dossier e' la pagina piu' cara, si disegna quando si apre. */}
+      <Link className="partite-row giornata-row" href={`/match/${gara.eventId}`} prefetch={false}>
         <Quando iso={gara.kickoff} />
         <span className="partite-teams">
           <span className="giornata-sfida">

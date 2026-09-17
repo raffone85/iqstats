@@ -70,7 +70,8 @@ export function VetrinaSection({ letture, calcolataIl }: Props) {
             : voce.lato === "trasferta" ? voce.fuori : "Totale gara";
           return (
             <li key={`${voce.gara}-${voce.bersaglio}-${voce.lato}`}>
-              <Link className="partite-row" href={`/match/${voce.gara}`}>
+              {/* Senza prefetch: il dossier e' la pagina piu' cara, si disegna quando si apre. */}
+              <Link className="partite-row" href={`/match/${voce.gara}`} prefetch={false}>
                 <span className="partite-time">{indice + 1}</span>
                 <span className="partite-teams">
                   {voce.casa} - {voce.fuori}

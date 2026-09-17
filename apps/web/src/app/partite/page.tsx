@@ -397,7 +397,11 @@ export default async function PartitePage({ searchParams }: PartitePageProps) {
                     const outcome = prediction ? readOutcome(prediction, m.homeScore, m.awayScore) : null;
                     return (
                       <li key={m.eventId}>
-                        <Link className="partite-row" href={`/match/${m.eventId}`}>
+                        {/* **Senza prefetch.** Un dossier costa le query piu' pesanti del
+                            prodotto: disegnarne trenta perche' sono entrati nello schermo ha
+                            esaurito il pooler del database il 16 settembre 2026. Si apre
+                            quando lo si apre. */}
+                        <Link className="partite-row" href={`/match/${m.eventId}`} prefetch={false}>
                           <span className="partite-time">{formatTime(m.kickoff)}</span>
                           <span className="partite-teams">
                             <span className="partite-team"><Crest name={m.homeTeam} teamId={m.homeTeamId} />{m.homeTeam}</span>

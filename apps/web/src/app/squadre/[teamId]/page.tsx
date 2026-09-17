@@ -658,7 +658,8 @@ export default async function TeamPage({ params, searchParams }: TeamPageProps) 
                 const opponent = home ? match.awayTeam : match.homeTeam;
                 return (
                   <li key={match.id}>
-                    <Link href={`/match/${match.id}`} className="squad-fixture">
+                    {/* Senza prefetch: il dossier e' la pagina piu' cara, si disegna quando si apre. */}
+                    <Link href={`/match/${match.id}`} className="squad-fixture" prefetch={false}>
                       <span className="squad-fixture-when">{formatKickoff(match.kickoffAt)}</span>
                       <span className="squad-fixture-who">
                         <b>

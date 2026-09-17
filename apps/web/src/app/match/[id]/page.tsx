@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { AggiornamentoLive } from "@/components/aggiornamento-live";
 import { LeagueIdentity } from "@/components/league-identity";
 import { ProductShell } from "@/components/product-shell";
 import { SezioneRiservata } from "@/components/sezione-riservata";
@@ -114,7 +113,7 @@ import {
 import { getMatchLineups, type TeamLineup } from "@/server/iqstats/lineups";
 import { haTabellaDiBase, isRuolo, letturaGiocatori } from "@/server/iqstats/giocatori-lettura";
 import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
-import { getLeaguesIndex, MATCHES_TTL_MS } from "@/server/iqstats/matches";
+import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
@@ -1139,12 +1138,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
                 <span className="oggi-hero-ref-nota">{avvisoArbitro.riga}</span>
               </p>
             )}
-            {/* A gara in corso il punteggio in testata si muove da solo. Fuori dalla gara in
-                corso il componente non rende nulla e non arma nessun timer. */}
-            <AggiornamentoLive
-              gareLive={statoInGioco(detail.status) ? 1 : 0}
-              ogniMs={MATCHES_TTL_MS}
-            />
+            {/* **Il dossier non si aggiorna da solo, e non e' una dimenticanza.** Rifarlo
+                significa rifare le query piu' pesanti del prodotto - scontri comuni, base di
+                lega, giocatori, arbitro - che il 16 settembre 2026 hanno preso da 20 a 120
+                secondi l'una e hanno esaurito il pooler del database, lasciando Auth senza
+                connessioni. Il punteggio dal vivo resta su /partite, che e' leggera. */}
           </div>
         </article>
 

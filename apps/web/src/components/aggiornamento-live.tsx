@@ -19,8 +19,14 @@ import { useRouter } from "next/navigation";
  * lascia che React riconcili: nessun punteggio scritto a mano dentro un nodo, quindi nessuna
  * riga che resta indietro rispetto al resto della gara.
  *
- * ponytail: nessun controllo di `visibilityState`. I browser rallentano gia' i timer nelle
- * schede in secondo piano; se un giorno la misura dicesse che non basta, si aggiunge qui.
+ * **Una scheda nascosta non chiede niente.** Il commento precedente diceva che i browser
+ * rallentano da soli i timer in secondo piano: misurato il 16 settembre 2026, non basta.
+ * `/partite` ha ricevuto **1.677 richieste in due ore** da schede lasciate aperte, ognuna un
+ * render completo lato server; con i dossier aperti insieme il pooler del database e' arrivato
+ * a «max clients reached», e Auth, che quelle connessioni le usa per rinnovare le sessioni,
+ * ha smesso di rispondere. Ora il battito si ferma quando la scheda non si vede e riprende
+ * quando torna in primo piano, con un aggiornamento subito, perche' al ritorno il punteggio
+ * dev'essere quello di adesso.
  */
 export function AggiornamentoLive({
   gareLive,
@@ -31,8 +37,20 @@ export function AggiornamentoLive({
 
   useEffect(() => {
     if (!attivo) return;
-    const battito = setInterval(() => router.refresh(), ogniMs);
-    return () => clearInterval(battito);
+    let battito: ReturnType<typeof setInterval> | undefined;
+    const ferma = () => { if (battito !== undefined) { clearInterval(battito); battito = undefined; } };
+    const avvia = () => { ferma(); battito = setInterval(() => router.refresh(), ogniMs); };
+    const alCambio = () => {
+      if (document.visibilityState === "hidden") return ferma();
+      router.refresh();
+      avvia();
+    };
+    if (document.visibilityState === "visible") avvia();
+    document.addEventListener("visibilitychange", alCambio);
+    return () => {
+      ferma();
+      document.removeEventListener("visibilitychange", alCambio);
+    };
   }, [attivo, ogniMs, router]);
 
   if (!attivo) return null;
