@@ -134,6 +134,66 @@ export async function baseDiLega(
 }
 
 /**
+ * Quante volte, in quella lega e stagione, la casa ne fa di piu' (1), pari (X) o la
+ * trasferta di piu' (2), per bersaglio. Chiave `bersaglio|esito`; stesso minimo di gare.
+ */
+export async function baseDegliEsiti(
+  competitionSourceId: number,
+  seasonSourceId: number,
+  bersagli: readonly string[],
+): Promise<Map<string, Base> | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+  const validi = [...new Set(bersagli)].filter((b) => COLONNA[b] !== undefined);
+  if (validi.length === 0) return new Map();
+  const conti = validi
+    .map((b) => {
+      const c = COLONNA[b];
+      return `sign(max(o.${c}) filter (where o.side = 'home')`
+        + ` - max(o.${c}) filter (where o.side = 'away')) as d_${b}`;
+    })
+    .join(", ");
+  const quote = validi
+    .flatMap((b) => [
+      `(count(*) filter (where d_${b} is not null))::text as n_${b}`,
+      `(avg((d_${b} > 0)::int) filter (where d_${b} is not null))::text as u_${b}`,
+      `(avg((d_${b} = 0)::int) filter (where d_${b} is not null))::text as x_${b}`,
+      `(avg((d_${b} < 0)::int) filter (where d_${b} is not null))::text as d2_${b}`,
+    ])
+    .join(", ");
+  try {
+    const righe = await sql<Record<string, string | null>[]>`
+      with g as (
+        select o.match_id, ${sql.unsafe(conti)}
+        from football.team_match_observations o
+        join football.competitions c on c.id = o.competition_id
+        join football.seasons s on s.id = o.season_id
+        where c.source_id = ${competitionSourceId}::bigint
+          and s.source_id = ${seasonSourceId}::bigint
+        group by 1
+        having count(*) = 2
+      )
+      select ${sql.unsafe(quote)}
+      from g
+    `;
+    const riga = righe[0];
+    if (riga === undefined) return null;
+    const mappa = new Map<string, Base>();
+    for (const b of validi) {
+      const n = Number(riga[`n_${b}`]);
+      if (!Number.isFinite(n) || n < GARE_MINIME) continue;
+      for (const [esito, colonna] of [["1", "u_"], ["X", "x_"], ["2", "d2_"]] as const) {
+        const q = Number(riga[colonna + b]);
+        if (Number.isFinite(q)) mappa.set(`${b}|${esito}`, { quota: q * 100, gare: n });
+      }
+    }
+    return mappa;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Sotto queste gare una frequenza di squadra non e' una frequenza.
  *
  * **E' quindici e non trenta, ed e' una misura.** Restringere al lato che la squadra

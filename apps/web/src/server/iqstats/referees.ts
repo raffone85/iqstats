@@ -15,6 +15,7 @@
 import "server-only";
 
 import { connessione } from "./lettura.ts";
+import type { TendenzaArbitro } from "./projection/letture-forti.ts";
 
 /** Sotto questo campione un arbitro non entra nel metro: poche gare non fanno una tendenza. */
 const GARE_MINIME = 5;
@@ -1282,4 +1283,44 @@ export function metroPer(
   if (stagione !== undefined && stagione.gare >= GARE_MINIME_METRO
     && stagione.dispersioneGialli !== null) return stagione;
   return metri.get(`${competitionSourceId}|`) ?? stagione ?? null;
+}
+
+/**
+ * Quanto l'arbitro si scosta dalla lega sui falli, per gara: totale, casa e trasferta.
+ *
+ * Tutte le stagioni archiviate di quella competizione, per l'arbitro e per la lega: e' la
+ * finestra su cui la regola dei falli nel consigliato e' stata misurata il 17 settembre
+ * 2026 (vedi `TendenzaArbitro` in `projection/letture-forti.ts`). Sotto cinque gare
+ * dell'arbitro `null`: una tendenza non si dichiara su due partite.
+ */
+export async function tendenzaArbitro(
+  refereeSourceId: number,
+  competitionSourceId: number,
+): Promise<TendenzaArbitro | null> {
+  const sql = connessione();
+  if (sql === null) return null;
+  try {
+    const righe = await sql<{ gare: string; totale: string; casa: string; trasferta: string }[]>`
+      with per_gara as (${sql.unsafe(PER_GARA)})
+      select count(*) filter (where r.source_id = ${refereeSourceId}::bigint)::text as gare,
+             (avg(p.falli) filter (where r.source_id = ${refereeSourceId}::bigint)
+               - avg(p.falli))::text as totale,
+             (avg(p.falli_casa) filter (where r.source_id = ${refereeSourceId}::bigint)
+               - avg(p.falli_casa))::text as casa,
+             (avg(p.falli_trasferta) filter (where r.source_id = ${refereeSourceId}::bigint)
+               - avg(p.falli_trasferta))::text as trasferta
+      from per_gara p
+      join football.referees r on r.id = p.referee_id
+      join football.competitions c on c.id = p.competition_id
+      where c.source_id = ${competitionSourceId}::bigint
+    `;
+    const riga = righe[0];
+    const gare = Number(riga?.gare);
+    if (riga === undefined || !Number.isFinite(gare) || gare < 5) return null;
+    const [totale, casa, trasferta] = [riga.totale, riga.casa, riga.trasferta].map(Number);
+    if (![totale, casa, trasferta].every(Number.isFinite)) return null;
+    return { totale, casa, trasferta, gare };
+  } catch {
+    return null;
+  }
 }

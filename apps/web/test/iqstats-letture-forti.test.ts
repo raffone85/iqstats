@@ -9,7 +9,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { lettureForti } from "../src/server/iqstats/projection/letture-forti.ts";
+import {
+  consigliatoDiGara,
+  type EsitoForte,
+  type LetturaForte,
+  lettureForti,
+} from "../src/server/iqstats/projection/letture-forti.ts";
 import type { Linea, ProiezioneDiGara } from "../src/server/iqstats/projection/match.ts";
 
 /** Cinque soglie attorno a un centro, con la probabilita' dichiarata sulla terza. */
@@ -175,4 +180,48 @@ test("senza base di lega non si consiglia: non si sa quanto sia normale", () => 
 
   assert.equal(letture.length, 1);
   assert.equal(consigliato, null, "senza base lo scarto non si calcola, e un consiglio non si inventa");
+});
+
+/** Una linea gia' arricchita, per il consigliato di Expected. */
+function lineaForte(bersaglio: string, probabilita: number, base: number, verso: "Over" | "Under" = "Over"): LetturaForte {
+  return {
+    bersaglio, lato: "totale", soglia: 20.5, verso, probabilita, decisione: 0.2, base,
+    gareDiBase: 100, squadre: [], affidabilita: 60, righeDiProva: 800, sorpresa: 0, forza: 0,
+  };
+}
+
+function esitoForte(bersaglio: string, esito: "1" | "X" | "2", probabilita: number, base: number): EsitoForte {
+  return { bersaglio, esito, probabilita, base, gareDiBase: 100, affidabilita: 60, righeDiProva: 800 };
+}
+
+const FISCHIA_DI_PIU = { totale: 2, casa: 1.5, trasferta: 0.5, gare: 20 };
+
+test("le parate non diventano mai il consigliato", () => {
+  const scelta = consigliatoDiGara([lineaForte("goalkeeper_saves", 0.75, 50)], [], null);
+  assert.equal(scelta, null);
+});
+
+test("i falli salgono solo con l'arbitro concorde", () => {
+  const over = [lineaForte("fouls", 0.75, 50, "Over")];
+  assert.equal(consigliatoDiGara(over, [], null), null, "senza arbitro restano fuori");
+  assert.equal(consigliatoDiGara(over, [], { ...FISCHIA_DI_PIU, totale: -2 }), null, "arbitro discorde");
+  assert.equal(consigliatoDiGara(over, [], FISCHIA_DI_PIU)?.tipo, "linea");
+  // L'1X2 dei falli: fischia di piu' alla casa, quindi «1» e' concorde e «2» no.
+  assert.equal(consigliatoDiGara([], [esitoForte("fouls", "1", 0.7, 45)], FISCHIA_DI_PIU)?.tipo, "esito");
+  assert.equal(consigliatoDiGara([], [esitoForte("fouls", "2", 0.7, 45)], FISCHIA_DI_PIU), null);
+});
+
+test("l'1X2 entra accanto alle linee, tranne quello dei tiri", () => {
+  const scelta = consigliatoDiGara(
+    [lineaForte("corner_kicks", 0.66, 50)],
+    [esitoForte("offsides", "1", 0.7, 40), esitoForte("total_shots", "1", 0.78, 40)],
+    null,
+  );
+  assert.equal(scelta?.tipo, "esito");
+  assert.equal(scelta?.lettura.bersaglio, "offsides", "i tiri 1X2 promettono troppo e restano fuori");
+});
+
+test("anche l'1X2 deve staccarsi di cinque punti dalla lega e restare sotto l'ottanta", () => {
+  assert.equal(consigliatoDiGara([], [esitoForte("corner_kicks", "1", 0.6, 57)], null), null);
+  assert.equal(consigliatoDiGara([], [esitoForte("corner_kicks", "1", 0.85, 40)], null), null);
 });

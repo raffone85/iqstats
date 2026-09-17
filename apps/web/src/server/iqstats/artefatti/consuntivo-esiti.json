@@ -1,0 +1,67 @@
+{
+  "schema": "consuntivo-esiti/1",
+  "calcolato_il": "2026-09-17T08:15:46.192Z",
+  "come_e_stato_misurato": "esito 1X2 piu' probabile di ogni famiglia, ricostruito sulle gare chiuse con i soli dati anteriori; contate le letture consigliabili (fino all'80%, cinque punti sopra la frequenza della lega nella stessa stagione), prese e sbagliate",
+  "complessivo": {
+    "letture": 1775,
+    "prese": 1029,
+    "frequenza_osservata": 0.5797,
+    "probabilita_promessa": 0.5887
+  },
+  "per_bersaglio": [
+    {
+      "bersaglio": "total_shots",
+      "letture": 319,
+      "prese": 185,
+      "frequenza_osservata": 0.5799,
+      "probabilita_promessa": 0.6556
+    },
+    {
+      "bersaglio": "shots_on_target",
+      "letture": 298,
+      "prese": 177,
+      "frequenza_osservata": 0.594,
+      "probabilita_promessa": 0.6107
+    },
+    {
+      "bersaglio": "fouls",
+      "letture": 413,
+      "prese": 236,
+      "frequenza_osservata": 0.5714,
+      "probabilita_promessa": 0.594
+    },
+    {
+      "bersaglio": "corner_kicks",
+      "letture": 318,
+      "prese": 196,
+      "frequenza_osservata": 0.6164,
+      "probabilita_promessa": 0.6194
+    },
+    {
+      "bersaglio": "offsides",
+      "letture": 250,
+      "prese": 145,
+      "frequenza_osservata": 0.58,
+      "probabilita_promessa": 0.5263
+    },
+    {
+      "bersaglio": "yellow_cards",
+      "letture": 177,
+      "prese": 90,
+      "frequenza_osservata": 0.5085,
+      "probabilita_promessa": 0.4518
+    }
+  ],
+  "falli_arbitro_concorde": {
+    "letture": 183,
+    "prese": 107,
+    "frequenza_osservata": 0.5847,
+    "probabilita_promessa": 0.5932
+  },
+  "falli_arbitro_discorde": {
+    "letture": 183,
+    "prese": 100,
+    "frequenza_osservata": 0.5464,
+    "probabilita_promessa": 0.5973
+  }
+}

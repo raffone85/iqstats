@@ -82,6 +82,15 @@ export interface ProiezioneDiGara {
   readonly scartoDiCalibrazioneDelTotale: number | null;
   /** Le gare fuori campione su cui i due scarti sono stati misurati. */
   readonly gareDiProvaDelleLinee: number | null;
+  /** Chi ne fa di piu': `null` dove le linee di lato non escono. Vedi `esitoDiFamiglia`. */
+  readonly esito?: EsitoDiFamiglia | null;
+}
+
+/** L'1X2 di una famiglia: la casa ne fa di piu', pari, la trasferta ne fa di piu'. */
+export interface EsitoDiFamiglia {
+  readonly uno: number;
+  readonly x: number;
+  readonly due: number;
 }
 
 /** I cinque passi attorno al centro, la stessa convenzione del lato che misura. */
@@ -336,5 +345,45 @@ export function proiezioneDiGara(
     ),
     scartoDiCalibrazioneDelTotale: dallaProva(parametri, 'scarto_di_calibrazione_delle_linee'),
     gareDiProvaDelleLinee: dallaProva(parametri, 'gare_di_prova'),
+    esito: esitoDiFamiglia(artefatto, casa, trasferta),
   };
+}
+
+/**
+ * Quale delle due squadre ne fa di piu', dalle due distribuzioni di lato.
+ *
+ * Stessa regola delle linee di lato: solo dal modello, con la dispersione dell'artefatto.
+ * ponytail: i due lati si trattano come indipendenti; la correlazione dei residui misurata
+ * va da -0,25 a +0,17, e quanto questo sposti la promessa lo dice il consuntivo dell'1X2.
+ */
+export function esitoDiFamiglia(
+  artefatto: ArtefattoModello,
+  casa: EsitoDiProduzione,
+  trasferta: EsitoDiProduzione,
+): EsitoDiFamiglia | null {
+  if (!previstaDalModello(casa) || !previstaDalModello(trasferta)) {
+    return null;
+  }
+  const { distribuzione_intervallo: distribuzione, dispersione } = artefatto.calibration;
+  // Le masse fino a dove la coda non pesa piu': oltre, il resto va tutto nell'ultimo punto.
+  const masse = (media: number): number[] => {
+    const limite = Math.ceil(media * 4 + 20);
+    const cumulata = (k: number) => 1 - probabilitaSopra(distribuzione, dispersione, media, k);
+    return Array.from({ length: limite + 1 }, (_, k) => (
+      k === limite ? 1 - cumulata(k - 1) : cumulata(k) - (k === 0 ? 0 : cumulata(k - 1))
+    ));
+  };
+  const c = masse(casa.valoreAtteso);
+  const t = masse(trasferta.valoreAtteso);
+  let uno = 0;
+  let x = 0;
+  // Cumulata della trasferta, per non rifare la somma a ogni conteggio della casa.
+  let sottoT = 0;
+  for (let k = 0; k < c.length; k += 1) {
+    const pariT = t[k] ?? 0;
+    uno += c[k] * sottoT;
+    x += c[k] * pariT;
+    sottoT += pariT;
+  }
+  return { uno, x, due: Math.max(0, 1 - uno - x) };
 }

@@ -13,6 +13,7 @@
 import "server-only";
 
 import rapporto from "./artefatti/expected-famiglie.json" with { type: "json" };
+import type { TendenzaArbitro } from "./projection/letture-forti.ts";
 
 export type LatoDiRiga = "casa" | "trasferta" | "totale";
 
@@ -52,10 +53,34 @@ export interface CausaDellAtteso {
   readonly effetto: number;
 }
 
-export interface Consigliato extends RigaDiFamiglia {
+export interface LineaConsigliata extends RigaDiFamiglia {
+  readonly tipo: "linea";
   /** Punti percentuali fra la nostra probabilita' e la frequenza della lega. */
   readonly scarto: number | null;
+  /** Solo sui falli: l'arbitro contro la sua lega. `null` altrove o dove non si sa. */
+  readonly arbitro: TendenzaArbitro | null;
 }
+
+/** L'1X2 di famiglia consigliato: 1 la casa ne fa di piu', X pari, 2 la trasferta. */
+export interface EsitoConsigliato {
+  readonly tipo: "esito";
+  readonly bersaglio: string;
+  readonly esito: "1" | "X" | "2";
+  /** Da 0 a 1. */
+  readonly probabilita: number;
+  /** Quante volte quell'esito succede in quella lega, da 0 a 100, o `null`. */
+  readonly base: number | null;
+  readonly gareDiBase: number | null;
+  readonly affidabilita: number;
+  readonly scarto: number | null;
+  readonly attesoCasa: number;
+  readonly attesoTrasferta: number;
+  readonly origine: "modello" | "miscela" | "ripiego";
+  readonly pesoDelModello: number;
+  readonly arbitro: TendenzaArbitro | null;
+}
+
+export type Consigliato = LineaConsigliata | EsitoConsigliato;
 
 export interface GaraExpected {
   readonly gara: number;
@@ -284,9 +309,13 @@ export function expectedDelleGare(adesso: Date = new Date()): Expected | null {
     if (new Date(g.kickoff).getTime() <= adesso.getTime()) return [];
     const famiglie = g.famiglie.map(riga).filter((r): r is RigaDiFamiglia => r !== null);
     if (famiglie.length === 0) return [];
-    const consigliato = g.consigliato === null ? null : riga(g.consigliato);
+    // Un artefatto scritto prima del 17 settembre 2026 non porta `tipo`: e' una linea.
+    const grezzo = g.consigliato as unknown as (Record<string, unknown> & { lato: string }) | null;
+    const consigliato: Consigliato | null = grezzo === null ? null
+      : grezzo.tipo === "esito" ? (grezzo as unknown as EsitoConsigliato)
+      : (riga({ arbitro: null, ...grezzo, tipo: "linea" }) as unknown as LineaConsigliata | null);
     const quote = g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
-    return [{ ...g, famiglie, quote, consigliato: consigliato as Consigliato | null }];
+    return [{ ...g, famiglie, quote, consigliato }];
   });
 
   if (gare.length === 0) return null;

@@ -23,10 +23,11 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { gunzipSync } from "node:zlib";
 
-import { baseDiLega } from "../src/server/iqstats/base-di-lega.ts";
+import { baseDegliEsiti, baseDiLega } from "../src/server/iqstats/base-di-lega.ts";
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import { getMatchDetail } from "../src/server/iqstats/match-context.ts";
 import { getMatchesByDate, type MatchListItem } from "../src/server/iqstats/matches.ts";
+import { tendenzaArbitro } from "../src/server/iqstats/referees.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "../src/server/iqstats/projection-artefatti.ts";
 import {
   type GolDellaGara,
@@ -51,7 +52,9 @@ import {
 import {
   arricchisci,
   candidateDiGara,
-  ordinaLetture,
+  candidateEsiti,
+  consigliatoDiGara,
+  type TendenzaArbitro,
 } from "../src/server/iqstats/projection/letture-forti.ts";
 
 interface RigaDiFamiglia {
@@ -305,20 +308,43 @@ function quoteDellaGara(
 /**
  * Il pronostico consigliato della gara, con i numeri che lo giustificano.
  *
- * **Non e' un criterio nuovo.** E' la lettura che `ordinaLetture` mette in cima - la piu'
- * probabile dentro la fascia fino all'ottanta per cento, a parita' di punto il bersaglio
- * che sbaglia meno - cioe' esattamente il criterio di cui il consuntivo di `/metodo`
- * conosce la resa. Un secondo criterio scelto qui sarebbe un pronostico senza consuntivo.
+ * **Il criterio e' `consigliatoDiGara`, dal 17 settembre 2026.** Lo stesso ordine di
+ * `ordinaLetture` - la piu' probabile fino all'ottanta per cento, cinque punti sopra la
+ * lega, a parita' di punto il bersaglio che sbaglia meno - con gli esiti 1X2 di famiglia
+ * accanto alle linee e i falli ammessi solo con l'arbitro concorde: entrambe le aggiunte
+ * sono state misurate sulle gare chiuse prima di entrare.
  *
  * **La motivazione sta nei campi, non in una frase.** `base` dice quanto quella linea
  * succede nella lega e `scarto` di quanto ce ne stacchiamo: e' li' che il consiglio smette
  * di essere banale, perche' una lettura che coincide con la norma del torneo non aggiunge
  * niente e il blocco lo deve dichiarare invece di spacciarla per nostra.
  */
-interface Consigliato extends RigaDiFamiglia {
+interface LineaConsigliata extends RigaDiFamiglia {
+  readonly tipo: "linea";
   /** Punti percentuali fra la nostra probabilita' e la frequenza della lega. */
   readonly scarto: number | null;
+  /** Solo sui falli, dove l'arbitro decide se la lettura puo' salire: vedi `TendenzaArbitro`. */
+  readonly arbitro: TendenzaArbitro | null;
 }
+
+/** L'1X2 di famiglia consigliato: chi ne fa di piu', con i due attesi da cui nasce. */
+interface EsitoConsigliato {
+  readonly tipo: "esito";
+  readonly bersaglio: string;
+  readonly esito: "1" | "X" | "2";
+  readonly probabilita: number;
+  readonly base: number | null;
+  readonly gareDiBase: number | null;
+  readonly affidabilita: number;
+  readonly scarto: number | null;
+  readonly attesoCasa: number;
+  readonly attesoTrasferta: number;
+  readonly origine: "modello" | "miscela" | "ripiego";
+  readonly pesoDelModello: number;
+  readonly arbitro: TendenzaArbitro | null;
+}
+
+type Consigliato = LineaConsigliata | EsitoConsigliato;
 
 interface GaraExpected {
   readonly gara: number;
@@ -463,35 +489,68 @@ async function famiglieDi(
   }
   if (migliori.size === 0) return null;
 
-  // Il consigliato passa dal criterio della cima, che e' l'unico di cui si conosce la resa.
-  const prima = ordinaLetture(candidate, senzaMisura, basi).consigliato ?? undefined;
-  // La lettura in cima non e' sempre la piu' probabile della sua famiglia - una sceglie
-  // sulla sorpresa, l'altra sulla probabilita' - quindi puo' stare su un altro lato, e la
-  // sua scala si chiede per il lato **suo**, non per quello della riga di famiglia.
-  const suo = prima === undefined ? null : perBersaglio.get(prima.bersaglio) ?? null;
-  const scalaConsigliata = suo === null || prima === undefined ? null : scalaDi(suo, prima.lato);
-  const consigliato: Consigliato | null = prima === undefined || suo === null
-    || scalaConsigliata === null
-    ? null
-    : {
-    bersaglio: prima.bersaglio,
-    lato: prima.lato,
-    soglia: prima.soglia,
-    verso: prima.verso,
-    probabilita: Number(prima.probabilita.toFixed(4)),
-    base: prima.base === null ? null : Number(prima.base.toFixed(2)),
-    gareDiBase: prima.gareDiBase,
-    affidabilita: prima.affidabilita,
-    scarto: prima.base === null
-      ? null
-      : Number((prima.probabilita * 100 - prima.base).toFixed(1)),
-    atteso: Number(scalaConsigliata.atteso.toFixed(2)),
-    intervallo: scalaConsigliata.intervallo,
-    origine: scalaConsigliata.origine,
-    pesoDelModello: scalaConsigliata.pesoDelModello,
-    cause: causeDellaLettura(prima.lato, suo.casa, suo.trasferta)
-      .map((c) => ({ nome: c.nome, effetto: Number(c.effetto.toFixed(3)) })),
-  };
+  // Il consigliato: linee ed esiti di famiglia nello stesso ordine, falli solo con l'arbitro
+  // concorde. Il criterio vive in `consigliatoDiGara`, qui si leggono solo i suoi ingressi.
+  const esiti = candidateEsiti(proiezioni.bersagli);
+  const basiEsiti = await baseDegliEsiti(detail.leagueId, detail.seasonId, esiti.map((e) => e.bersaglio));
+  const arbitro = detail.refereeId === null ? null : await tendenzaArbitro(detail.refereeId, detail.leagueId);
+  const scelta = consigliatoDiGara(
+    arricchisci(candidate, basi),
+    esiti.map((e) => {
+      const b = basiEsiti?.get(`${e.bersaglio}|${e.esito}`) ?? null;
+      return { ...e, base: b === null ? null : b.quota, gareDiBase: b === null ? null : b.gare };
+    }),
+    arbitro,
+  );
+  const suo = scelta === null ? null : perBersaglio.get(scelta.lettura.bersaglio) ?? null;
+  const scarto = (l: { probabilita: number; base: number | null }) =>
+    l.base === null ? null : Number((l.probabilita * 100 - l.base).toFixed(1));
+  const arbitroDi = (bersaglio: string) => (bersaglio === "fouls" ? arbitro : null);
+  let consigliato: Consigliato | null = null;
+  if (scelta !== null && suo !== null && scelta.tipo === "linea") {
+    const prima = scelta.lettura;
+    // La lettura in cima puo' stare su un altro lato della riga di famiglia: la scala si
+    // chiede per il lato **suo**.
+    const scala = scalaDi(suo, prima.lato);
+    consigliato = scala === null ? null : {
+      tipo: "linea",
+      bersaglio: prima.bersaglio,
+      lato: prima.lato,
+      soglia: prima.soglia,
+      verso: prima.verso,
+      probabilita: Number(prima.probabilita.toFixed(4)),
+      base: prima.base === null ? null : Number(prima.base.toFixed(2)),
+      gareDiBase: prima.gareDiBase,
+      affidabilita: prima.affidabilita,
+      scarto: scarto(prima),
+      atteso: Number(scala.atteso.toFixed(2)),
+      intervallo: scala.intervallo,
+      origine: scala.origine,
+      pesoDelModello: scala.pesoDelModello,
+      cause: causeDellaLettura(prima.lato, suo.casa, suo.trasferta)
+        .map((c) => ({ nome: c.nome, effetto: Number(c.effetto.toFixed(3)) })),
+      arbitro: arbitroDi(prima.bersaglio),
+    };
+  } else if (scelta !== null && scelta.tipo === "esito" && suo !== null && suo.casa.stato === "prevista"
+    && suo.trasferta.stato === "prevista") {
+    const e = scelta.lettura;
+    const scala = scalaDi(suo, "totale");
+    consigliato = scala === null ? null : {
+      tipo: "esito",
+      bersaglio: e.bersaglio,
+      esito: e.esito,
+      probabilita: Number(e.probabilita.toFixed(4)),
+      base: e.base === null ? null : Number(e.base.toFixed(2)),
+      gareDiBase: e.gareDiBase,
+      affidabilita: e.affidabilita,
+      scarto: scarto(e),
+      attesoCasa: Number(suo.casa.valoreAtteso.toFixed(2)),
+      attesoTrasferta: Number(suo.trasferta.valoreAtteso.toFixed(2)),
+      origine: scala.origine,
+      pesoDelModello: scala.pesoDelModello,
+      arbitro: arbitroDi(e.bersaglio),
+    };
+  }
 
   const evento = agganciaGara(detail.homeTeam, detail.awayTeam, gara.kickoff, palinsesto);
 

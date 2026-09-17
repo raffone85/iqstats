@@ -30,13 +30,16 @@ import Link from "next/link";
 import { ProductShell } from "@/components/product-shell";
 import { TeamCrest } from "@/components/team-crest";
 import {
+  arbitroInBreve,
+  chiDelConsiglio,
   chiRiguarda,
+  consiglio,
   linea,
   nomeFamiglia,
   soglia,
   VoceDiGara,
 } from "@/components/expected-voce";
-import { resaDelBersaglio, GARE_DEL_CONSUNTIVO } from "@/server/iqstats/consuntivo";
+import { resaDelBersaglio, resaDellEsito, GARE_DEL_CONSUNTIVO } from "@/server/iqstats/consuntivo";
 import {
   expectedDelleGare,
   type GaraExpected,
@@ -708,7 +711,9 @@ function Gara({ g, calcolatoIl, quoteIl }: {
   readonly calcolatoIl: string;
   readonly quoteIl: string | null;
 }) {
-  const resa = g.consigliato === null ? null : resaDelBersaglio(g.consigliato.bersaglio);
+  const resa = g.consigliato === null ? null
+    : g.consigliato.tipo === "esito" ? resaDellEsito(g.consigliato.bersaglio)
+    : resaDelBersaglio(g.consigliato.bersaglio);
   const scarto = g.consigliato === null ? null : g.consigliato.scarto;
 
   return (
@@ -746,11 +751,30 @@ function Gara({ g, calcolatoIl, quoteIl }: {
         <section className="expected-consiglio" aria-labelledby="expected-consiglio-title">
           <p className="eyebrow" id="expected-consiglio-title">Consigliato</p>
           <p className="expected-lettura">
-            <b>{linea(g.consigliato)}</b> · {chiRiguarda(g.consigliato.lato, g.casa, g.fuori)}
+            <b>{consiglio(g.consigliato)}</b> · {chiDelConsiglio(g.consigliato, g.casa, g.fuori)}
             {" · "}
             <b>{Math.round(g.consigliato.probabilita * 100)}%</b>
           </p>
-          <Motivazione r={g.consigliato} />
+          {g.consigliato.tipo === "linea" ? (
+            <Motivazione r={g.consigliato} />
+          ) : (
+            /* L'esito nasce dai due attesi di lato: sono loro il numero da leggere. */
+            <p className="expected-perche">
+              <span className="expected-dato">
+                attesi <b>{virgola(g.consigliato.attesoCasa)}</b> contro{" "}
+                <b>{virgola(g.consigliato.attesoTrasferta)}</b>
+              </span>
+              {g.consigliato.base === null ? (
+                <span className="expected-dato">campionato non noto</span>
+              ) : (
+                <span className="expected-dato">
+                  campionato {Math.round(g.consigliato.base)}%
+                  {g.consigliato.gareDiBase === null ? "" : ` su ${g.consigliato.gareDiBase}`}
+                </span>
+              )}
+              <span className="expected-dato">affidabilità {g.consigliato.affidabilita}</span>
+            </p>
+          )}
           <ul className="expected-motivi">
             {scarto === null ? null : (
               <li>È lo scarto più grande di questa gara: {scarto > 0 ? "+" : ""}
@@ -758,11 +782,18 @@ function Gara({ g, calcolatoIl, quoteIl }: {
             )}
             {/* La resa della famiglia sulle gare gia' chiuse: e' la meta' che rende questo
                 un consiglio misurato invece che una promessa. */}
+            {g.consigliato.arbitro === null ? null : (
+              <li>
+                I falli entrano nel consigliato solo con l&apos;arbitro dalla loro parte:{" "}
+                {arbitroInBreve(g.consigliato.arbitro)}.
+              </li>
+            )}
             {resa === null ? (
               <li>Di questa famiglia non abbiamo ancora un consuntivo.</li>
             ) : (
               <li>
-                Sulle gare già chiuse questa famiglia ha reso{" "}
+                Sulle gare già chiuse {g.consigliato.tipo === "esito" ? "l'1X2 di " : ""}questa
+                famiglia ha reso{" "}
                 <b>{virgola(resa.frequenzaOsservata * 100)}%</b> contro il{" "}
                 {virgola(resa.probabilitaPromessa * 100)}% promesso, su {resa.letture}{" "}
                 letture.

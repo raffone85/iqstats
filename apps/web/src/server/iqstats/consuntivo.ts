@@ -10,6 +10,7 @@
 import "server-only";
 
 import rapporto from "./artefatti/consuntivo-letture.json" with { type: "json" };
+import esiti from "./artefatti/consuntivo-esiti.json" with { type: "json" };
 
 export interface ContoDelleLetture {
   readonly letture: number;
@@ -52,6 +53,15 @@ function conto(voce: Voce | undefined): ContoDelleLetture | null {
  */
 export function resaDelBersaglio(target: string): ContoDelleLetture | null {
   return conto(rapporto.per_bersaglio.find((v) => v.bersaglio === target));
+}
+
+/**
+ * Quanto ha reso l'1X2 di una famiglia, da `scripts/consuntivo-esiti.ts`. Sui falli la resa
+ * e' quella con l'arbitro concorde, l'unica con cui l'esito puo' diventare il consigliato.
+ */
+export function resaDellEsito(target: string): ContoDelleLetture | null {
+  if (target === "fouls") return conto(esiti.falli_arbitro_concorde);
+  return conto(esiti.per_bersaglio.find((v) => v.bersaglio === target));
 }
 
 /** Su quante gare chiuse poggia quella resa. */

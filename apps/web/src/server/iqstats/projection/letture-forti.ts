@@ -73,6 +73,64 @@ const FASCIA_MASSIMA = 0.8;
 const FUORI_DALLA_CIMA = "fouls";
 
 /**
+ * Le parate non sono un pronostico: decisione dell'utente del 17 settembre 2026, non una
+ * misura (il consuntivo le dava a -0,0). Restano nella card della loro famiglia.
+ */
+const MAI_IN_CIMA = "goalkeeper_saves";
+
+/**
+ * L'1X2 di famiglia dei tiri resta fuori dalla cima, ed e' misurato.
+ *
+ * Il 17 settembre 2026, su 1.200 gare chiuse ricostruite solo con i dati anteriori, l'esito
+ * piu' probabile di famiglia consigliabile (fino all'80%, cinque punti sopra la lega) ha
+ * reso 58,0% contro 58,9% promesso su 1.775 letture. Per famiglia: tiri **58,0 su 65,6**
+ * (319), tiri in porta 59,4 su 61,1 (298), falli 57,1 su 59,4 (413), corner 61,6 su 61,9
+ * (318), fuorigioco 58,0 su 52,6 (250), cartellini 50,8 su 45,2 (177). Entra chi rende entro
+ * tre punti da quanto promette o di piu'; i tiri promettono sette punti e mezzo di troppo.
+ */
+const ESITI_FUORI_DALLA_CIMA: readonly string[] = ["total_shots", MAI_IN_CIMA];
+
+/**
+ * Quanto l'arbitro si scosta dalla sua lega sui falli, per gara: sul totale e per lato.
+ *
+ * **I falli entrano nel consigliato solo con l'arbitro dalla loro parte, ed e' misurato.**
+ * Il 17 settembre 2026, 1.200 gare chiuse: le letture falli consigliabili rendono 55,9% su
+ * 63,3% promesso (673), ma con l'arbitro concorde - fischia piu' della lega e la lettura e'
+ * Over, o meno e Under, sul lato della lettura - **63,2% su 63,4%** (321), e contro l'arbitro
+ * 47,3% su 63,1% (277). Sull'1X2 dei falli: concorde 58,5 su 59,3 (183), discorde 54,6 su
+ * 59,7 (183). Una condizione scelta prima di misurare, ma misurata su quelle stesse gare:
+ * va riguardata sulle gare nuove.
+ */
+export interface TendenzaArbitro {
+  /** Falli per gara dell'arbitro meno quelli della lega: positivo, fischia di piu'. */
+  readonly totale: number;
+  /** Falli per gara della squadra di casa con lui, meno quelli della lega. */
+  readonly casa: number;
+  readonly trasferta: number;
+  /** Su quante gare dell'arbitro in quella competizione. */
+  readonly gare: number;
+}
+
+/** L'1X2 di una famiglia: la casa ne fa di piu' (1), pari (X), la trasferta di piu' (2). */
+export interface EsitoForte {
+  readonly bersaglio: string;
+  readonly esito: "1" | "X" | "2";
+  /** Da 0 a 1. */
+  readonly probabilita: number;
+  /** Quante volte quell'esito succede nella lega, da 0 a 100, o `null` se non si sa. */
+  readonly base: number | null;
+  readonly gareDiBase: number | null;
+  /** Lo stesso punteggio di affidabilita' delle linee del bersaglio, da 0 a 100. */
+  readonly affidabilita: number;
+  readonly righeDiProva: number;
+}
+
+/** Il consigliato di Expected: una linea o un esito di famiglia. */
+export type ConsigliatoDiGara =
+  | { readonly tipo: "linea"; readonly lettura: LetturaForte }
+  | { readonly tipo: "esito"; readonly lettura: EsitoForte };
+
+/**
  * Sotto questi punti di scarto dalla norma del campionato non si consiglia niente.
  *
  * **Il criterio in produzione consigliava l'ovvio, e c'e' il numero.** Sulle 1.200 gare
@@ -295,7 +353,8 @@ export function ordinaLetture(
   quante: number = QUANTE,
 ): LettureDellaGara {
   const letture = arricchisci(candidate, basi, basiCasa, basiFuori)
-    .filter((l) => l.probabilita <= FASCIA_MASSIMA && l.bersaglio !== FUORI_DALLA_CIMA)
+    .filter((l) => l.probabilita <= FASCIA_MASSIMA
+      && l.bersaglio !== FUORI_DALLA_CIMA && l.bersaglio !== MAI_IN_CIMA)
     .slice()
     // **L'ordine e' per punto percentuale, non per decimale.** Con il tetto all'ottanta le
     // prime letture si schiacciano contro il tetto: sulla vetrina del 6 settembre le dieci
@@ -331,6 +390,68 @@ export function ordinaLetture(
   ) ?? null;
 
   return { letture: distinte.slice(0, quante), consigliato, senzaMisura };
+}
+
+/**
+ * L'esito piu' probabile di ogni famiglia, senza base: il chiamante la chiede dopo.
+ *
+ * Stessa regola delle linee: un bersaglio senza affidabilita' misurata non entra.
+ */
+export function candidateEsiti(bersagli: readonly ProiezioneDiGara[]): readonly EsitoForte[] {
+  return bersagli.flatMap((b) => {
+    const livello = b.totale?.affidabilita ?? null;
+    if (livello === null || b.esito === undefined || b.esito === null) return [];
+    const scelte = [["1", b.esito.uno], ["X", b.esito.x], ["2", b.esito.due]] as const;
+    const [esito, probabilita] = scelte.reduce((m, s) => (s[1] > m[1] ? s : m));
+    return [{
+      bersaglio: b.target, esito, probabilita, base: null, gareDiBase: null,
+      affidabilita: livello.punteggio, righeDiProva: livello.righeDiProva,
+    }];
+  });
+}
+
+/** L'arbitro sta dalla parte della lettura: vedi `TendenzaArbitro`. Il pari non ha verso. */
+function arbitroConcorde(
+  arbitro: TendenzaArbitro | null,
+  lettura: { readonly lato: LatoDellaGara; readonly verso: "Over" | "Under" } | { readonly esito: "1" | "X" | "2" },
+): boolean {
+  if (arbitro === null) return false;
+  if ("esito" in lettura) {
+    if (lettura.esito === "X") return false;
+    return (arbitro.casa - arbitro.trasferta > 0) === (lettura.esito === "1");
+  }
+  return (arbitro[lettura.lato] > 0) === (lettura.verso === "Over");
+}
+
+/**
+ * Il consigliato di Expected: le linee e gli esiti di famiglia nello stesso ordine.
+ *
+ * E' `ordinaLetture` con due cose in piu', entrambe misurate il 17 settembre 2026: gli
+ * esiti 1X2 di famiglia (fuori i tiri) e i falli ammessi solo con l'arbitro concorde. Le
+ * linee arrivano gia' con la base (`arricchisci`), gli esiti con la loro.
+ */
+export function consigliatoDiGara(
+  linee: readonly LetturaForte[],
+  esiti: readonly EsitoForte[],
+  arbitro: TendenzaArbitro | null,
+): ConsigliatoDiGara | null {
+  const ammessa = (bersaglio: string, concorde: boolean) =>
+    bersaglio !== MAI_IN_CIMA && (bersaglio !== FUORI_DALLA_CIMA || concorde);
+  const pool: ConsigliatoDiGara[] = [
+    ...linee
+      .filter((l) => ammessa(l.bersaglio, arbitroConcorde(arbitro, l)))
+      .map((lettura) => ({ tipo: "linea" as const, lettura })),
+    ...esiti
+      .filter((e) => !ESITI_FUORI_DALLA_CIMA.includes(e.bersaglio)
+        && ammessa(e.bersaglio, arbitroConcorde(arbitro, e)))
+      .map((lettura) => ({ tipo: "esito" as const, lettura })),
+  ];
+  return pool
+    .filter(({ lettura: l }) => l.probabilita <= FASCIA_MASSIMA
+      && l.base !== null && l.probabilita * 100 - l.base >= SCARTO_MINIMO)
+    .sort((a, b) =>
+      (Math.round(b.lettura.probabilita * 100) - Math.round(a.lettura.probabilita * 100))
+      || (b.lettura.affidabilita - a.lettura.affidabilita))[0] ?? null;
 }
 
 /** La chiave con cui una linea ritrova la sua base. Deve combaciare con `base-di-lega`. */
