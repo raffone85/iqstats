@@ -2,7 +2,7 @@ import "server-only";
 
 import type postgres from "postgres";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import { calcolaFeature } from "./projection/asof/calcolo.ts";
 import { attesiDellaGara, mercatiGol, type MercatiGol } from "./projection/gol.ts";
@@ -368,7 +368,7 @@ export type SenzaProiezione =
   /** La lettura e' fallita. Si dichiara invece di far sparire la sezione in silenzio. */
   | "errore";
 
-export async function proiezioniDellaGara(
+async function proiezioniDellaGaraDaLeggere(
   detail: GaraDaProiettare,
 ): Promise<ProiezioniDellaGara | SenzaProiezione> {
   const sql = connessione();
@@ -482,3 +482,6 @@ export async function proiezioniDellaGara(
     return "errore";
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const proiezioniDellaGara = inCache("proiezioniDellaGara", proiezioniDellaGaraDaLeggere, (r) => typeof r === "string" && r === "errore");

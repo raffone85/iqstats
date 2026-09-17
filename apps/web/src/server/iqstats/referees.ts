@@ -14,7 +14,7 @@
 // accorgerebbe. Le gare a meta' restano fuori dal conto, e il campione lo dichiara.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import type { TendenzaArbitro } from "./projection/letture-forti.ts";
 
 /** Sotto questo campione un arbitro non entra nel metro: poche gare non fanno una tendenza. */
@@ -273,7 +273,7 @@ export async function competizioneDellArbitro(
   }
 }
 
-export async function profiloArbitro(
+async function profiloArbitroDaLeggere(
   sourceId: number,
   contesto?: ContestoDiGara,
   /**
@@ -486,7 +486,7 @@ interface RigaControSquadra {
  * Le gare attraversano stagioni e competizioni di proposito: con questo campione restringere
  * alla stagione lascerebbe zero. L'arco di tempo si dichiara insieme al conteggio.
  */
-export async function arbitroControLeSquadre(
+async function arbitroControLeSquadreDaLeggere(
   refereeSourceId: number,
   casaSourceId: number,
   trasfertaSourceId: number,
@@ -892,7 +892,7 @@ function forse(valore: string | null): number | null {
  * la gara resta nell'elenco, perche' averla diretta e' un fatto anche se i falli non li
  * sappiamo.
  */
-export async function gareDirette(sourceId: number): Promise<readonly GaraDiretta[]> {
+async function gareDiretteDaLeggere(sourceId: number): Promise<readonly GaraDiretta[]> {
   const sql = connessione();
   if (sql === null) return [];
   try {
@@ -1324,3 +1324,8 @@ export async function tendenzaArbitro(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const arbitroControLeSquadre = inCache("arbitroControLeSquadre", arbitroControLeSquadreDaLeggere);
+export const gareDirette = inCache("gareDirette", gareDiretteDaLeggere);
+export const profiloArbitro = inCache("profiloArbitro", profiloArbitroDaLeggere);

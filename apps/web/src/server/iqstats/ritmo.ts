@@ -18,7 +18,7 @@
 // **Anti-leakage.** Finestra `kickoff_at < quando`, come ovunque nel motore.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import { mediana } from "./statistica.ts";
 
 const MAX_GARE = 400;
@@ -110,7 +110,7 @@ function media(valori: readonly number[]): number {
  * nessuna metrica raggiunge la copertura minima: un ritmo con due metriche su sedici non
  * e' un ritmo.
  */
-export async function ritmoDellaGara(args: {
+async function ritmoDellaGaraDaLeggere(args: {
   readonly leagueId: number | null;
   readonly seasonId: number | null;
   readonly homeTeamId: number | null;
@@ -221,3 +221,6 @@ export async function ritmoDellaGara(args: {
 
   return { gruppi, gareDiLega: dati.length, escluse };
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const ritmoDellaGara = inCache("ritmoDellaGara", ritmoDellaGaraDaLeggere);

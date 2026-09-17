@@ -39,7 +39,7 @@
 // metro: la media di competizione si ferma allo stesso istante.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /** Quante gare al massimo si guardano indietro, come nelle altre letture. */
 const MAX_GARE = 400;
@@ -146,7 +146,7 @@ export function letturaDeiTempi(voci: readonly QuotaDiTempo[]): RitmoDeiTempi | 
  * segue la stessa finestra: campione e metro parlano sempre dello stesso periodo,
  * altrimenti il confronto misura il calendario.
  */
-export async function ritmoDeiTempi(
+async function ritmoDeiTempiDaLeggere(
   casaSourceId: number,
   trasfertaSourceId: number,
   competitionSourceId: number,
@@ -287,3 +287,6 @@ export async function ritmoDeiTempi(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const ritmoDeiTempi = inCache("ritmoDeiTempi", ritmoDeiTempiDaLeggere);

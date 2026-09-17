@@ -21,7 +21,7 @@
 // **Anti-leakage.** Finestra `kickoff_at < quando`, come ovunque.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /** Quante gare si guardano per lato. E' la definizione, non una soglia. */
 const GARE = 5;
@@ -217,7 +217,7 @@ async function latoDi(
  * Come si presentano le due squadre: la casa con le sue ultime gare in casa di questa
  * stagione, l'ospite con le sue in trasferta.
  */
-export async function comeSiPresentano(
+async function comeSiPresentanoDaLeggere(
   casaSourceId: number,
   trasfertaSourceId: number,
   competitionSourceId: number,
@@ -250,3 +250,6 @@ export async function comeSiPresentano(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const comeSiPresentano = inCache("comeSiPresentano", comeSiPresentanoDaLeggere);

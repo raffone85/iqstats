@@ -23,7 +23,7 @@
 // altrimenti la riga si mostra senza dire chi ha fatto meglio.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /**
  * Le metriche del confronto: i gol e i sette bersagli del motore, con i nomi che il prodotto
@@ -104,7 +104,7 @@ interface Riga {
  *
  * Gli identificativi sono quelli della fonte, come ovunque nel livello dati.
  */
-export async function scontriComuni(
+async function scontriComuniDaLeggere(
   competitionSourceId: number,
   idCasa: number,
   idFuori: number,
@@ -192,3 +192,6 @@ export async function scontriComuni(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const scontriComuni = inCache("scontriComuni", scontriComuniDaLeggere);

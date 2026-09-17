@@ -40,7 +40,7 @@
 // **Anti-leakage.** Finestra `kickoff_at < quando`, per il campione e per il metro.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /** Quante gare al massimo si guardano indietro per squadra. */
 const MAX_GARE = 40;
@@ -208,7 +208,7 @@ function vociDi(
  *
  * `stagioni` sono gli `source_id` scelti dalla finestra, come per le altre letture.
  */
-export async function daDoveTirano(
+async function daDoveTiranoDaLeggere(
   casaSourceId: number,
   trasfertaSourceId: number,
   competitionSourceId: number,
@@ -305,3 +305,6 @@ export async function daDoveTirano(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const daDoveTirano = inCache("daDoveTirano", daDoveTiranoDaLeggere);

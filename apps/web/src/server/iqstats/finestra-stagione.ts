@@ -21,7 +21,7 @@
 // archivio. `starts_on` e `ends_on` invece ci sono sempre, e da quelli esce «2025/26».
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /** Le tre finestre offerte dal selettore. La prima e' quella predefinita. */
 export const FINESTRE = ["corrente", "scorsa", "tutto"] as const;
@@ -86,7 +86,7 @@ export async function stagioneInCorso(competitionSourceId: number): Promise<numb
   }
 }
 
-export async function stagioniScelte(
+async function stagioniScelteDaLeggere(
   competitionSourceId: number,
   seasonSourceId: number,
   finestra: Finestra,
@@ -144,3 +144,6 @@ export async function stagioniScelte(
       : nomeDiStagione(corrente.starts_on, corrente.ends_on),
   };
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const stagioniScelte = inCache("stagioniScelte", stagioniScelteDaLeggere);

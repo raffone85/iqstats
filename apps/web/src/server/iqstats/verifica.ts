@@ -18,7 +18,7 @@
 // intervallo non si giudica e si dichiara, invece di essere contato come sbagliato.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "./projection-artefatti.ts";
 import type { ProiezioneDiGara } from "./projection/match.ts";
 
@@ -40,7 +40,7 @@ interface RigaReale {
 }
 
 /** Le due righe della gara, dalle nostre osservazioni. `null` se non l'abbiamo osservata. */
-export async function realeDellaGara(matchSourceId: number): Promise<RealeDiGara | null> {
+async function realeDellaGaraDaLeggere(matchSourceId: number): Promise<RealeDiGara | null> {
   const sql = connessione();
   if (sql === null) return null;
   const scelte = COLONNE.map((c) => "o." + c + "::text").join(", ");
@@ -229,3 +229,6 @@ export function taraturaDegliIntervalli(): Taratura | null {
     bersagli: coperture.length,
   };
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const realeDellaGara = inCache("realeDellaGara", realeDellaGaraDaLeggere);

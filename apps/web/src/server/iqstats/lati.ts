@@ -22,7 +22,7 @@
 // prova diventa rossa invece di lasciare passare medie costruite a meta'.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 export type Lato = "home" | "away";
 
@@ -202,7 +202,7 @@ interface RigaDiLato {
  * nomina un torneo solo, perche' lo stesso identificativo di stagione compare in piu'
  * competizioni.
  */
-export async function medieDiLato(
+async function medieDiLatoDaLeggere(
   teamSourceId: number,
   competitionSourceId: number,
   seasonSourceId: number,
@@ -414,7 +414,7 @@ export interface Trend {
  * i due numeri sono confrontabili perche' nascono dalla stessa definizione, non perche' si
  * somigliano.
  */
-export async function trendUltime5(
+async function trendUltime5DaLeggere(
   teamSourceId: number,
   competitionSourceId: number,
   seasonSourceId: number,
@@ -612,7 +612,7 @@ export interface Duelli {
  * Solo le sette famiglie del motore: sono quelle di cui parlano le card, le letture e il
  * trend, e un elenco di ventotto confronti non e' una lettura.
  */
-export async function duelliDiLato(
+async function duelliDiLatoDaLeggere(
   teamSourceId: number,
   competitionSourceId: number,
   seasonSourceId: number,
@@ -724,3 +724,8 @@ export function contese(
 
   return trovate.sort((a, b) => b.forza - a.forza).slice(0, quante);
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const duelliDiLato = inCache("duelliDiLato", duelliDiLatoDaLeggere);
+export const medieDiLato = inCache("medieDiLato", medieDiLatoDaLeggere);
+export const trendUltime5 = inCache("trendUltime5", trendUltime5DaLeggere);

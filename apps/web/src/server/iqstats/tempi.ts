@@ -19,7 +19,7 @@
 // gara da leggere non entra mai nelle medie che la leggono.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 import { mercatiGol, type MercatiGol } from "./projection/gol.ts";
 
 /** Quante gare al massimo si guardano indietro. Oltre, si guarda un'altra stagione. */
@@ -212,7 +212,7 @@ interface RigaGrezza {
   readonly gol_trasferta_pt: string;
 }
 
-export async function tempiDellaGara(args: {
+async function tempiDellaGaraDaLeggere(args: {
   readonly leagueId: number | null;
   readonly seasonId: number | null;
   readonly homeTeamId: number | null;
@@ -313,3 +313,6 @@ export async function tempiDellaGara(args: {
     fasce: "DATA_NOT_AVAILABLE",
   };
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const tempiDellaGara = inCache("tempiDellaGara", tempiDellaGaraDaLeggere);

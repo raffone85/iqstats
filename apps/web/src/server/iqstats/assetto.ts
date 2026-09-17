@@ -15,7 +15,7 @@
 // **Anti-leakage.** Finestra `kickoff_at < quando`, come ovunque.
 import "server-only";
 
-import { connessione } from "./lettura.ts";
+import { connessione, inCache } from "./lettura.ts";
 
 /** Quante gare al massimo entrano nel profilo. */
 const GARE = 10;
@@ -194,7 +194,7 @@ async function profiloDi(
 }
 
 /** Come stanno in campo le due squadre in questa stagione. */
-export async function assettoDelConfronto(
+async function assettoDelConfrontoDaLeggere(
   casaSourceId: number,
   trasfertaSourceId: number,
   stagioni: readonly number[],
@@ -277,7 +277,7 @@ async function fasceDi(
 }
 
 /** In quale tratto della gara le due squadre producono di piu'. */
-export async function quandoSpingono(
+async function quandoSpingonoDaLeggere(
   casaSourceId: number,
   trasfertaSourceId: number,
   stagioni: readonly number[],
@@ -321,3 +321,7 @@ export async function quandoSpingono(
     return null;
   }
 }
+
+// Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
+export const assettoDelConfronto = inCache("assettoDelConfronto", assettoDelConfrontoDaLeggere);
+export const quandoSpingono = inCache("quandoSpingono", quandoSpingonoDaLeggere);
