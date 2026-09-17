@@ -61,10 +61,8 @@ export default async function AccessPage({ searchParams }: Readonly<{ searchPara
   const nextPath = localNext(query.next);
   const accessError = accessErrorMessage(query.errore);
   const supabase = await createSupabaseServerClient();
-  const [{ data, error }, googleEnabled] = await Promise.all([
-    supabase.auth.getClaims(),
-    isGoogleAccessEnabled(),
-  ]);
+  const { data, error } = await supabase.auth.getClaims();
+  const googleEnabled = isGoogleAccessEnabled();
   const authenticated = !error && Boolean(data?.claims?.sub);
 
   return (
