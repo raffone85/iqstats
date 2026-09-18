@@ -82,6 +82,9 @@ export function connessione(): ReturnType<typeof postgres> | null {
     idle_timeout: 20,
     connect_timeout: 5,
     prepare: false,
+    // Il catalogo dei tipi a ogni connessione e' traffico che non serve: qui si leggono
+    // solo tipi nativi. Vedi la stessa scelta in `runtime.ts`.
+    fetch_types: false,
     connection: {
       application_name: "iqstats-lettura",
       default_transaction_read_only: true,

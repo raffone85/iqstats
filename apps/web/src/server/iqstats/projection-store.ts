@@ -97,6 +97,43 @@ interface RigaGiocatore {
 
 const PROVENIENZE_AMMESSE = ["A", "B", "C"];
 
+/** Le colonne della tavola che il contratto usa, oltre alle metriche e ai tiri. */
+const COLONNE_BASE = [
+  "match_id", "season_id", "team_id", "opponent_id", "side", "kickoff_at",
+  "referee_id", "coach_source_id", "round_number", "is_derby", "goals_for", "goals_against",
+] as const;
+
+/**
+ * L'elenco delle colonne da leggere, al posto di `select *`.
+ *
+ * **Perche' non si legge tutto.** `value_provenance` e' un jsonb da 890 byte medi su una
+ * riga di 1.272: il 70 per cento di quello che viaggiava fra database e applicazione era
+ * una tabella di provenienze che serviva solo a decidere se un numero e' noto. Misurato
+ * il 18 settembre 2026 su una stagione intera: 1.605 KB per lettura, di cui 960 KB di
+ * sole provenienze. Il traffico d'uscita Supabase era arrivato a 13,82 GB contro i 5,5
+ * del piano.
+ *
+ * **La politica non cambia ed e' sempre la stessa.** Il filtro qui sotto e' generato da
+ * `METRICHE` e `PROVENIENZE_AMMESSE`, le stesse costanti che usa `noto`: una provenienza
+ * non ammessa diventa `null` prima di partire, invece di essere scartata all'arrivo. Una
+ * provenienza assente resta un valore noto, esattamente come prima.
+ *
+ * Nessun pezzo di questa stringa viene da fuori: sono nomi di colonna scritti qui.
+ */
+function colonneOsservazione(alias: string): string {
+  const p = alias === "" ? "" : `${alias}.`;
+  const ammesse = PROVENIENZE_AMMESSE.map((classe) => `'${classe}'`).join(", ");
+  const metriche = METRICHE.map((metrica) =>
+    `case when ${p}value_provenance->>'${metrica}' is null`
+    + ` or ${p}value_provenance->>'${metrica}' in (${ammesse})`
+    + ` then ${p}${metrica} else null end as ${metrica}`);
+  return [
+    ...COLONNE_BASE.map((colonna) => `${p}${colonna}`),
+    ...metriche,
+    ...CAMPI_TIRI.map((coppia) => `${p}${coppia[1]}`),
+  ].join(", ");
+}
+
 function numero(valore: unknown): number | null {
   if (valore === null || valore === undefined) return null;
   const convertito = typeof valore === "number" ? valore : Number(valore);
@@ -118,6 +155,9 @@ function istante(valore: string): string {
  * E' la stessa politica del lato che addestra, applicata **prima** di qualunque media.
  * Una provenienza ambigua o mancante non e' un numero piccolo: non e' un numero.
  */
+// Le letture dal database applicano gia' questo filtro in SQL (`colonneOsservazione`) e
+// non portano piu' `value_provenance`: qui il controllo resta per chi arriva da altre
+// fonti - e perche' la politica deve restare scritta una volta sola, in queste costanti.
 function noto(riga: RigaOsservazione, metrica: string): number | null {
   const provenienze = riga.value_provenance;
   if (provenienze !== null && provenienze !== undefined) {
@@ -302,7 +342,7 @@ export class ProjectionObservationStore {
     finoA: string,
   ): Promise<OsservazioneSquadraGara[]> {
     const righe = await this.#sql<RigaOsservazione[]>`
-      select gemella.*
+      select ${this.#sql.unsafe(colonneOsservazione("gemella"))}
       from football.team_match_observations propria
       join football.team_match_observations gemella
         on gemella.match_id = propria.match_id
@@ -318,7 +358,7 @@ export class ProjectionObservationStore {
     finoA: string,
   ): Promise<OsservazioneSquadraGara[]> {
     const righe = await this.#sql<RigaOsservazione[]>`
-      select *
+      select ${this.#sql.unsafe(colonneOsservazione(""))}
       from football.team_match_observations
       where season_id = ${seasonId}::bigint
         and kickoff_at <= ${finoA}::timestamptz
@@ -332,7 +372,7 @@ export class ProjectionObservationStore {
     finoA: string,
   ): Promise<OsservazioneSquadraGara[]> {
     const righe = await this.#sql<RigaOsservazione[]>`
-      select *
+      select ${this.#sql.unsafe(colonneOsservazione(""))}
       from football.team_match_observations
       where referee_id = ${refereeId}::bigint
         and kickoff_at <= ${finoA}::timestamptz

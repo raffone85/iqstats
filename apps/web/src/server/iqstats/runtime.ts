@@ -64,6 +64,10 @@ function databaseGateway(databaseUrl: string): DatabaseIqstatsGateway {
     idle_timeout: 20,
     connect_timeout: 5,
     prepare: false,
+    // Ogni nuova connessione chiedeva il catalogo dei tipi: 381 righe di pg_type a
+    // connessione, 515.493 righe in dieci ore di misura il 18 settembre 2026. Il livello
+    // dati usa solo tipi nativi, quindi il catalogo non serve.
+    fetch_types: false,
     connection: {
       application_name: "iqstats-web-data1",
       default_transaction_read_only: true,
