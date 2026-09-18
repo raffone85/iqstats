@@ -131,6 +131,8 @@ import { tempiDellaGara } from "@/server/iqstats/tempi";
 import { MatchTempiSection } from "@/components/match-tempi-section";
 import { ritmoDellaGara } from "@/server/iqstats/ritmo";
 import { MatchRitmoSection } from "@/components/match-ritmo-section";
+import { UominiGaraSection } from "@/components/uomini-gara-section";
+import { uominiDellaGara } from "@/server/iqstats/uomini-gara";
 import { getMatchPrediction } from "@/server/iqstats/predictions";
 import { getStatEngineReading } from "@/server/iqstats/stat-engine";
 import {
@@ -480,6 +482,18 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     detail.homeTeamId !== null ? getTeamForm(String(detail.homeTeamId)) : Promise.resolve(null),
     detail.awayTeamId !== null ? getTeamForm(String(detail.awayTeamId)) : Promise.resolve(null),
   ]);
+
+  // Gli uomini delle due rose: una lettura per squadra, gia' in cache, dalla stessa fonte
+  // della scheda squadra. Senza lega o stagione non si chiede: una rosa fuori contesto
+  // sarebbe di un'altra competizione.
+  const uomini = detail.leagueId !== null && detail.seasonId !== null
+    && detail.homeTeamId !== null && detail.awayTeamId !== null
+    ? await uominiDellaGara(
+      { nome: detail.homeTeam, id: String(detail.homeTeamId) },
+      { nome: detail.awayTeam, id: String(detail.awayTeamId) },
+      { leagueId: String(detail.leagueId), seasonId: String(detail.seasonId) },
+    )
+    : null;
 
   // Quarta ondata, e solo a gara conclusa: il tabellino con la mappa dei tiri dentro, e la
   // cronologia. Sono due richieste in tutto — le statistiche e la mappa arrivano insieme —
@@ -1541,6 +1555,10 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             nome="Giocatori"
           />
         ) : null}
+
+        {/* Il rendimento di chi scende in campo, prima delle formazioni: dice chi pesa in
+            questa rosa, e le formazioni poi dicono chi di loro c'e'. */}
+        {uomini !== null ? <UominiGaraSection uomini={uomini} /> : null}
 
         {/* **La formazione prima delle letture che la usano.** Fino al 3 settembre 2026 gli
             undici comparivano cinque blocchi dopo la sezione che dichiarava «formazione

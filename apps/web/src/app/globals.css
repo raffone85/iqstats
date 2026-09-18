@@ -2327,3 +2327,33 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .product-shell .famiglia-sintesi b { color: var(--card-brand-strong); }
 .product-shell .famiglia-testa em, .product-shell .famiglia-blocco > summary::after { color: var(--card-ink-3); }
 .partite-verdetto { margin: 0 0 18px; }
+
+/* Gli uomini della gara: due rose, chi segna e chi prende i gialli.
+   La barra e' proporzionale al primo della lista, non a un fondoscala inventato, e la
+   cifra resta scritta accanto: la barra rende visibile il confronto, non lo sostituisce. */
+.uomini-griglia { display: grid; gap: 22px; margin-top: 18px; }
+@media (min-width: 860px) { .uomini-griglia { grid-template-columns: 1fr 1fr; gap: 28px; } }
+.uomini-lato > h3 { margin: 0 0 4px; font: 700 17px/1.25 var(--font-archivo, sans-serif); color: var(--card-ink); }
+.uomini-campione { margin: 0 0 16px; font-size: 12.5px; color: var(--card-ink-3); }
+.uomini-lista + .uomini-lista { margin-top: 20px; }
+.uomini-lista > h4 { margin: 0 0 2px; font: 700 13.5px/1.3 var(--font-inter, sans-serif); color: var(--card-brand); }
+.uomini-spiega { margin: 0 0 10px; font-size: 12.5px; color: var(--card-ink-3); }
+.uomini-vuoto { margin: 0; padding: 12px 14px; border-radius: var(--r-control); background: var(--card-panel-2); font-size: 13px; color: var(--card-ink-2); }
+.uomini-lista ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.uomini-riga { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "nome cifre" "barra barra" "nota nota"; gap: 4px 10px; padding: 10px 12px; border-radius: var(--r-control); background: var(--card-panel-2); }
+.uomini-riga:nth-child(even) { background: var(--card-ground); }
+.uomini-nome { grid-area: nome; font: 600 14px/1.3 var(--font-inter, sans-serif); color: var(--card-ink); text-decoration: none; }
+.uomini-nome:hover { color: var(--card-brand-strong); text-decoration: underline; }
+.uomini-nome:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 3px; border-radius: 6px; }
+.uomini-cifre { grid-area: cifre; display: inline-flex; align-items: baseline; gap: 5px; font-family: var(--font-mono, monospace); }
+.uomini-cifre b { font-size: 15px; color: var(--card-brand-strong); }
+.uomini-unita { font-size: 11px; color: var(--card-ink-3); }
+.uomini-barra { grid-area: barra; display: block; height: 4px; border-radius: 2px; background: var(--card-stroke); overflow: hidden; }
+.uomini-barra i { display: block; height: 100%; border-radius: 2px; background: var(--card-brand); transform-origin: left center; }
+.uomini-nota { grid-area: nota; font-size: 11.5px; color: var(--card-ink-3); }
+@media (prefers-reduced-motion: no-preference) {
+  /* Un solo movimento, e motivato: le barre crescono una volta all'apertura della
+     sezione, cosi' l'occhio vede la scala prima di leggere le cifre. Niente cicli. */
+  .uomini-barra i { animation: uomini-cresce 520ms cubic-bezier(.16, 1, .3, 1) both; }
+}
+@keyframes uomini-cresce { from { transform: scaleX(0); } to { transform: scaleX(1); } }
