@@ -2357,3 +2357,34 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
   .uomini-barra i { animation: uomini-cresce 520ms cubic-bezier(.16, 1, .3, 1) both; }
 }
 @keyframes uomini-cresce { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Filtro sui giocatori delle gare di oggi: un modulo GET, cursori che l'utente regola da
+   se', e una riga per giocatore che dice perche' e' in lista. Solo i token del sistema. */
+.filtro { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px 32px; margin: 14px 0 18px; padding: var(--pad-panel); border-radius: var(--r-panel); border: 1px solid var(--card-stroke); background: var(--card-panel); }
+.cursore { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.cursore label { font: 600 14px/1.35 var(--font-inter, sans-serif); color: var(--card-ink); }
+.cursore-valore { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-brand-strong); }
+.cursore input[type="range"] { grid-column: 1 / -1; width: 100%; min-height: var(--h-control); margin: 0; accent-color: var(--card-brand); cursor: pointer; }
+.cursore input[type="range"]:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; border-radius: var(--r-inset); }
+.filtro-scelte { display: grid; gap: 14px; grid-column: 1 / -1; }
+@media (min-width: 640px) { .filtro-scelte { grid-template-columns: 1fr 1fr; } }
+.filtro-scelte label { font: 600 14px/1.35 var(--font-inter, sans-serif); letter-spacing: normal; text-transform: none; color: var(--card-ink); }
+.filtro-azioni { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; grid-column: 1 / -1; }
+.filtro-azzera, .filtro-cerca { display: inline-flex; align-items: center; justify-content: center; min-height: var(--h-action); border-radius: var(--r-control); font: 700 15px/1 var(--font-display); cursor: pointer; text-decoration: none; }
+.filtro-azzera { border: 1px solid var(--card-stroke); background: var(--card-panel-2); color: var(--card-ink); }
+.filtro-azzera:hover { border-color: var(--card-brand); color: var(--card-brand-strong); }
+.filtro-cerca { border: 0; background: var(--card-brand); color: var(--card-on-brand); }
+.filtro-cerca:hover { background: var(--card-brand-strong); }
+.filtro-azzera:focus-visible, .filtro-cerca:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 3px; }
+.filtro-nota { margin: 0 0 16px; padding: 12px 14px; border-radius: var(--r-control); background: var(--card-panel-2); font-size: 13.5px; line-height: 1.5; color: var(--card-ink-2); }
+.filtro-nota b { color: var(--card-ink); }
+.filtro-attesa, .filtro-conto { margin: 0 0 12px; font-size: 14px; color: var(--card-ink-2); }
+.filtro-conto b { font-family: var(--font-mono, monospace); color: var(--card-ink); }
+.filtro-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.filtro-riga { grid-template-areas: "nome cifre" "nota nota" "perche perche"; }
+.filtro-riga .uomini-nota a { color: var(--card-brand-strong); }
+.filtro-riga .uomini-nota a:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; border-radius: 4px; }
+.filtro-perche { grid-area: perche; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
+.filtro-perche b { color: var(--card-ink); }
+/* La scheda aperta si riconosce dal pieno e dal peso, non dal solo colore. */
+.filtro-schede .partite-index-link[aria-current="page"] { border-color: var(--card-brand); background: var(--card-brand); color: var(--card-on-brand); font-weight: 700; }

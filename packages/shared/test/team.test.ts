@@ -227,6 +227,31 @@ test("la rosa mappa i ruoli e un solo GET copre le statistiche per giocatore", (
   assert.equal(starter?.stats?.totals.expectedGoals, 0.0515);
 });
 
+test("le presenze dall'ultimo giallo si contano dalla gara piu' recente", () => {
+  const members = requireData(normalizeTeamSquad(readJson("team-squad.json"), { teamId, capturedAt }));
+  const base = requireData(
+    normalizeEventPlayerStats(readJson("event-player-stats-1.json"), { teamId, capturedAt }),
+  ).find((row) => row.playerId === "1995");
+  assert.ok(base);
+  const gara = (eventId: string, gialli: number | null, minuti: number | null) => ({
+    ...base, eventId, minutesPlayed: minuti, metrics: { ...base.metrics, yellowCard: gialli },
+  });
+  const stats = (rows: readonly (typeof base)[]) =>
+    requireData(aggregateTeamSquad(members, rows, { teamId, capturedAt, matchesCovered: rows.length }))
+      .entries.find((entry) => entry.profile.playerId === "1995")?.stats;
+  const conta = (rows: readonly (typeof base)[]) => stats(rows)?.appearancesSinceYellow;
+
+  // Dalla piu' recente: niente, riga a zero minuti (non conta), niente, giallo.
+  const seq = [gara("4", 0, 90), gara("3", 1, 0), gara("2", null, 80), gara("1", 1, 90)];
+  assert.equal(conta(seq), 2);
+  // Il giallo della riga a zero minuti non entra nel totale: non ha minuti su cui dividersi.
+  assert.equal(stats(seq)?.totals.yellowCard, 1);
+  assert.equal(stats(seq)?.minutes, 260);
+  assert.equal(conta([gara("2", 1, 90), gara("1", 0, 90)]), 0);
+  // Mai un giallo nelle gare lette: un'assenza, non uno zero.
+  assert.equal(conta([gara("2", 0, 90), gara("1", null, 90)]), null);
+});
+
 test("con una sola gara il rating medio resta sotto soglia", () => {
   const members = requireData(normalizeTeamSquad(readJson("team-squad.json"), { teamId, capturedAt }));
   const playerStats = requireData(

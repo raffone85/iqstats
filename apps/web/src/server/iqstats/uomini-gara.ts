@@ -16,12 +16,12 @@
 // quel numero, e la sezione dichiara quanti giocatori ha potuto misurare.
 import "server-only";
 
-import type { SquadPosition, TeamSquadEntry } from "@iqstats/shared";
+import type { PlayerMetricKey, SquadPosition, TeamSquadEntry } from "@iqstats/shared";
 
 import { getTeamSquad, type TeamSelection } from "./team-page.ts";
 
 /** Minuti minimi di stagione perche' un giocatore entri in classifica. */
-const MINUTI_MINIMI = 180;
+export const MINUTI_MINIMI = 180;
 
 /**
  * Quante gare pesa la media della rosa quando si corregge il rating di un giocatore.
@@ -82,7 +82,7 @@ export interface UominiDellaGara {
   readonly minutiMinimi: number;
 }
 
-function per90(totale: number | null, minuti: number): number | null {
+export function per90(totale: number | null, minuti: number): number | null {
   if (totale === null || minuti <= 0) return null;
   return (totale / minuti) * 90;
 }
@@ -96,7 +96,7 @@ function per90(totale: number | null, minuti: number): number | null {
  * scende a 0,2106 contro 0,2170 della media generale e 0,2249 senza correzione; sui gialli
  * 0,1264 contro 0,1256 e 0,1326. La squadra vince dove la differenza conta.
  */
-function per90Corretto(
+export function per90Corretto(
   grezzo: number | null,
   minuti: number,
   mediaRosa: number | null,
@@ -108,9 +108,9 @@ function per90Corretto(
 }
 
 /** La media della rosa per quella metrica, sui minuti giocati da tutti. */
-function mediaDellaRosa(
+export function mediaDellaRosa(
   entries: readonly TeamSquadEntry[],
-  metrica: "goals" | "yellowCard",
+  metrica: PlayerMetricKey,
 ): number | null {
   let totale = 0;
   let minuti = 0;

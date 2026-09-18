@@ -566,8 +566,15 @@ function aggregateMember(
   minimumSample: number,
 ): TeamSquadMemberStats {
   const ratings = rows.map((row) => row.rating).filter((value): value is number => value !== null);
+  // Le righe arrivano dalla gara piu' recente: e' l'ordine in cui il gateway le chiede.
+  const played = rows.filter((row) => (row.minutesPlayed ?? 0) > 0);
+  // I totali stanno sulle stesse gare che danno i minuti. La fonte scrive righe a zero
+  // minuti che portano gialli e rossi (misurato il 18/09/2026: 2 gialli e un rosso a 0'):
+  // contarle gonfiava ogni rapporto per 90'. Quegli episodi si perdono, e si perdono
+  // dichiarati: un numeratore senza denominatore non e' un dato.
   const totals = {} as Record<PlayerMetricKey, number | null>;
-  for (const key of PLAYER_METRIC_KEYS) totals[key] = sumMetric(rows, key);
+  for (const key of PLAYER_METRIC_KEYS) totals[key] = sumMetric(played, key);
+  const lastYellow = played.findIndex((row) => (row.metrics.yellowCard ?? 0) > 0);
 
   return {
     playerId,
@@ -578,6 +585,7 @@ function aggregateMember(
       : unavailable<number>(ratings.length === 0 ? "not_captured" : "insufficient_coverage"),
     ratingSample: ratings.length,
     totals,
+    appearancesSinceYellow: lastYellow === -1 ? null : lastYellow,
   };
 }
 

@@ -343,6 +343,12 @@ export interface TeamSquadMemberStats {
   readonly ratingSample: number;
   /** Somme stagionali; `null` quando nessuna gara espone la metrica. */
   readonly totals: Readonly<Record<PlayerMetricKey, number | null>>;
+  /**
+   * Presenze dall'ultimo giallo: 0 se l'ha preso nell'ultima gara giocata, `null` se nelle
+   * gare lette non ne ha. E' un fatto, non un segnale: il ritardo non rende il giallo piu'
+   * probabile (misurato il 18/09/2026, `tasks/filtro-giocatori-del-giorno.md`).
+   */
+  readonly appearancesSinceYellow: number | null;
 }
 
 export interface TeamSquadEntry {

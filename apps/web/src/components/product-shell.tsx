@@ -80,7 +80,13 @@ const MENU: ReadonlyArray<{
       { label: "Cerca", href: "/cerca", section: "search" },
     ],
   },
-  { label: "Giocatori", href: "/giocatori", section: "teams" },
+  {
+    label: "Giocatori",
+    voci: [
+      { label: "Gare di oggi", href: "/giocatori/oggi", section: "teams" },
+      { label: "Classifiche", href: "/giocatori", section: "teams" },
+    ],
+  },
   { label: "Arbitri", href: "/arbitri", section: "referees" },
   { label: "Metodo", href: "/metodo", section: "method" },
 ];

@@ -23,6 +23,7 @@ function gara(
   return {
     eventId: progressivo,
     leagueId,
+    seasonId: null,
     leagueName: `Lega ${leagueId}`,
     leagueCountry: null,
     leagueCountryCode: null,

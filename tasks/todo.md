@@ -92,6 +92,13 @@ Settembre in breve, tutto verificato in produzione:
   self-test verdi; smoke HTTP reale su `/match/7213` (stagione corrente) e `/match/1452`
   (dati stagione precedente). **Resta il checkpoint umano: QA visuale a
   375/768/1024/1440 px e decisione su `/pronostici`.**
+- [x] **GIOC-OGGI — Filtro sui giocatori delle gare di oggi** (18 settembre 2026, piano in
+  `tasks/filtro-giocatori-del-giorno.md`). `/giocatori/oggi`: Marcatori, Probabili
+  ammoniti, Falli commessi, Falli subiti, cursori in un modulo `GET`, «perché è qui» su ogni
+  riga. Nessun filtro sul ritardo dal giallo (misurato: non predice). Corretto alla radice
+  il per 90' della rosa, che contava cartellini di righe a zero minuti. Test condivisi
+  30/30, gateway 25/25, dossier 15/15; 0 sotto AA e overflow 0 a 375/768/1024/1440.
+  **Checkpoint umano: pubblicazione.**
 
 ## APP-0: Matrice dei contratti MVP
 

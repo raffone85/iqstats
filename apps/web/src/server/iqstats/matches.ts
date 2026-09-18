@@ -22,6 +22,8 @@ const MAX_PAGES = 5;
 export interface MatchListItem {
   readonly eventId: number;
   readonly leagueId: number | null;
+  /** La stagione della gara: serve a leggere la rosa nella competizione giusta. */
+  readonly seasonId: number | null;
   readonly leagueName: string | null;
   readonly leagueCountry: string | null;
   readonly leagueCountryCode: string | null;
@@ -137,6 +139,7 @@ function normalizeMatch(row: unknown, leagues: Map<number, LeagueMeta>): MatchLi
   return {
     eventId,
     leagueId,
+    seasonId: asNumber(r.season_id),
     leagueName: meta?.name ?? null,
     leagueCountry: meta?.country ?? null,
     leagueCountryCode: meta?.countryCode ?? null,
