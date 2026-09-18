@@ -82,9 +82,11 @@ export function connessione(): ReturnType<typeof postgres> | null {
     idle_timeout: 20,
     connect_timeout: 5,
     prepare: false,
-    // Il catalogo dei tipi a ogni connessione e' traffico che non serve: qui si leggono
-    // solo tipi nativi. Vedi la stessa scelta in `runtime.ts`.
-    fetch_types: false,
+    // **Il catalogo dei tipi si legge.** Toglierlo con `fetch_types: false` risparmiava 381
+    // righe di `pg_type` per connessione, ma senza quelle righe postgres.js non sa
+    // serializzare un array: `= any($1::bigint[])` partiva come stringa e il database
+    // rispondeva «malformed array literal». Misurato il 18 settembre 2026 su
+    // `nomiDelleSquadre`, che e' nel percorso di ogni dossier.
     connection: {
       application_name: "iqstats-lettura",
       default_transaction_read_only: true,
