@@ -47,6 +47,11 @@ $dataset = Join-Path $radice 'scripts\projection\dataset'
 
 if (-not (Test-Path $python)) { throw "python del progetto assente: $python" }
 
+# L'ambiente locale prima di tutto. Alle 03:00 Docker Desktop puo' essere spento - parte al
+# login dell'utente, l'attivita' pianificata no - e senza il container la catena cadeva
+# prima di aprire il giornale. Vale solo dove il psql sta in un container.
+if ($env:IQSTATS_PG_CONTAINER) { & (Join-Path $radice 'scripts\ops\avvia-ambiente.ps1') }
+
 function Passo($titolo, $file, $argomenti) {
     Write-Output "== $titolo"
     & $python $file @argomenti
@@ -192,26 +197,25 @@ if ($elenco.tetto_raggiunto) {
 }
 Write-Output "gare nuove scoperte: $gare (in $($elenco.competizioni_esaminate) competizioni, $($elenco.richieste_usate) richieste)"
 
-if ($gare -eq 0) {
-    Write-Output 'niente da raccogliere: la passata finisce qui'
-    foreach ($dest in $destinazioni) {
-        if (-not $dest.giornale) { continue }
-        Sql $dest @"
-update private.football_sync_runs
-set status = 'completed', completed_at = now(),
-    requests_limit = 200, requests_started = $($elenco.richieste_usate),
-    requests_completed = $($elenco.richieste_usate)
-where id = $($dest.giornale)
-"@ | Out-Null
-    }
-    exit 0
-}
-
 # 2. Raccolta. Quattro richieste per gara - pannello e mappa dei tiri arrivano insieme da
 #    /stats/, poi episodi, statistiche per giocatore e dettaglio - piu' cinquanta di
 #    margine per i ritentativi.
-$tetto = $gare * 4 + 50
-Passo "raccolta di $gare gare (tetto $tetto)" $sync @('--raccogli', '--max-richieste', "$tetto")
+#
+# **Zero gare nuove non vuol dire niente da fare.** Il 17 settembre 2026 la scoperta ha
+# detto zero perche' i payload del 13-17 erano gia' su disco, raccolti da una passata
+# interrotta dopo la raccolta: uscire qui lasciava il livello dati fermo al 12 mentre
+# l'archivio era avanti. La raccolta si salta, la normalizzazione e il caricamento no -
+# sono idempotenti, e sono l'unico modo perche' quei payload arrivino nel database.
+$tetto = 0
+if ($gare -eq 0) {
+    Write-Output 'niente da raccogliere: restano solo normalizzazione e caricamento'
+    # Il rendiconto della raccolta precedente non e' di questa passata: sommarlo direbbe
+    # richieste che stanotte nessuno ha fatto.
+    Remove-Item $raccolta -ErrorAction SilentlyContinue
+} else {
+    $tetto = $gare * 4 + 50
+    Passo "raccolta di $gare gare (tetto $tetto)" $sync @('--raccogli', '--max-richieste', "$tetto")
+}
 
 # 3. Normalizzazione: gli script Python gia' validati, non una seconda scrittura.
 Passo 'osservazioni' (Join-Path $dataset 'build_observations.py') @()
