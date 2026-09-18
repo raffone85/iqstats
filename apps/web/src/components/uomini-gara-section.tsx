@@ -45,6 +45,9 @@ function Riga({
       </span>
       <span className="uomini-nota">
         {uomo.totale === null ? "totale non esposto" : `${uomo.totale} in ${uomo.presenze} gare`}
+        {uomo.per90Grezzo === null || uomo.per90Grezzo === uomo.per90
+          ? null
+          : ` · grezzo ${cifra(uomo.per90Grezzo, 2)}`}
         {uomo.accanto === null ? null : ` · ${accantoNome} ${cifra(uomo.accanto, accantoDecimali)}`}
         {uomo.rating === null ? null : (
           // Il rating corretto e' quello che conta; la media grezza resta scritta col suo

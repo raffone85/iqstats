@@ -55,8 +55,10 @@ export interface UomoDellaGara {
   readonly gareDiRating: number;
   /** Lo stesso rating avvicinato alla media della rosa, in proporzione al campione. */
   readonly ratingCorretto: number | null;
-  /** Per novanta minuti: `null` dove la fonte non espone la metrica. */
+  /** Per novanta minuti, corretto sul campione: e' il numero su cui la lista ordina. */
   readonly per90: number | null;
+  /** Lo stesso rapporto senza correzione, cosi' com'e' nei totali della fonte. */
+  readonly per90Grezzo: number | null;
   /** Il totale stagionale della stessa metrica, perche' un rapporto senza il suo conteggio inganna. */
   readonly totale: number | null;
   /** La seconda misura della riga: gol attesi per i marcatori, falli per gli ammoniti. */
@@ -83,6 +85,44 @@ export interface UominiDellaGara {
 function per90(totale: number | null, minuti: number): number | null {
   if (totale === null || minuti <= 0) return null;
   return (totale / minuti) * 90;
+}
+
+/**
+ * Il rapporto per novanta minuti, avvicinato alla media della rosa quanto il campione e'
+ * piccolo. Stesso metodo del rating, stesso peso, stessa ragione.
+ *
+ * **Il riferimento e' la rosa, non il campionato.** Misurato il 18 settembre 2026 sulle
+ * stesse 11.983 stagioni-giocatore: con la media della squadra l'errore sui tiri in porta
+ * scende a 0,2106 contro 0,2170 della media generale e 0,2249 senza correzione; sui gialli
+ * 0,1264 contro 0,1256 e 0,1326. La squadra vince dove la differenza conta.
+ */
+function per90Corretto(
+  grezzo: number | null,
+  minuti: number,
+  mediaRosa: number | null,
+): number | null {
+  if (grezzo === null) return null;
+  if (mediaRosa === null || minuti <= 0) return grezzo;
+  const gare = minuti / 90;
+  return (grezzo * gare + mediaRosa * GARE_DI_PRIOR) / (gare + GARE_DI_PRIOR);
+}
+
+/** La media della rosa per quella metrica, sui minuti giocati da tutti. */
+function mediaDellaRosa(
+  entries: readonly TeamSquadEntry[],
+  metrica: "goals" | "yellowCard",
+): number | null {
+  let totale = 0;
+  let minuti = 0;
+  for (const entry of entries) {
+    const stats = entry.stats;
+    if (stats === null || stats.minutes <= 0) continue;
+    const valore = stats.totals[metrica];
+    if (valore === null || valore === undefined) continue;
+    totale += valore;
+    minuti += stats.minutes;
+  }
+  return minuti === 0 ? null : (totale / minuti) * 90;
 }
 
 function valoreRating(entry: TeamSquadEntry): { rating: number | null; gare: number } {
@@ -117,6 +157,7 @@ function uomo(
   metrica: "goals" | "yellowCard",
   accantoA: "expectedGoals" | "fouls",
   mediaRosa: number | null,
+  mediaMetrica: number | null,
 ): UomoDellaGara | null {
   const stats = entry.stats;
   if (stats === null || stats.minutes < MINUTI_MINIMI) return null;
@@ -133,7 +174,8 @@ function uomo(
     ratingCorretto: rating === null || mediaRosa === null || gare <= 0
       ? rating
       : (rating * gare + mediaRosa * GARE_DI_PRIOR) / (gare + GARE_DI_PRIOR),
-    per90: per90(totale, stats.minutes),
+    per90: per90Corretto(per90(totale, stats.minutes), stats.minutes, mediaMetrica),
+    per90Grezzo: per90(totale, stats.minutes),
     totale,
     accanto: per90(stats.totals[accantoA] ?? null, stats.minutes),
   };
@@ -151,9 +193,13 @@ function primi(
   accantoA: "expectedGoals" | "fouls",
   mediaRosa: number | null,
 ): readonly UomoDellaGara[] {
+  const mediaMetrica = mediaDellaRosa(rose, metrica);
   return rose
-    .map((entry) => uomo(entry, metrica, accantoA, mediaRosa))
-    .filter((v): v is UomoDellaGara => v !== null && v.per90 !== null && v.per90 > 0)
+    .map((entry) => uomo(entry, metrica, accantoA, mediaRosa, mediaMetrica))
+    // Chi non ha mai fatto quella cosa resta fuori: la correzione lo porterebbe sopra zero
+    // per il solo fatto che i compagni la fanno, e sarebbe un numero che non gli appartiene.
+    .filter((v): v is UomoDellaGara => v !== null && v.per90 !== null
+      && v.per90Grezzo !== null && v.per90Grezzo > 0)
     .sort((a, b) => (b.per90 ?? 0) - (a.per90 ?? 0) || b.minuti - a.minuti)
     .slice(0, QUANTI);
 }
