@@ -471,8 +471,16 @@ async function famiglieDi(
    * consigliati di tipo linea, solo 10 stavano su una linea che il banco apre**. Il
    * dossier mostrava «Over 2,5 tiri in porta» dove il banco parte da 3,5.
    *
-   * Le `fuoriFinestra` restano fuori: sono soglie oltre le cinque su cui la calibrazione
-   * e' stata misurata, e una probabilita' non verificata sarebbe un numero inventato.
+   * **Le `fuoriFinestra` restano fuori, e adesso si sa quanto costa.** Sono le soglie
+   * oltre le cinque su cui la calibrazione e' stata misurata. `consuntivo-soglie.ts`, su
+   * 267 gare chiuse e 53.488 letture, dice che nella fascia 50-80% - l'unica che il
+   * criterio usa - la promessa regge dentro la finestra (-0,8 punti) e al primo passo
+   * sotto (-0,2), mentre sopra diventa ottimista di 2,9, 4,9 e 5,0 punti a uno, due e tre
+   * passi: una linea li' spenderebbe nella distorsione tutto il margine di cinque punti
+   * che il criterio chiede. Allargare di un passo sotto, dove reggerebbe, non guadagna
+   * nemmeno una riga: sull'artefatto del 18 settembre 2026 le righe fuori finestra
+   * ammissibili erano 73, 36 piu' in basso di un passo e 37 sopra la massima, zero a un
+   * passo sotto. Quindi la finestra resta quella, per misura e non per prudenza.
    */
   const quotateCandidate: LetturaForte[] = quotate.flatMap((q) => {
     if (q.probabilita === null || q.fuoriFinestra) return [];

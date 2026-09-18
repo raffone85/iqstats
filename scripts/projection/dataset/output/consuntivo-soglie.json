@@ -1,0 +1,811 @@
+{
+  "generato_il": "2026-09-18T10:39:02.870Z",
+  "gare_chieste": 300,
+  "gare_lette": 267,
+  "letture": 53488,
+  "passi_fuori": 4,
+  "tutti": {
+    "righe": [
+      {
+        "passi": -4,
+        "letture": 2052,
+        "promessa": 94.8,
+        "frequenza": 94.2,
+        "scarto": -0.6,
+        "letture_50_80": 0,
+        "promessa_50_80": null,
+        "frequenza_50_80": null,
+        "scarto_50_80": null
+      },
+      {
+        "passi": -3,
+        "letture": 2299,
+        "promessa": 92.4,
+        "frequenza": 92,
+        "scarto": -0.4,
+        "letture_50_80": 28,
+        "promessa_50_80": 79.3,
+        "frequenza_50_80": 75,
+        "scarto_50_80": -4.3
+      },
+      {
+        "passi": -2,
+        "letture": 2665,
+        "promessa": 89.5,
+        "frequenza": 88.8,
+        "scarto": -0.6,
+        "letture_50_80": 454,
+        "promessa_50_80": 77.7,
+        "frequenza_50_80": 76,
+        "scarto_50_80": -1.7
+      },
+      {
+        "passi": -1,
+        "letture": 3301,
+        "promessa": 86,
+        "frequenza": 86,
+        "scarto": 0,
+        "letture_50_80": 945,
+        "promessa_50_80": 74,
+        "frequenza_50_80": 73.9,
+        "scarto_50_80": -0.2
+      },
+      {
+        "passi": 0,
+        "letture": 23467,
+        "promessa": 68.1,
+        "frequenza": 67.7,
+        "scarto": -0.5,
+        "letture_50_80": 18987,
+        "promessa_50_80": 63.8,
+        "frequenza_50_80": 63,
+        "scarto_50_80": -0.8
+      },
+      {
+        "passi": 1,
+        "letture": 4926,
+        "promessa": 83.5,
+        "frequenza": 81.1,
+        "scarto": -2.5,
+        "letture_50_80": 1765,
+        "promessa_50_80": 73.4,
+        "frequenza_50_80": 70.5,
+        "scarto_50_80": -2.9
+      },
+      {
+        "passi": 2,
+        "letture": 4926,
+        "promessa": 89.3,
+        "frequenza": 87,
+        "scarto": -2.3,
+        "letture_50_80": 873,
+        "promessa_50_80": 75.8,
+        "frequenza_50_80": 70.9,
+        "scarto_50_80": -4.9
+      },
+      {
+        "passi": 3,
+        "letture": 4926,
+        "promessa": 92.9,
+        "frequenza": 91.4,
+        "scarto": -1.5,
+        "letture_50_80": 303,
+        "promessa_50_80": 78.3,
+        "frequenza_50_80": 73.3,
+        "scarto_50_80": -5
+      },
+      {
+        "passi": 4,
+        "letture": 4926,
+        "promessa": 95.3,
+        "frequenza": 94.1,
+        "scarto": -1.2,
+        "letture_50_80": 7,
+        "promessa_50_80": 79.5,
+        "frequenza_50_80": 100,
+        "scarto_50_80": 20.5
+      }
+    ]
+  },
+  "per_bersaglio": {
+    "total_shots": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 756,
+          "promessa": 91,
+          "frequenza": 90.6,
+          "scarto": -0.4,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 756,
+          "promessa": 86.7,
+          "frequenza": 87,
+          "scarto": 0.3,
+          "letture_50_80": 28,
+          "promessa_50_80": 79.3,
+          "frequenza_50_80": 75,
+          "scarto_50_80": -4.3
+        },
+        {
+          "passi": -2,
+          "letture": 756,
+          "promessa": 81.2,
+          "frequenza": 81.7,
+          "scarto": 0.5,
+          "letture_50_80": 344,
+          "promessa_50_80": 77.4,
+          "frequenza_50_80": 76.7,
+          "scarto_50_80": -0.6
+        },
+        {
+          "passi": -1,
+          "letture": 756,
+          "promessa": 74.7,
+          "frequenza": 76.6,
+          "scarto": 1.9,
+          "letture_50_80": 672,
+          "promessa_50_80": 73.7,
+          "frequenza_50_80": 75.7,
+          "scarto_50_80": 2
+        },
+        {
+          "passi": 0,
+          "letture": 3780,
+          "promessa": 59.9,
+          "frequenza": 59.9,
+          "scarto": 0,
+          "letture_50_80": 3780,
+          "promessa_50_80": 59.9,
+          "frequenza_50_80": 59.9,
+          "scarto_50_80": 0
+        },
+        {
+          "passi": 1,
+          "letture": 756,
+          "promessa": 70.9,
+          "frequenza": 66,
+          "scarto": -4.9,
+          "letture_50_80": 756,
+          "promessa_50_80": 70.9,
+          "frequenza_50_80": 66,
+          "scarto_50_80": -4.9
+        },
+        {
+          "passi": 2,
+          "letture": 756,
+          "promessa": 76.8,
+          "frequenza": 70.9,
+          "scarto": -5.9,
+          "letture_50_80": 628,
+          "promessa_50_80": 75.8,
+          "frequenza_50_80": 69.3,
+          "scarto_50_80": -6.5
+        },
+        {
+          "passi": 3,
+          "letture": 756,
+          "promessa": 81.8,
+          "frequenza": 76.7,
+          "scarto": -5.1,
+          "letture_50_80": 235,
+          "promessa_50_80": 78.1,
+          "frequenza_50_80": 71.1,
+          "scarto_50_80": -7
+        },
+        {
+          "passi": 4,
+          "letture": 756,
+          "promessa": 86,
+          "frequenza": 81.1,
+          "scarto": -4.9,
+          "letture_50_80": 6,
+          "promessa_50_80": 79.6,
+          "frequenza_50_80": 100,
+          "scarto_50_80": 20.4
+        }
+      ]
+    },
+    "shots_on_target": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 231,
+          "promessa": 99.2,
+          "frequenza": 100,
+          "scarto": 0.8,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 270,
+          "promessa": 97.8,
+          "frequenza": 97.4,
+          "scarto": -0.4,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -2,
+          "letture": 393,
+          "promessa": 95.8,
+          "frequenza": 96.4,
+          "scarto": 0.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -1,
+          "letture": 562,
+          "promessa": 92.3,
+          "frequenza": 92.9,
+          "scarto": 0.6,
+          "letture_50_80": 1,
+          "promessa_50_80": 79.1,
+          "frequenza_50_80": 0,
+          "scarto_50_80": -79.1
+        },
+        {
+          "passi": 0,
+          "letture": 3148,
+          "promessa": 69.1,
+          "frequenza": 68.9,
+          "scarto": -0.2,
+          "letture_50_80": 2548,
+          "promessa_50_80": 65.2,
+          "frequenza_50_80": 64.2,
+          "scarto_50_80": -1
+        },
+        {
+          "passi": 1,
+          "letture": 630,
+          "promessa": 83.9,
+          "frequenza": 78.4,
+          "scarto": -5.5,
+          "letture_50_80": 135,
+          "promessa_50_80": 77.6,
+          "frequenza_50_80": 70.4,
+          "scarto_50_80": -7.3
+        },
+        {
+          "passi": 2,
+          "letture": 630,
+          "promessa": 90.5,
+          "frequenza": 86.7,
+          "scarto": -3.8,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 3,
+          "letture": 630,
+          "promessa": 94.6,
+          "frequenza": 93,
+          "scarto": -1.6,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 4,
+          "letture": 630,
+          "promessa": 97.1,
+          "frequenza": 97,
+          "scarto": -0.1,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        }
+      ]
+    },
+    "corner_kicks": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 252,
+          "promessa": 98.7,
+          "frequenza": 99.2,
+          "scarto": 0.5,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 321,
+          "promessa": 97.2,
+          "frequenza": 98.8,
+          "scarto": 1.6,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -2,
+          "letture": 487,
+          "promessa": 95,
+          "frequenza": 96.7,
+          "scarto": 1.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -1,
+          "letture": 614,
+          "promessa": 90.3,
+          "frequenza": 92.2,
+          "scarto": 1.9,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 0,
+          "letture": 3280,
+          "promessa": 67.5,
+          "frequenza": 67.2,
+          "scarto": -0.2,
+          "letture_50_80": 2876,
+          "promessa_50_80": 65,
+          "frequenza_50_80": 64.6,
+          "scarto_50_80": -0.4
+        },
+        {
+          "passi": 1,
+          "letture": 656,
+          "promessa": 81.9,
+          "frequenza": 76.7,
+          "scarto": -5.2,
+          "letture_50_80": 219,
+          "promessa_50_80": 77.5,
+          "frequenza_50_80": 71.7,
+          "scarto_50_80": -5.8
+        },
+        {
+          "passi": 2,
+          "letture": 656,
+          "promessa": 88.5,
+          "frequenza": 83.5,
+          "scarto": -5,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 3,
+          "letture": 656,
+          "promessa": 93,
+          "frequenza": 90.9,
+          "scarto": -2.1,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 4,
+          "letture": 656,
+          "promessa": 95.9,
+          "frequenza": 93,
+          "scarto": -2.9,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        }
+      ]
+    },
+    "fouls": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 716,
+          "promessa": 95.2,
+          "frequenza": 93.4,
+          "scarto": -1.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 716,
+          "promessa": 92,
+          "frequenza": 89.7,
+          "scarto": -2.3,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -2,
+          "letture": 716,
+          "promessa": 87.3,
+          "frequenza": 83.1,
+          "scarto": -4.2,
+          "letture_50_80": 110,
+          "promessa_50_80": 78.6,
+          "frequenza_50_80": 73.6,
+          "scarto_50_80": -5
+        },
+        {
+          "passi": -1,
+          "letture": 716,
+          "promessa": 80.9,
+          "frequenza": 76.7,
+          "scarto": -4.2,
+          "letture_50_80": 272,
+          "promessa_50_80": 74.8,
+          "frequenza_50_80": 69.5,
+          "scarto_50_80": -5.3
+        },
+        {
+          "passi": 0,
+          "letture": 3580,
+          "promessa": 62.6,
+          "frequenza": 60.7,
+          "scarto": -1.9,
+          "letture_50_80": 3534,
+          "promessa_50_80": 62.4,
+          "frequenza_50_80": 60.4,
+          "scarto_50_80": -2
+        },
+        {
+          "passi": 1,
+          "letture": 716,
+          "promessa": 74.8,
+          "frequenza": 75.1,
+          "scarto": 0.4,
+          "letture_50_80": 622,
+          "promessa_50_80": 73.8,
+          "frequenza_50_80": 74.9,
+          "scarto_50_80": 1.1
+        },
+        {
+          "passi": 2,
+          "letture": 716,
+          "promessa": 81.6,
+          "frequenza": 81.7,
+          "scarto": 0.1,
+          "letture_50_80": 245,
+          "promessa_50_80": 75.9,
+          "frequenza_50_80": 75.1,
+          "scarto_50_80": -0.8
+        },
+        {
+          "passi": 3,
+          "letture": 716,
+          "promessa": 87,
+          "frequenza": 85.9,
+          "scarto": -1.1,
+          "letture_50_80": 68,
+          "promessa_50_80": 78.9,
+          "frequenza_50_80": 80.9,
+          "scarto_50_80": 2
+        },
+        {
+          "passi": 4,
+          "letture": 716,
+          "promessa": 91,
+          "frequenza": 90.4,
+          "scarto": -0.6,
+          "letture_50_80": 1,
+          "promessa_50_80": 78.9,
+          "frequenza_50_80": 100,
+          "scarto_50_80": 21.1
+        }
+      ]
+    },
+    "offsides": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 1,
+          "promessa": 99.6,
+          "frequenza": 100,
+          "scarto": 0.4,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 6,
+          "promessa": 99.5,
+          "frequenza": 100,
+          "scarto": 0.5,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -2,
+          "letture": 21,
+          "promessa": 98.7,
+          "frequenza": 100,
+          "scarto": 1.3,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -1,
+          "letture": 117,
+          "promessa": 97.3,
+          "frequenza": 99.1,
+          "scarto": 1.8,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 0,
+          "letture": 2967,
+          "promessa": 74.2,
+          "frequenza": 73.9,
+          "scarto": -0.3,
+          "letture_50_80": 1815,
+          "promessa_50_80": 66.1,
+          "frequenza_50_80": 64.8,
+          "scarto_50_80": -1.2
+        },
+        {
+          "passi": 1,
+          "letture": 707,
+          "promessa": 93.3,
+          "frequenza": 92.2,
+          "scarto": -1,
+          "letture_50_80": 1,
+          "promessa_50_80": 79.9,
+          "frequenza_50_80": 100,
+          "scarto_50_80": 20.1
+        },
+        {
+          "passi": 2,
+          "letture": 707,
+          "promessa": 97.4,
+          "frequenza": 96,
+          "scarto": -1.3,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 3,
+          "letture": 707,
+          "promessa": 99.1,
+          "frequenza": 98.9,
+          "scarto": -0.2,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 4,
+          "letture": 707,
+          "promessa": 99.7,
+          "frequenza": 99.7,
+          "scarto": 0,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        }
+      ]
+    },
+    "goalkeeper_saves": {
+      "righe": [
+        {
+          "passi": -4,
+          "letture": 96,
+          "promessa": 99.8,
+          "frequenza": 100,
+          "scarto": 0.2,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -3,
+          "letture": 230,
+          "promessa": 99.4,
+          "frequenza": 99.6,
+          "scarto": 0.2,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -2,
+          "letture": 271,
+          "promessa": 97.5,
+          "frequenza": 96.7,
+          "scarto": -0.8,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -1,
+          "letture": 378,
+          "promessa": 93.7,
+          "frequenza": 92.6,
+          "scarto": -1.1,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 0,
+          "letture": 3622,
+          "promessa": 71.7,
+          "frequenza": 70.9,
+          "scarto": -0.8,
+          "letture_50_80": 2608,
+          "promessa_50_80": 65.7,
+          "frequenza_50_80": 64.9,
+          "scarto_50_80": -0.9
+        },
+        {
+          "passi": 1,
+          "letture": 740,
+          "promessa": 87.5,
+          "frequenza": 86.5,
+          "scarto": -1,
+          "letture_50_80": 32,
+          "promessa_50_80": 79.1,
+          "frequenza_50_80": 81.3,
+          "scarto_50_80": 2.1
+        },
+        {
+          "passi": 2,
+          "letture": 740,
+          "promessa": 93.4,
+          "frequenza": 92.7,
+          "scarto": -0.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 3,
+          "letture": 740,
+          "promessa": 96.8,
+          "frequenza": 96.1,
+          "scarto": -0.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 4,
+          "letture": 740,
+          "promessa": 98.5,
+          "frequenza": 98.4,
+          "scarto": -0.1,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        }
+      ]
+    },
+    "yellow_cards": {
+      "righe": [
+        {
+          "passi": -2,
+          "letture": 21,
+          "promessa": 99.1,
+          "frequenza": 100,
+          "scarto": 0.9,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": -1,
+          "letture": 158,
+          "promessa": 97.7,
+          "frequenza": 99.4,
+          "scarto": 1.7,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 0,
+          "letture": 3090,
+          "promessa": 74.3,
+          "frequenza": 74.7,
+          "scarto": 0.3,
+          "letture_50_80": 1826,
+          "promessa_50_80": 65.5,
+          "frequenza_50_80": 65.6,
+          "scarto_50_80": 0
+        },
+        {
+          "passi": 1,
+          "letture": 721,
+          "promessa": 93.1,
+          "frequenza": 92.5,
+          "scarto": -0.5,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 2,
+          "letture": 721,
+          "promessa": 97.3,
+          "frequenza": 97.6,
+          "scarto": 0.3,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 3,
+          "letture": 721,
+          "promessa": 99,
+          "frequenza": 99.3,
+          "scarto": 0.3,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        },
+        {
+          "passi": 4,
+          "letture": 721,
+          "promessa": 99.7,
+          "frequenza": 99.9,
+          "scarto": 0.2,
+          "letture_50_80": 0,
+          "promessa_50_80": null,
+          "frequenza_50_80": null,
+          "scarto_50_80": null
+        }
+      ]
+    }
+  }
+}
