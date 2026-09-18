@@ -90,7 +90,7 @@ export default async function GiocatoriOggiPage({ searchParams }: Props) {
           sul campione verso la media della sua squadra, con il valore grezzo accanto.
         </p>
 
-        <nav className="partite-index filtro-schede" aria-label="Che cosa cerchi">
+        <nav className="partite-index" aria-label="Che cosa cerchi">
           {SCHEDE.map((s) => (
             <Link
               className="partite-index-link"

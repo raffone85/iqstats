@@ -964,6 +964,10 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .giornata-altre .partite-index { flex-wrap: wrap; overflow-x: visible; max-height: 54vh; overflow-y: auto; }
 .partite-index-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--card-stroke); background: var(--card-panel-2); color: var(--card-ink-2); font-family: var(--font-display); font-size: 13px; transition: border-color 180ms ease, color 180ms ease; }
 .partite-index-link:hover { border-color: var(--card-brand); color: var(--card-brand-strong); }
+/* La scheda aperta si riconosce da fondo, bordo e peso, non dal solo colore. Fondo tenue e
+   non pieno: sul verde pieno gli stemmi dei campionati sparivano. */
+.partite-index-link[aria-current="page"] { border-color: var(--card-brand); background: var(--card-brand-pale); color: var(--card-brand-strong); font-weight: 700; }
+.partite-index-link[aria-current="page"] i { color: var(--card-brand-strong); }
 .partite-index-link i { font-style: normal; font-family: var(--font-mono, monospace); font-size: 11px; color: var(--card-ink-3); }
 /* Pannello per competizione, richiudibile: stesso segno del registro squadra */
 .partite-group { border-radius: var(--r-panel); border: 1px solid var(--card-stroke); background: var(--card-panel); scroll-margin-top: 16px; }
@@ -2386,5 +2390,3 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .filtro-riga .uomini-nota a:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; border-radius: 4px; }
 .filtro-perche { grid-area: perche; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
 .filtro-perche b { color: var(--card-ink); }
-/* La scheda aperta si riconosce dal pieno e dal peso, non dal solo colore. */
-.filtro-schede .partite-index-link[aria-current="page"] { border-color: var(--card-brand); background: var(--card-brand); color: var(--card-on-brand); font-weight: 700; }
