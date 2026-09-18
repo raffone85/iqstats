@@ -46,7 +46,13 @@ function Riga({
       <span className="uomini-nota">
         {uomo.totale === null ? "totale non esposto" : `${uomo.totale} in ${uomo.presenze} gare`}
         {uomo.accanto === null ? null : ` · ${accantoNome} ${cifra(uomo.accanto, accantoDecimali)}`}
-        {uomo.rating === null ? null : ` · rating ${cifra(uomo.rating, 2)} su ${uomo.gareDiRating}`}
+        {uomo.rating === null ? null : (
+          // Il rating corretto e' quello che conta; la media grezza resta scritta col suo
+          // campione, perche' una correzione che nasconde il numero di partenza e' opaca.
+          uomo.ratingCorretto === null || uomo.ratingCorretto === uomo.rating
+            ? ` · rating ${cifra(uomo.rating, 2)} su ${uomo.gareDiRating} gare`
+            : ` · rating ${cifra(uomo.ratingCorretto, 2)}, media ${cifra(uomo.rating, 2)} su ${uomo.gareDiRating} gare`
+        )}
       </span>
     </li>
   );
