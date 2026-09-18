@@ -138,13 +138,14 @@ def normalizza(dettaglio):
     }
 
 
-def elenco(sessione, giorni):
+def elenco(sessione, giorni, entro_ore=0):
     ora = datetime.now(timezone.utc)
+    fine = ora + (timedelta(hours=entro_ore) if entro_ore else timedelta(days=giorni))
     p = dict(
         COMUNI,
         sportId=str(CALCIO),
         dateFrom=ora.strftime("%Y-%m-%dT%H:%M:%SZ"),
-        dateTo=(ora + timedelta(days=giorni)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        dateTo=fine.strftime("%Y-%m-%dT%H:%M:%SZ"),
         marketTypeIds="1",
     )
     r = sessione.get(BASE + "/GetEvents", params=p, timeout=60)
@@ -179,16 +180,27 @@ def main():
     a.add_argument("--giorni", type=int, default=3)
     a.add_argument("--eventi", type=int, default=0, help="0 = tutti")
     a.add_argument("--pausa", type=float, default=1.0, help="secondi fra due richieste")
+    # Le linee di squadra - «U/O Tiri in porta Casa», «U/O Falli Commessi Ospite» - il
+    # banco le apre vicino al fischio. Misurato il 18 settembre 2026 su Monza-Sassuolo: a
+    # 33 ore dal via non c'erano (290 mercati), a 11 ore e 40 c'erano tutte (4.310
+    # mercati, tiri in porta casa 3,5-5,5, falli ospite 11,5). Una passata ravvicinata le
+    # prende; scrive un file a se', perche' il suo valore e' proprio essere piu' recente.
+    a.add_argument("--entro-ore", type=int, default=0,
+                   help="0 = usa --giorni; se >0 prende solo le gare entro N ore")
     o = a.parse_args()
 
     USCITA.mkdir(parents=True, exist_ok=True)
-    percorso = USCITA / ("fastbet-" + datetime.now().strftime("%Y-%m-%d") + ".ndjson.gz")
+    if o.entro_ore:
+        percorso = USCITA / ("fastbet-vicine-"
+                             + datetime.now().strftime("%Y-%m-%d-%H%M") + ".ndjson.gz")
+    else:
+        percorso = USCITA / ("fastbet-" + datetime.now().strftime("%Y-%m-%d") + ".ndjson.gz")
     fatti = gia_raccolti(percorso)
 
     scritti = mercati_tot = esiti_tot = saltati = 0
     inizio = time.time()
     with FetcherSession(impersonate="chrome", stealthy_headers=True) as s:
-        eventi = elenco(s, o.giorni)
+        eventi = elenco(s, o.giorni, o.entro_ore)
         if o.eventi:
             eventi = eventi[:o.eventi]
         print(str(len(eventi)) + " eventi in finestra, " + str(len(fatti)) + " gia' raccolti",

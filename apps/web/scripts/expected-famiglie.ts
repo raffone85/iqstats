@@ -54,6 +54,7 @@ import {
   candidateDiGara,
   candidateEsiti,
   consigliatoDiGara,
+  type LetturaForte,
   type TendenzaArbitro,
 } from "../src/server/iqstats/projection/letture-forti.ts";
 
@@ -455,10 +456,56 @@ async function famiglieDi(
   const { candidate, senzaMisura } = candidateDiGara(proiezioni.bersagli);
   if (candidate.length === 0) return null;
 
+  // Le linee che il banco ha davvero aperto su questa gara, con la nostra probabilita'
+  // sulla sua soglia. Servono prima del consigliato, non solo alla fine della riga.
+  const evento = agganciaGara(detail.homeTeam, detail.awayTeam, gara.kickoff, palinsesto);
+  const quotate = evento === null ? [] : quoteDellaGara(evento, proiezioni.bersagli);
+
+  /**
+   * Le linee quotate rifatte nella forma di una candidata.
+   *
+   * **Perche'.** Il motore costruisce cinque soglie attorno al proprio atteso e sceglie
+   * fra le tre centrali: quasi sempre una soglia bassa, quindi una probabilita' alta.
+   * Il banco fa l'opposto - apre dove la sua probabilita' e' vicina a meta' - e quelle
+   * soglie basse non le quota. Misurato il 18 settembre 2026 sull'artefatto: **su 78
+   * consigliati di tipo linea, solo 10 stavano su una linea che il banco apre**. Il
+   * dossier mostrava «Over 2,5 tiri in porta» dove il banco parte da 3,5.
+   *
+   * Le `fuoriFinestra` restano fuori: sono soglie oltre le cinque su cui la calibrazione
+   * e' stata misurata, e una probabilita' non verificata sarebbe un numero inventato.
+   */
+  const quotateCandidate: LetturaForte[] = quotate.flatMap((q) => {
+    if (q.probabilita === null || q.fuoriFinestra) return [];
+    const bersaglio = proiezioni.bersagli.find((b) => b.target === q.bersaglio);
+    const livello = bersaglio?.totale?.affidabilita ?? null;
+    if (livello === null) return [];
+    return [{
+      bersaglio: q.bersaglio,
+      lato: q.lato,
+      soglia: q.soglia,
+      verso: q.verso === "Over" ? "Over" as const : "Under" as const,
+      probabilita: q.probabilita,
+      decisione: Math.abs(q.probabilita - 0.5),
+      base: null,
+      gareDiBase: null,
+      squadre: [],
+      affidabilita: livello.punteggio,
+      righeDiProva: livello.righeDiProva,
+      sorpresa: 0,
+      forza: 0,
+    }];
+  });
+
+  // **Il pool del consigliato: le linee comprabili quando ci sono.** Dove il banco non ha
+  // aperto niente su questa gara si resta alle nostre soglie, come prima: meglio una
+  // lettura che il banco non quota di nessuna lettura.
+  const pool = quotateCandidate.length > 0 ? quotateCandidate : candidate;
+
   const basi = await baseDiLega(
     detail.leagueId,
     detail.seasonId,
-    candidate.map((c) => ({ target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso })),
+    [...candidate, ...quotateCandidate]
+      .map((c) => ({ target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso })),
   );
 
   const perBersaglio = new Map(proiezioni.bersagli.map((b) => [b.target, b]));
@@ -495,7 +542,7 @@ async function famiglieDi(
   const basiEsiti = await baseDegliEsiti(detail.leagueId, detail.seasonId, esiti.map((e) => e.bersaglio));
   const arbitro = detail.refereeId === null ? null : await tendenzaArbitro(detail.refereeId, detail.leagueId);
   const scelta = consigliatoDiGara(
-    arricchisci(candidate, basi),
+    arricchisci(pool, basi),
     esiti.map((e) => {
       const b = basiEsiti?.get(`${e.bersaglio}|${e.esito}`) ?? null;
       return { ...e, base: b === null ? null : b.quota, gareDiBase: b === null ? null : b.gare };
@@ -552,8 +599,6 @@ async function famiglieDi(
     };
   }
 
-  const evento = agganciaGara(detail.homeTeam, detail.awayTeam, gara.kickoff, palinsesto);
-
   return {
     gara: gara.eventId,
     casa: detail.homeTeam,
@@ -568,7 +613,7 @@ async function famiglieDi(
     // che regge di piu' invece che sull'ordine alfabetico dei bersagli.
     famiglie: [...migliori.values()].sort((a, b) => b.probabilita - a.probabilita),
     senzaMisura,
-    quote: evento === null ? [] : quoteDellaGara(evento, proiezioni.bersagli),
+    quote: quotate,
     attesi: attesiDelleFamiglie(proiezioni.bersagli),
     gol: proiezioni.gol === null
       ? null
@@ -598,19 +643,35 @@ function palinsestoPiuFresco(): {
   } catch {
     return { eventi: [], raccoltoIl: null };
   }
-  const ultimo = file.at(-1);
-  if (ultimo === undefined) return { eventi: [], raccoltoIl: null };
-  const testo = gunzipSync(readFileSync(path.join(cartella, ultimo))).toString("utf8");
-  const eventi: EventoQuotato[] = [];
+  if (file.length === 0) return { eventi: [], raccoltoIl: null };
+  // **Piu' file, una lettura per gara.** La passata larga guarda tre giorni avanti, quella
+  // ravvicinata (`--entro-ore`) rilegge solo le gare che stanno per cominciare: e' li' che
+  // compaiono le linee di squadra, che a un giorno di distanza il banco non ha ancora
+  // aperto. Leggere solo l'ultimo file perderebbe l'una o l'altra, quindi si uniscono e
+  // per ogni gara vince la lettura piu' recente.
+  // La chiave e' la gara, non l'identificativo del banco: il contratto normalizzato porta
+  // squadre e calcio d'inizio, e sono quelli a dire che due righe parlano della stessa gara.
+  const perEvento = new Map<string, EventoGrezzo & { readonly raccolto_il?: string }>();
   let raccoltoIl: string | null = null;
-  for (const riga of testo.split("\n")) {
-    if (riga.trim() === "") continue;
-    const grezzo = JSON.parse(riga) as EventoGrezzo & { readonly raccolto_il?: string };
-    // L'ultima riga scritta e' la piu' recente: e' quella l'ora che la pagina dichiara.
-    if (typeof grezzo.raccolto_il === "string") raccoltoIl = grezzo.raccolto_il;
-    eventi.push(eventoQuotato(grezzo));
+  for (const nome of file) {
+    const testo = gunzipSync(readFileSync(path.join(cartella, nome))).toString("utf8");
+    for (const riga of testo.split("\n")) {
+      if (riga.trim() === "") continue;
+      const grezzo = JSON.parse(riga) as EventoGrezzo & { readonly raccolto_il?: string };
+      const chiave = `${grezzo.casa}|${grezzo.fuori}|${grezzo.inizio}`;
+      const gia = perEvento.get(chiave);
+      if (gia === undefined || (grezzo.raccolto_il ?? "") >= (gia.raccolto_il ?? "")) {
+        perEvento.set(chiave, grezzo);
+      }
+      // L'ora dichiarata dalla pagina e' la piu' recente fra quelle lette.
+      if (typeof grezzo.raccolto_il === "string"
+        && (raccoltoIl === null || grezzo.raccolto_il > raccoltoIl)) {
+        raccoltoIl = grezzo.raccolto_il;
+      }
+    }
   }
-  console.log(`palinsesto ${ultimo}: ${eventi.length} eventi`);
+  const eventi = [...perEvento.values()].map(eventoQuotato);
+  console.log(`palinsesto: ${file.length} file, ${eventi.length} gare distinte`);
   return { eventi, raccoltoIl };
 }
 
