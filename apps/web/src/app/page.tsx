@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { CalendarioGiornate } from "@/components/calendario-giornate";
 import { ProductShell } from "@/components/product-shell";
+import { competitionRank } from "@/server/iqstats/competition-rank";
 import { coperturaDelleGare } from "@/server/iqstats/copertura";
 import { prossimeGiornate } from "@/server/iqstats/giornate";
 import { getMatchesByDate, getMatchesInRange } from "@/server/iqstats/matches";
@@ -97,7 +98,20 @@ function primoGiornoConGare(gare: readonly GaraExpected[]): {
     `${chiave}T12:00:00Z`,
   ).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" });
   const delGiorno = gare.filter((g) => giorno(g.kickoff) === chiave);
-  return { titolo, gare: delGiorno.slice(0, IN_HOME), quante: delGiorno.length };
+  // **Prima i campionati che contano.** In ordine di orario la home apriva con la Chinese
+  // Super League e l'Ekstraklasa mentre Serie A, Premier e Liga restavano sotto il taglio
+  // delle otto. L'ordine e' quello di `competitionRank` - le coppe dei campioni, poi i
+  // cinque grandi, poi le altre prime divisioni - e a parita' di peso resta l'orario.
+  // I campionati minori non spariscono: scendono, e riempiono la lista quando sopra non
+  // c'e' abbastanza da leggere.
+  // Prima di tutto pero' viene l'avere qualcosa da dire: una gara di Bundesliga senza
+  // consigliato non toglie il posto a una di Eredivisie che ce l'ha.
+  const muta = (g: GaraExpected) => (g.consigliato === null ? 1 : 0);
+  const perPeso = [...delGiorno].sort((a, b) =>
+    (muta(a) - muta(b))
+    || (competitionRank(a.legaId) - competitionRank(b.legaId))
+    || a.kickoff.localeCompare(b.kickoff));
+  return { titolo, gare: perPeso.slice(0, IN_HOME), quante: delGiorno.length };
 }
 
 type Props = {
