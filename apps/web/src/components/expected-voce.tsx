@@ -95,7 +95,17 @@ export function indirizzoDi(g: GaraExpected): string {
  * solo esiti che il banco quota, e gli 1X2 di falli e tiri non comparivano quasi piu': qui
  * restano visibili, con la nostra probabilita' e senza cambiare il criterio.
  */
-function EsitoInBreve({ e }: { readonly e: EsitoDiFamigliaInGara }) {
+function EsitoInBreve({ e, quote }: {
+  readonly e: EsitoDiFamigliaInGara;
+  readonly quote: GaraExpected["quote"];
+}) {
+  // La linea Under/Over quotata piu' probabile della famiglia, dentro gli stessi confini del
+  // consigliato: tetto all'ottanta per cento e niente soglie fuori misura. Informativa anche
+  // lei: il consigliato finisce quasi sempre sui corner, che il banco apre su quindici linee.
+  const linee = quote.filter((r) => r.bersaglio === e.bersaglio && r.probabilita !== null
+    && r.probabilita <= 0.8 && !r.fuoriFinestra);
+  const migliore = linee.reduce<(typeof linee)[number] | null>(
+    (m, r) => (m === null || (r.probabilita ?? 0) > (m.probabilita ?? 0) ? r : m), null);
   const p = e.probabilita;
   const primo = p === null ? null
     : ([["1", p.uno], ["X", p.x], ["2", p.due]] as const).reduce((m, s) => (s[1] > m[1] ? s : m));
@@ -107,6 +117,15 @@ function EsitoInBreve({ e }: { readonly e: EsitoDiFamigliaInGara }) {
         <b>{primo === null ? "stima assente" : `${primo[0]} ${Math.round(primo[1] * 100)}%`}</b>
         {quotato ? <span className="engine-obs"> banco</span> : null}
       </span>
+      {migliore === null ? <span className="engine-obs">U/O assente</span> : (
+        <span>
+          {migliore.verso} {soglia(migliore.soglia)}{" "}
+          <span className="engine-obs">
+            {migliore.lato === "casa" ? "casa" : migliore.lato === "trasferta" ? "ospite" : "totale"}
+          </span>{" "}
+          <b>{Math.round((migliore.probabilita ?? 0) * 100)}%</b>
+        </span>
+      )}
     </span>
   );
 }
@@ -141,9 +160,11 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
         )}
         {g.esiti === undefined ? null : (
           <span className="expected-esiti">
-            <span className="engine-obs">1X2 per famiglia, informativo · banco = lo quota</span>
+            <span className="engine-obs">
+              Per famiglia, informativo: 1X2 (banco = lo quota) e miglior linea U/O del banco
+            </span>
             <span className="expected-esiti-griglia" role="list">
-              {g.esiti.map((e) => <EsitoInBreve key={e.bersaglio} e={e} />)}
+              {g.esiti.map((e) => <EsitoInBreve key={e.bersaglio} e={e} quote={g.quote} />)}
             </span>
           </span>
         )}
