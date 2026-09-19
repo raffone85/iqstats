@@ -484,4 +484,12 @@ async function proiezioniDellaGaraDaLeggere(
 }
 
 // Le letture del dossier, condivise per sei ore: vedi `inCache` in `lettura.ts`.
-export const proiezioniDellaGara = inCache("proiezioniDellaGara", proiezioniDellaGaraDaLeggere, (r) => typeof r === "string" && r === "errore");
+// **Le assenze nostre non si conservano.** «senza-connessione» e «senza-modelli» dicono
+// com'era configurato il server, non com'e' la gara, e la chiave della cache non vede
+// l'ambiente: un avvio senza variabile scriveva «senza-connessione» su disco e i riavvii
+// con la variabile lo rileggevano per sei ore. Misurato il 19 settembre 2026 in locale.
+export const proiezioniDellaGara = inCache(
+  "proiezioniDellaGara",
+  proiezioniDellaGaraDaLeggere,
+  (r) => r === "errore" || r === "senza-connessione" || r === "senza-modelli",
+);
