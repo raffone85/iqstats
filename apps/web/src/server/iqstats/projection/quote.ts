@@ -56,6 +56,8 @@ export interface EventoQuotato {
   readonly istante: number;
   /** Le linee per `bersaglio|lato`, gia' ripulite dai mercati combinati. */
   readonly linee: ReadonlyMap<string, readonly EsitoQuotato[]>;
+  /** L'1X2 di famiglia a tempo pieno, per bersaglio: `null` dove l'esito e' sospeso. */
+  readonly esiti: ReadonlyMap<string, Readonly<Record<"1" | "X" | "2", number | null>>>;
   readonly gol: QuoteGol;
 }
 
@@ -179,6 +181,37 @@ function lineeDellEvento(
   return raccolte;
 }
 
+/** «1T - corner 1x2», «NT - ...»: una frazione di gara, non la gara. */
+const FRAZIONE = /^\s*(?:1T|2T|NT)\b/i;
+
+/**
+ * L'1X2 di famiglia che il banco quota: «Corner 1x2», «Cartellini 1x2», «1X2 Tiri in
+ * porta (incl. sup.)».
+ *
+ * Serve al consigliato come le linee: un esito che il banco non apre non si propone.
+ * Misurato sulla raccolta del 18 settembre 2026 (1.609 eventi): corner 327 gare, cartellini
+ * 181, tiri e tiri in porta 65, fuorigioco 7, falli 3. Le frazioni di gara e i mercati
+ * combinati con il marcatore restano fuori.
+ */
+function esitiDellEvento(
+  mercati: readonly MercatoGrezzo[],
+): ReadonlyMap<string, Readonly<Record<"1" | "X" | "2", number | null>>> {
+  const fuori = new Map<string, Record<"1" | "X" | "2", number | null>>();
+  for (const mercato of mercati) {
+    const nome = mercato.nome ?? "";
+    if (mercato.famiglia === null || mercato.giocatore !== null) continue;
+    if (!/\b1x2\b/i.test(nome) || FRAZIONE.test(nome) || /&|\+/.test(nome)) continue;
+    // Vince il primo mercato letto, come per le linee.
+    if (fuori.has(mercato.famiglia)) continue;
+    fuori.set(mercato.famiglia, {
+      "1": quotaDi(mercato, "1"),
+      "X": quotaDi(mercato, "x"),
+      "2": quotaDi(mercato, "2"),
+    });
+  }
+  return fuori;
+}
+
 /** Gli intervalli di un mercato multigol, scartati quelli sospesi. */
 function intervalliDi(mercato: MercatoGrezzo | undefined): readonly IntervalloQuotato[] {
   if (mercato === undefined) return [];
@@ -245,6 +278,7 @@ export function eventoQuotato(grezzo: EventoGrezzo): EventoQuotato {
     giorno: grezzo.inizio.slice(0, 10),
     istante: new Date(grezzo.inizio).getTime(),
     linee: lineeDellEvento(grezzo.mercati),
+    esiti: esitiDellEvento(grezzo.mercati),
     gol: golDellEvento(grezzo.mercati),
   };
 }

@@ -546,7 +546,11 @@ async function famiglieDi(
 
   // Il consigliato: linee ed esiti di famiglia nello stesso ordine, falli solo con l'arbitro
   // concorde. Il criterio vive in `consigliatoDiGara`, qui si leggono solo i suoi ingressi.
-  const esiti = candidateEsiti(proiezioni.bersagli);
+  // **Gli esiti seguono la stessa regola delle linee** (deciso dall'utente il 19 settembre
+  // 2026): dove il banco ha aperto la gara, un 1X2 di famiglia entra solo se il banco quota
+  // quell'esito, a gara intera. Dove non ha aperto niente restano tutti, come le soglie.
+  const esiti = candidateEsiti(proiezioni.bersagli).filter((e) =>
+    quotateCandidate.length === 0 || (evento?.esiti.get(e.bersaglio)?.[e.esito] ?? null) !== null);
   const basiEsiti = await baseDegliEsiti(detail.leagueId, detail.seasonId, esiti.map((e) => e.bersaglio));
   const arbitro = detail.refereeId === null ? null : await tendenzaArbitro(detail.refereeId, detail.leagueId);
   const scelta = consigliatoDiGara(

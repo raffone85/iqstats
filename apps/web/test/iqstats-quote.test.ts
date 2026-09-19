@@ -106,6 +106,25 @@ test("una quota sospesa non diventa un prezzo", () => {
   assert.deepEqual(quotato.gol.multigolCasa, [{ da: 0, a: 1, quota: 1.61 }]);
 });
 
+test("l'1X2 di famiglia e' quello della gara intera, non delle frazioni ne' delle combinate", () => {
+  const tre = (uno: number, x: number, due: number) =>
+    [{ nome: "1", quota: uno }, { nome: "X", quota: x }, { nome: "2", quota: due }];
+  const quotato = eventoQuotato(evento([
+    mercato("1T - corner 1x2", "corner_kicks", tre(2.5, 2.1, 3.9)),
+    mercato("Corner 1x2", "corner_kicks", tre(1.6, 8.5, 2.4)),
+    mercato("NT - corner 1x2", "corner_kicks", tre(9, 9, 9)),
+    mercato("Cartellini 1x2", "yellow_cards", tre(2.2, 0, 2.9)),
+    mercato("1X2 Tiri in porta (incl. sup.)", "shots_on_target", tre(1.7, 6, 2.6)),
+    mercato("1x2", null, tre(1.9, 3.4, 4.1)),
+    mercato("Marcatore & 1x2 (Emerson)", "shots_on_target", tre(9, 9, 9)),
+  ]));
+  assert.deepEqual(quotato.esiti.get("corner_kicks"), { "1": 1.6, "X": 8.5, "2": 2.4 });
+  // La X sospesa resta assente, non diventa un prezzo.
+  assert.deepEqual(quotato.esiti.get("yellow_cards"), { "1": 2.2, "X": null, "2": 2.9 });
+  assert.deepEqual(quotato.esiti.get("shots_on_target"), { "1": 1.7, "X": 6, "2": 2.6 });
+  assert.equal(quotato.esiti.size, 3);
+});
+
 test("i mercati sui gol escono normalizzati", () => {
   const quotato = eventoQuotato(evento([
     mercato("1x2", null, [{ nome: "1", quota: 2.75 }, { nome: "X", quota: 3.33 },

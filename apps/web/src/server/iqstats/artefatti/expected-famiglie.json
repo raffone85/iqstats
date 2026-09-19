@@ -1,1981 +1,16 @@
 {
   "schema": "expected-famiglie/2",
-  "calcolato_il": "2026-09-19T02:56:52.764Z",
+  "calcolato_il": "2026-09-19T03:09:06.802Z",
   "giorni": 3,
-  "gare_in_arrivo": 446,
-  "gare_con_proiezione": 183,
-  "righe": 1088,
-  "gare_con_quote": 169,
+  "gare_in_arrivo": 445,
+  "gare_con_proiezione": 182,
+  "righe": 1081,
+  "gare_con_quote": 168,
   "quote_raccolte_il": "2026-09-18T22:23:01+00:00",
-  "righe_quotate": 5092,
+  "righe_quotate": 5017,
   "come_sono_arrivate_le_quote": "dal palinsesto Fastbet/Altenar raccolto da scripts/quote/fastbet-quote.py. Le soglie le detta il bookmaker e la nostra probabilita' si calcola su quelle, dalla stessa distribuzione calibrata delle cinque soglie del motore: la quota non entra nel calcolo. L'aggancio passa da parole significative piu' data e le gare ambigue si buttano; gli esiti sospesi, con quota a zero, non diventano un prezzo.",
   "come_e_stato_scelto": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' probabile fra i lati e le soglie di quella famiglia. Non si passa da ordinaLetture: quello e' il criterio della cima, che scarta le letture sopra l'ottanta per cento e i falli, e qui scartare direbbe il falso su una sezione che deve mostrare che cosa dice il motore.",
   "gare": [
-    {
-      "gara": 211571,
-      "casa": "FC Juárez",
-      "fuori": "Tigres UANL",
-      "casaId": 306,
-      "fuoriId": 321,
-      "legaId": 19,
-      "lega": "Liga MX Apertura",
-      "kickoff": "2026-09-19T03:00:00+00:00",
-      "consigliato": {
-        "tipo": "linea",
-        "bersaglio": "corner_kicks",
-        "lato": "casa",
-        "soglia": 5.5,
-        "verso": "Under",
-        "probabilita": 0.7852,
-        "base": 45.71,
-        "gareDiBase": 70,
-        "affidabilita": 66,
-        "scarto": 32.8,
-        "atteso": 3.83,
-        "intervallo": {
-          "basso": 1,
-          "alto": 6
-        },
-        "origine": "modello",
-        "pesoDelModello": 1,
-        "cause": [
-          {
-            "nome": "la classifica",
-            "effetto": -0.128
-          },
-          {
-            "nome": "il fattore campo",
-            "effetto": 0.041
-          },
-          {
-            "nome": "il livello della squadra",
-            "effetto": 0.031
-          }
-        ],
-        "arbitro": null
-      },
-      "famiglie": [
-        {
-          "bersaglio": "offsides",
-          "lato": "totale",
-          "soglia": 1.5,
-          "verso": "Over",
-          "probabilita": 0.8157,
-          "base": 80.3,
-          "gareDiBase": 66,
-          "affidabilita": 69,
-          "atteso": 3.1,
-          "intervallo": {
-            "basso": 1,
-            "alto": 5
-          },
-          "origine": "miscela",
-          "pesoDelModello": 0.9,
-          "cause": [
-            {
-              "nome": "quanto concede l'avversario",
-              "effetto": -0.041
-            },
-            {
-              "nome": "il livello della squadra",
-              "effetto": -0.027
-            },
-            {
-              "nome": "quanto produce la squadra",
-              "effetto": -0.019
-            }
-          ]
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Over",
-          "probabilita": 0.8059,
-          "base": 92.86,
-          "gareDiBase": 70,
-          "affidabilita": 64,
-          "atteso": 3.21,
-          "intervallo": {
-            "basso": 1,
-            "alto": 5
-          },
-          "origine": "modello",
-          "pesoDelModello": 1,
-          "cause": [
-            {
-              "nome": "la classifica",
-              "effetto": -0.07
-            },
-            {
-              "nome": "quanto produce la squadra",
-              "effetto": -0.039
-            },
-            {
-              "nome": "il fattore campo",
-              "effetto": 0.03
-            }
-          ]
-        },
-        {
-          "bersaglio": "goalkeeper_saves",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Over",
-          "probabilita": 0.7956,
-          "base": 58.57,
-          "gareDiBase": 70,
-          "affidabilita": 56,
-          "atteso": 4.43,
-          "intervallo": {
-            "basso": 2,
-            "alto": 7
-          },
-          "origine": "modello",
-          "pesoDelModello": 1,
-          "cause": [
-            {
-              "nome": "la classifica",
-              "effetto": 0.117
-            },
-            {
-              "nome": "il fattore campo",
-              "effetto": -0.028
-            },
-            {
-              "nome": "il livello della squadra",
-              "effetto": 0.025
-            }
-          ]
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Over",
-          "probabilita": 0.7738,
-          "base": 51.43,
-          "gareDiBase": 70,
-          "affidabilita": 70,
-          "atteso": 2.83,
-          "intervallo": {
-            "basso": 1,
-            "alto": 4
-          },
-          "origine": "modello",
-          "pesoDelModello": 1,
-          "cause": [
-            {
-              "nome": "quanto concede l'avversario",
-              "effetto": 0.06
-            },
-            {
-              "nome": "l'incrocio fra attacco e difesa",
-              "effetto": 0.045
-            },
-            {
-              "nome": "quanto produce la squadra",
-              "effetto": 0.041
-            }
-          ]
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Over",
-          "probabilita": 0.6855,
-          "base": 87.14,
-          "gareDiBase": 70,
-          "affidabilita": 66,
-          "atteso": 3.83,
-          "intervallo": {
-            "basso": 1,
-            "alto": 6
-          },
-          "origine": "modello",
-          "pesoDelModello": 1,
-          "cause": [
-            {
-              "nome": "la classifica",
-              "effetto": -0.128
-            },
-            {
-              "nome": "il fattore campo",
-              "effetto": 0.041
-            },
-            {
-              "nome": "il livello della squadra",
-              "effetto": 0.031
-            }
-          ]
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "casa",
-          "soglia": 11.5,
-          "verso": "Over",
-          "probabilita": 0.6792,
-          "base": 50,
-          "gareDiBase": 70,
-          "affidabilita": 66,
-          "atteso": 13.33,
-          "intervallo": {
-            "basso": 9,
-            "alto": 18
-          },
-          "origine": "miscela",
-          "pesoDelModello": 0.8,
-          "cause": [
-            {
-              "nome": "quanto concede l'avversario",
-              "effetto": 0.055
-            },
-            {
-              "nome": "l'incrocio fra attacco e difesa",
-              "effetto": -0.029
-            },
-            {
-              "nome": "gli undici",
-              "effetto": -0.019
-            }
-          ]
-        },
-        {
-          "bersaglio": "total_shots",
-          "lato": "casa",
-          "soglia": 9.5,
-          "verso": "Over",
-          "probabilita": 0.6503,
-          "base": 85.71,
-          "gareDiBase": 70,
-          "affidabilita": 57,
-          "atteso": 11.49,
-          "intervallo": {
-            "basso": 7,
-            "alto": 17
-          },
-          "origine": "miscela",
-          "pesoDelModello": 0.95,
-          "cause": [
-            {
-              "nome": "quanto concede l'avversario",
-              "effetto": 0.115
-            },
-            {
-              "nome": "la classifica",
-              "effetto": -0.1
-            },
-            {
-              "nome": "la norma del campionato",
-              "effetto": -0.077
-            }
-          ]
-        }
-      ],
-      "senzaMisura": [],
-      "quote": [
-        {
-          "bersaglio": "total_shots",
-          "lato": "casa",
-          "soglia": 11.5,
-          "verso": "Over",
-          "quota": 1.75,
-          "probabilita": 0.464,
-          "atteso": 11.49,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "total_shots",
-          "lato": "trasferta",
-          "soglia": 15.5,
-          "verso": "Over",
-          "quota": 1.8182,
-          "probabilita": 0.5762,
-          "atteso": 16.88,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "total_shots",
-          "lato": "totale",
-          "soglia": 27.5,
-          "verso": "Over",
-          "quota": 1.68,
-          "probabilita": 0.5407,
-          "atteso": 28.38,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Under",
-          "quota": 1.8182,
-          "probabilita": 0.6051,
-          "atteso": 3.21,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 1.76,
-          "probabilita": 0.3949,
-          "atteso": 3.21,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "trasferta",
-          "soglia": 5.5,
-          "verso": "Under",
-          "quota": 1.5834,
-          "probabilita": 0.5134,
-          "atteso": 5.64,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "trasferta",
-          "soglia": 5.5,
-          "verso": "Over",
-          "quota": 2.05,
-          "probabilita": 0.4866,
-          "atteso": 5.64,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Under",
-          "quota": 1.9091,
-          "probabilita": 0.4813,
-          "atteso": 8.85,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Over",
-          "quota": 1.6,
-          "probabilita": 0.5187,
-          "atteso": 8.85,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Under",
-          "quota": 2.1429,
-          "probabilita": 0.4959,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 1.5556,
-          "probabilita": 0.5041,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 4.5,
-          "verso": "Under",
-          "quota": 1.5,
-          "probabilita": 0.6588,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 4.5,
-          "verso": "Over",
-          "quota": 2.25,
-          "probabilita": 0.3412,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 5.5,
-          "verso": "Under",
-          "quota": 1.2223,
-          "probabilita": 0.7852,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "casa",
-          "soglia": 5.5,
-          "verso": "Over",
-          "quota": 3.4,
-          "probabilita": 0.2148,
-          "atteso": 3.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 4.5,
-          "verso": "Under",
-          "quota": 2.8,
-          "probabilita": 0.3265,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 4.5,
-          "verso": "Over",
-          "quota": 1.3334,
-          "probabilita": 0.6735,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 5.5,
-          "verso": "Under",
-          "quota": 1.9231,
-          "probabilita": 0.4682,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 5.5,
-          "verso": "Over",
-          "quota": 1.6924,
-          "probabilita": 0.5318,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 6.5,
-          "verso": "Under",
-          "quota": 1.48,
-          "probabilita": 0.6035,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 6.5,
-          "verso": "Over",
-          "quota": 2.3,
-          "probabilita": 0.3965,
-          "atteso": 6.03,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 5.5,
-          "verso": "Under",
-          "quota": 7,
-          "probabilita": 0.0864,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 5.5,
-          "verso": "Over",
-          "quota": 1.0304,
-          "probabilita": 0.9136,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 6.5,
-          "verso": "Under",
-          "quota": 5,
-          "probabilita": 0.1567,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 6.5,
-          "verso": "Over",
-          "quota": 1.1,
-          "probabilita": 0.8433,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 7.5,
-          "verso": "Under",
-          "quota": 3.6,
-          "probabilita": 0.2509,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 7.5,
-          "verso": "Over",
-          "quota": 1.2,
-          "probabilita": 0.7491,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Under",
-          "quota": 2.5715,
-          "probabilita": 0.3628,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Over",
-          "quota": 1.3847,
-          "probabilita": 0.6372,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 9.5,
-          "verso": "Under",
-          "quota": 1.9412,
-          "probabilita": 0.4826,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 9.5,
-          "verso": "Over",
-          "quota": 1.68,
-          "probabilita": 0.5174,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 10.5,
-          "verso": "Under",
-          "quota": 1.5715,
-          "probabilita": 0.5994,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 10.5,
-          "verso": "Over",
-          "quota": 2.1,
-          "probabilita": 0.4006,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 11.5,
-          "verso": "Under",
-          "quota": 1.3334,
-          "probabilita": 0.7043,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 11.5,
-          "verso": "Over",
-          "quota": 2.8,
-          "probabilita": 0.2957,
-          "atteso": 9.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 12.5,
-          "verso": "Under",
-          "quota": 1.1819,
-          "probabilita": 0.7917,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 12.5,
-          "verso": "Over",
-          "quota": 3.75,
-          "probabilita": 0.2083,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 13.5,
-          "verso": "Under",
-          "quota": 1.1,
-          "probabilita": 0.8599,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 13.5,
-          "verso": "Over",
-          "quota": 5,
-          "probabilita": 0.1401,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 14.5,
-          "verso": "Under",
-          "quota": 1.04,
-          "probabilita": 0.9098,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 14.5,
-          "verso": "Over",
-          "quota": 6.6667,
-          "probabilita": 0.0902,
-          "atteso": 9.86,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "casa",
-          "soglia": 12.5,
-          "verso": "Under",
-          "quota": 1.875,
-          "probabilita": 0.4276,
-          "atteso": 13.33,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "casa",
-          "soglia": 12.5,
-          "verso": "Over",
-          "quota": 1.7334,
-          "probabilita": 0.5724,
-          "atteso": 13.33,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "trasferta",
-          "soglia": 11.5,
-          "verso": "Under",
-          "quota": 1.96,
-          "probabilita": 0.2479,
-          "atteso": 14.15,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "trasferta",
-          "soglia": 11.5,
-          "verso": "Over",
-          "quota": 1.6667,
-          "probabilita": 0.7521,
-          "atteso": 14.15,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "totale",
-          "soglia": 24.5,
-          "verso": "Under",
-          "quota": 1.9,
-          "probabilita": 0.3051,
-          "atteso": 27.47,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "fouls",
-          "lato": "totale",
-          "soglia": 24.5,
-          "verso": "Over",
-          "quota": 1.7143,
-          "probabilita": 0.6949,
-          "atteso": 27.47,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Under",
-          "quota": 3.4,
-          "probabilita": 0.2262,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Over",
-          "quota": 1.2353,
-          "probabilita": 0.7738,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Under",
-          "quota": 1.88,
-          "probabilita": 0.4626,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Over",
-          "quota": 1.76,
-          "probabilita": 0.5374,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Under",
-          "quota": 1.3334,
-          "probabilita": 0.6855,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 2.9,
-          "probabilita": 0.3145,
-          "atteso": 2.83,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 1.5,
-          "verso": "Under",
-          "quota": 2.9,
-          "probabilita": 0.3776,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 1.5,
-          "verso": "Over",
-          "quota": 1.3334,
-          "probabilita": 0.6224,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 2.5,
-          "verso": "Under",
-          "quota": 1.6667,
-          "probabilita": 0.6475,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 2.5,
-          "verso": "Over",
-          "quota": 2,
-          "probabilita": 0.3525,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 3.5,
-          "verso": "Under",
-          "quota": 1.2353,
-          "probabilita": 0.8371,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 3.4,
-          "probabilita": 0.1629,
-          "atteso": 2.11,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 3.5,
-          "verso": "Under",
-          "quota": 3.1,
-          "probabilita": 0.274,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 1.3,
-          "probabilita": 0.726,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 4.5,
-          "verso": "Under",
-          "quota": 2.1,
-          "probabilita": 0.4516,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 4.5,
-          "verso": "Over",
-          "quota": 1.6334,
-          "probabilita": 0.5484,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 5.5,
-          "verso": "Under",
-          "quota": 1.6,
-          "probabilita": 0.627,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 5.5,
-          "verso": "Over",
-          "quota": 2.15,
-          "probabilita": 0.373,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 6.5,
-          "verso": "Under",
-          "quota": 1.32,
-          "probabilita": 0.7713,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 6.5,
-          "verso": "Over",
-          "quota": 3,
-          "probabilita": 0.2287,
-          "atteso": 4.94,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 7.5,
-          "verso": "Under",
-          "quota": 1.175,
-          "probabilita": 0.8731,
-          "atteso": 4.94,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "totale",
-          "soglia": 7.5,
-          "verso": "Over",
-          "quota": 4.2,
-          "probabilita": 0.1269,
-          "atteso": 4.94,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Under",
-          "quota": 1.5556,
-          "probabilita": 0.5355,
-          "atteso": 1.58,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "casa",
-          "soglia": 1.5,
-          "verso": "Over",
-          "quota": 2.1429,
-          "probabilita": 0.4645,
-          "atteso": 1.58,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "trasferta",
-          "soglia": 1.5,
-          "verso": "Under",
-          "quota": 1.6364,
-          "probabilita": 0.5558,
-          "atteso": 1.52,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "trasferta",
-          "soglia": 1.5,
-          "verso": "Over",
-          "quota": 2,
-          "probabilita": 0.4442,
-          "atteso": 1.52,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "totale",
-          "soglia": 2.5,
-          "verso": "Under",
-          "quota": 2,
-          "probabilita": 0.4005,
-          "atteso": 3.1,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "totale",
-          "soglia": 2.5,
-          "verso": "Over",
-          "quota": 1.6364,
-          "probabilita": 0.5995,
-          "atteso": 3.1,
-          "fuoriFinestra": false
-        }
-      ],
-      "attesi": [
-        {
-          "bersaglio": "total_shots",
-          "casa": 11.49,
-          "trasferta": 16.88,
-          "totale": 28.38
-        },
-        {
-          "bersaglio": "shots_on_target",
-          "casa": 3.21,
-          "trasferta": 5.64,
-          "totale": 8.85
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "casa": 3.83,
-          "trasferta": 6.03,
-          "totale": 9.86
-        },
-        {
-          "bersaglio": "fouls",
-          "casa": 13.33,
-          "trasferta": 14.15,
-          "totale": 27.47
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "casa": 2.83,
-          "trasferta": 2.11,
-          "totale": 4.94
-        },
-        {
-          "bersaglio": "offsides",
-          "casa": 1.58,
-          "trasferta": 1.52,
-          "totale": 3.1
-        },
-        {
-          "bersaglio": "goalkeeper_saves",
-          "casa": 4.43,
-          "trasferta": 2.62,
-          "totale": 7.04
-        }
-      ],
-      "gol": {
-        "nostri": {
-          "attesiCasa": 1.04,
-          "attesiTrasferta": 1.49,
-          "campioneCasa": 4,
-          "campioneTrasferta": 5,
-          "campioneLega": 140,
-          "xgCasa": 0.86,
-          "xgTrasferta": 1.5,
-          "xgLegaCasa": 1.45,
-          "xgLegaTrasferta": 1.31,
-          "esito": {
-            "uno": 0.26281980513138714,
-            "x": 0.2599947581367123,
-            "due": 0.4771854367319005
-          },
-          "doppiaChance": {
-            "unoX": 0.5228145632680994,
-            "xDue": 0.7371801948686127,
-            "unoDue": 0.7400052418632876
-          },
-          "overUnder": [
-            {
-              "linea": 0.5,
-              "sopra": 0.9201,
-              "sotto": 0.0799
-            },
-            {
-              "linea": 1.5,
-              "sopra": 0.7181,
-              "sotto": 0.2819
-            },
-            {
-              "linea": 2.5,
-              "sopra": 0.463,
-              "sotto": 0.537
-            },
-            {
-              "linea": 3.5,
-              "sopra": 0.2481,
-              "sotto": 0.7519
-            },
-            {
-              "linea": 4.5,
-              "sopra": 0.1124,
-              "sotto": 0.8876
-            },
-            {
-              "linea": 5.5,
-              "sopra": 0.0438,
-              "sotto": 0.9562
-            }
-          ],
-          "gg": 0.4997090320836721,
-          "ng": 0.5002909679163279,
-          "multigolPartita": [
-            {
-              "da": 0,
-              "a": 1,
-              "probabilita": 0.2819
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "probabilita": 0.537
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "probabilita": 0.7519
-            },
-            {
-              "da": 0,
-              "a": 4,
-              "probabilita": 0.8876
-            },
-            {
-              "da": 0,
-              "a": 5,
-              "probabilita": 0.9562
-            },
-            {
-              "da": 0,
-              "a": 6,
-              "probabilita": 0.9851
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "probabilita": 0.4571
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "probabilita": 0.672
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "probabilita": 0.8077
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "probabilita": 0.8762
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "probabilita": 0.9051
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "probabilita": 0.9155
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "probabilita": 0.47
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "probabilita": 0.6057
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "probabilita": 0.6743
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "probabilita": 0.7032
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "probabilita": 0.7136
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "probabilita": 0.3506
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "probabilita": 0.4191
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "probabilita": 0.448
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "probabilita": 0.4584
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "probabilita": 0.2043
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "probabilita": 0.2332
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "probabilita": 0.2436
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "probabilita": 0.0974
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "probabilita": 0.1079
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "probabilita": 0.0393
-            }
-          ],
-          "multigolCasa": [
-            {
-              "da": 0,
-              "a": 1,
-              "probabilita": 0.7228
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "probabilita": 0.9131
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "probabilita": 0.9788
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "probabilita": 0.558
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "probabilita": 0.6236
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "probabilita": 0.6406
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "probabilita": 0.6442
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "probabilita": 0.6448
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "probabilita": 0.6449
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "probabilita": 0.256
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "probabilita": 0.273
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "probabilita": 0.2765
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "probabilita": 0.2771
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "probabilita": 0.2772
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "probabilita": 0.0827
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "probabilita": 0.0862
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "probabilita": 0.0868
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "probabilita": 0.0869
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "probabilita": 0.0205
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "probabilita": 0.0211
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "probabilita": 0.0212
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "probabilita": 0.0041
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "probabilita": 0.0042
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "probabilita": 0.0007
-            }
-          ],
-          "multigolTrasferta": [
-            {
-              "da": 0,
-              "a": 1,
-              "probabilita": 0.5608
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "probabilita": 0.8111
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "probabilita": 0.9355
-            },
-            {
-              "da": 0,
-              "a": 4,
-              "probabilita": 0.9818
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "probabilita": 0.586
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "probabilita": 0.7104
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "probabilita": 0.7567
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "probabilita": 0.7706
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "probabilita": 0.774
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "probabilita": 0.7747
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "probabilita": 0.3747
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "probabilita": 0.4211
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "probabilita": 0.4349
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "probabilita": 0.4383
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "probabilita": 0.4391
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "probabilita": 0.1708
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "probabilita": 0.1846
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "probabilita": 0.188
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "probabilita": 0.1888
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "probabilita": 0.0602
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "probabilita": 0.0636
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "probabilita": 0.0644
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "probabilita": 0.0173
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "probabilita": 0.018
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "probabilita": 0.0042
-            }
-          ]
-        },
-        "quote": {
-          "esito": {
-            "uno": 4,
-            "x": 3.5,
-            "due": 1.8572
-          },
-          "doppiaChance": {
-            "unoX": 1.8889,
-            "xDue": 1.2223,
-            "unoDue": 1.2778
-          },
-          "overUnder": [
-            {
-              "soglia": 0.5,
-              "verso": "Over",
-              "quota": 1.04
-            },
-            {
-              "soglia": 0.5,
-              "verso": "Under",
-              "quota": 8.5
-            },
-            {
-              "soglia": 1.5,
-              "verso": "Over",
-              "quota": 1.2223
-            },
-            {
-              "soglia": 1.5,
-              "verso": "Under",
-              "quota": 3.8
-            },
-            {
-              "soglia": 2.5,
-              "verso": "Over",
-              "quota": 1.7273
-            },
-            {
-              "soglia": 2.5,
-              "verso": "Under",
-              "quota": 2
-            },
-            {
-              "soglia": 3.5,
-              "verso": "Over",
-              "quota": 2.8
-            },
-            {
-              "soglia": 3.5,
-              "verso": "Under",
-              "quota": 1.3847
-            },
-            {
-              "soglia": 4.5,
-              "verso": "Over",
-              "quota": 5
-            },
-            {
-              "soglia": 4.5,
-              "verso": "Under",
-              "quota": 1.1334
-            },
-            {
-              "soglia": 5.5,
-              "verso": "Over",
-              "quota": 8.5
-            },
-            {
-              "soglia": 5.5,
-              "verso": "Under",
-              "quota": 1.04
-            }
-          ],
-          "gol": 1.6667,
-          "noGol": 2.0834,
-          "multigolPartita": [
-            {
-              "da": 0,
-              "a": 1,
-              "quota": 3.6667
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "quota": 1.96
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "quota": 1.375
-            },
-            {
-              "da": 0,
-              "a": 4,
-              "quota": 1.1334
-            },
-            {
-              "da": 0,
-              "a": 5,
-              "quota": 1.05
-            },
-            {
-              "da": 0,
-              "a": 6,
-              "quota": 1.015
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "quota": 2.25
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "quota": 1.5129
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "quota": 1.2106
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "quota": 1.1112
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "quota": 1.0667
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "quota": 1.05
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "quota": 1.96
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "quota": 1.4879
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 1.32
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "quota": 1.25
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "quota": 1.2223
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "quota": 2.3
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "quota": 1.92
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "quota": 1.7693
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "quota": 1.7143
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "quota": 3.25
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "quota": 2.8572
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "quota": 2.75
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "quota": 5.6667
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "quota": 5
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "quota": 11
-            }
-          ],
-          "multigolCasa": [
-            {
-              "da": 0,
-              "a": 1,
-              "quota": 1.3334
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "quota": 1.075
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "quota": 1.0134
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "quota": 1.6061
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "quota": 1.4348
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "quota": 1.4
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "quota": 1.3847
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "quota": 1.3847
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "quota": 1.3847
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "quota": 3.05
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "quota": 2.8572
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 2.85
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "quota": 2.8334
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "quota": 2.8334
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "quota": 7.5
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "quota": 7.5
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "quota": 7.5
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "quota": 7.5
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "quota": 21
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "quota": 21
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "quota": 21
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "quota": 41
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "quota": 41
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "quota": 41
-            }
-          ],
-          "multigolTrasferta": [
-            {
-              "da": 0,
-              "a": 1,
-              "quota": 1.885
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "quota": 1.26
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "quota": 1.077
-            },
-            {
-              "da": 0,
-              "a": 4,
-              "quota": 1.02
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "quota": 1.6061
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "quota": 1.2942
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "quota": 1.1905
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "quota": 1.1667
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "quota": 1.1539
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "quota": 1.1539
-            },
-            {
-              "da": 2,
-              "a": 3,
-              "quota": 2.125
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "quota": 1.8667
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 1.7858
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "quota": 1.76
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "quota": 1.76
-            },
-            {
-              "da": 3,
-              "a": 4,
-              "quota": 3.6
-            },
-            {
-              "da": 3,
-              "a": 5,
-              "quota": 3.3334
-            },
-            {
-              "da": 3,
-              "a": 6,
-              "quota": 3.25
-            },
-            {
-              "da": 3,
-              "a": 7,
-              "quota": 3.25
-            },
-            {
-              "da": 4,
-              "a": 5,
-              "quota": 8
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "quota": 7.5
-            },
-            {
-              "da": 4,
-              "a": 7,
-              "quota": 7
-            },
-            {
-              "da": 5,
-              "a": 6,
-              "quota": 19
-            },
-            {
-              "da": 5,
-              "a": 7,
-              "quota": 18
-            },
-            {
-              "da": 6,
-              "a": 7,
-              "quota": 41
-            }
-          ]
-        }
-      }
-    },
     {
       "gara": 212258,
       "casa": "Kawasaki Frontale",
@@ -20009,24 +18044,38 @@
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-19T12:45:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "1",
-        "probabilita": 0.6858,
-        "base": 53.52,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "trasferta",
+        "soglia": 4.5,
+        "verso": "Over",
+        "probabilita": 0.4433,
+        "base": 36.62,
         "gareDiBase": 71,
         "affidabilita": 66,
-        "scarto": 15.1,
-        "attesoCasa": 14.95,
-        "attesoTrasferta": 11.94,
-        "origine": "miscela",
-        "pesoDelModello": 0.8,
-        "arbitro": {
-          "totale": -3.544848484848485,
-          "casa": -1.3784242424242423,
-          "trasferta": -2.1664242424242426,
-          "gare": 22
-        }
+        "scarto": 7.7,
+        "atteso": 4.45,
+        "intervallo": {
+          "basso": 2,
+          "alto": 7
+        },
+        "origine": "modello",
+        "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "la classifica",
+            "effetto": -0.09
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": -0.053
+          },
+          {
+            "nome": "gli undici",
+            "effetto": 0.04
+          }
+        ],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -36011,18 +34060,37 @@
       "lega": "Championship",
       "kickoff": "2026-09-19T14:00:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "offsides",
-        "esito": "1",
-        "probabilita": 0.7355,
-        "base": 40.96,
-        "gareDiBase": 83,
-        "affidabilita": 69,
-        "scarto": 32.6,
-        "attesoCasa": 3.38,
-        "attesoTrasferta": 1.46,
-        "origine": "miscela",
-        "pesoDelModello": 0.9,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "casa",
+        "soglia": 5.5,
+        "verso": "Under",
+        "probabilita": 0.738,
+        "base": 58.33,
+        "gareDiBase": 84,
+        "affidabilita": 66,
+        "scarto": 15.5,
+        "atteso": 4.17,
+        "intervallo": {
+          "basso": 2,
+          "alto": 7
+        },
+        "origine": "modello",
+        "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.049
+          },
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.044
+          },
+          {
+            "nome": "la classifica",
+            "effetto": -0.042
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -37547,18 +35615,37 @@
       "lega": "Championship",
       "kickoff": "2026-09-19T14:00:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "1",
-        "probabilita": 0.6553,
-        "base": 53.57,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "totale",
+        "soglia": 10.5,
+        "verso": "Under",
+        "probabilita": 0.5564,
+        "base": 48.81,
         "gareDiBase": 84,
-        "affidabilita": 64,
-        "scarto": 12,
-        "attesoCasa": 5.42,
-        "attesoTrasferta": 3.62,
+        "affidabilita": 66,
+        "scarto": 6.8,
+        "atteso": 10.23,
+        "intervallo": {
+          "basso": 6,
+          "alto": 14
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.039
+          },
+          {
+            "nome": "gli undici",
+            "effetto": 0.025
+          },
+          {
+            "nome": "la classifica",
+            "effetto": -0.02
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -63061,15 +61148,15 @@
       "kickoff": "2026-09-19T16:00:00+00:00",
       "consigliato": {
         "tipo": "esito",
-        "bersaglio": "shots_on_target",
+        "bersaglio": "corner_kicks",
         "esito": "1",
-        "probabilita": 0.7978,
+        "probabilita": 0.7806,
         "base": 60.42,
         "gareDiBase": 48,
-        "affidabilita": 64,
-        "scarto": 19.4,
-        "attesoCasa": 6.73,
-        "attesoTrasferta": 3.39,
+        "affidabilita": 66,
+        "scarto": 17.6,
+        "attesoCasa": 7.05,
+        "attesoTrasferta": 3.61,
         "origine": "modello",
         "pesoDelModello": 1,
         "arbitro": null
@@ -64903,15 +62990,15 @@
       "kickoff": "2026-09-19T16:00:00+00:00",
       "consigliato": {
         "tipo": "esito",
-        "bersaglio": "shots_on_target",
+        "bersaglio": "corner_kicks",
         "esito": "1",
-        "probabilita": 0.7477,
+        "probabilita": 0.7165,
         "base": 60.42,
         "gareDiBase": 48,
-        "affidabilita": 64,
-        "scarto": 14.4,
-        "attesoCasa": 6.6,
-        "attesoTrasferta": 3.79,
+        "affidabilita": 66,
+        "scarto": 11.2,
+        "attesoCasa": 6.72,
+        "attesoTrasferta": 4.02,
         "origine": "modello",
         "pesoDelModello": 1,
         "arbitro": null
@@ -67334,18 +65421,37 @@
       "lega": "Pro League",
       "kickoff": "2026-09-19T16:15:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "1",
-        "probabilita": 0.7911,
-        "base": 58.18,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "trasferta",
+        "soglia": 5.5,
+        "verso": "Under",
+        "probabilita": 0.7627,
+        "base": 69.09,
         "gareDiBase": 55,
-        "affidabilita": 64,
-        "scarto": 20.9,
-        "attesoCasa": 6.19,
-        "attesoTrasferta": 3.05,
+        "affidabilita": 66,
+        "scarto": 7.2,
+        "atteso": 4,
+        "intervallo": {
+          "basso": 2,
+          "alto": 7
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "la classifica",
+            "effetto": -0.142
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": -0.053
+          },
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.048
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -81244,18 +79350,37 @@
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-19T18:15:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "2",
-        "probabilita": 0.5614,
-        "base": 32.39,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "trasferta",
+        "soglia": 4.5,
+        "verso": "Over",
+        "probabilita": 0.526,
+        "base": 36.62,
         "gareDiBase": 71,
-        "affidabilita": 64,
-        "scarto": 23.7,
-        "attesoCasa": 3.68,
-        "attesoTrasferta": 4.67,
+        "affidabilita": 66,
+        "scarto": 16,
+        "atteso": 4.97,
+        "intervallo": {
+          "basso": 2,
+          "alto": 8
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "la classifica",
+            "effetto": 0.161
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": -0.053
+          },
+          {
+            "nome": "la norma del campionato",
+            "effetto": -0.038
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -101145,18 +99270,37 @@
       "lega": "Brasileirão Serie A",
       "kickoff": "2026-09-19T23:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "1",
-        "probabilita": 0.7246,
-        "base": 58.8,
+        "tipo": "linea",
+        "bersaglio": "yellow_cards",
+        "lato": "trasferta",
+        "soglia": 2.5,
+        "verso": "Under",
+        "probabilita": 0.6369,
+        "base": 52.81,
         "gareDiBase": 267,
-        "affidabilita": 66,
-        "scarto": 13.7,
-        "attesoCasa": 5.99,
-        "attesoTrasferta": 3.51,
+        "affidabilita": 68,
+        "scarto": 10.9,
+        "atteso": 2.15,
+        "intervallo": {
+          "basso": 1,
+          "alto": 3
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "quanto concede l'avversario",
+            "effetto": -0.036
+          },
+          {
+            "nome": "l'arbitro",
+            "effetto": 0.034
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.03
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -102488,15 +100632,15 @@
       "kickoff": "2026-09-19T23:30:00+00:00",
       "consigliato": {
         "tipo": "esito",
-        "bersaglio": "offsides",
-        "esito": "2",
-        "probabilita": 0.4713,
-        "base": 41.08,
-        "gareDiBase": 353,
-        "affidabilita": 73,
-        "scarto": 6.1,
-        "attesoCasa": 1.31,
-        "attesoTrasferta": 1.73,
+        "bersaglio": "yellow_cards",
+        "esito": "1",
+        "probabilita": 0.4039,
+        "base": 32.26,
+        "gareDiBase": 372,
+        "affidabilita": 68,
+        "scarto": 8.1,
+        "attesoCasa": 2.06,
+        "attesoTrasferta": 2.03,
         "origine": "modello",
         "pesoDelModello": 1,
         "arbitro": null
@@ -103755,18 +101899,37 @@
       "lega": "MLS",
       "kickoff": "2026-09-19T23:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "offsides",
-        "esito": "1",
-        "probabilita": 0.7144,
-        "base": 44.76,
-        "gareDiBase": 353,
-        "affidabilita": 73,
-        "scarto": 26.7,
-        "attesoCasa": 3.13,
-        "attesoTrasferta": 1.39,
+        "tipo": "linea",
+        "bersaglio": "yellow_cards",
+        "lato": "totale",
+        "soglia": 4.5,
+        "verso": "Under",
+        "probabilita": 0.7049,
+        "base": 61.02,
+        "gareDiBase": 372,
+        "affidabilita": 68,
+        "scarto": 9.5,
+        "atteso": 3.61,
+        "intervallo": {
+          "basso": 2,
+          "alto": 6
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "quanto concede l'avversario",
+            "effetto": -0.03
+          },
+          {
+            "nome": "l'arbitro",
+            "effetto": -0.018
+          },
+          {
+            "nome": "quanto produce la squadra",
+            "effetto": -0.018
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -106319,15 +104482,15 @@
       "kickoff": "2026-09-19T23:30:00+00:00",
       "consigliato": {
         "tipo": "esito",
-        "bersaglio": "offsides",
-        "esito": "2",
-        "probabilita": 0.5047,
-        "base": 41.08,
-        "gareDiBase": 353,
-        "affidabilita": 73,
-        "scarto": 9.4,
-        "attesoCasa": 1.47,
-        "attesoTrasferta": 2.02,
+        "bersaglio": "yellow_cards",
+        "esito": "1",
+        "probabilita": 0.4108,
+        "base": 32.26,
+        "gareDiBase": 372,
+        "affidabilita": 68,
+        "scarto": 8.8,
+        "attesoCasa": 1.97,
+        "attesoTrasferta": 1.88,
         "origine": "modello",
         "pesoDelModello": 1,
         "arbitro": null
@@ -107598,24 +105761,38 @@
       "lega": "Brasileirão Serie A",
       "kickoff": "2026-09-20T00:00:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "2",
-        "probabilita": 0.5778,
-        "base": 45.32,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "totale",
+        "soglia": 9.5,
+        "verso": "Under",
+        "probabilita": 0.4924,
+        "base": 43.82,
         "gareDiBase": 267,
-        "affidabilita": 55,
-        "scarto": 12.5,
-        "attesoCasa": 14.29,
-        "attesoTrasferta": 15.87,
+        "affidabilita": 62,
+        "scarto": 5.4,
+        "atteso": 9.78,
+        "intervallo": {
+          "basso": 6,
+          "alto": 14
+        },
         "origine": "modello",
         "pesoDelModello": 1,
-        "arbitro": {
-          "totale": 0.9350366585203288,
-          "casa": -0.139880026660742,
-          "trasferta": 1.074916685181071,
-          "gare": 35
-        }
+        "cause": [
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.047
+          },
+          {
+            "nome": "gli undici",
+            "effetto": -0.022
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.012
+          }
+        ],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -108926,24 +107103,30 @@
       "lega": "MLS",
       "kickoff": "2026-09-20T00:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "1",
-        "probabilita": 0.5453,
-        "base": 44.35,
+        "tipo": "linea",
+        "bersaglio": "yellow_cards",
+        "lato": "totale",
+        "soglia": 3.5,
+        "verso": "Under",
+        "probabilita": 0.4899,
+        "base": 40.32,
         "gareDiBase": 372,
-        "affidabilita": 55,
-        "scarto": 10.2,
-        "attesoCasa": 12.87,
-        "attesoTrasferta": 11.8,
+        "affidabilita": 68,
+        "scarto": 8.7,
+        "atteso": 3.72,
+        "intervallo": {
+          "basso": 2,
+          "alto": 6
+        },
         "origine": "modello",
         "pesoDelModello": 1,
-        "arbitro": {
-          "totale": 0.0254037948878784,
-          "casa": 0.5736239611102399,
-          "trasferta": -0.5482201662223616,
-          "gare": 14
-        }
+        "cause": [
+          {
+            "nome": "l'arbitro",
+            "effetto": -0.029
+          }
+        ],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -114044,24 +112227,25 @@
       "lega": "MLS",
       "kickoff": "2026-09-20T00:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "1",
-        "probabilita": 0.6454,
-        "base": 44.35,
+        "tipo": "linea",
+        "bersaglio": "yellow_cards",
+        "lato": "totale",
+        "soglia": 3.5,
+        "verso": "Under",
+        "probabilita": 0.4639,
+        "base": 40.32,
         "gareDiBase": 372,
-        "affidabilita": 55,
-        "scarto": 20.2,
-        "attesoCasa": 13.17,
-        "attesoTrasferta": 10.84,
+        "affidabilita": 68,
+        "scarto": 6.1,
+        "atteso": 3.85,
+        "intervallo": {
+          "basso": 2,
+          "alto": 6
+        },
         "origine": "modello",
         "pesoDelModello": 1,
-        "arbitro": {
-          "totale": 0.9777847472688307,
-          "casa": 0.5260049134911923,
-          "trasferta": 0.4517798337776384,
-          "gare": 21
-        }
+        "cause": [],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -118366,18 +116550,33 @@
       "lega": "MLS",
       "kickoff": "2026-09-20T01:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "offsides",
-        "esito": "2",
-        "probabilita": 0.6855,
-        "base": 41.08,
-        "gareDiBase": 353,
-        "affidabilita": 73,
-        "scarto": 27.5,
-        "attesoCasa": 1.23,
-        "attesoTrasferta": 2.73,
+        "tipo": "linea",
+        "bersaglio": "yellow_cards",
+        "lato": "totale",
+        "soglia": 4.5,
+        "verso": "Under",
+        "probabilita": 0.6875,
+        "base": 61.02,
+        "gareDiBase": 372,
+        "affidabilita": 68,
+        "scarto": 7.7,
+        "atteso": 3.7,
+        "intervallo": {
+          "basso": 2,
+          "alto": 6
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "quanto concede l'avversario",
+            "effetto": -0.023
+          },
+          {
+            "nome": "quanto produce la squadra",
+            "effetto": -0.011
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -119637,26 +117836,7 @@
       "legaId": 18,
       "lega": "MLS",
       "kickoff": "2026-09-20T02:30:00+00:00",
-      "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "2",
-        "probabilita": 0.7208,
-        "base": 50,
-        "gareDiBase": 372,
-        "affidabilita": 55,
-        "scarto": 22.1,
-        "attesoCasa": 9.18,
-        "attesoTrasferta": 12.39,
-        "origine": "modello",
-        "pesoDelModello": 1,
-        "arbitro": {
-          "totale": -0.8674533479692645,
-          "casa": -0.8728046103183315,
-          "trasferta": 0.005351262349067,
-          "gare": 16
-        }
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "goalkeeper_saves",
@@ -123800,24 +121980,38 @@
       "lega": "Ekstraklasa",
       "kickoff": "2026-09-20T10:15:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "2",
-        "probabilita": 0.7246,
-        "base": 40.85,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "casa",
+        "soglia": 4.5,
+        "verso": "Over",
+        "probabilita": 0.6828,
+        "base": 61.97,
         "gareDiBase": 71,
         "affidabilita": 66,
-        "scarto": 31.6,
-        "attesoCasa": 9.96,
-        "attesoTrasferta": 13.34,
-        "origine": "miscela",
-        "pesoDelModello": 0.8,
-        "arbitro": {
-          "totale": -0.3175757575757576,
-          "casa": -0.3784242424242424,
-          "trasferta": 0.0608484848484849,
-          "gare": 11
-        }
+        "scarto": 6.3,
+        "atteso": 6.11,
+        "intervallo": {
+          "basso": 3,
+          "alto": 9
+        },
+        "origine": "modello",
+        "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.06
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.056
+          },
+          {
+            "nome": "la norma del campionato",
+            "effetto": 0.031
+          }
+        ],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -137592,18 +135786,37 @@
       "lega": "Championship",
       "kickoff": "2026-09-20T12:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "1",
-        "probabilita": 0.7432,
-        "base": 53.57,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "totale",
+        "soglia": 11.5,
+        "verso": "Under",
+        "probabilita": 0.6961,
+        "base": 61.9,
         "gareDiBase": 84,
-        "affidabilita": 64,
-        "scarto": 20.7,
-        "attesoCasa": 6.25,
-        "attesoTrasferta": 3.55,
+        "affidabilita": 66,
+        "scarto": 7.7,
+        "atteso": 9.94,
+        "intervallo": {
+          "basso": 6,
+          "alto": 14
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.036
+          },
+          {
+            "nome": "gli undici",
+            "effetto": -0.023
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.012
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -159896,18 +158109,37 @@
       "lega": "Allsvenskan",
       "kickoff": "2026-09-20T14:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
+        "tipo": "linea",
         "bersaglio": "corner_kicks",
-        "esito": "2",
-        "probabilita": 0.7176,
-        "base": 39.88,
+        "lato": "totale",
+        "soglia": 11.5,
+        "verso": "Under",
+        "probabilita": 0.7041,
+        "base": 62.5,
         "gareDiBase": 168,
         "affidabilita": 62,
-        "scarto": 31.9,
-        "attesoCasa": 3.62,
-        "attesoTrasferta": 6.24,
+        "scarto": 7.9,
+        "atteso": 9.86,
+        "intervallo": {
+          "basso": 6,
+          "alto": 14
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "la classifica",
+            "effetto": 0.043
+          },
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.028
+          },
+          {
+            "nome": "gli undici",
+            "effetto": -0.019
+          }
+        ],
         "arbitro": null
       },
       "famiglie": [
@@ -174656,21 +172888,7 @@
       "legaId": 2,
       "lega": "Liga Portugal Betclic",
       "kickoff": "2026-09-20T17:00:00+00:00",
-      "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "shots_on_target",
-        "esito": "1",
-        "probabilita": 0.5397,
-        "base": 47.17,
-        "gareDiBase": 53,
-        "affidabilita": 64,
-        "scarto": 6.8,
-        "attesoCasa": 4.48,
-        "attesoTrasferta": 3.66,
-        "origine": "modello",
-        "pesoDelModello": 1,
-        "arbitro": null
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "shots_on_target",
@@ -188049,24 +186267,38 @@
       "lega": "Liga Portugal Betclic",
       "kickoff": "2026-09-20T19:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "1",
-        "probabilita": 0.6103,
-        "base": 45.28,
+        "tipo": "linea",
+        "bersaglio": "corner_kicks",
+        "lato": "totale",
+        "soglia": 8.5,
+        "verso": "Over",
+        "probabilita": 0.5269,
+        "base": 47.17,
         "gareDiBase": 53,
         "affidabilita": 66,
-        "scarto": 15.7,
-        "attesoCasa": 13.76,
-        "attesoTrasferta": 11.84,
-        "origine": "miscela",
-        "pesoDelModello": 0.8,
-        "arbitro": {
-          "totale": -1.1968297937827024,
-          "casa": -0.4983071714373654,
-          "trasferta": -0.6985226223453371,
-          "gare": 18
-        }
+        "scarto": 5.5,
+        "atteso": 8.93,
+        "intervallo": {
+          "basso": 5,
+          "alto": 13
+        },
+        "origine": "modello",
+        "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "la classifica",
+            "effetto": 0.048
+          },
+          {
+            "nome": "gli undici",
+            "effetto": -0.017
+          },
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.01
+          }
+        ],
+        "arbitro": null
       },
       "famiglie": [
         {
@@ -189351,15 +187583,15 @@
       "kickoff": "2026-09-20T21:30:00+00:00",
       "consigliato": {
         "tipo": "esito",
-        "bersaglio": "shots_on_target",
+        "bersaglio": "corner_kicks",
         "esito": "1",
-        "probabilita": 0.7119,
-        "base": 58.8,
+        "probabilita": 0.6878,
+        "base": 60.67,
         "gareDiBase": 267,
-        "affidabilita": 66,
-        "scarto": 12.4,
-        "attesoCasa": 5.97,
-        "attesoTrasferta": 3.61,
+        "affidabilita": 62,
+        "scarto": 8.1,
+        "attesoCasa": 6.13,
+        "attesoTrasferta": 3.82,
         "origine": "modello",
         "pesoDelModello": 1,
         "arbitro": null
@@ -192023,26 +190255,7 @@
       "legaId": 18,
       "lega": "MLS",
       "kickoff": "2026-09-20T23:00:00+00:00",
-      "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "fouls",
-        "esito": "1",
-        "probabilita": 0.5684,
-        "base": 44.35,
-        "gareDiBase": 372,
-        "affidabilita": 55,
-        "scarto": 12.5,
-        "attesoCasa": 13.86,
-        "attesoTrasferta": 12.47,
-        "origine": "modello",
-        "pesoDelModello": 1,
-        "arbitro": {
-          "totale": 2.7492133186974024,
-          "casa": 1.7577509452372242,
-          "trasferta": 0.9914623734601781,
-          "gare": 45
-        }
-      },
+      "consigliato": null,
       "famiglie": [
         {
           "bersaglio": "offsides",
