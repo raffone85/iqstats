@@ -21,7 +21,7 @@
 //     --experimental-strip-types scripts/expected-famiglie.ts [--giorni 3] [--insieme 6]
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { gunzipSync } from "node:zlib";
+import { constants, gunzipSync } from "node:zlib";
 
 import { baseDegliEsiti, baseDiLega } from "../src/server/iqstats/base-di-lega.ts";
 import { connessione } from "../src/server/iqstats/lettura.ts";
@@ -662,10 +662,21 @@ function palinsestoPiuFresco(): {
   const perEvento = new Map<string, EventoGrezzo & { readonly raccolto_il?: string }>();
   let raccoltoIl: string | null = null;
   for (const nome of file) {
-    const testo = gunzipSync(readFileSync(path.join(cartella, nome))).toString("utf8");
+    // **Un file troncato si legge fin dove arriva.** Una raccolta uccisa a meta' lascia un
+    // gzip senza chiusura e un'ultima riga spezzata (successo il 18 settembre 2026): senza
+    // `Z_SYNC_FLUSH` quel file faceva cadere ogni rigenerazione successiva.
+    const testo = gunzipSync(readFileSync(path.join(cartella, nome)), {
+      finishFlush: constants.Z_SYNC_FLUSH,
+    }).toString("utf8");
     for (const riga of testo.split("\n")) {
       if (riga.trim() === "") continue;
-      const grezzo = JSON.parse(riga) as EventoGrezzo & { readonly raccolto_il?: string };
+      let grezzo: EventoGrezzo & { readonly raccolto_il?: string };
+      try {
+        grezzo = JSON.parse(riga) as EventoGrezzo & { readonly raccolto_il?: string };
+      } catch {
+        console.log(`palinsesto: riga spezzata in ${nome}, saltata`);
+        continue;
+      }
       const chiave = `${grezzo.casa}|${grezzo.fuori}|${grezzo.inizio}`;
       const gia = perEvento.get(chiave);
       if (gia === undefined || (grezzo.raccolto_il ?? "") >= (gia.raccolto_il ?? "")) {
