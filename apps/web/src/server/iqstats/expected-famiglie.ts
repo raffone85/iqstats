@@ -119,6 +119,20 @@ export interface GaraExpected {
   readonly attesi: readonly AttesiDiFamiglia[];
   /** I mercati sui gol, i nostri e quelli del banco. `null` senza il materiale nostro. */
   readonly gol: GolDiGara | null;
+  /**
+   * L'1X2 di ogni famiglia, sempre sei righe in ordine fisso. **Informativo**: il
+   * consigliato non lo legge. Assente in un artefatto scritto prima del 19 settembre 2026.
+   */
+  readonly esiti?: readonly EsitoDiFamigliaInGara[];
+}
+
+/** Chi ne fa di piu' in una famiglia: la nostra probabilita' e, se c'e', il prezzo del banco. */
+export interface EsitoDiFamigliaInGara {
+  readonly bersaglio: string;
+  /** `null` dove il modello non esce su entrambi i lati: l'assenza si dichiara. */
+  readonly probabilita: { readonly uno: number; readonly x: number; readonly due: number } | null;
+  /** `null` se il banco non apre l'1X2 di questa famiglia; un esito `null` e' sospeso. */
+  readonly quote: Readonly<Record<"1" | "X" | "2", number | null>> | null;
 }
 
 /** L'atteso di una famiglia sui tre lati. `null` dove quella scala non esce. */

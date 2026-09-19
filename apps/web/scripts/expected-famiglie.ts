@@ -373,7 +373,18 @@ interface GaraExpected {
   readonly attesi: readonly AttesiDiFamiglia[];
   /** I mercati sui gol, nostri e del banco. `null` se manca il materiale per i nostri. */
   readonly gol: GolConQuote | null;
+  /** L'1X2 di ogni famiglia, informativo: il consigliato non lo legge. */
+  readonly esiti: readonly {
+    readonly bersaglio: string;
+    readonly probabilita: { readonly uno: number; readonly x: number; readonly due: number } | null;
+    readonly quote: Readonly<Record<"1" | "X" | "2", number | null>> | null;
+  }[];
 }
+
+/** Le famiglie della riga 1X2 nella card, in quest'ordine. Le parate non ci stanno. */
+const FAMIGLIE_1X2 = [
+  "fouls", "total_shots", "shots_on_target", "corner_kicks", "yellow_cards", "offsides",
+] as const;
 
 function argomento(nome: string, difetto: number): number {
   const indice = process.argv.indexOf("--" + nome);
@@ -633,6 +644,16 @@ async function famiglieDi(
         nostri: golNostri(proiezioni.gol, evento === null ? null : evento.gol),
         quote: evento === null ? null : evento.gol,
       },
+    esiti: FAMIGLIE_1X2.map((bersaglio) => {
+      const e = perBersaglio.get(bersaglio)?.esito ?? null;
+      return {
+        bersaglio,
+        probabilita: e === null ? null : {
+          uno: Number(e.uno.toFixed(4)), x: Number(e.x.toFixed(4)), due: Number(e.due.toFixed(4)),
+        },
+        quote: evento?.esiti.get(bersaglio) ?? null,
+      };
+    }),
   };
 }
 

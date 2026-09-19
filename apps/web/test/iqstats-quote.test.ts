@@ -113,6 +113,7 @@ test("l'1X2 di famiglia e' quello della gara intera, non delle frazioni ne' dell
     mercato("1T - corner 1x2", "corner_kicks", tre(2.5, 2.1, 3.9)),
     mercato("Corner 1x2", "corner_kicks", tre(1.6, 8.5, 2.4)),
     mercato("NT - corner 1x2", "corner_kicks", tre(9, 9, 9)),
+    mercato("5 minuti - cartellini 1x2 da 0:00 a 4:59", "yellow_cards", tre(9, 1.1, 9)),
     mercato("Cartellini 1x2", "yellow_cards", tre(2.2, 0, 2.9)),
     mercato("1X2 Tiri in porta (incl. sup.)", "shots_on_target", tre(1.7, 6, 2.6)),
     mercato("1x2", null, tre(1.9, 3.4, 4.1)),

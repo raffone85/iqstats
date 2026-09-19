@@ -200,7 +200,9 @@ function esitiDellEvento(
   for (const mercato of mercati) {
     const nome = mercato.nome ?? "";
     if (mercato.famiglia === null || mercato.giocatore !== null) continue;
-    if (!/\b1x2\b/i.test(nome) || FRAZIONE.test(nome) || /&|\+/.test(nome)) continue;
+    // «10 minuti - cartellini 1x2 da 0:00 a 9:59» e' una finestra, non la gara: sul palinsesto
+    // del 18 settembre 2026 veniva dopo quello di gara intera, ma nulla ne garantisce l'ordine.
+    if (!/\b1x2\b/i.test(nome) || FRAZIONE.test(nome) || /&|\+|\d+ *minut/i.test(nome)) continue;
     // Vince il primo mercato letto, come per le linee.
     if (fuori.has(mercato.famiglia)) continue;
     fuori.set(mercato.famiglia, {

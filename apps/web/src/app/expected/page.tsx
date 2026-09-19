@@ -44,6 +44,7 @@ import {
   expectedDelleGare,
   type GaraExpected,
   type AttesiDiFamiglia,
+  type EsitoDiFamigliaInGara,
   type IntervalloDiGol,
   type RigaDiFamiglia,
   type RigaQuotata,
@@ -245,10 +246,12 @@ function RigaDiMercato({ r }: { readonly r: RigaQuotata }) {
  * dipendono dall'arbitro, e finche' la designazione non c'e' quelle scale ripiegano: 429
  * righe su 3.870. Una colonna di trattini senza la sua ragione si legge come un guasto.
  */
-function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senzaArbitro, apri }: {
+function BloccoDiFamiglia({ bersaglio, lettura, righe, esito, atteso, casa, fuori, senzaArbitro, apri }: {
   readonly bersaglio: string;
   readonly lettura: RigaDiFamiglia | null;
   readonly righe: readonly RigaQuotata[];
+  /** L'1X2 di famiglia: informativo, il consigliato non lo legge. */
+  readonly esito: EsitoDiFamigliaInGara | null;
   readonly atteso: number | null;
   readonly casa: string;
   readonly fuori: string;
@@ -307,6 +310,17 @@ function BloccoDiFamiglia({ bersaglio, lettura, righe, atteso, casa, fuori, senz
             : "Su questa scala il motore ripiega su una media, e sotto un ripiego non pubblica una probabilità: restano le quote del banco."}
         </p>
       ) : null}
+
+      {esito?.quote == null ? null : (
+        <div className="quota-lato">
+          <p className="quota-lato-titolo">1X2 · chi ne fa di più</p>
+          <ul className="quota-righe">
+            <RigaDiGol nome={`1 ${casa}`} quota={esito.quote["1"]} probabilita={esito.probabilita?.uno ?? null} />
+            <RigaDiGol nome="X pari" quota={esito.quote.X} probabilita={esito.probabilita?.x ?? null} />
+            <RigaDiGol nome={`2 ${fuori}`} quota={esito.quote["2"]} probabilita={esito.probabilita?.due ?? null} />
+          </ul>
+        </div>
+      )}
 
       {lati.map((lato) => {
         const diLato = righe.filter((r) => r.lato === lato);
@@ -542,6 +556,7 @@ function Famiglie({ g, raccolteIl }: {
           bersaglio={bersaglio}
           lettura={letture.get(bersaglio) ?? null}
           righe={perFamiglia.get(bersaglio) ?? []}
+          esito={g.esiti?.find((e) => e.bersaglio === bersaglio) ?? null}
           atteso={attesoDi(g.attesi, bersaglio, "totale")}
           casa={g.casa}
           fuori={g.fuori}

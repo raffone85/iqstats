@@ -174,6 +174,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .expected-voce { display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--product-border); border-radius: var(--r-panel); background: var(--product-surface); color: inherit; text-decoration: none; }
 .expected-voce:hover { background: var(--product-surface-soft); }
 .expected-voce:focus-visible { outline: 2px solid var(--product-primary-deep); outline-offset: 2px; }
+.expected-esiti { display: block; margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--product-border); }
+.expected-esiti-griglia { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; margin-top: 6px; }
+.expected-esito { display: grid; align-content: start; min-width: 0; font-size: 12px; color: var(--card-ink-2); }
+.expected-esito b { color: var(--card-ink); font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums; }
+.expected-esito .engine-obs { display: inline; }
+@media (min-width: 1024px) { .expected-esiti-griglia { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 /* Expected, gara: la famiglia e' la riga piu' la sua motivazione, che e' prosa. */
 .expected-famiglie { margin-top: 12px; }
 .expected-famiglia { display: grid; gap: 6px; }

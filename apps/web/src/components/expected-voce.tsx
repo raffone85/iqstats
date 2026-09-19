@@ -12,7 +12,9 @@ import Link from "next/link";
 
 import { TeamCrest } from "@/components/team-crest";
 import { FAMIGLIE } from "@/components/match-projection-section";
-import type { Consigliato, GaraExpected, RigaDiFamiglia } from "@/server/iqstats/expected-famiglie";
+import type {
+  Consigliato, EsitoDiFamigliaInGara, GaraExpected, RigaDiFamiglia,
+} from "@/server/iqstats/expected-famiglie";
 import type { TendenzaArbitro } from "@/server/iqstats/projection/letture-forti";
 
 /** Dentro un giorno la data e' gia' scritta nella testata: resta l'ora. */
@@ -86,6 +88,29 @@ export function indirizzoDi(g: GaraExpected): string {
   return `/expected?${q.toString()}`;
 }
 
+/**
+ * L'1X2 di una famiglia in breve: l'esito piu' probabile, e se il banco lo quota.
+ *
+ * **Informativo**: il consigliato non lo legge. Dal 19 settembre 2026 il consigliato propone
+ * solo esiti che il banco quota, e gli 1X2 di falli e tiri non comparivano quasi piu': qui
+ * restano visibili, con la nostra probabilita' e senza cambiare il criterio.
+ */
+function EsitoInBreve({ e }: { readonly e: EsitoDiFamigliaInGara }) {
+  const p = e.probabilita;
+  const primo = p === null ? null
+    : ([["1", p.uno], ["X", p.x], ["2", p.due]] as const).reduce((m, s) => (s[1] > m[1] ? s : m));
+  const quotato = primo === null ? e.quote !== null : (e.quote?.[primo[0]] ?? null) !== null;
+  return (
+    <span className="expected-esito" role="listitem">
+      <span>{nomeFamiglia(e.bersaglio)}</span>
+      <span>
+        <b>{primo === null ? "stima assente" : `${primo[0]} ${Math.round(primo[1] * 100)}%`}</b>
+        {quotato ? <span className="engine-obs"> banco</span> : null}
+      </span>
+    </span>
+  );
+}
+
 /** La riga di una gara: chi gioca, quando, e la lettura consigliata con la sua probabilita'. */
 export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
   return (
@@ -113,6 +138,14 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
         )}
         {g.consigliato?.arbitro == null ? null : (
           <span className="engine-obs">{arbitroInBreve(g.consigliato.arbitro)}</span>
+        )}
+        {g.esiti === undefined ? null : (
+          <span className="expected-esiti">
+            <span className="engine-obs">1X2 per famiglia, informativo · banco = lo quota</span>
+            <span className="expected-esiti-griglia" role="list">
+              {g.esiti.map((e) => <EsitoInBreve key={e.bersaglio} e={e} />)}
+            </span>
+          </span>
         )}
       </Link>
     </li>
