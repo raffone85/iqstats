@@ -18,7 +18,11 @@
 
 param([switch]$SenzaRaccolta)
 
-$ErrorActionPreference = 'Stop'
+# Non `Stop`: l'attivita' manda ogni flusso nel log (`*>&1`), e PowerShell 5.1 trasforma allora
+# ogni riga su stderr di un programma esterno in un errore - l'avviso di node, il log di
+# scrapling, i servizi fermi di Supabase. Con `Stop` il giro cadeva al primo avviso (19/09/2026).
+# Ci si ferma sui codici d'uscita, controllati passo per passo con `throw`.
+$ErrorActionPreference = 'Continue'
 
 $radice = Resolve-Path (Join-Path $PSScriptRoot '..\..')
 $web = Join-Path $radice 'apps\web'
@@ -44,11 +48,7 @@ Write-Output '== Expected'
 # come in `apps/web/scripts/with-local-data1.mjs`. Vive solo nell'ambiente di questo processo
 # e non si stampa.
 $env:Path = "$env:LOCALAPPDATA\Programs\DockerDesktop\resources\bin;$env:Path"
-# La CLI scrive su stderr l'elenco dei servizi fermi, che qui non servono: con `Stop`,
-# PowerShell 5.1 trasforma quella riga in un errore fatale. Si guarda solo DB_URL.
-$ErrorActionPreference = 'Continue'
 $stato = & (Join-Path $radice 'node_modules\.bin\supabase.cmd') status -o env 2>$null
-$ErrorActionPreference = 'Stop'
 $riga = $stato | Where-Object { $_ -like 'DB_URL=*' } | Select-Object -First 1
 if (-not $riga) { throw 'livello dati locale non raggiungibile' }
 $env:IQSTATS_PROJECTION_DATABASE_URL = $riga.Substring('DB_URL='.Length).Trim().Trim('"', "'")
