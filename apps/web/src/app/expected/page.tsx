@@ -28,6 +28,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ProductShell } from "@/components/product-shell";
+import { RiassuntoGara } from "@/components/riassunto-gara";
 import { TeamCrest } from "@/components/team-crest";
 import {
   arbitroInBreve,
@@ -762,6 +763,7 @@ function Gara({ g, calcolatoIl, quoteIl }: {
       </section>
 
       <CheGaraSara g={g} />
+      <RiassuntoGara g={g} breve />
 
       {g.consigliato === null ? (
         /* Un consigliato assente si dichiara: nessuna lettura di questa gara si stacca

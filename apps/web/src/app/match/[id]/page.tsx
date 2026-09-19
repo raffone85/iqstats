@@ -26,8 +26,9 @@ import { MatchGolSection } from "@/components/match-gol-section";
 import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import {
-  motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteGolDiGara, quoteRaccolteIl,
+  expectedDelleGare, motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteGolDiGara, quoteRaccolteIl,
 } from "@/server/iqstats/expected-famiglie";
+import { RiassuntoGara } from "@/components/riassunto-gara";
 import { ArbitroScheda } from "@/components/arbitro-scheda";
 import { MatchArbitroSection } from "@/components/match-arbitro-section";
 import { MatchFormaSection } from "@/components/match-forma-section";
@@ -414,6 +415,8 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // Le linee che il banco quota su questa gara: fino a oggi vivevano solo nella pagina
   // Expected, e il dossier mostrava 101 soglie del motore senza un prezzo accanto.
   const quoteDelBanco = quoteDiGara(eventId);
+  // Il riassunto pre-gara legge la stessa gara dell'artefatto di Expected: solo prima del via.
+  const garaExpected = expectedDelleGare()?.gare.find((x) => x.gara === eventId) ?? null;
   const esito = await getMatchDetail(eventId);
 
   // **Una gara che non esiste e una fonte muta meritano risposte opposte.** Prima erano la
@@ -1226,6 +1229,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         ) : (
           <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
         )}
+        {!insight.allowed || garaExpected === null ? null : <RiassuntoGara g={garaExpected} />}
 
         {/* Senza il piano non restano pannelli vuoti: al posto dell'intera area c'e' il
             riquadro che dice che cosa ci sarebbe dentro. */}
