@@ -65,6 +65,18 @@ test("traduce assenza e risposte non immagine senza esporre il provider", async 
   );
 });
 
+test("un'immagine dichiarata oltre il limite e' assente, non una fonte rotta", async () => {
+  const client = new ProviderMediaClient({
+    baseUrl: "https://provider.example/",
+    fetchImplementation: async () =>
+      new Response(new Uint8Array(4), {
+        status: 200,
+        headers: { "Content-Type": "image/png", "Content-Length": String(6 * 1024 * 1024) },
+      }),
+  });
+  assert.deepEqual(await client.getImage("venue", "5"), { status: "absent" });
+});
+
 test("interrompe uno stream che supera il limite binario anche senza content-length", async () => {
   const client = new ProviderMediaClient({
     baseUrl: "https://provider.example/",

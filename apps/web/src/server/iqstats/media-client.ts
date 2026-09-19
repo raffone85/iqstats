@@ -108,7 +108,14 @@ export class ProviderMediaClient {
 
     const imageType = contentType(response.headers.get("content-type"));
     const imageSize = declaredImageSize(response.headers.get("content-length"));
-    if (!imageType || !response.body || (imageSize !== null && imageSize > MAX_IMAGE_BYTES)) {
+    // Oltre il tetto l'immagine non si serve, ma la fonte non e' rotta: e' un'immagine che
+    // non mostriamo. Misurato il 19/09/2026: la foto dello stadio 5 pesa 6,3 MB e usciva
+    // come 502; le altre 23 del campione stavano in media a 1,7 MB.
+    if (imageSize !== null && imageSize > MAX_IMAGE_BYTES) {
+      await response.body?.cancel();
+      return { status: "absent" };
+    }
+    if (!imageType || !response.body) {
       throw new GatewayError("source_invalid_response");
     }
 
