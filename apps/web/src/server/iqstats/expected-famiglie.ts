@@ -206,6 +206,8 @@ export interface GolDiGara {
       readonly xDue: number;
       readonly unoDue: number;
     } | null;
+    /** Assente in un artefatto scritto prima del 19 settembre 2026. */
+    readonly drawNoBet?: { readonly uno: number; readonly due: number } | null;
     readonly overUnder: ReadonlyArray<{
       readonly soglia: number;
       readonly verso: string;

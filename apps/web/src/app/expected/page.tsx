@@ -454,6 +454,19 @@ function MercatoDeiGol({ g, casa, fuori }: {
                 />
               </>
             )}
+            {/* Draw no bet: il pari esce dal conto, 1 e 2 si riportano a uno. */}
+            {quote.drawNoBet == null || nostri.esito.uno + nostri.esito.due <= 0 ? null : (
+              <>
+                <RigaDiGol
+                  nome={`DNB 1 ${casa}`} quota={quote.drawNoBet.uno}
+                  probabilita={nostri.esito.uno / (nostri.esito.uno + nostri.esito.due)}
+                />
+                <RigaDiGol
+                  nome={`DNB 2 ${fuori}`} quota={quote.drawNoBet.due}
+                  probabilita={nostri.esito.due / (nostri.esito.uno + nostri.esito.due)}
+                />
+              </>
+            )}
             <RigaDiGol nome="Gol" quota={quote.gol} probabilita={nostri.gg} />
             <RigaDiGol nome="No gol" quota={quote.noGol} probabilita={nostri.ng} />
           </ul>

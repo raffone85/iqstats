@@ -285,10 +285,19 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet
       "doppia chance", 2,
     ));
 
+  // Draw no bet: il pareggio restituisce la posta, quindi resta 1 contro 2 riportato a uno.
+  // Il consenso non lo apre: il prezzo e' solo di Fastbet.
+  const dnbFb = [fastbet?.drawNoBet?.uno ?? null, fastbet?.drawNoBet?.due ?? null];
+  const senzaPari = m.esito.uno + m.esito.due;
+  const drawNoBet: Voce[] = senzaPari <= 0 ? [] : ([["1", m.esito.uno], ["2", m.esito.due]] as const)
+    .map(([etichetta, p], i) => conPrezzo(
+      etichetta, p / senzaPari, { quota: null, gruppo: [] }, banco(dnbFb, i), daFastbet, "draw no bet",
+    ));
+
   const multiPartita = daIntervalli(m.multigolPartita, fastbet?.multigolPartita, daFastbet);
   const multiCasa = daIntervalli(m.casa.multigol, fastbet?.multigolCasa, daFastbet);
   const multiTrasferta = daIntervalli(m.trasferta.multigol, fastbet?.multigolTrasferta, daFastbet);
-  const conQuota = [...esito, ...over, ...entrambe, ...doppia, ...multiPartita, ...multiCasa, ...multiTrasferta]
+  const conQuota = [...esito, ...over, ...entrambe, ...doppia, ...drawNoBet, ...multiPartita, ...multiCasa, ...multiTrasferta]
     .some((v) => v.quota != null);
 
   return (
@@ -362,11 +371,16 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet
           informazione nuova, sono la stessa informazione tagliata in altri modi. Chi li
           vuole li apre; chi cerca quanti gol si ferma prima. */}
       <details className="gol-derivati">
-        <summary>Doppia chance, gol esatti, risultati, esito con la linea e multigol</summary>
+        <summary>Doppia chance, draw no bet, gol esatti, risultati, esito con la linea e multigol</summary>
         <ul className="engine-rows">
         <Riga titolo="Doppia chance">
           <Scala titolo="Probabilità delle doppie chance" voci={doppia} />
         </Riga>
+        {drawNoBet.length === 0 ? null : (
+          <Riga titolo="Draw no bet, il pari esce dal conto">
+            <Scala titolo="Probabilità di 1 e 2 senza il pareggio" voci={drawNoBet} />
+          </Riga>
+        )}
         <Riga titolo="Quanti gol segna ciascuna">
           <ul className="engine-splits">
             <li className="engine-split">

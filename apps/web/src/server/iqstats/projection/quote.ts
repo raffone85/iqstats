@@ -36,6 +36,8 @@ export interface QuoteGol {
   readonly doppiaChance:
     | { readonly unoX: number; readonly xDue: number; readonly unoDue: number }
     | null;
+  /** Il pareggio restituisce la posta: resta 1 contro 2. */
+  readonly drawNoBet: { readonly uno: number; readonly due: number } | null;
   readonly overUnder: readonly EsitoQuotato[];
   readonly gol: number | null;
   readonly noGol: number | null;
@@ -252,6 +254,8 @@ function golDellEvento(mercati: readonly MercatoGrezzo[]): QuoteGol {
   const unoX = quotaDi(doppia, "1x");
   const xDue = quotaDi(doppia, "x2");
   const unoDue = quotaDi(doppia, "12");
+  const dnbUno = quotaDi(per.get("draw no bet"), "1");
+  const dnbDue = quotaDi(per.get("draw no bet"), "2");
   const overUnder: EsitoQuotato[] = [];
   for (const grezzo of per.get("u/o")?.esiti ?? []) {
     const quotato = esitoDiSoglia(grezzo);
@@ -263,6 +267,7 @@ function golDellEvento(mercati: readonly MercatoGrezzo[]): QuoteGol {
     esito: uno === null || x === null || due === null ? null : { uno, x, due },
     doppiaChance:
       unoX === null || xDue === null || unoDue === null ? null : { unoX, xDue, unoDue },
+    drawNoBet: dnbUno === null || dnbDue === null ? null : { uno: dnbUno, due: dnbDue },
     overUnder,
     gol: quotaDi(per.get("goal / nogoal"), "goal"),
     noGol: quotaDi(per.get("goal / nogoal"), "nogoal"),

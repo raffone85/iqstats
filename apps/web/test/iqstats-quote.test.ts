@@ -132,6 +132,7 @@ test("i mercati sui gol escono normalizzati", () => {
       { nome: "2", quota: 2.62 }]),
     mercato("Doppia chance", null, [{ nome: "1X", quota: 1.48 }, { nome: "12", quota: 1.35 },
       { nome: "X2", quota: 1.46 }]),
+    mercato("Draw no bet", null, [{ nome: "1", quota: 1.95 }, { nome: "2", quota: 0 }]),
     mercato("U/O", null, [{ nome: "Un. 2.5", quota: 2.12 }, { nome: "Ov. 1.5", quota: 1.18 }]),
     mercato("Goal / Nogoal", null, [{ nome: "Goal", quota: 1.52 },
       { nome: "Nogoal", quota: 2.37 }]),
@@ -139,6 +140,12 @@ test("i mercati sui gol escono normalizzati", () => {
   ]));
   assert.deepEqual(quotato.gol.esito, { uno: 2.75, x: 3.33, due: 2.62 });
   assert.deepEqual(quotato.gol.doppiaChance, { unoX: 1.48, xDue: 1.46, unoDue: 1.35 });
+  // Un lato sospeso non e' un prezzo: il mercato a due esiti non si legge a meta'.
+  assert.equal(quotato.gol.drawNoBet, null);
+  const pieno = eventoQuotato(evento([
+    mercato("Draw no bet", null, [{ nome: "1", quota: 1.75 }, { nome: "2", quota: 2 }]),
+  ]));
+  assert.deepEqual(pieno.gol.drawNoBet, { uno: 1.75, due: 2 });
   assert.equal(quotato.gol.gol, 1.52);
   assert.equal(quotato.gol.noGol, 2.37);
   assert.deepEqual(quotato.gol.overUnder, [
