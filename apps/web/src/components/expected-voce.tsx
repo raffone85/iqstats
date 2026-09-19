@@ -153,6 +153,12 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
             {chiDelConsiglio(g.consigliato, g.casa, g.fuori)}
             {" · "}
             <b>{Math.round(g.consigliato.probabilita * 100)}%</b>
+            {(g.consigli?.length ?? 0) < 2 ? null : (
+              <span className="engine-obs">
+                {" "}+ {(g.consigli?.length ?? 0) - 1}{" "}
+                {(g.consigli?.length ?? 0) === 2 ? "altro consiglio" : "altri consigli"}
+              </span>
+            )}
           </span>
         )}
         {g.consigliato?.arbitro == null ? null : (

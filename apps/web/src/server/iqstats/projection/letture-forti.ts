@@ -435,6 +435,25 @@ export function consigliatoDiGara(
   esiti: readonly EsitoForte[],
   arbitro: TendenzaArbitro | null,
 ): ConsigliatoDiGara | null {
+  return consigliDiGara(linee, esiti, arbitro)[0] ?? null;
+}
+
+/**
+ * Tutte le letture che passano il criterio del consigliato, nel suo ordine: «i consigli».
+ *
+ * Il primo e' il consigliato. Misurato il 19 settembre 2026 con `consuntivo-letture.ts` su
+ * 262 gare chiuse: la seconda lettura di una gara rende 76,3% contro 74,6% promesso, la
+ * terza 75,3% contro 71,5%, la quarta 70,0% contro 70,0%.
+ *
+ * **Una sola lettura per famiglia**, la piu' forte (deciso dall'utente il 19 settembre 2026).
+ * Senza, sulle 111 gare di quella sera i consigli erano 950, fino a 28 per gara: Over 7,5 e
+ * Over 8,5 corner della stessa gara dicono la stessa partita. Cosi' sono 244, fino a 6.
+ */
+export function consigliDiGara(
+  linee: readonly LetturaForte[],
+  esiti: readonly EsitoForte[],
+  arbitro: TendenzaArbitro | null,
+): readonly ConsigliatoDiGara[] {
   const ammessa = (bersaglio: string, concorde: boolean) =>
     bersaglio !== MAI_IN_CIMA && (bersaglio !== FUORI_DALLA_CIMA || concorde);
   const pool: ConsigliatoDiGara[] = [
@@ -451,7 +470,8 @@ export function consigliatoDiGara(
       && l.base !== null && l.probabilita * 100 - l.base >= SCARTO_MINIMO)
     .sort((a, b) =>
       (Math.round(b.lettura.probabilita * 100) - Math.round(a.lettura.probabilita * 100))
-      || (b.lettura.affidabilita - a.lettura.affidabilita))[0] ?? null;
+      || (b.lettura.affidabilita - a.lettura.affidabilita))
+    .filter((c, i, tutte) => tutte.findIndex((d) => d.lettura.bersaglio === c.lettura.bersaglio) === i);
 }
 
 /** La chiave con cui una linea ritrova la sua base. Deve combaciare con `base-di-lega`. */

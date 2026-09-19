@@ -191,6 +191,11 @@ input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible
 .expected-mancanti { margin-top: 12px; }
 /* La motivazione e' una fila di dati, non un paragrafo: a 375 px va a capo da sola. */
 .expected-perche { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.expected-consigli { margin-top: 16px; }
+.expected-consigli-titolo { margin: 0 0 8px; font-family: var(--font-display); font-size: 17px; color: var(--card-ink); }
+.expected-consigli-elenco { display: grid; gap: 10px; margin: 0; padding-left: 22px; }
+.expected-consigli-elenco > li { display: grid; gap: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--product-border); }
+.expected-consigli-elenco p { margin: 0; }
 .expected-cause { display: contents; }
 .expected-dato { white-space: nowrap; }
 .expected-dato + .expected-dato::before { content: "·"; margin-right: 10px; color: var(--product-border); }

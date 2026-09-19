@@ -53,7 +53,8 @@ import {
   arricchisci,
   candidateDiGara,
   candidateEsiti,
-  consigliatoDiGara,
+  consigliDiGara,
+  type ConsigliatoDiGara,
   type LetturaForte,
   type TendenzaArbitro,
 } from "../src/server/iqstats/projection/letture-forti.ts";
@@ -358,6 +359,8 @@ interface GaraExpected {
   readonly lega: string | null;
   readonly kickoff: string;
   readonly consigliato: Consigliato | null;
+  /** Tutte le letture che passano il criterio, nel suo ordine: la prima e' il consigliato. */
+  readonly consigli: readonly Consigliato[];
   readonly famiglie: readonly RigaDiFamiglia[];
   /** Le famiglie senza una misura di riscontro: si dichiarano, non si nascondono. */
   readonly senzaMisura: readonly string[];
@@ -564,7 +567,7 @@ async function famiglieDi(
     quotateCandidate.length === 0 || (evento?.esiti.get(e.bersaglio)?.[e.esito] ?? null) !== null);
   const basiEsiti = await baseDegliEsiti(detail.leagueId, detail.seasonId, esiti.map((e) => e.bersaglio));
   const arbitro = detail.refereeId === null ? null : await tendenzaArbitro(detail.refereeId, detail.leagueId);
-  const scelta = consigliatoDiGara(
+  const scelte = consigliDiGara(
     arricchisci(pool, basi),
     esiti.map((e) => {
       const b = basiEsiti?.get(`${e.bersaglio}|${e.esito}`) ?? null;
@@ -572,17 +575,18 @@ async function famiglieDi(
     }),
     arbitro,
   );
-  const suo = scelta === null ? null : perBersaglio.get(scelta.lettura.bersaglio) ?? null;
   const scarto = (l: { probabilita: number; base: number | null }) =>
     l.base === null ? null : Number((l.probabilita * 100 - l.base).toFixed(1));
   const arbitroDi = (bersaglio: string) => (bersaglio === "fouls" ? arbitro : null);
-  let consigliato: Consigliato | null = null;
-  if (scelta !== null && suo !== null && scelta.tipo === "linea") {
+  // Una scelta del criterio nella forma dell'artefatto; `null` dove la sua scala non esce.
+  const comeConsigliato = (scelta: ConsigliatoDiGara): Consigliato | null => {
+  const suo = perBersaglio.get(scelta.lettura.bersaglio) ?? null;
+  if (suo !== null && scelta.tipo === "linea") {
     const prima = scelta.lettura;
     // La lettura in cima puo' stare su un altro lato della riga di famiglia: la scala si
     // chiede per il lato **suo**.
     const scala = scalaDi(suo, prima.lato);
-    consigliato = scala === null ? null : {
+    return scala === null ? null : {
       tipo: "linea",
       bersaglio: prima.bersaglio,
       lato: prima.lato,
@@ -601,11 +605,11 @@ async function famiglieDi(
         .map((c) => ({ nome: c.nome, effetto: Number(c.effetto.toFixed(3)) })),
       arbitro: arbitroDi(prima.bersaglio),
     };
-  } else if (scelta !== null && scelta.tipo === "esito" && suo !== null && suo.casa.stato === "prevista"
+  } else if (scelta.tipo === "esito" && suo !== null && suo.casa.stato === "prevista"
     && suo.trasferta.stato === "prevista") {
     const e = scelta.lettura;
     const scala = scalaDi(suo, "totale");
-    consigliato = scala === null ? null : {
+    return scala === null ? null : {
       tipo: "esito",
       bersaglio: e.bersaglio,
       esito: e.esito,
@@ -621,6 +625,12 @@ async function famiglieDi(
       arbitro: arbitroDi(e.bersaglio),
     };
   }
+  return null;
+  };
+  // Il consigliato e' il primo dei consigli, come prima: se la sua scala non esce resta
+  // assente, e non gli subentra il secondo.
+  const consigliato = scelte.length === 0 ? null : comeConsigliato(scelte[0]);
+  const consigli = scelte.map(comeConsigliato).filter((c): c is Consigliato => c !== null);
 
   return {
     gara: gara.eventId,
@@ -632,6 +642,7 @@ async function famiglieDi(
     lega: gara.leagueName,
     kickoff: gara.kickoff,
     consigliato,
+    consigli,
     // Ordine stabile: la famiglia piu' probabile in cima, cosi' la riga apre sul numero
     // che regge di piu' invece che sull'ordine alfabetico dei bersagli.
     famiglie: [...migliori.values()].sort((a, b) => b.probabilita - a.probabilita),

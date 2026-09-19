@@ -95,6 +95,8 @@ interface Esito {
   readonly presa: boolean;
   /** Vera per le candidate sopra l'ottanta per cento, che il tetto tiene fuori dalle letture. */
   readonly fuoriFascia: boolean;
+  /** 1 per la prima lettura della gara, 2 per la seconda...; `null` fuori fascia. */
+  readonly posizione: number | null;
 }
 
 /** Le letture che la pagina avrebbe messo in cima a quella gara, con il loro esito. */
@@ -127,7 +129,7 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
   if (reale === null) return [];
 
   const esiti: Esito[] = [];
-  for (const lettura of forti.letture) {
+  for (const [indice, lettura] of forti.letture.entries()) {
     const vero = valoreVero(reale, lettura.bersaglio, lettura.lato);
     if (vero === null) continue;
     // Le soglie sono a mezzo punto: il pareggio con la soglia non esiste.
@@ -137,6 +139,7 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
       probabilita: lettura.probabilita,
       presa: lettura.verso === "Over" ? sopra : !sopra,
       fuoriFascia: false,
+      posizione: indice + 1,
     });
   }
 
@@ -155,6 +158,7 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
       probabilita: candidata.probabilita,
       presa: candidata.verso === "Over" ? sopra : !sopra,
       fuoriFascia: true,
+      posizione: null,
     });
   }
   return esiti;
@@ -235,6 +239,12 @@ async function main(): Promise<number> {
     ...conta(dentro.filter((e) => e.probabilita >= f.da && e.probabilita < f.a)),
   })).filter((v) => v.letture !== undefined);
 
+  // **Rende la seconda lettura di una gara quanto la prima?** Serve a «i consigli», che
+  // mostrano piu' letture per gara: se la terza promette 70 e rende 60 va detto, o tolta.
+  const perPosizione = [1, 2, 3, 4]
+    .map((p) => ({ posizione: p, ...conta(dentro.filter((e) => e.posizione === p)) }))
+    .filter((v) => v.letture !== undefined);
+
   const bersagli = [...new Set(dentro.map((e) => e.bersaglio))].sort();
   const perBersaglio = bersagli
     .map((b) => ({ bersaglio: b, ...conta(dentro.filter((e) => e.bersaglio === b)) }))
@@ -253,6 +263,7 @@ async function main(): Promise<number> {
     ),
     complessivo,
     per_fascia: perFascia,
+    per_posizione: perPosizione,
     per_bersaglio: perBersaglio,
     // Le candidate sopra l'ottanta per cento: non entrano in nessuna lettura, e sono la
     // ragione misurata per cui il tetto sta li'.
@@ -280,6 +291,12 @@ async function main(): Promise<number> {
     console.log(
       `  ${v.fascia}: ${v.prese}/${v.letture} = ${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}%`
       + ` contro ${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}%`,
+    );
+  }
+  for (const v of perPosizione) {
+    console.log(
+      `  lettura n. ${v.posizione}: ${v.prese}/${v.letture} = `
+      + `${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}% contro ${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}%`,
     );
   }
   console.log(percorso);

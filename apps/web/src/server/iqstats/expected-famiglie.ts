@@ -93,6 +93,11 @@ export interface GaraExpected {
   readonly lega: string | null;
   readonly kickoff: string;
   readonly consigliato: Consigliato | null;
+  /**
+   * Tutte le letture che passano il criterio, nel suo ordine: la prima e' il consigliato.
+   * Assente in un artefatto scritto prima del 19 settembre 2026.
+   */
+  readonly consigli?: readonly Consigliato[];
   readonly famiglie: readonly RigaDiFamiglia[];
   /**
    * Le famiglie che questa gara non produce. Sono quasi sempre le tre che dipendono
@@ -331,7 +336,9 @@ export function expectedDelleGare(adesso: Date = new Date()): Expected | null {
       : grezzo.tipo === "esito" ? (grezzo as unknown as EsitoConsigliato)
       : (riga({ arbitro: null, ...grezzo, tipo: "linea" }) as unknown as LineaConsigliata | null);
     const quote = g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
-    return [{ ...g, famiglie, quote, consigliato }];
+    // I consigli li scrive lo stesso generatore del consigliato, sempre con `tipo`.
+    const consigli = (g as { readonly consigli?: unknown }).consigli as readonly Consigliato[] | undefined;
+    return [{ ...g, famiglie, quote, consigliato, consigli }];
   });
 
   if (gare.length === 0) return null;
