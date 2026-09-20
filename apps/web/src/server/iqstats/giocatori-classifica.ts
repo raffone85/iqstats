@@ -26,6 +26,11 @@ const QUANTI = 10;
 
 /** Le colonne sono scritte qui una per una: nessun nome di colonna arriva dall'indirizzo. */
 export const LETTURE = [
+  // I gol vengono dalle statistiche per giocatore, non dagli episodi: un autogol non ha un
+  // marcatore, quindi la somma dei gol dei giocatori sta sotto il punteggio in una gara su
+  // nove. Misurato il 20 settembre 2026 su 10.199 gare: combacia nell'89,0%, e dove non
+  // combacia lo scarto e' di uno in 874 casi su 1.117.
+  { chiave: "gol", colonna: "goals", nome: "Gol", unita: "gol" },
   { chiave: "minuti", colonna: "minutes_played", nome: "Minuti giocati", unita: "minuti" },
   { chiave: "tiri", colonna: "total_shots", nome: "Tiri", unita: "tiri" },
   { chiave: "in_porta", colonna: "shots_on_target", nome: "Tiri in porta", unita: "in porta" },

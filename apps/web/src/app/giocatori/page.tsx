@@ -184,7 +184,10 @@ export default async function GiocatoriPage({ searchParams }: Props) {
           ) : null}
           Un giocatore entra in classifica da <b>cinque gare</b> osservate in poi. Le gare
           coperte sono {scelta.gareConDato} su {scelta.gareGiocate} già iniziate: sotto il
-          totale la classifica è parziale, e quanto lo sia sta scritto qui sopra. Il nome
+          totale la classifica è parziale, e quanto lo sia sta scritto qui sopra. I gol sono
+          quelli attribuiti a un marcatore dalle statistiche della gara: un autogol non ne ha
+          uno, e in qualche campionato la fonte non le ha complete, quindi una classifica dei
+          gol può contarne meno di quanti la gara ne abbia visti. Il nome
           arriva dal livello dati, e dalla rosa di oggi solo per chi lì non c&apos;è: chi non
           sta in nessuno dei due resta con il suo identificativo al posto del nome, invece di
           essere lasciato fuori.
