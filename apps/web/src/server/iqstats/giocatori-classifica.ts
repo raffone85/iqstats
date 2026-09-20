@@ -63,6 +63,32 @@ function numero(valore: string | null | undefined): number {
 }
 
 /**
+ * I nomi che il livello dati conosce, per identificativo della fonte.
+ *
+ * **Da qui e non dalle rose, quando c'e'.** `football.players` nasce dalle rose gia'
+ * archiviate: una interrogazione sola invece di una chiamata alla fonte per squadra, e
+ * copre anche chi in quella rosa oggi non c'e' piu'. Chi manca manca: la mappa non ha la
+ * sua chiave, e chi legge lo dichiara invece di travestire un identificativo da persona.
+ */
+export async function nomiDalLivelloDati(
+  playerSourceIds: readonly number[],
+): Promise<ReadonlyMap<number, string>> {
+  const sql = connessione();
+  const voluti = [...new Set(playerSourceIds)].filter((id) => Number.isInteger(id));
+  if (sql === null || voluti.length === 0) return new Map();
+  try {
+    const righe = await sql<Array<{ source_id: string; name: string }>>`
+      select p.source_id::text, p.name
+      from football.players p
+      where p.source_id = any(${voluti}::bigint[])
+    `;
+    return new Map(righe.map((r) => [Number(r.source_id), r.name]));
+  } catch {
+    return new Map();
+  }
+}
+
+/**
  * Competizioni e stagioni che hanno abbastanza giocatori per una classifica, dalla piu'
  * popolata. Ognuna dichiara quante gare portano il dato su quelle gia' iniziate.
  */

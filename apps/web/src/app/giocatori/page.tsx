@@ -7,6 +7,7 @@ import {
   classificaGiocatori,
   competizioniConGiocatori,
   type LetturaGiocatori,
+  nomiDalLivelloDati,
 } from "@/server/iqstats/giocatori-classifica";
 import { nomiDeiGiocatori } from "@/server/iqstats/player-page";
 
@@ -68,7 +69,14 @@ export default async function GiocatoriPage({ searchParams }: Props) {
     scelta.stagioneSourceId,
     lettura.chiave as LetturaGiocatori,
   );
-  const nomi = await nomiDeiGiocatori(classifica.map((voce) => voce.teamSourceId));
+  // Prima il livello dati, che costa una interrogazione; le rose della fonte solo per chi
+  // resta senza nome, e solo per le squadre di quei giocatori.
+  const dalDatabase = await nomiDalLivelloDati(classifica.map((voce) => voce.playerSourceId));
+  const senzaNome = classifica.filter((voce) => !dalDatabase.has(voce.playerSourceId));
+  const dalleRose = senzaNome.length === 0
+    ? new Map<number, string>()
+    : await nomiDeiGiocatori(senzaNome.map((voce) => voce.teamSourceId));
+  const nomi = new Map([...dalleRose, ...dalDatabase]);
 
   // **I pari merito prendono la stessa posizione.** In Serie A 25/26 il massimo di gialli
   // e' sette e almeno sei giocatori ci arrivano: numerarli uno, due, tre direbbe che c'e'
@@ -176,9 +184,10 @@ export default async function GiocatoriPage({ searchParams }: Props) {
           ) : null}
           Un giocatore entra in classifica da <b>cinque gare</b> osservate in poi. Le gare
           coperte sono {scelta.gareConDato} su {scelta.gareGiocate} già iniziate: sotto il
-          totale la classifica è parziale, e quanto lo sia sta scritto qui sopra. Chi non
-          compare nella rosa di oggi della sua squadra resta senza nome, con il suo
-          identificativo al posto del nome, invece di essere lasciato fuori.
+          totale la classifica è parziale, e quanto lo sia sta scritto qui sopra. Il nome
+          arriva dal livello dati, e dalla rosa di oggi solo per chi lì non c&apos;è: chi non
+          sta in nessuno dei due resta con il suo identificativo al posto del nome, invece di
+          essere lasciato fuori.
         </p>
       </section>
     </ProductShell>
