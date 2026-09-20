@@ -14,12 +14,16 @@ import type { Database } from "@/server/supabase/database.types";
  */
 const TEMPO_MASSIMO_RINNOVO_MS = 5_000;
 
-export async function refreshSupabaseSession(request: NextRequest) {
+export async function refreshSupabaseSession(request: NextRequest, headers?: Headers) {
+  // `headers` sono gli header di richiesta riscritti da chi chiama (il nonce della CSP):
+  // devono arrivare a Next attraverso ogni `NextResponse.next`, altrimenti si perdono.
+  const prosegui = () => NextResponse.next(headers ? { request: { headers } } : { request });
+
   // Un prefetch non è una visita: i link di /partite ne aprono decine in parallelo, e se
   // ognuno rinnova la stessa sessione Supabase risponde 409. Si rinnova alla navigazione vera.
-  if (request.headers.has("next-router-prefetch")) return NextResponse.next({ request });
+  if (request.headers.has("next-router-prefetch")) return prosegui();
 
-  let response = NextResponse.next({ request });
+  let response = prosegui();
   const supabase = createServerClient<Database>(
     serverEnv.supabaseUrl(),
     serverEnv.supabasePublishableKey(),
@@ -30,7 +34,7 @@ export async function refreshSupabaseSession(request: NextRequest) {
           for (const { name, value } of cookiesToSet) {
             request.cookies.set(name, value);
           }
-          response = NextResponse.next({ request });
+          response = prosegui();
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options);
           }

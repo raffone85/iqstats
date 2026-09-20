@@ -13,14 +13,14 @@ const nextConfig: NextConfig = {
   // tutti, e senza `frame-ancestors` una pagina di IQstatS si lascia incorniciare da un
   // sito terzo, che e' il modo in cui si rubano i clic di un utente gia' autenticato.
   // `Strict-Transport-Security` lo mette gia' Vercel sul dominio, quindi non si ripete.
-  // Una CSP completa - `script-src` e compagnia - non entra qui: va misurata pagina per
-  // pagina contro gli script di Next e di Stripe, e una CSP sbagliata rompe il checkout.
+  // La CSP completa sta in `src/proxy.ts`, non qui: ha un nonce che cambia a ogni
+  // richiesta e questi header sono fissi. Qui resta cio' che vale anche per i percorsi che
+  // il proxy non attraversa, gli statici e le immagini.
   async headers() {
     return [
       {
         source: "/:path*",
         headers: [
-          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
