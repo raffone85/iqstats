@@ -68,6 +68,9 @@ export async function baseDiLega(
   const viste = new Set<string>();
   const valide = richieste.filter((r) => {
     if (COLONNA[r.target] === undefined || !Number.isFinite(r.soglia)) return false;
+    // `lato` finisce nell'alias della colonna, che passa da `sql.unsafe`: il tipo lo
+    // vincola a compilazione, l'elenco lo vincola a runtime. `target` ha gia' `COLONNA`.
+    if (r.lato !== "casa" && r.lato !== "trasferta" && r.lato !== "totale") return false;
     const k = chiaveDi(r);
     if (viste.has(k)) return false;
     viste.add(k);
