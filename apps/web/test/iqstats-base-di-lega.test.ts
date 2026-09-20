@@ -55,7 +55,9 @@ test("la base resta accanto alla lettura, sopra e sotto", () => {
 
 test("chi non ha una base lo dichiara, invece di fingerla", () => {
   const a = linea("corner_kicks", 7.5, 0.80);
-  const b = linea("fouls", 25.5, 0.60);
+  // Non i falli: `fouls` e' fuori dalla cima, quindi `ordinaLetture` non lo restituisce e
+  // qui servono due letture per vedere chi ha la base e chi no.
+  const b = linea("yellow_cards", 4.5, 0.60);
   const solaUna = new Map([[chiaveDiLinea(b), { quota: 10, gare: 200 }]]);
   const r = ordinaLetture([a, b], [], solaUna);
   // L'ordine e' per probabilita': l'80% davanti al 60%, e la base non lo cambia.
