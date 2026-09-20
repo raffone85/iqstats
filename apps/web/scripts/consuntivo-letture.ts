@@ -30,7 +30,9 @@ import path from "node:path";
 import { baseDiLega } from "../src/server/iqstats/base-di-lega.ts";
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import { proiezioniDellaGara } from "../src/server/iqstats/projection-runtime.ts";
-import { candidateDiGara, ordinaLetture } from "../src/server/iqstats/projection/letture-forti.ts";
+import {
+  candidateDiGara, consigliDiGara, ordinaLetture,
+} from "../src/server/iqstats/projection/letture-forti.ts";
 import { realeDellaGara } from "../src/server/iqstats/verifica.ts";
 
 /** Le fasce di probabilita' su cui si guarda la promessa contro la frequenza. */
@@ -90,6 +92,8 @@ function valoreVero(
 }
 
 interface Esito {
+  /** La gara da cui viene: serve a scegliere un consigliato per gara, non uno per lettura. */
+  readonly gara: string;
   readonly bersaglio: string;
   readonly probabilita: number;
   readonly presa: boolean;
@@ -97,6 +101,10 @@ interface Esito {
   readonly fuoriFascia: boolean;
   /** 1 per la prima lettura della gara, 2 per la seconda...; `null` fuori fascia. */
   readonly posizione: number | null;
+  /** Il posto fra «i consigli» di quella gara, `null` se il criterio non la consiglia. */
+  readonly posizioneConsiglio: number | null;
+  /** Punti di distacco dalla norma del campionato; `null` se la lega non ha una base. */
+  readonly scarto: number | null;
 }
 
 /** Le letture che la pagina avrebbe messo in cima a quella gara, con il loro esito. */
@@ -122,11 +130,19 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
     Number(riga.stagione),
     candidate.map((c) => ({ target: c.bersaglio, lato: c.lato, soglia: c.soglia, verso: c.verso })),
   );
-  const forti = ordinaLetture(candidate, senzaMisura, basi);
+  // **Otto invece di quattro.** `QUANTE` vale 4 e la quinta lettura non e' mai esistita
+  // in questa misura: «i consigli» ne mostrano fino a 6, e senza allargare qui la loro
+  // resa oltre la quarta posizione resterebbe non misurata.
+  const forti = ordinaLetture(candidate, senzaMisura, basi, null, null, 8);
   if (forti.letture.length === 0) return [];
 
   const reale = await realeDellaGara(Number(riga.gara));
   if (reale === null) return [];
+
+  // Il posto fra i consigli lo decide la stessa funzione della pagina, non una regola
+  // riscritta qui. Senza quote non ci sono esiti 1X2 da passare: e' il limite di questa
+  // misura, e i consigli veri possono avere qualche posizione in piu'.
+  const consigli = consigliDiGara(forti.letture, [], null);
 
   const esiti: Esito[] = [];
   for (const [indice, lettura] of forti.letture.entries()) {
@@ -135,11 +151,19 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
     // Le soglie sono a mezzo punto: il pareggio con la soglia non esiste.
     const sopra = vero > lettura.soglia;
     esiti.push({
+      gara: riga.gara,
       bersaglio: lettura.bersaglio,
       probabilita: lettura.probabilita,
       presa: lettura.verso === "Over" ? sopra : !sopra,
       fuoriFascia: false,
       posizione: indice + 1,
+      posizioneConsiglio: (() => {
+        const posto = consigli.findIndex((c) => c.lettura === lettura);
+        return posto < 0 ? null : posto + 1;
+      })(),
+      scarto: lettura.base === null
+        ? null
+        : Number((lettura.probabilita * 100 - lettura.base).toFixed(2)),
     });
   }
 
@@ -154,11 +178,14 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
     if (vero === null) continue;
     const sopra = vero > candidata.soglia;
     esiti.push({
+      gara: riga.gara,
       bersaglio: candidata.bersaglio,
       probabilita: candidata.probabilita,
       presa: candidata.verso === "Over" ? sopra : !sopra,
       fuoriFascia: true,
       posizione: null,
+      posizioneConsiglio: null,
+      scarto: null,
     });
   }
   return esiti;
@@ -241,8 +268,54 @@ async function main(): Promise<number> {
 
   // **Rende la seconda lettura di una gara quanto la prima?** Serve a «i consigli», che
   // mostrano piu' letture per gara: se la terza promette 70 e rende 60 va detto, o tolta.
-  const perPosizione = [1, 2, 3, 4]
+  const posti = [1, 2, 3, 4, 5, 6, 7, 8];
+  const perPosizione = posti
     .map((p) => ({ posizione: p, ...conta(dentro.filter((e) => e.posizione === p)) }))
+    .filter((v) => v.letture !== undefined);
+
+  // **Il criterio sceglie per distacco dalla norma: quel distacco rende?** Se la resa cala
+  // man mano che lo scarto cresce, selezionare lo scarto e' selezionare sovra-confidenza,
+  // e la promessa dei consigli esce alta per costruzione.
+  const FASCE_SCARTO = [
+    { da: -1e9, a: 0, nome: "sotto la norma" },
+    { da: 0, a: 5, nome: "0-5 (fuori dal criterio)" },
+    { da: 5, a: 10, nome: "5-10" },
+    { da: 10, a: 15, nome: "10-15" },
+    { da: 15, a: 1e9, nome: "oltre 15" },
+  ];
+  const perScarto = FASCE_SCARTO
+    .map((f) => ({
+      // `conta()` restituisce a sua volta un campo `scarto`: questo nome deve restare diverso.
+      fascia_scarto: f.nome,
+      ...conta(dentro.filter((e) => e.scarto !== null && e.scarto >= f.da && e.scarto < f.a)),
+    }))
+    .filter((v) => v.letture !== undefined);
+  const senzaBase = conta(dentro.filter((e) => e.scarto === null));
+
+  // **E se lo scarto avesse un tetto?** Le letture che si staccano di piu' dalla norma
+  // rendono meno di quanto promettono: qui si simula il consigliato che uscirebbe tenendo
+  // solo gli scarti sotto un tetto, e si guarda anche quante gare resterebbero senza.
+  // Misura, non modifica: il criterio del prodotto resta quello.
+  const gare = [...new Set(dentro.map((e) => e.gara))];
+  const conTetto = [999, 20, 15, 12, 10].map((tetto) => {
+    const scelti = gare
+      .map((g) => dentro
+        .filter((e) => e.gara === g && e.posizioneConsiglio !== null
+          && e.scarto !== null && e.scarto <= tetto)
+        .sort((a, b) => (a.posizioneConsiglio ?? 0) - (b.posizioneConsiglio ?? 0))[0])
+      .filter((e): e is Esito => e !== undefined);
+    return {
+      tetto: tetto === 999 ? "nessuno" : `${tetto} punti`,
+      gare_consigliate: scelti.length,
+      ...conta(scelti),
+    };
+  }).filter((v) => v.letture !== undefined);
+
+  // **La resa di un consiglio, al posto in cui la pagina lo mostra.** Non e' la stessa cosa
+  // della riga sopra: fra le letture ordinate solo alcune passano il criterio, e il terzo
+  // consiglio puo' essere la sesta lettura.
+  const perPosizioneConsiglio = posti
+    .map((p) => ({ posizione: p, ...conta(dentro.filter((e) => e.posizioneConsiglio === p)) }))
     .filter((v) => v.letture !== undefined);
 
   const bersagli = [...new Set(dentro.map((e) => e.bersaglio))].sort();
@@ -264,6 +337,14 @@ async function main(): Promise<number> {
     complessivo,
     per_fascia: perFascia,
     per_posizione: perPosizione,
+    per_posizione_consiglio: perPosizioneConsiglio,
+    per_scarto: perScarto,
+    consigliato_con_tetto: conTetto,
+    senza_base_di_lega: senzaBase,
+    limite_dei_consigli: (
+      "senza quote storiche gli esiti 1X2 non entrano in questa misura: i consigli qui "
+      + "sono le sole linee che passano il criterio, e in pagina possono essere di piu'."
+    ),
     per_bersaglio: perBersaglio,
     // Le candidate sopra l'ottanta per cento: non entrano in nessuna lettura, e sono la
     // ragione misurata per cui il tetto sta li'.
@@ -296,6 +377,32 @@ async function main(): Promise<number> {
   for (const v of perPosizione) {
     console.log(
       `  lettura n. ${v.posizione}: ${v.prese}/${v.letture} = `
+      + `${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}% contro ${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}%`,
+    );
+  }
+  for (const v of perScarto) {
+    console.log(
+      `  scarto ${v.fascia_scarto}: ${v.prese}/${v.letture} = `
+      + `${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}% contro ${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}%`,
+    );
+  }
+  if (senzaBase !== null) {
+    console.log(
+      `  senza base di lega: ${senzaBase.prese}/${senzaBase.letture} = `
+      + `${(senzaBase.frequenza_osservata * 100).toFixed(1)}% contro `
+      + `${(senzaBase.probabilita_promessa * 100).toFixed(1)}%`,
+    );
+  }
+  for (const v of conTetto) {
+    console.log(
+      `  tetto ${v.tetto}: ${v.prese}/${v.letture} = `
+      + `${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}% contro `
+      + `${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}% · ${v.gare_consigliate} gare`,
+    );
+  }
+  for (const v of perPosizioneConsiglio) {
+    console.log(
+      `  consiglio n. ${v.posizione}: ${v.prese}/${v.letture} = `
       + `${((v.frequenza_osservata ?? 0) * 100).toFixed(1)}% contro ${((v.probabilita_promessa ?? 0) * 100).toFixed(1)}%`,
     );
   }
