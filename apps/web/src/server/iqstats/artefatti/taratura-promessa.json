@@ -1,0 +1,58 @@
+{
+  "schema": "taratura-promessa/1",
+  "calcolata_il": "2026-09-20T23:39:36.552Z",
+  "come_e_stata_stimata": "sulle letture ricostruite da consuntivo-letture.ts su gare gia' chiuse: per ogni fascia di scarto dalla norma del campionato, la differenza fra quanto la lettura ha reso e quanto prometteva. Corregge solo il numero mostrato: l'ordine delle letture e la scelta del consigliato restano sulla probabilita' del motore.",
+  "campione": {
+    "letture": 2643,
+    "dal": "2026-08-29",
+    "al": "2026-09-19",
+    "minimo_per_fascia": 30
+  },
+  "fasce": [
+    {
+      "nome": "sotto la norma",
+      "da": null,
+      "a": 0,
+      "letture": 1343,
+      "promesso": 0.7147,
+      "reso": 0.7565,
+      "correzione": 0.0418
+    },
+    {
+      "nome": "0-5",
+      "da": 0,
+      "a": 5,
+      "letture": 527,
+      "promesso": 0.7309,
+      "reso": 0.7078,
+      "correzione": -0.0231
+    },
+    {
+      "nome": "5-10",
+      "da": 5,
+      "a": 10,
+      "letture": 300,
+      "promesso": 0.7133,
+      "reso": 0.68,
+      "correzione": -0.0333
+    },
+    {
+      "nome": "10-15",
+      "da": 10,
+      "a": 15,
+      "letture": 212,
+      "promesso": 0.7156,
+      "reso": 0.6415,
+      "correzione": -0.0741
+    },
+    {
+      "nome": "oltre 15",
+      "da": 15,
+      "a": null,
+      "letture": 261,
+      "promesso": 0.6871,
+      "reso": 0.6015,
+      "correzione": -0.0856
+    }
+  ]
+}

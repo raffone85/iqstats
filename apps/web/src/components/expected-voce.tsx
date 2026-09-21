@@ -16,6 +16,7 @@ import type {
   Consigliato, EsitoDiFamigliaInGara, GaraExpected, RigaDiFamiglia,
 } from "@/server/iqstats/expected-famiglie";
 import type { TendenzaArbitro } from "@/server/iqstats/projection/letture-forti";
+import { promessaDi } from "@/server/iqstats/expected-famiglie";
 
 /** Dentro un giorno la data e' gia' scritta nella testata: resta l'ora. */
 const ORA: Intl.DateTimeFormatOptions = {
@@ -89,15 +90,47 @@ export function indirizzoDi(g: GaraExpected): string {
 }
 
 /**
+ * Il numero da mostrare per una linea del banco.
+ *
+ * **Perche' non e' sempre la sua probabilita'.** Le righe di famiglia e i consigli portano
+ * la promessa tarata sullo scarto dalla norma; le righe quotate no, perche' non portano la
+ * base di lega e senza norma non c'e' scarto da cui leggere la correzione. Dove pero' la
+ * linea del banco **e' la stessa linea** di una riga gia' tarata, il numero e' quello:
+ * altrimenti la stessa riga uscirebbe due volte nella stessa scheda con due percentuali
+ * diverse, come il consigliato al 70% e la sua stessa linea al 73% nella griglia.
+ */
+function numeroDellaLinea(
+  linea: { readonly bersaglio: string; readonly lato: string; readonly soglia: number;
+    readonly verso: string; readonly probabilita: number | null },
+  tarate: ReadonlyArray<{ readonly bersaglio: string; readonly lato: string;
+    readonly soglia: number; readonly verso: string; readonly probabilita: number;
+    readonly promessa?: number }>,
+): number {
+  const stessa = tarate.find((f) => f.bersaglio === linea.bersaglio && f.lato === linea.lato
+    && f.soglia === linea.soglia && f.verso === linea.verso);
+  return stessa === undefined ? (linea.probabilita ?? 0) : promessaDi(stessa);
+}
+
+/** Le righe della gara che portano una promessa tarata: famiglie e consigli di linea. */
+function righeTarate(g: GaraExpected) {
+  return [
+    ...g.famiglie,
+    ...(g.consigli ?? []).filter((c) => c.tipo === "linea"),
+    ...(g.consigliato !== null && g.consigliato.tipo === "linea" ? [g.consigliato] : []),
+  ];
+}
+
+/**
  * L'1X2 di una famiglia in breve: l'esito piu' probabile, e se il banco lo quota.
  *
  * **Informativo**: il consigliato non lo legge. Dal 19 settembre 2026 il consigliato propone
  * solo esiti che il banco quota, e gli 1X2 di falli e tiri non comparivano quasi piu': qui
  * restano visibili, con la nostra probabilita' e senza cambiare il criterio.
  */
-function EsitoInBreve({ e, quote }: {
+function EsitoInBreve({ e, quote, tarate }: {
   readonly e: EsitoDiFamigliaInGara;
   readonly quote: GaraExpected["quote"];
+  readonly tarate: ReturnType<typeof righeTarate>;
 }) {
   // La linea Under/Over quotata piu' probabile della famiglia, dentro gli stessi confini del
   // consigliato: tetto all'ottanta per cento e niente soglie fuori misura. Informativa anche
@@ -123,7 +156,7 @@ function EsitoInBreve({ e, quote }: {
           <span className="engine-obs">
             {migliore.lato === "casa" ? "casa" : migliore.lato === "trasferta" ? "ospite" : "totale"}
           </span>{" "}
-          <b>{Math.round((migliore.probabilita ?? 0) * 100)}%</b>
+          <b>{Math.round(numeroDellaLinea(migliore, tarate) * 100)}%</b>
         </span>
       )}
     </span>
@@ -152,7 +185,7 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
             {" · "}
             {chiDelConsiglio(g.consigliato, g.casa, g.fuori)}
             {" · "}
-            <b>{Math.round(g.consigliato.probabilita * 100)}%</b>
+            <b>{Math.round(promessaDi(g.consigliato) * 100)}%</b>
             {(g.consigli?.length ?? 0) < 2 ? null : (
               <span className="engine-obs">
                 {" "}+ {(g.consigli?.length ?? 0) - 1}{" "}
@@ -170,7 +203,9 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
               Per famiglia, informativo: 1X2 (banco = lo quota) e miglior linea U/O del banco
             </span>
             <span className="expected-esiti-griglia" role="list">
-              {g.esiti.map((e) => <EsitoInBreve key={e.bersaglio} e={e} quote={g.quote} />)}
+              {g.esiti.map((e) => (
+                <EsitoInBreve key={e.bersaglio} e={e} quote={g.quote} tarate={righeTarate(g)} />
+              ))}
             </span>
           </span>
         )}

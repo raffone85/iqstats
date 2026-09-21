@@ -19,7 +19,7 @@ function lettura(bersaglio: string, probabilita: number, affidabilita = 70): Let
   return {
     bersaglio, lato: "totale", soglia: 9.5, verso: "Over", probabilita,
     decisione: Math.abs(probabilita - 0.5), base: 60, gareDiBase: 200, squadre: [],
-    affidabilita, righeDiProva: 300, sorpresa: 0.1, forza: 0.07,
+    affidabilita, righeDiProva: 300, sorpresa: 0.1, forza: 0.07, promessa: probabilita,
   };
 }
 

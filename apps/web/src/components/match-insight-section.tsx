@@ -11,6 +11,7 @@ import {
 } from "@/server/iqstats/projection/eventi-probabili";
 import type { LetturaForte, LettureDellaGara } from "@/server/iqstats/projection/letture-forti";
 import { FAMIGLIE } from "./match-projection-section";
+import { campioneDellaTaratura } from "@/server/iqstats/projection/taratura-promessa";
 
 /**
  * Che cosa vede IQstatS in questa gara, in un blocco solo.
@@ -165,14 +166,14 @@ function Lettura({ lettura, nome, massima, homeTeam, awayTeam }: {
           {" · affidabilità "}{lettura.affidabilita}/100
         </em>
       </span>
-      {/* La barra segue **la probabilita'**, che e' il numero scritto qui accanto e il
-          criterio con cui queste righe sono ordinate dal 6 settembre 2026. Prima seguiva la
-          forza: con l'ordine nuovo la prima riga non e' piu' la piu' forte, e le barre
-          sarebbero uscite disordinate rispetto ai numeri che accompagnano. */}
+      {/* La barra segue **il numero scritto qui accanto**, che dal 21 settembre 2026 e' la
+          promessa tarata sullo scarto dalla norma, non la probabilita' grezza del motore.
+          L'ordine delle righe resta quello del criterio: puo' quindi capitare che una riga
+          piu' in basso mostri una percentuale piu' alta, ed e' detto sotto l'elenco. */}
       <span className="dossier-bar" aria-hidden="true">
-        <i style={{ width: `${Math.round((lettura.probabilita / massima) * 100)}%` }} />
+        <i style={{ width: `${Math.round((lettura.promessa / massima) * 100)}%` }} />
       </span>
-      <span className="dossier-1x2-val">{percento(lettura.probabilita)}</span>
+      <span className="dossier-1x2-val">{percento(lettura.promessa)}</span>
     </div>
   );
 }
@@ -289,7 +290,7 @@ function Pronostico({ lettura, chi, resa, gare }: {
   readonly gare: number;
 }) {
   const famiglia = FAMIGLIE[lettura.bersaglio];
-  const nostra = Math.round(lettura.probabilita * 100);
+  const nostra = Math.round(lettura.promessa * 100);
   const base = lettura.base === null ? null : Math.round(lettura.base);
   return (
     <div className="insight-pronostico">
@@ -355,7 +356,11 @@ export function MatchInsightSection(
   // La barra si scala sulla riga piu' alta dell'elenco mostrato, che dal 12 settembre 2026
   // puo' essere un mercato dei gol: scalare ancora sulle sole letture avrebbe dato barre
   // piene oltre il bordo dove il multigol sta sopra la prima famiglia.
-  const massima = eventi[0]?.probabilita ?? righe[0]?.probabilita ?? 1;
+  const massima = Math.max(
+    eventi[0]?.probabilita ?? 0,
+    ...righe.map((r) => r.promessa),
+    0.01,
+  );
   const chi = (lettura: LetturaForte) => lettura.lato === "casa" ? homeTeam
     : lettura.lato === "trasferta" ? awayTeam : "Totale gara";
 
@@ -528,6 +533,19 @@ export function MatchInsightSection(
               />
             ))}
           </div>
+          {/* **L'ordine non e' la percentuale.** Le percentuali sono tarate su come queste
+              letture sono andate davvero, e la taratura dipende da quanto la lettura si
+              stacca dalla norma del suo campionato: una riga piu' in basso puo' quindi
+              mostrare un numero piu' alto. L'ordine resta quello del criterio, che non e'
+              cambiato. Si dice solo dove c'e' piu' di una lettura da confrontare. */}
+          {righe.length > 1 ? (
+            <p className="insight-nota">
+              Le percentuali sono tarate su come queste letture sono andate davvero, su{" "}
+              {campioneDellaTaratura.letture.toLocaleString("it-IT")} letture di gare chiuse.
+              L’ordine invece segue quanto ogni lettura si stacca dalla norma del suo
+              campionato, non la percentuale: più in basso può esserci un numero più alto.
+            </p>
+          ) : null}
           {eventi.length > IN_VISTA ? (
             <details className="dossier-spiega">
               <summary>

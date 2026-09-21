@@ -20,7 +20,7 @@ function linea(
     bersaglio, lato: "totale", soglia, verso, probabilita,
     decisione: Math.abs(probabilita - 0.5),
     base: null, gareDiBase: null, squadre: [], affidabilita: 100, righeDiProva: 2000,
-    sorpresa: 0, forza: 0,
+    sorpresa: 0, forza: 0, promessa: probabilita,
   };
 }
 

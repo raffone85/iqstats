@@ -37,6 +37,7 @@
  */
 import { daAccendere, decisione, soglieReali, type LineaProbabile } from "./linea-scelta";
 import type { Linea, ProiezioneDiGara } from "./match";
+import { promessaTarata } from "./taratura-promessa";
 
 /** Le frequenze gia' lette dal livello dati, per linea. `null` quando non si sanno. */
 type Basi = ReadonlyMap<string, { readonly quota: number; readonly gare: number }> | null;
@@ -205,6 +206,11 @@ export interface LetturaForte {
   readonly sorpresa: number;
   /** `sorpresa` per `affidabilita / 100`. E' il numero su cui si ordina. */
   readonly forza: number;
+  /**
+   * La probabilita' da mostrare, tarata sullo scarto dalla norma del campionato. Non entra
+   * in nessun ordinamento ne' nel criterio del consigliato: vedi `taratura-promessa.ts`.
+   */
+  readonly promessa: number;
 }
 
 export interface LettureDellaGara {
@@ -282,6 +288,8 @@ export function candidateDiGara(bersagli: readonly ProiezioneDiGara[]): {
         squadre: [],
         affidabilita: livello.punteggio,
         righeDiProva: livello.righeDiProva,
+        // Senza base di lega non c'e' scarto da cui tarare: vedi `arricchisci`.
+        promessa: v.probabilita,
         sorpresa: 0,
         forza: 0,
       });
@@ -340,6 +348,7 @@ export function arricchisci(
       squadre,
       sorpresa,
       forza: sorpresa * (l.affidabilita / 100),
+      promessa: promessaTarata(l.probabilita, b === null ? null : b.quota),
     };
   });
 }

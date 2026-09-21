@@ -65,6 +65,8 @@ interface RigaDiFamiglia {
   readonly soglia: number;
   readonly verso: "Over" | "Under";
   readonly probabilita: number;
+  /** Il numero mostrato, tarato sullo scarto dalla norma: `taratura-promessa.ts`. */
+  readonly promessa: number;
   readonly base: number | null;
   readonly gareDiBase: number | null;
   readonly affidabilita: number;
@@ -335,6 +337,8 @@ interface EsitoConsigliato {
   readonly bersaglio: string;
   readonly esito: "1" | "X" | "2";
   readonly probabilita: number;
+  /** Il numero mostrato, tarato sullo scarto dalla norma: `taratura-promessa.ts`. */
+  readonly promessa: number;
   readonly base: number | null;
   readonly gareDiBase: number | null;
   readonly affidabilita: number;
@@ -515,6 +519,8 @@ async function famiglieDi(
       righeDiProva: livello.righeDiProva,
       sorpresa: 0,
       forza: 0,
+      // La taratura arriva con la base di lega, in `arricchisci`.
+      promessa: q.probabilita,
     }];
   });
 
@@ -545,6 +551,7 @@ async function famiglieDi(
       soglia: l.soglia,
       verso: l.verso,
       probabilita: Number(l.probabilita.toFixed(4)),
+      promessa: Number(l.promessa.toFixed(4)),
       base: l.base === null ? null : Number(l.base.toFixed(2)),
       gareDiBase: l.gareDiBase,
       affidabilita: l.affidabilita,
@@ -593,6 +600,7 @@ async function famiglieDi(
       soglia: prima.soglia,
       verso: prima.verso,
       probabilita: Number(prima.probabilita.toFixed(4)),
+      promessa: Number(prima.promessa.toFixed(4)),
       base: prima.base === null ? null : Number(prima.base.toFixed(2)),
       gareDiBase: prima.gareDiBase,
       affidabilita: prima.affidabilita,
@@ -614,6 +622,8 @@ async function famiglieDi(
       bersaglio: e.bersaglio,
       esito: e.esito,
       probabilita: Number(e.probabilita.toFixed(4)),
+      // Sugli esiti 1X2 la taratura non e' stata misurata: la promessa resta la nostra.
+      promessa: Number(e.probabilita.toFixed(4)),
       base: e.base === null ? null : Number(e.base.toFixed(2)),
       gareDiBase: e.gareDiBase,
       affidabilita: e.affidabilita,

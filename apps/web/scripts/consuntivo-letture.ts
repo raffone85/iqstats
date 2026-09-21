@@ -94,6 +94,8 @@ function valoreVero(
 interface Esito {
   /** La gara da cui viene: serve a scegliere un consigliato per gara, non uno per lettura. */
   readonly gara: string;
+  /** Il calcio d'inizio: serve a dividere il campione nel tempo, non a caso. */
+  readonly kickoff: string;
   readonly bersaglio: string;
   readonly probabilita: number;
   readonly presa: boolean;
@@ -152,6 +154,7 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
     const sopra = vero > lettura.soglia;
     esiti.push({
       gara: riga.gara,
+      kickoff: riga.kickoff,
       bersaglio: lettura.bersaglio,
       probabilita: lettura.probabilita,
       presa: lettura.verso === "Over" ? sopra : !sopra,
@@ -179,6 +182,7 @@ async function letturePreseDi(riga: RigaDiGara): Promise<readonly Esito[]> {
     const sopra = vero > candidata.soglia;
     esiti.push({
       gara: riga.gara,
+      kickoff: riga.kickoff,
       bersaglio: candidata.bersaglio,
       probabilita: candidata.probabilita,
       presa: candidata.verso === "Over" ? sopra : !sopra,
@@ -355,6 +359,12 @@ async function main(): Promise<number> {
     import.meta.dirname, "..", "src", "server", "iqstats", "artefatti", "consuntivo-letture.json",
   );
   writeFileSync(percorso, JSON.stringify(rapporto, null, 2) + "\n", "utf8");
+  // Con `--dettaglio <file>` esce anche la riga per riga, che il rapporto aggregato non
+  // conserva: serve a studiare una calibrazione fuori campione senza rifare la corsa.
+  const dettaglio = process.argv.indexOf("--dettaglio");
+  if (dettaglio >= 0 && process.argv[dettaglio + 1]) {
+    writeFileSync(process.argv[dettaglio + 1], JSON.stringify(tutti) + "\n", "utf8");
+  }
   console.log(
     `${complessivo.letture} letture su ${gareLette} gare · prese ${complessivo.prese}`
     + ` (${(complessivo.frequenza_osservata * 100).toFixed(1)}%)`

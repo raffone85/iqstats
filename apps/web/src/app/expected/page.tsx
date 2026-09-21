@@ -43,6 +43,7 @@ import {
 import { resaDelBersaglio, resaDellEsito, GARE_DEL_CONSUNTIVO } from "@/server/iqstats/consuntivo";
 import {
   expectedDelleGare,
+  promessaDi,
   type GaraExpected,
   type AttesiDiFamiglia,
   type Consigliato,
@@ -282,7 +283,7 @@ function BloccoDiFamiglia({ bersaglio, lettura, righe, esito, atteso, casa, fuor
         {atteso === null ? null : <i>attesi {virgola(atteso)}</i>}
         {lettura === null ? null : (
           <span className="famiglia-sintesi">
-            {linea(lettura)} · <b>{Math.round(lettura.probabilita * 100)}%</b>
+            {linea(lettura)} · <b>{Math.round(promessaDi(lettura) * 100)}%</b>
           </span>
         )}
         {quante === 0 ? null : <em>{quante} linee</em>}
@@ -295,7 +296,7 @@ function BloccoDiFamiglia({ bersaglio, lettura, righe, esito, atteso, casa, fuor
             {chiRiguarda(lettura.lato, casa, fuori)}
           </span>
           <b className="famiglia-lettura-valore">
-            {Math.round(lettura.probabilita * 100)}%
+            {Math.round(promessaDi(lettura) * 100)}%
           </b>
           {scarto === null ? null : (
             <span className={scarto > 0 ? "is-sopra" : "is-sotto"}>
@@ -763,7 +764,7 @@ function AltriConsigli({ g }: { readonly g: GaraExpected }) {
             <li key={`${c.tipo}-${c.bersaglio}-${c.tipo === "esito" ? c.esito : `${c.lato}-${c.verso}-${c.soglia}`}`}>
               <p className="expected-sintesi">
                 <b>{consiglio(c)}</b> · {chiDelConsiglio(c, g.casa, g.fuori)} ·{" "}
-                <b>{Math.round(c.probabilita * 100)}%</b>
+                <b>{Math.round(promessaDi(c) * 100)}%</b>
                 {quota === null ? null : <span className="engine-obs"> quota {prezzo(quota)}</span>}
               </p>
               <p className="expected-perche">
@@ -842,7 +843,7 @@ function Gara({ g, calcolatoIl, quoteIl }: {
           <p className="expected-lettura">
             <b>{consiglio(g.consigliato)}</b> · {chiDelConsiglio(g.consigliato, g.casa, g.fuori)}
             {" · "}
-            <b>{Math.round(g.consigliato.probabilita * 100)}%</b>
+            <b>{Math.round(promessaDi(g.consigliato) * 100)}%</b>
           </p>
           {g.consigliato.tipo === "linea" ? (
             <Motivazione r={g.consigliato} />

@@ -187,6 +187,7 @@ function lineaForte(bersaglio: string, probabilita: number, base: number, verso:
   return {
     bersaglio, lato: "totale", soglia: 20.5, verso, probabilita, decisione: 0.2, base,
     gareDiBase: 100, squadre: [], affidabilita: 60, righeDiProva: 800, sorpresa: 0, forza: 0,
+    promessa: probabilita,
   };
 }
 

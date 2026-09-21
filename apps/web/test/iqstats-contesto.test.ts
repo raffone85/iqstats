@@ -36,6 +36,7 @@ function lettura(bersaglio: string, forza: number, soglia = 7.5, prob = 0.71): L
     righeDiProva: 2000,
     sorpresa: Math.abs(prob - 0.5),
     forza,
+    promessa: prob,
   };
 }
 

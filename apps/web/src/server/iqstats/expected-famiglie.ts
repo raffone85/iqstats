@@ -12,6 +12,11 @@
 // moduli con lo stesso nome erano gia' bastati a far sovrascrivere quello sbagliato.
 import "server-only";
 
+// **Il tipo dell'artefatto non si deduce dai suoi dati.** TypeScript stringe il tipo di un
+// JSON importato su cio' che quel file contiene oggi: in un artefatto dove nessuna riga ha
+// `base` nulla, `base` diventa `number`, e un predicato `r is RigaDiFamiglia` smette di
+// compilare al primo artefatto diverso. Le righe si convertono quindi sul contratto
+// dichiarato qui sotto, che e' quello che `scripts/expected-famiglie.ts` scrive.
 import rapporto from "./artefatti/expected-famiglie.json" with { type: "json" };
 import type { TendenzaArbitro } from "./projection/letture-forti.ts";
 
@@ -24,6 +29,16 @@ export interface RigaDiFamiglia {
   readonly verso: string;
   /** Da 0 a 1. */
   readonly probabilita: number;
+  /**
+   * La probabilita' da mostrare, tarata sullo scarto dalla norma del campionato: vedi
+   * `projection/taratura-promessa.ts`. Non entra in nessun ordinamento: il criterio resta
+   * su `probabilita`. Sugli esiti 1X2 vale `probabilita`, perche' la taratura e' stata
+   * misurata sulle linee e su quegli esiti non c'e' misura.
+   *
+   * Chi lo legge passa da `promessaDi`: un artefatto scritto prima del 21 settembre 2026
+   * non ha questo campo, e un `undefined` in pagina diventerebbe `NaN`.
+   */
+  readonly promessa: number;
   /** Quanto quella linea succede in quel campionato, da 0 a 100, o `null` se non si sa. */
   readonly base: number | null;
   /** Su quante gare poggia la base. `null` dove la base manca. */
@@ -68,6 +83,8 @@ export interface EsitoConsigliato {
   readonly esito: "1" | "X" | "2";
   /** Da 0 a 1. */
   readonly probabilita: number;
+  /** Uguale a `probabilita`: sugli esiti 1X2 la taratura non e' stata misurata. */
+  readonly promessa: number;
   /** Quante volte quell'esito succede in quella lega, da 0 a 100, o `null`. */
   readonly base: number | null;
   readonly gareDiBase: number | null;
@@ -257,7 +274,7 @@ function riga<T extends { lato: string }>(v: T): (T & { lato: LatoDiRiga }) | nu
 export function quoteDiGara(gara: number): readonly RigaQuotata[] {
   const g = rapporto.gare.find((x) => x.gara === gara);
   if (g === undefined) return [];
-  return g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
+  return g.quote.map(riga).filter((r) => r !== null) as readonly RigaQuotata[];
 }
 
 /**
@@ -328,14 +345,14 @@ export function motivoSenzaQuote(
 export function expectedDelleGare(adesso: Date = new Date()): Expected | null {
   const gare: GaraExpected[] = rapporto.gare.flatMap((g) => {
     if (new Date(g.kickoff).getTime() <= adesso.getTime()) return [];
-    const famiglie = g.famiglie.map(riga).filter((r): r is RigaDiFamiglia => r !== null);
+    const famiglie = g.famiglie.map(riga).filter((r) => r !== null) as RigaDiFamiglia[];
     if (famiglie.length === 0) return [];
     // Un artefatto scritto prima del 17 settembre 2026 non porta `tipo`: e' una linea.
     const grezzo = g.consigliato as unknown as (Record<string, unknown> & { lato: string }) | null;
     const consigliato: Consigliato | null = grezzo === null ? null
       : grezzo.tipo === "esito" ? (grezzo as unknown as EsitoConsigliato)
       : (riga({ arbitro: null, ...grezzo, tipo: "linea" }) as unknown as LineaConsigliata | null);
-    const quote = g.quote.map(riga).filter((r): r is RigaQuotata => r !== null);
+    const quote = g.quote.map(riga).filter((r) => r !== null) as RigaQuotata[];
     // I consigli li scrive lo stesso generatore del consigliato, sempre con `tipo`.
     const consigli = (g as { readonly consigli?: unknown }).consigli as readonly Consigliato[] | undefined;
     return [{ ...g, famiglie, quote, consigliato, consigli }];
@@ -351,4 +368,11 @@ export function expectedDelleGare(adesso: Date = new Date()): Expected | null {
     quoteRaccolteIl: typeof raccolte === "string" ? raccolte : null,
     gare,
   };
+}
+
+/** Il numero da mostrare per una riga dell'artefatto, con il ripiego per i file vecchi. */
+export function promessaDi(r: { readonly probabilita: number; readonly promessa?: number }): number {
+  // Il tipo dice `number` perche' l'artefatto committato ce l'ha; a runtime un file piu'
+  // vecchio puo' non averlo, e allora si mostra la probabilita' invece di un `NaN`.
+  return typeof r.promessa === "number" ? r.promessa : r.probabilita;
 }
