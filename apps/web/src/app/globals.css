@@ -1586,6 +1586,15 @@ summary.giornata-head::-webkit-details-marker { color: var(--card-ink-3); }
 .assistente .squad-player-stats { margin-top: 10px; }
 .assistente-nota { display: block; font-style: normal; font-size: 11px; color: var(--card-ink-3); }
 .assistente-vai { display: inline-flex; align-items: center; margin-top: 6px; text-decoration: none; }
+/* Le domande pronte dell'assistente della gara. Quarantaquattro pixel di altezza: sono
+   controlli da toccare, non etichette. */
+.assistente-modulo .cerca-modulo { margin-bottom: 10px; }
+.assistente-pronte { display: flex; flex-wrap: wrap; gap: 8px; }
+.assistente-pronta { min-height: var(--h-control); padding: 0 14px; border: 1px solid var(--card-stroke); border-radius: 22px; background: var(--card-panel-2); color: var(--card-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+.assistente-pronta:hover { border-color: var(--card-brand); }
+.assistente-pronta:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.assistente-pronta:disabled, .assistente-modulo .cerca-invia:disabled { opacity: .55; cursor: progress; }
+.assistente-attesa { min-height: 18px; margin: 8px 0 0; font-size: 13px; color: var(--card-ink-3); }
 .ref-stagione { text-align: left; font-family: var(--font-mono, monospace); font-size: 13px; font-weight: 700; color: var(--card-brand-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ref-data { text-align: left; font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 600; color: var(--card-brand-strong); white-space: nowrap; }
 .ref-ora { display: block; margin-top: 2px; font: 600 10px/1 var(--font-inter, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--card-ink-3); }

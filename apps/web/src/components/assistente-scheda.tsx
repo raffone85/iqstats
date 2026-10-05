@@ -10,6 +10,7 @@
 // scheda sbagliata, perche' i numeri non li scrive lui.
 import Link from "next/link";
 
+import { AssistenteModulo } from "@/components/assistente-modulo";
 import type { Risposta } from "@/server/iqstats/assistente";
 
 export function AssistenteScheda({ risposta }: Readonly<{ risposta: Risposta }>) {
@@ -51,11 +52,24 @@ export function AssistenteScheda({ risposta }: Readonly<{ risposta: Risposta }>)
 }
 
 /**
- * L'assistente dentro il dossier: una domanda sulle linee di questa gara.
+ * Le domande pronte sotto il campo. Una per tema fra i piu' chiesti: chi apre la pagina
+ * vede subito che cosa si puo' domandare, invece di una casella vuota.
+ */
+const DOMANDE_PRONTE = [
+  "Che partita sarà?",
+  "Chi è favorito?",
+  "Chi può segnare?",
+  "Com'è l'arbitro?",
+  "Ci sono infortunati?",
+] as const;
+
+/**
+ * L'assistente dentro il dossier: una domanda su questa gara.
  *
- * **Un modulo normale, come su `/cerca`.** La domanda sta nell'indirizzo, la risposta la
- * rende il server e la pagina funziona anche senza JavaScript. `#chiedi` riporta chi ha
- * chiesto davanti alla risposta invece che in cima a un dossier lungo.
+ * **Sta in cima, sotto la testata.** Il dossier e' lungo decine di schermate e la risposta
+ * a una domanda precisa sta a meta' strada: qui si chiede invece di cercare. La domanda
+ * sta nell'indirizzo e la risposta la rende il server, quindi funziona anche senza
+ * JavaScript; `#chiedi` riporta chi ha chiesto davanti alla risposta.
  */
 export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
   gara: number;
@@ -71,22 +85,7 @@ export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
         {risposta === null ? "Una domanda su questa gara" : risposta.titolo}
       </h2>
 
-      <form className="cerca-modulo" action={`/match/${gara}#chiedi`} method="get">
-        {stagione === null ? null : <input type="hidden" name="stagione" value={stagione} />}
-        <label className="cerca-etichetta" htmlFor="domanda">Domanda</label>
-        <input
-          id="domanda"
-          name="domanda"
-          type="text"
-          className="cerca-campo"
-          defaultValue={domanda}
-          maxLength={200}
-          placeholder="Conviene l’over 9,5 tiri ospite? Chi è favorito? Chi può segnare?"
-          autoComplete="off"
-          required
-        />
-        <button type="submit" className="cerca-invia">Chiedi</button>
-      </form>
+      <AssistenteModulo gara={gara} domanda={domanda} stagione={stagione} pronte={DOMANDE_PRONTE} />
 
       {risposta === null || risposta.righe.length === 0 ? null : (
         <span className="squad-player-stats">

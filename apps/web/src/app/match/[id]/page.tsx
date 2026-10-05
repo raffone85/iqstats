@@ -561,8 +561,13 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // modello solo dove c'e' qualcosa da rispondere - una proiezione, il piano che la
   // mostra, una gara ancora da giocare - cosi' un indirizzo qualunque non spende richieste.
   const domandaGrezza = (await searchParams).domanda;
-  const domanda = typeof domandaGrezza === "string"
-    ? domandaGrezza.trim().slice(0, DOMANDA_MASSIMA)
+  // Senza JavaScript una domanda pronta arriva accanto al campo scritto, vuoto: due valori
+  // con lo stesso nome. Vale l'ultimo che dice qualcosa.
+  const domandaScritta = Array.isArray(domandaGrezza)
+    ? domandaGrezza.filter((d) => d.trim() !== "").at(-1)
+    : domandaGrezza;
+  const domanda = typeof domandaScritta === "string"
+    ? domandaScritta.trim().slice(0, DOMANDA_MASSIMA)
     : "";
   const assistenteAttivo = motore.allowed && proiezioni !== null && detail.status !== "finished";
   const squadreDellaGara = { casa: detail.homeTeam, trasferta: detail.awayTeam };
@@ -1264,6 +1269,17 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
           </div>
         </article>
 
+        {/* **L'assistente sta sotto la testata, prima dei capitoli.** Dal 6 ottobre 2026:
+            chi ha una domanda la fa qui, invece di cercare la risposta in un dossier lungo
+            decine di schermate. */}
+        {assistenteAttivo ? (
+          <AssistenteGara
+            gara={eventId}
+            domanda={domanda}
+            risposta={rispostaAssistente}
+            stagione={typeof chiesto === "string" ? chiesto : null}
+          />
+        ) : null}
 
         {/* **I capitoli, e perche' ci sono.** Misurato a 375 px su una gara reale, questa
             pagina e' alta 31.462 px: circa trentanove schermate, ventuno blocchi in fila e
@@ -1298,15 +1314,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             />
             {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
           </>
-        ) : null}
-
-        {assistenteAttivo ? (
-          <AssistenteGara
-            gara={eventId}
-            domanda={domanda}
-            risposta={rispostaAssistente}
-            stagione={typeof chiesto === "string" ? chiesto : null}
-          />
         ) : null}
 
         {aree.insight ? (
