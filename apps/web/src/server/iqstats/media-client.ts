@@ -80,7 +80,10 @@ export class ProviderMediaClient {
       throw new GatewayError("invalid_request");
     }
 
-    const url = new URL(`/img/${kind}/${entityId}/?bg=transparent`, this.#baseUrl);
+    // La trasparenza serve agli stemmi, non a una foto: chiesta sullo stadio, la fonte manda
+    // il PNG pieno. Misurato il 5/10/2026 su sette stadi: da 1,8-6,3 MB a 0,3-0,9 MB senza.
+    const query = kind === "venue" ? "" : "?bg=transparent";
+    const url = new URL(`/img/${kind}/${entityId}/${query}`, this.#baseUrl);
     if (url.origin !== this.#baseUrl.origin) throw new GatewayError("internal_error");
 
     let response: Response;

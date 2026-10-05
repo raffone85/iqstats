@@ -45,6 +45,19 @@ test("usa soltanto il percorso media consentito e conserva il corpo binario", as
   }
 });
 
+test("la foto di stadio si chiede senza trasparenza", async () => {
+  let target = "";
+  const client = new ProviderMediaClient({
+    baseUrl: "https://provider.example/",
+    fetchImplementation: async (input) => {
+      target = String(input);
+      return new Response(null, { status: 404 });
+    },
+  });
+  await client.getImage("venue", "5");
+  assert.equal(target, "https://provider.example/img/venue/5/");
+});
+
 test("traduce assenza e risposte non immagine senza esporre il provider", async () => {
   const absentClient = new ProviderMediaClient({
     baseUrl: "https://provider.example/",
