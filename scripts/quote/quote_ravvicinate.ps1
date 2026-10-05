@@ -1,13 +1,13 @@
 # Raccolta ravvicinata delle quote, Expected rigenerato dopo di lei, cache della pagina
-# giocatori scaldata. Attivita' pianificata «IQstatS - quote ravvicinate», alle 09:00, alle
-# 15:00 e alle 21:00.
+# giocatori scaldata. Attivita' pianificata «IQstatS - quote ravvicinate», alle 09:00 e alle 15:00.
 #
-# Perche' tre orari. Il banco apre le linee di squadra fra le dodici e le sei ore dal fischio
+# Perche' due orari. Il banco apre le linee di squadra fra le dodici e le sei ore dal fischio
 # (misurato il 18 settembre 2026 su Monza-Sassuolo): alle 09:00 si prendono le gare fino alle
-# 21:00, alle 15:00 quelle della sera e della notte sudamericana. Alle 21:00 (dal 5 ottobre
-# 2026) quelle col fischio fra le 03:00 e le 09:00, Asia e Australia, che gli altri due giri
-# non vedevano. Ogni passata scrive un file a se', ed Expected tiene per ogni gara la lettura
-# piu' recente.
+# 21:00, alle 15:00 quelle della sera e della notte sudamericana. Ogni passata scrive un file
+# a se', ed Expected tiene per ogni gara la lettura piu' recente.
+#
+# Le gare col fischio fra le 03:00 e le 09:00 restano fuori. Un terzo orario alle 21:00 e'
+# stato messo e tolto il 5 ottobre 2026: quante di quelle gare copriamo non e' misurato.
 #
 # Perche' Expected dopo. L'artefatto legge il palinsesto che trova su disco: rigenerato prima
 # della raccolta, porterebbe le linee di ieri.
