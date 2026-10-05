@@ -274,7 +274,9 @@ function riga<T extends { lato: string }>(v: T): (T & { lato: LatoDiRiga }) | nu
 export function quoteDiGara(gara: number): readonly RigaQuotata[] {
   const g = rapporto.gare.find((x) => x.gara === gara);
   if (g === undefined) return [];
-  return g.quote.map(riga).filter((r) => r !== null) as readonly RigaQuotata[];
+  // `as unknown`: il tipo dedotto dal JSON cambia con i dati, e dal 25/09/2026 le righe di
+  // quota non si sovrapponevano piu' a `RigaQuotata`: il build cadeva a ogni giro di quote.
+  return g.quote.map(riga).filter((r) => r !== null) as unknown as readonly RigaQuotata[];
 }
 
 /**
