@@ -68,7 +68,7 @@ export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
     <section className="assistente" id="chiedi" aria-labelledby="chiedi-title">
       <p className="dossier-kick">Chiedi</p>
       <h2 id="chiedi-title" className="squad-section-title">
-        {risposta === null ? "Una domanda sulle linee di questa gara" : risposta.titolo}
+        {risposta === null ? "Una domanda su questa gara" : risposta.titolo}
       </h2>
 
       <form className="cerca-modulo" action={`/match/${gara}#chiedi`} method="get">
@@ -81,7 +81,7 @@ export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
           className="cerca-campo"
           defaultValue={domanda}
           maxLength={200}
-          placeholder="Conviene l’over 9,5 tiri della squadra ospite?"
+          placeholder="Conviene l’over 9,5 tiri ospite? Chi è favorito? Com’è l’arbitro?"
           autoComplete="off"
           required
         />
@@ -103,10 +103,10 @@ export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
       {risposta === null ? null : <p className="dossier-src">{risposta.spiegazione}</p>}
 
       <p className="dossier-src">
-        <b>Posso sbagliare, e in un modo solo:</b> capendo male la domanda. La probabilità
-        la calcola il motore, la quota è del banco e il valore è la loro differenza: nessuno
-        di questi numeri lo scrivo io. Controlla che il titolo qui sopra sia quello che
-        volevi chiedere.
+        <b>Posso sbagliare, e in un modo solo:</b> capendo male la domanda. I numeri sono
+        quelli del dossier: le probabilità le calcola il motore, le quote sono del banco, le
+        medie vengono dalle gare osservate. Nessuno lo scrivo io. Controlla che il titolo qui
+        sopra sia quello che volevi chiedere.
       </p>
     </section>
   );

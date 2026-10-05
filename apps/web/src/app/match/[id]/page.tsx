@@ -118,9 +118,13 @@ import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import {
-  DOMANDA_MASSIMA, interpreta, leggiRichiesta, NON_DISPONIBILE, rispostaSulleLinee,
+  DOMANDA_MASSIMA, interpreta, leggiDomanda, NON_DISPONIBILE, rispostaRiassunto,
+  rispostaSuiGol, rispostaSulleLinee, rispostaSullArbitro,
 } from "@/server/iqstats/assistente-gara";
+import { frasiDellaGara } from "@/server/iqstats/riassunto-gara";
+import { vociDeiGol } from "@/server/iqstats/voci-dei-gol";
 import { AssistenteGara } from "@/components/assistente-scheda";
+import { chiDelConsiglio, consiglio } from "@/components/expected-voce";
 import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
 import { causeDellaLettura } from "@/server/iqstats/projection/cause";
@@ -563,11 +567,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   const tradotta = assistenteAttivo && domanda !== ""
     ? await interpreta(domanda, squadreDellaGara)
     : null;
-  const rispostaAssistente = !assistenteAttivo || domanda === ""
-    ? null
-    : tradotta === null
-      ? NON_DISPONIBILE
-      : rispostaSulleLinee(leggiRichiesta(tradotta), proiezioni.bersagli, quoteDelBanco, squadreDellaGara);
 
   // **Il modello del confronto e' il nostro, quando c'e'.** Fino al 2 settembre 2026 la
   // colonna «Modello» del pannello del mercato veniva dalla previsione della fonte: un
@@ -974,6 +973,44 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       altro: fuori ? detail.homeTeam : detail.awayTeam,
     });
   };
+  // La risposta dell'assistente si compone qui, dove i capitoli hanno gia' i loro numeri:
+  // ogni tema legge gli stessi oggetti della sezione che ne parla, e non ne calcola altri.
+  const rispostaAssistente = (() => {
+    if (!assistenteAttivo || domanda === "") return null;
+    if (tradotta === null) return NON_DISPONIBILE;
+    const letta = leggiDomanda(tradotta);
+    if (letta === null || letta.tema === "linee") {
+      return rispostaSulleLinee(letta, proiezioni.bersagli, quoteDelBanco, squadreDellaGara);
+    }
+    if (letta.tema === "gol") {
+      const gol = proiezioni.gol;
+      return rispostaSuiGol(
+        letta, gol,
+        gol === null ? null : vociDeiGol(gol.mercati, odds, quoteGolDiGara(eventId)),
+        squadreDellaGara,
+      );
+    }
+    if (letta.tema === "arbitro") {
+      return rispostaSullArbitro({
+        nome: referee?.name ?? null,
+        profilo: arbitroNostro,
+        giudizio: arbitroGiudizio,
+        // Quanto l'arbitro sposta l'atteso totale, dalle stesse cause che spiegano una
+        // lettura: sotto l'uno per cento `causeDellaLettura` non restituisce la voce.
+        influenza: proiezioni.bersagli.flatMap((b) => {
+          const sua = causeDellaLettura("totale", b.casa, b.trasferta, 99)
+            .find((causa) => causa.nome === "l'arbitro");
+          return sua === undefined ? [] : [{ famiglia: nomeFamiglia(b.target), effetto: sua.effetto }];
+        }),
+      }, squadreDellaGara);
+    }
+    const c = garaExpected?.consigliato ?? null;
+    return rispostaRiassunto(garaExpected === null ? [] : frasiDellaGara(
+      garaExpected,
+      c === null ? null : `${consiglio(c)} (${chiDelConsiglio(c, garaExpected.casa, garaExpected.fuori)})`,
+    ));
+  })();
+
   const analisi = analisiFinale({
     favorito: verdictFav?.name ?? null,
     // Una famiglia per lettura, senza ripetizioni, e non piu' di due: oltre e' un elenco.
