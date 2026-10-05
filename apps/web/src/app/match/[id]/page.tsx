@@ -119,7 +119,8 @@ import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
 import {
   DOMANDA_MASSIMA, interpreta, leggiDomanda, NON_DISPONIBILE, rispostaRiassunto,
-  rispostaSuiGol, rispostaSulleLinee, rispostaSullArbitro,
+  rispostaSuiGiocatori, rispostaSuiGol, rispostaSuiPrecedenti, rispostaSullaClassifica,
+  rispostaSullaForma, rispostaSulleFormazioni, rispostaSulleLinee, rispostaSullArbitro,
 } from "@/server/iqstats/assistente-gara";
 import { frasiDellaGara } from "@/server/iqstats/riassunto-gara";
 import { vociDeiGol } from "@/server/iqstats/voci-dei-gol";
@@ -978,7 +979,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   const rispostaAssistente = (() => {
     if (!assistenteAttivo || domanda === "") return null;
     if (tradotta === null) return NON_DISPONIBILE;
-    const letta = leggiDomanda(tradotta);
+    const letta = leggiDomanda(tradotta, domanda);
     if (letta === null || letta.tema === "linee") {
       return rispostaSulleLinee(letta, proiezioni.bersagli, quoteDelBanco, squadreDellaGara);
     }
@@ -1004,6 +1005,21 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         }),
       }, squadreDellaGara);
     }
+    if (letta.tema === "giocatori") return rispostaSuiGiocatori(letta, giocatori, squadreDellaGara);
+    if (letta.tema === "formazioni") {
+      const lato = (l: NonNullable<typeof lineups>["home"]) => (l === null ? null : {
+        modulo: l.formation,
+        titolari: l.starters.map((g) => g.name),
+        indisponibili: l.unavailable,
+      });
+      return rispostaSulleFormazioni(letta, lineups === null ? null : {
+        ufficiali: lineups.confirmed, inProva: lineups.beta,
+        casa: lato(lineups.home), trasferta: lato(lineups.away),
+      }, squadreDellaGara);
+    }
+    if (letta.tema === "classifica") return rispostaSullaClassifica(standings, squadreDellaGara);
+    if (letta.tema === "forma") return rispostaSullaForma(homeForm, awayForm, squadreDellaGara);
+    if (letta.tema === "precedenti") return rispostaSuiPrecedenti(h2h, squadreDellaGara);
     const c = garaExpected?.consigliato ?? null;
     return rispostaRiassunto(garaExpected === null ? [] : frasiDellaGara(
       garaExpected,

@@ -81,7 +81,7 @@ export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
           className="cerca-campo"
           defaultValue={domanda}
           maxLength={200}
-          placeholder="Conviene l’over 9,5 tiri ospite? Chi è favorito? Com’è l’arbitro?"
+          placeholder="Conviene l’over 9,5 tiri ospite? Chi è favorito? Chi può segnare?"
           autoComplete="off"
           required
         />

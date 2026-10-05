@@ -9,7 +9,12 @@ import {
   leggiRichiesta,
   probabilitaSuSoglia,
   rispostaRiassunto,
+  rispostaSuiGiocatori,
   rispostaSuiGol,
+  rispostaSuiPrecedenti,
+  rispostaSullaClassifica,
+  rispostaSullaForma,
+  rispostaSulleFormazioni,
   rispostaSulleLinee,
   rispostaSullArbitro,
 } from "../src/server/iqstats/assistente-gara.ts";
@@ -214,4 +219,107 @@ test("l'arbitro: medie accanto ai colleghi, effetto col segno, assenza dichiarat
 test("il riassunto ripete le frasi del dossier e non ne aggiunge", () => {
   assert.equal(rispostaRiassunto(["Prima frase.", "Seconda frase."]).spiegazione, "Prima frase. Seconda frase.");
   assert.match(rispostaRiassunto([]).spiegazione, /non c'è un riassunto/);
+});
+
+// --- Giocatori, formazioni, classifica, forma, precedenti.
+
+const candidato = (nome: string, squadra: string, stima: number) => ({
+  nome, squadra, stima, fattore: "tiri", valore: 3.2, incertezza: 1.5, gare: 6,
+});
+const LETTURA = {
+  marcatori: [candidato("Rossi", "Monza", 0.31), candidato("Verdi", "Sassuolo", 0.27), candidato("Neri", "Monza", 0.22)],
+  cartellini: [candidato("Bianchi", "Sassuolo", 0.24)],
+};
+
+test("i temi nuovi si leggono con il loro aspetto e il loro lato", () => {
+  assert.deepEqual(leggiDomanda({ tema: "giocatori", aspetto: "marcatori", lato: "casa" }),
+    { tema: "giocatori", aspetto: "marcatori", lato: "casa" });
+  assert.deepEqual(leggiDomanda({ tema: "giocatori", aspetto: "indisponibili" }),
+    { tema: "giocatori", aspetto: null, lato: "totale" });
+  assert.deepEqual(leggiDomanda({ tema: "formazioni", aspetto: "indisponibili", lato: "trasferta" }),
+    { tema: "formazioni", indisponibili: true, lato: "trasferta" });
+  assert.deepEqual(leggiDomanda({ tema: "forma", bersaglio: "fouls" }), { tema: "forma" });
+});
+
+test("i marcatori sono quelli della lettura, filtrati per squadra, con la loro incertezza", () => {
+  const letta = leggiDomanda({ tema: "giocatori", aspetto: "marcatori", lato: "casa" });
+  assert.ok(letta !== null && letta.tema === "giocatori");
+  const risposta = rispostaSuiGiocatori(letta, LETTURA, SQUADRE);
+  assert.deepEqual(risposta.righe.map((r) => r.etichetta), ["Rossi · gol", "Neri · gol"]);
+  assert.equal(risposta.righe[0].valore, "31%");
+  assert.match(risposta.righe[0].nota ?? "", /3,2 tiri ogni 90' su 6 gare · ±1,5 punti/);
+
+  const tutti = leggiDomanda({ tema: "giocatori" });
+  assert.ok(tutti !== null && tutti.tema === "giocatori");
+  assert.equal(rispostaSuiGiocatori(tutti, LETTURA, SQUADRE).righe.length, 4);
+  // Senza lettura, o senza un nome di quella squadra, non si indica nessuno.
+  assert.equal(rispostaSuiGiocatori(tutti, null, SQUADRE).righe.length, 0);
+  const gialliCasa = leggiDomanda({ tema: "giocatori", aspetto: "cartellini", lato: "casa" });
+  assert.ok(gialliCasa !== null && gialliCasa.tema === "giocatori");
+  assert.match(rispostaSuiGiocatori(gialliCasa, LETTURA, SQUADRE).spiegazione, /non c'è un nome da indicare/);
+});
+
+test("le formazioni dichiarano se sono previste, e gli assenti che l'elenco e' in prova", () => {
+  const formazioni = {
+    ufficiali: false, inProva: true,
+    casa: { modulo: "4-3-3", titolari: ["Uno", "Due"], indisponibili: [{ nome: "Tre", stato: "infortunato", motivo: "ginocchio" }] },
+    trasferta: null,
+  };
+  const undici = leggiDomanda({ tema: "formazioni" });
+  assert.ok(undici !== null && undici.tema === "formazioni");
+  const risposta = rispostaSulleFormazioni(undici, formazioni, SQUADRE);
+  assert.deepEqual(risposta.righe, [{ etichetta: "Monza", valore: "4-3-3", nota: "Uno, Due" }]);
+  assert.match(risposta.spiegazione, /non ancora ufficiali/);
+
+  const assenti = leggiDomanda({ tema: "formazioni", aspetto: "indisponibili" });
+  assert.ok(assenti !== null && assenti.tema === "formazioni");
+  const chiManca = rispostaSulleFormazioni(assenti, formazioni, SQUADRE);
+  assert.deepEqual(chiManca.righe, [{ etichetta: "Tre", valore: "infortunato", nota: "Monza · ginocchio" }]);
+  assert.match(chiManca.spiegazione, /in prova/);
+  assert.match(rispostaSulleFormazioni(undici, null, SQUADRE).spiegazione, /non ha ancora le formazioni/);
+});
+
+test("classifica, forma e precedenti non trasformano un vuoto in uno zero", () => {
+  const riga = { position: 3, played: 8, won: 5, drawn: 2, lost: 1, goalsFor: 14, goalsAgainst: 6, points: 17 };
+  const classifica = rispostaSullaClassifica(
+    { home: riga, away: { ...riga, position: 11, goalsFor: null }, teams: 20, seasonName: "2026/27" }, SQUADRE,
+  );
+  assert.deepEqual(classifica.righe[0], {
+    etichetta: "Monza", valore: "3ª", nota: "17 punti · 8 giocate · 5 V 2 N 1 P · gol 14-6",
+  });
+  assert.equal(classifica.righe[1].nota, "17 punti · 8 giocate · 5 V 2 N 1 P");
+  assert.equal(rispostaSullaClassifica(null, SQUADRE).righe.length, 0);
+
+  const gara = { opponent: "Empoli", atHome: true, goalsFor: 2, goalsAgainst: 1, outcome: "V" as const };
+  const forma = rispostaSullaForma([gara, { ...gara, atHome: false, outcome: "P" as const }], null, SQUADRE);
+  assert.deepEqual(forma.righe, [{ etichetta: "Monza", valore: "V P", nota: "2-1 in casa con Empoli · 2-1 fuori con Empoli" }]);
+  assert.equal(rispostaSullaForma(null, [], SQUADRE).righe.length, 0);
+
+  const precedenti = rispostaSuiPrecedenti({
+    totalMatches: 3, homeWins: 1, draws: null, awayWins: 2, avgTotalGoals: 2.67,
+    recent: [{ date: null, home: "Monza", away: "Sassuolo", score: "1-2" }],
+  }, SQUADRE);
+  assert.deepEqual(precedenti.righe.map((r) => r.valore), ["1", "0", "2", "2,7"]);
+  assert.match(precedenti.spiegazione, /Gli ultimi: Monza 1-2 Sassuolo\. Sono pochi/);
+  assert.equal(rispostaSuiPrecedenti(null, SQUADRE).righe.length, 0);
+});
+
+test("un numero intero diventa soglia dalla parola che lo precede, e senza parola si butta", () => {
+  const soglie = (domanda: string, ...numeri: number[]) =>
+    leggiRichiesta({ bersaglio: "fouls", soglie: numeri }, domanda)?.soglie;
+  assert.deepEqual(soglie("il Sassuolo fa più di 4 tiri in porta?", 4), [4.5]);
+  assert.deepEqual(soglie("Monza almeno 5 corner", 5), [4.5]);
+  assert.deepEqual(soglie("meno di 25 falli nella partita?", 25), [24.5]);
+  assert.deepEqual(soglie("al massimo 3 gialli per il Sassuolo", 3), [3.5]);
+  assert.deepEqual(soglie("sotto i 2 fuorigioco per gli ospiti", 2), [1.5]);
+  assert.deepEqual(soglie("oltre 9 corner in tutta la gara", 9), [9.5]);
+  // Una soglia gia' col mezzo punto non si tocca, qualunque parola abbia davanti.
+  assert.deepEqual(soglie("conviene l'under 4,5, meno di 4,5 corner?", 4.5), [4.5]);
+  // «12 volte» senza una parola che dica da che parte: non e' una soglia.
+  assert.deepEqual(soglie("il Monza tira 12 volte?", 12), []);
+  // La virgola di una frase non e' un decimale; quella di «4,5» si'.
+  assert.deepEqual(soglie("più di 4, giusto?", 4), [4.5]);
+  assert.deepEqual(soglie("più di 4,5 tiri", 4), []);
+  // «più di 4» non deve agganciare il 4 di «più di 45».
+  assert.deepEqual(soglie("più di 45 falli", 4), []);
 });
