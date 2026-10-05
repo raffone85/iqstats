@@ -1,13 +1,13 @@
 {
   "schema": "expected-famiglie/2",
-  "calcolato_il": "2026-10-05T08:43:58.308Z",
+  "calcolato_il": "2026-10-05T13:20:15.754Z",
   "giorni": 3,
-  "gare_in_arrivo": 76,
+  "gare_in_arrivo": 74,
   "gare_con_proiezione": 2,
   "righe": 10,
   "gare_con_quote": 2,
-  "quote_raccolte_il": "2026-10-05T08:39:19+00:00",
-  "righe_quotate": 32,
+  "quote_raccolte_il": "2026-10-05T13:15:11+00:00",
+  "righe_quotate": 59,
   "come_sono_arrivate_le_quote": "dal palinsesto Fastbet/Altenar raccolto da scripts/quote/fastbet-quote.py. Le soglie le detta il bookmaker e la nostra probabilita' si calcola su quelle, dalla stessa distribuzione calibrata delle cinque soglie del motore: la quota non entra nel calcolo. L'aggancio passa da parole significative piu' data e le gare ambigue si buttano; gli esiti sospesi, con quota a zero, non diventano un prezzo.",
   "come_e_stato_scelto": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' probabile fra i lati e le soglie di quella famiglia. Non si passa da ordinaLetture: quello e' il criterio della cima, che scarta le letture sopra l'ottanta per cento e i falli, e qui scartare direbbe il falso su una sezione che deve mostrare che cosa dice il motore.",
   "gare": [
@@ -21,34 +21,88 @@
       "lega": "Segunda División",
       "kickoff": "2026-10-05T18:30:00+00:00",
       "consigliato": {
-        "tipo": "esito",
-        "bersaglio": "corner_kicks",
-        "esito": "1",
-        "probabilita": 0.5684,
-        "promessa": 0.5684,
-        "base": 44.78,
-        "gareDiBase": 67,
-        "affidabilita": 66,
-        "scarto": 12.1,
-        "attesoCasa": 4.98,
-        "attesoTrasferta": 3.86,
+        "tipo": "linea",
+        "bersaglio": "shots_on_target",
+        "lato": "casa",
+        "soglia": 5.5,
+        "verso": "Under",
+        "probabilita": 0.7276,
+        "promessa": 0.6943,
+        "base": 65.52,
+        "gareDiBase": 87,
+        "affidabilita": 64,
+        "scarto": 7.2,
+        "atteso": 4.3,
+        "intervallo": {
+          "basso": 2,
+          "alto": 7
+        },
         "origine": "modello",
         "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "quanto concede l'avversario",
+            "effetto": -0.101
+          },
+          {
+            "nome": "la classifica",
+            "effetto": -0.031
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": 0.031
+          }
+        ],
         "arbitro": null
       },
       "consigli": [
         {
+          "tipo": "linea",
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 5.5,
+          "verso": "Under",
+          "probabilita": 0.7276,
+          "promessa": 0.6943,
+          "base": 65.52,
+          "gareDiBase": 87,
+          "affidabilita": 64,
+          "scarto": 7.2,
+          "atteso": 4.3,
+          "intervallo": {
+            "basso": 2,
+            "alto": 7
+          },
+          "origine": "modello",
+          "pesoDelModello": 1,
+          "cause": [
+            {
+              "nome": "quanto concede l'avversario",
+              "effetto": -0.101
+            },
+            {
+              "nome": "la classifica",
+              "effetto": -0.031
+            },
+            {
+              "nome": "il fattore campo",
+              "effetto": 0.031
+            }
+          ],
+          "arbitro": null
+        },
+        {
           "tipo": "esito",
           "bersaglio": "corner_kicks",
           "esito": "1",
-          "probabilita": 0.5684,
-          "promessa": 0.5684,
-          "base": 44.78,
-          "gareDiBase": 67,
+          "probabilita": 0.5383,
+          "promessa": 0.5383,
+          "base": 45.98,
+          "gareDiBase": 87,
           "affidabilita": 66,
-          "scarto": 12.1,
-          "attesoCasa": 4.98,
-          "attesoTrasferta": 3.86,
+          "scarto": 7.8,
+          "attesoCasa": 4.92,
+          "attesoTrasferta": 4.06,
           "origine": "modello",
           "pesoDelModello": 1,
           "arbitro": null
@@ -59,13 +113,13 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Under",
-          "probabilita": 0.5065,
-          "promessa": 0.4732,
-          "base": 42.42,
-          "gareDiBase": 66,
+          "probabilita": 0.4906,
+          "promessa": 0.4573,
+          "base": 41.79,
+          "gareDiBase": 67,
           "affidabilita": 70,
-          "scarto": 8.2,
-          "atteso": 2.65,
+          "scarto": 7.3,
+          "atteso": 2.71,
           "intervallo": {
             "basso": 1,
             "alto": 4
@@ -83,7 +137,7 @@
             },
             {
               "nome": "la norma del campionato",
-              "effetto": 0.04
+              "effetto": 0.041
             }
           ],
           "arbitro": null
@@ -95,12 +149,12 @@
           "lato": "trasferta",
           "soglia": 1.5,
           "verso": "Over",
-          "probabilita": 0.7999,
-          "promessa": 0.8417,
-          "base": 81.82,
-          "gareDiBase": 66,
+          "probabilita": 0.8021,
+          "promessa": 0.8439,
+          "base": 82.56,
+          "gareDiBase": 86,
           "affidabilita": 56,
-          "atteso": 3.16,
+          "atteso": 3.17,
           "intervallo": {
             "basso": 1,
             "alto": 5
@@ -114,11 +168,43 @@
             },
             {
               "nome": "la classifica",
-              "effetto": -0.029
+              "effetto": -0.031
             },
             {
               "nome": "la norma del campionato",
-              "effetto": 0.023
+              "effetto": 0.028
+            }
+          ]
+        },
+        {
+          "bersaglio": "offsides",
+          "lato": "totale",
+          "soglia": 2.5,
+          "verso": "Over",
+          "probabilita": 0.7806,
+          "promessa": 0.7575,
+          "base": 77.11,
+          "gareDiBase": 83,
+          "affidabilita": 69,
+          "atteso": 4.13,
+          "intervallo": {
+            "basso": 2,
+            "alto": 6
+          },
+          "origine": "miscela",
+          "pesoDelModello": 0.9,
+          "cause": [
+            {
+              "nome": "quanto concede l'avversario",
+              "effetto": 0.091
+            },
+            {
+              "nome": "il livello della squadra",
+              "effetto": 0.053
+            },
+            {
+              "nome": "quanto produce la squadra",
+              "effetto": 0.036
             }
           ]
         },
@@ -127,12 +213,12 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Over",
-          "probabilita": 0.785,
-          "promessa": 0.8268,
-          "base": 82.09,
-          "gareDiBase": 67,
+          "probabilita": 0.7794,
+          "promessa": 0.8212,
+          "base": 81.61,
+          "gareDiBase": 87,
           "affidabilita": 64,
-          "atteso": 4.35,
+          "atteso": 4.3,
           "intervallo": {
             "basso": 2,
             "alto": 7
@@ -142,47 +228,15 @@
           "cause": [
             {
               "nome": "quanto concede l'avversario",
-              "effetto": -0.105
+              "effetto": -0.101
             },
             {
-              "nome": "il fattore campo",
-              "effetto": 0.032
-            },
-            {
-              "nome": "quanto produce l'avversario",
-              "effetto": 0.027
-            }
-          ]
-        },
-        {
-          "bersaglio": "offsides",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Under",
-          "probabilita": 0.7435,
-          "promessa": 0.6694,
-          "base": 62.5,
-          "gareDiBase": 64,
-          "affidabilita": 69,
-          "atteso": 1.75,
-          "intervallo": {
-            "basso": 1,
-            "alto": 3
-          },
-          "origine": "miscela",
-          "pesoDelModello": 0.9,
-          "cause": [
-            {
-              "nome": "quanto concede l'avversario",
+              "nome": "la classifica",
               "effetto": -0.031
             },
             {
-              "nome": "quanto produce l'avversario",
-              "effetto": -0.029
-            },
-            {
-              "nome": "il livello della squadra",
-              "effetto": 0.026
+              "nome": "il fattore campo",
+              "effetto": 0.031
             }
           ]
         },
@@ -191,12 +245,12 @@
           "lato": "trasferta",
           "soglia": 1.5,
           "verso": "Over",
-          "probabilita": 0.7417,
-          "promessa": 0.7835,
-          "base": 78.79,
-          "gareDiBase": 66,
+          "probabilita": 0.7536,
+          "promessa": 0.7954,
+          "base": 79.1,
+          "gareDiBase": 67,
           "affidabilita": 70,
-          "atteso": 2.65,
+          "atteso": 2.71,
           "intervallo": {
             "basso": 1,
             "alto": 4
@@ -214,7 +268,7 @@
             },
             {
               "nome": "la norma del campionato",
-              "effetto": 0.04
+              "effetto": 0.041
             }
           ]
         },
@@ -223,44 +277,44 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Over",
-          "probabilita": 0.6902,
-          "promessa": 0.732,
-          "base": 77.61,
-          "gareDiBase": 67,
+          "probabilita": 0.7197,
+          "promessa": 0.7615,
+          "base": 74.71,
+          "gareDiBase": 87,
           "affidabilita": 66,
-          "atteso": 3.86,
+          "atteso": 4.06,
           "intervallo": {
-            "basso": 1,
-            "alto": 6
+            "basso": 2,
+            "alto": 7
           },
           "origine": "modello",
           "pesoDelModello": 1,
           "cause": [
             {
               "nome": "il livello della squadra",
-              "effetto": -0.054
+              "effetto": -0.058
             },
             {
               "nome": "il fattore campo",
               "effetto": -0.053
             },
             {
-              "nome": "gli undici",
-              "effetto": -0.046
+              "nome": "la classifica",
+              "effetto": 0.047
             }
           ]
         },
         {
           "bersaglio": "fouls",
-          "lato": "casa",
+          "lato": "trasferta",
           "soglia": 12.5,
           "verso": "Over",
-          "probabilita": 0.6611,
-          "promessa": 0.587,
-          "base": 53.73,
-          "gareDiBase": 67,
+          "probabilita": 0.6756,
+          "promessa": 0.6525,
+          "base": 63.22,
+          "gareDiBase": 87,
           "affidabilita": 66,
-          "atteso": 14.2,
+          "atteso": 14.35,
           "intervallo": {
             "basso": 10,
             "alto": 19
@@ -269,48 +323,48 @@
           "pesoDelModello": 0.8,
           "cause": [
             {
-              "nome": "il livello della squadra",
-              "effetto": 0.134
-            },
-            {
-              "nome": "la norma del campionato",
-              "effetto": -0.047
-            },
-            {
               "nome": "quanto concede l'avversario",
-              "effetto": 0.039
+              "effetto": 0.164
+            },
+            {
+              "nome": "il livello della squadra",
+              "effetto": 0.059
+            },
+            {
+              "nome": "l'incrocio fra attacco e difesa",
+              "effetto": -0.031
             }
           ]
         },
         {
           "bersaglio": "total_shots",
-          "lato": "casa",
-          "soglia": 11.5,
+          "lato": "trasferta",
+          "soglia": 8.5,
           "verso": "Over",
-          "probabilita": 0.6367,
-          "promessa": 0.6136,
-          "base": 62.69,
-          "gareDiBase": 67,
+          "probabilita": 0.6013,
+          "promessa": 0.6431,
+          "base": 73.56,
+          "gareDiBase": 87,
           "affidabilita": 57,
-          "atteso": 13.48,
+          "atteso": 9.89,
           "intervallo": {
-            "basso": 8,
-            "alto": 19
+            "basso": 5,
+            "alto": 15
           },
           "origine": "miscela",
           "pesoDelModello": 0.95,
           "cause": [
             {
-              "nome": "quanto concede l'avversario",
-              "effetto": -0.146
-            },
-            {
               "nome": "il livello della squadra",
-              "effetto": 0.073
+              "effetto": -0.109
             },
             {
               "nome": "il fattore campo",
-              "effetto": 0.068
+              "effetto": -0.075
+            },
+            {
+              "nome": "l'incrocio fra attacco e difesa",
+              "effetto": -0.073
             }
           ]
         }
@@ -318,13 +372,283 @@
       "senzaMisura": [],
       "quote": [
         {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 13.5,
+          "verso": "Over",
+          "quota": 1.52,
+          "probabilita": 0.4879,
+          "atteso": 13.74,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 14.5,
+          "verso": "Over",
+          "quota": 1.7,
+          "probabilita": 0.4061,
+          "atteso": 13.74,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "casa",
+          "soglia": 15.5,
+          "verso": "Over",
+          "quota": 1.96,
+          "probabilita": 0.3307,
+          "atteso": 13.74,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 9.5,
+          "verso": "Over",
+          "quota": 1.48,
+          "probabilita": 0.4999,
+          "atteso": 9.89,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 10.5,
+          "verso": "Over",
+          "quota": 1.7143,
+          "probabilita": 0.4032,
+          "atteso": 9.89,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 11.5,
+          "verso": "Over",
+          "quota": 2,
+          "probabilita": 0.3159,
+          "atteso": 9.89,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "totale",
+          "soglia": 24.5,
+          "verso": "Over",
+          "quota": 1.4706,
+          "probabilita": 0.419,
+          "atteso": 23.63,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "totale",
+          "soglia": 25.5,
+          "verso": "Over",
+          "quota": 1.6471,
+          "probabilita": 0.3515,
+          "atteso": 23.63,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "totale",
+          "soglia": 26.5,
+          "verso": "Over",
+          "quota": 1.8572,
+          "probabilita": 0.2892,
+          "atteso": 23.63,
+          "fuoriFinestra": true
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 3.5,
+          "verso": "Under",
+          "quota": 2.625,
+          "probabilita": 0.3953,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 3.5,
+          "verso": "Over",
+          "quota": 1.3,
+          "probabilita": 0.6047,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 4.5,
+          "verso": "Under",
+          "quota": 1.875,
+          "probabilita": 0.5748,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 4.5,
+          "verso": "Over",
+          "quota": 1.625,
+          "probabilita": 0.4252,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 5.5,
+          "verso": "Under",
+          "quota": 1.4706,
+          "probabilita": 0.7276,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "casa",
+          "soglia": 5.5,
+          "verso": "Over",
+          "quota": 2.125,
+          "probabilita": 0.2724,
+          "atteso": 4.3,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Under",
+          "quota": 2.4,
+          "probabilita": 0.3118,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 2.5,
+          "verso": "Over",
+          "quota": 1.3637,
+          "probabilita": 0.6882,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Under",
+          "quota": 1.6667,
+          "probabilita": 0.5096,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "quota": 1.8182,
+          "probabilita": 0.4904,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Under",
+          "quota": 1.32,
+          "probabilita": 0.6866,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "trasferta",
+          "soglia": 4.5,
+          "verso": "Over",
+          "quota": 2.5455,
+          "probabilita": 0.3134,
+          "atteso": 3.68,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 7.5,
+          "verso": "Under",
+          "quota": 2.2223,
+          "probabilita": 0.4619,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 7.5,
+          "verso": "Over",
+          "quota": 1.4286,
+          "probabilita": 0.5381,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 8.5,
+          "verso": "Under",
+          "quota": 1.75,
+          "probabilita": 0.5948,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 8.5,
+          "verso": "Over",
+          "quota": 1.7334,
+          "probabilita": 0.4052,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Under",
+          "quota": 1.4546,
+          "probabilita": 0.7127,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "shots_on_target",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Over",
+          "quota": 2.1667,
+          "probabilita": 0.2873,
+          "atteso": 7.98,
+          "fuoriFinestra": false
+        },
+        {
           "bersaglio": "corner_kicks",
           "lato": "casa",
           "soglia": 5.5,
           "verso": "Under",
-          "quota": 1.8334,
-          "probabilita": 0.6208,
-          "atteso": 4.98,
+          "quota": 1.7,
+          "probabilita": 0.6298,
+          "atteso": 4.92,
           "fuoriFinestra": false
         },
         {
@@ -332,119 +656,119 @@
           "lato": "casa",
           "soglia": 5.5,
           "verso": "Over",
-          "quota": 1.7778,
-          "probabilita": 0.3792,
-          "atteso": 4.98,
+          "quota": 1.9231,
+          "probabilita": 0.3702,
+          "atteso": 4.92,
           "fuoriFinestra": false
         },
         {
           "bersaglio": "corner_kicks",
           "lato": "trasferta",
           "soglia": 3.5,
+          "verso": "Under",
+          "quota": 1.96,
+          "probabilita": 0.4557,
+          "atteso": 4.06,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "trasferta",
+          "soglia": 3.5,
+          "verso": "Over",
+          "quota": 1.6667,
+          "probabilita": 0.5443,
+          "atteso": 4.06,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 8.5,
+          "verso": "Under",
+          "quota": 2.1429,
+          "probabilita": 0.4668,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 8.5,
+          "verso": "Over",
+          "quota": 1.5556,
+          "probabilita": 0.5332,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Under",
+          "quota": 1.68,
+          "probabilita": 0.59,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Over",
+          "quota": 1.9412,
+          "probabilita": 0.41,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 10.5,
+          "verso": "Under",
+          "quota": 1.4,
+          "probabilita": 0.7006,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 10.5,
+          "verso": "Over",
+          "quota": 2.5455,
+          "probabilita": 0.2994,
+          "atteso": 8.98,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Under",
+          "quota": 1.8,
+          "probabilita": 0.6282,
+          "atteso": 2.18,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "casa",
+          "soglia": 2.5,
+          "verso": "Over",
+          "quota": 1.8,
+          "probabilita": 0.3718,
+          "atteso": 2.18,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "yellow_cards",
+          "lato": "trasferta",
+          "soglia": 2.5,
           "verso": "Under",
           "quota": 2,
           "probabilita": 0.4906,
-          "atteso": 3.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "trasferta",
-          "soglia": 3.5,
-          "verso": "Over",
-          "quota": 1.6364,
-          "probabilita": 0.5094,
-          "atteso": 3.86,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Under",
-          "quota": 2.3334,
-          "probabilita": 0.4845,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 8.5,
-          "verso": "Over",
-          "quota": 1.4706,
-          "probabilita": 0.5155,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 9.5,
-          "verso": "Under",
-          "quota": 1.8,
-          "probabilita": 0.6074,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 9.5,
-          "verso": "Over",
-          "quota": 1.8,
-          "probabilita": 0.3926,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 10.5,
-          "verso": "Under",
-          "quota": 1.48,
-          "probabilita": 0.7163,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 10.5,
-          "verso": "Over",
-          "quota": 2.3,
-          "probabilita": 0.2837,
-          "atteso": 8.84,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Under",
-          "quota": 1.8,
-          "probabilita": 0.6712,
-          "atteso": 2.02,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "casa",
-          "soglia": 2.5,
-          "verso": "Over",
-          "quota": 1.8,
-          "probabilita": 0.3288,
-          "atteso": 2.02,
-          "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "yellow_cards",
-          "lato": "trasferta",
-          "soglia": 2.5,
-          "verso": "Under",
-          "quota": 2,
-          "probabilita": 0.5065,
-          "atteso": 2.65,
+          "atteso": 2.71,
           "fuoriFinestra": false
         },
         {
@@ -453,8 +777,8 @@
           "soglia": 2.5,
           "verso": "Over",
           "quota": 1.6334,
-          "probabilita": 0.4935,
-          "atteso": 2.65,
+          "probabilita": 0.5094,
+          "atteso": 2.71,
           "fuoriFinestra": false
         },
         {
@@ -463,8 +787,8 @@
           "soglia": 4.5,
           "verso": "Under",
           "quota": 2.3,
-          "probabilita": 0.5006,
-          "atteso": 4.67,
+          "probabilita": 0.4597,
+          "atteso": 4.89,
           "fuoriFinestra": false
         },
         {
@@ -473,8 +797,8 @@
           "soglia": 4.5,
           "verso": "Over",
           "quota": 1.48,
-          "probabilita": 0.4994,
-          "atteso": 4.67,
+          "probabilita": 0.5403,
+          "atteso": 4.89,
           "fuoriFinestra": false
         },
         {
@@ -483,8 +807,8 @@
           "soglia": 5.5,
           "verso": "Under",
           "quota": 1.7143,
-          "probabilita": 0.674,
-          "atteso": 4.67,
+          "probabilita": 0.635,
+          "atteso": 4.89,
           "fuoriFinestra": false
         },
         {
@@ -493,8 +817,8 @@
           "soglia": 5.5,
           "verso": "Over",
           "quota": 1.9,
-          "probabilita": 0.326,
-          "atteso": 4.67,
+          "probabilita": 0.365,
+          "atteso": 4.89,
           "fuoriFinestra": false
         },
         {
@@ -503,8 +827,8 @@
           "soglia": 6.5,
           "verso": "Under",
           "quota": 1.4,
-          "probabilita": 0.809,
-          "atteso": 4.67,
+          "probabilita": 0.7778,
+          "atteso": 4.89,
           "fuoriFinestra": false
         },
         {
@@ -513,479 +837,469 @@
           "soglia": 6.5,
           "verso": "Over",
           "quota": 2.5455,
-          "probabilita": 0.191,
-          "atteso": 4.67,
+          "probabilita": 0.2222,
+          "atteso": 4.89,
           "fuoriFinestra": false
         }
       ],
       "attesi": [
         {
           "bersaglio": "total_shots",
-          "casa": 13.48,
-          "trasferta": 10.11,
-          "totale": 23.58
+          "casa": 13.74,
+          "trasferta": 9.89,
+          "totale": 23.63
         },
         {
           "bersaglio": "shots_on_target",
-          "casa": 4.35,
-          "trasferta": 3.62,
-          "totale": 7.97
+          "casa": 4.3,
+          "trasferta": 3.68,
+          "totale": 7.98
         },
         {
           "bersaglio": "corner_kicks",
-          "casa": 4.98,
-          "trasferta": 3.86,
-          "totale": 8.84
+          "casa": 4.92,
+          "trasferta": 4.06,
+          "totale": 8.98
         },
         {
           "bersaglio": "fouls",
-          "casa": 14.2,
-          "trasferta": 14.5,
-          "totale": 28.7
+          "casa": 14.31,
+          "trasferta": 14.35,
+          "totale": 28.67
         },
         {
           "bersaglio": "yellow_cards",
-          "casa": 2.02,
-          "trasferta": 2.65,
-          "totale": 4.67
+          "casa": 2.18,
+          "trasferta": 2.71,
+          "totale": 4.89
         },
         {
           "bersaglio": "offsides",
-          "casa": 1.75,
-          "trasferta": 2.13,
-          "totale": 3.88
+          "casa": 1.62,
+          "trasferta": 2.51,
+          "totale": 4.13
         },
         {
           "bersaglio": "goalkeeper_saves",
-          "casa": 2.29,
-          "trasferta": 3.16,
-          "totale": 5.44
+          "casa": 2.36,
+          "trasferta": 3.17,
+          "totale": 5.53
         }
       ],
       "gol": {
         "nostri": {
-          "attesiCasa": 1.57,
+          "attesiCasa": 1.58,
           "attesiTrasferta": 1.62,
           "campioneCasa": 3,
           "campioneTrasferta": 3,
-          "campioneLega": 134,
+          "campioneLega": 174,
           "xgCasa": 0,
           "xgTrasferta": 0,
-          "xgLegaCasa": 0.08,
-          "xgLegaTrasferta": 0.07,
+          "xgLegaCasa": 0.23,
+          "xgLegaTrasferta": 0.18,
           "esito": {
-            "uno": 0.3730533966729093,
-            "x": 0.23447975937914092,
-            "due": 0.3924668439479493
+            "uno": 0.3756521038123852,
+            "x": 0.23417055175376486,
+            "due": 0.3901773444338497
           },
           "doppiaChance": {
-            "unoX": 0.6075331560520503,
-            "xDue": 0.6269466033270902,
-            "unoDue": 0.7655202406208585
+            "unoX": 0.60982265556615,
+            "xDue": 0.6243478961876145,
+            "unoDue": 0.7658294482462349
           },
           "overUnder": [
             {
               "linea": 0.5,
-              "sopra": 0.959,
-              "sotto": 0.041
+              "sopra": 0.9593,
+              "sotto": 0.0407
             },
             {
               "linea": 1.5,
-              "sopra": 0.8279,
-              "sotto": 0.1721
+              "sopra": 0.829,
+              "sotto": 0.171
             },
             {
               "linea": 2.5,
-              "sopra": 0.6187,
-              "sotto": 0.3813
+              "sopra": 0.6204,
+              "sotto": 0.3796
             },
             {
               "linea": 3.5,
-              "sopra": 0.396,
-              "sotto": 0.604
+              "sopra": 0.3978,
+              "sotto": 0.6022
             },
             {
               "linea": 4.5,
-              "sopra": 0.2182,
-              "sotto": 0.7818
+              "sopra": 0.2197,
+              "sotto": 0.7803
             },
             {
               "linea": 5.5,
-              "sopra": 0.1047,
-              "sotto": 0.8953
+              "sopra": 0.1056,
+              "sotto": 0.8944
             }
           ],
-          "gg": 0.6357990601377369,
-          "ng": 0.3642009398622631,
+          "gg": 0.6371584260221831,
+          "ng": 0.3628415739778169,
           "multigolPartita": [
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.1721
+              "probabilita": 0.171
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.3813
+              "probabilita": 0.3796
             },
             {
               "da": 0,
               "a": 3,
-              "probabilita": 0.604
+              "probabilita": 0.6022
             },
             {
               "da": 0,
               "a": 4,
-              "probabilita": 0.7818
+              "probabilita": 0.7803
             },
             {
               "da": 0,
               "a": 5,
-              "probabilita": 0.8953
-            },
-            {
-              "da": 0,
-              "a": 6,
-              "probabilita": 0.9558
+              "probabilita": 0.8944
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.3403
+              "probabilita": 0.3389
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.563
+              "probabilita": 0.5615
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.7408
+              "probabilita": 0.7396
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.8543
+              "probabilita": 0.8537
             },
             {
               "da": 1,
               "a": 6,
-              "probabilita": 0.9147
+              "probabilita": 0.9146
             },
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.9423
+              "probabilita": 0.9424
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.4319
+              "probabilita": 0.4312
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.6097
+              "probabilita": 0.6093
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.7233
+              "probabilita": 0.7234
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.7837
+              "probabilita": 0.7843
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.8113
+              "probabilita": 0.8121
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.4005
+              "probabilita": 0.4008
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.5141
+              "probabilita": 0.5148
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.5745
+              "probabilita": 0.5757
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.6021
+              "probabilita": 0.6035
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.2914
+              "probabilita": 0.2922
             },
             {
               "da": 4,
               "a": 6,
-              "probabilita": 0.3518
+              "probabilita": 0.3531
             },
             {
               "da": 4,
               "a": 7,
-              "probabilita": 0.3794
+              "probabilita": 0.3809
             },
             {
               "da": 5,
               "a": 6,
-              "probabilita": 0.174
+              "probabilita": 0.1749
             },
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.2016
+              "probabilita": 0.2028
             },
             {
               "da": 6,
               "a": 7,
-              "probabilita": 0.088
+              "probabilita": 0.0887
             }
           ],
           "multigolCasa": [
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.5334
+              "probabilita": 0.5302
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.7901
+              "probabilita": 0.7875
             },
             {
               "da": 0,
               "a": 3,
-              "probabilita": 0.9247
+              "probabilita": 0.9234
             },
             {
               "da": 0,
               "a": 4,
-              "probabilita": 0.9777
+              "probabilita": 0.9772
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.5828
+              "probabilita": 0.5823
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.7175
+              "probabilita": 0.7182
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.7705
+              "probabilita": 0.772
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.7872
+              "probabilita": 0.789
             },
             {
               "da": 1,
               "a": 6,
-              "probabilita": 0.7916
+              "probabilita": 0.7935
             },
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.7926
+              "probabilita": 0.7946
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.3914
+              "probabilita": 0.3932
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.4444
+              "probabilita": 0.447
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.461
+              "probabilita": 0.4641
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.4654
+              "probabilita": 0.4685
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.4664
+              "probabilita": 0.4696
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.1877
+              "probabilita": 0.1897
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.2044
+              "probabilita": 0.2067
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.2087
+              "probabilita": 0.2112
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.2097
+              "probabilita": 0.2122
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.0697
+              "probabilita": 0.0708
             },
             {
               "da": 4,
               "a": 6,
-              "probabilita": 0.0741
+              "probabilita": 0.0753
             },
             {
               "da": 4,
               "a": 7,
-              "probabilita": 0.075
+              "probabilita": 0.0763
             },
             {
               "da": 5,
               "a": 6,
-              "probabilita": 0.0211
+              "probabilita": 0.0215
             },
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.022
+              "probabilita": 0.0226
             },
             {
               "da": 6,
               "a": 7,
-              "probabilita": 0.0054
+              "probabilita": 0.0055
             }
           ],
           "multigolTrasferta": [
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.5187
+              "probabilita": 0.5192
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.7783
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "probabilita": 0.9185
+              "probabilita": 0.7788
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.5803
+              "probabilita": 0.5804
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.7205
+              "probabilita": 0.7204
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.7772
+              "probabilita": 0.777
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.7956
+              "probabilita": 0.7953
             },
             {
               "da": 1,
               "a": 6,
-              "probabilita": 0.8006
+              "probabilita": 0.8002
             },
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.8017
+              "probabilita": 0.8014
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.3998
+              "probabilita": 0.3995
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.4565
+              "probabilita": 0.4561
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.4749
+              "probabilita": 0.4744
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.4799
+              "probabilita": 0.4794
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.481
+              "probabilita": 0.4805
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.1969
+              "probabilita": 0.1966
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.2153
+              "probabilita": 0.2149
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.2202
+              "probabilita": 0.2198
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.2214
+              "probabilita": 0.221
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.0751
+              "probabilita": 0.0749
             },
             {
               "da": 4,
               "a": 6,
-              "probabilita": 0.0801
+              "probabilita": 0.0799
             },
             {
               "da": 4,
               "a": 7,
-              "probabilita": 0.0812
+              "probabilita": 0.081
             },
             {
               "da": 5,
@@ -995,7 +1309,7 @@
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.0245
+              "probabilita": 0.0244
             },
             {
               "da": 6,
@@ -1006,59 +1320,59 @@
         },
         "quote": {
           "esito": {
-            "uno": 1.85,
-            "x": 3.25,
-            "due": 4.2
+            "uno": 1.8,
+            "x": 3.4,
+            "due": 4.25
           },
           "doppiaChance": {
-            "unoX": 1.2,
-            "xDue": 1.8667,
-            "unoDue": 1.2353
+            "unoX": 1.1905,
+            "xDue": 1.92,
+            "unoDue": 1.2308
           },
           "drawNoBet": {
-            "uno": 1.3637,
-            "due": 3
+            "uno": 1.3334,
+            "due": 3.1
           },
           "overUnder": [
             {
               "soglia": 0.5,
               "verso": "Over",
-              "quota": 1.04
+              "quota": 1.05
             },
             {
               "soglia": 0.5,
               "verso": "Under",
-              "quota": 8
+              "quota": 7.5
             },
             {
               "soglia": 1.5,
               "verso": "Over",
-              "quota": 1.2667
+              "quota": 1.2858
             },
             {
               "soglia": 1.5,
               "verso": "Under",
-              "quota": 3.3334
+              "quota": 3.2
             },
             {
               "soglia": 2.5,
               "verso": "Over",
-              "quota": 1.8334
+              "quota": 1.8889
             },
             {
               "soglia": 2.5,
               "verso": "Under",
-              "quota": 1.8334
+              "quota": 1.7858
             },
             {
               "soglia": 3.5,
               "verso": "Over",
-              "quota": 3
+              "quota": 3.2
             },
             {
               "soglia": 3.5,
               "verso": "Under",
-              "quota": 1.32
+              "quota": 1.2858
             },
             {
               "soglia": 4.5,
@@ -1081,53 +1395,48 @@
               "quota": 1.02
             }
           ],
-          "gol": 1.75,
-          "noGol": 1.9334,
+          "gol": 1.8,
+          "noGol": 1.875,
           "multigolPartita": [
             {
               "da": 0,
               "a": 1,
-              "quota": 3.3
+              "quota": 3.2
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 1.8182
+              "quota": 1.775
             },
             {
               "da": 0,
               "a": 3,
-              "quota": 1.3077
+              "quota": 1.2858
             },
             {
               "da": 0,
               "a": 4,
-              "quota": 1.1112
+              "quota": 1.1
             },
             {
               "da": 0,
               "a": 5,
-              "quota": 1.04
-            },
-            {
-              "da": 0,
-              "a": 6,
-              "quota": 1.01
+              "quota": 1.0334
             },
             {
               "da": 1,
               "a": 2,
-              "quota": 2.1
+              "quota": 2.05
             },
             {
               "da": 1,
               "a": 3,
-              "quota": 1.4546
+              "quota": 1.4286
             },
             {
               "da": 1,
               "a": 4,
-              "quota": 1.2
+              "quota": 1.1905
             },
             {
               "da": 1,
@@ -1142,99 +1451,99 @@
             {
               "da": 1,
               "a": 7,
-              "quota": 1.06
+              "quota": 1.0625
             },
             {
               "da": 2,
               "a": 3,
-              "quota": 1.9334
+              "quota": 1.926
             },
             {
               "da": 2,
               "a": 4,
-              "quota": 1.5
+              "quota": 1.5129
             },
             {
               "da": 2,
               "a": 5,
-              "quota": 1.3449
+              "quota": 1.3572
             },
             {
               "da": 2,
               "a": 6,
-              "quota": 1.2858
+              "quota": 1.3
             },
             {
               "da": 2,
               "a": 7,
-              "quota": 1.26
+              "quota": 1.2778
             },
             {
               "da": 3,
               "a": 4,
-              "quota": 2.375
+              "quota": 2.4286
             },
             {
               "da": 3,
               "a": 5,
-              "quota": 2.025
+              "quota": 2.05
             },
             {
               "da": 3,
               "a": 6,
+              "quota": 1.926
+            },
+            {
+              "da": 3,
+              "a": 7,
               "quota": 1.885
             },
             {
-              "da": 3,
-              "a": 7,
-              "quota": 1.84
-            },
-            {
               "da": 4,
               "a": 5,
-              "quota": 3.5
+              "quota": 3.65
             },
             {
               "da": 4,
               "a": 6,
+              "quota": 3.25
+            },
+            {
+              "da": 4,
+              "a": 7,
               "quota": 3.15
             },
             {
-              "da": 4,
-              "a": 7,
-              "quota": 3.05
-            },
-            {
               "da": 5,
               "a": 6,
-              "quota": 6.5
+              "quota": 6.75
             },
             {
               "da": 5,
               "a": 7,
-              "quota": 6
+              "quota": 6.25
             },
             {
               "da": 6,
               "a": 7,
-              "quota": 13
+              "quota": 14
             }
           ],
           "multigolCasa": [
             {
               "da": 0,
               "a": 1,
-              "quota": 1.8
+              "quota": 1.7858
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 1.2308
+              "quota": 1.2223
             },
             {
               "da": 0,
               "a": 3,
-              "quota": 1.0667
+              "quota": 1.0625
             },
             {
               "da": 0,
@@ -1259,12 +1568,12 @@
             {
               "da": 1,
               "a": 5,
-              "quota": 1.1765
+              "quota": 1.1819
             },
             {
               "da": 1,
               "a": 6,
-              "quota": 1.174
+              "quota": 1.175
             },
             {
               "da": 1,
@@ -1279,22 +1588,22 @@
             {
               "da": 2,
               "a": 4,
-              "quota": 1.9412
+              "quota": 1.95
             },
             {
               "da": 2,
               "a": 5,
-              "quota": 1.8696
+              "quota": 1.875
             },
             {
               "da": 2,
               "a": 6,
-              "quota": 1.85
+              "quota": 1.8572
             },
             {
               "da": 2,
               "a": 7,
-              "quota": 1.8462
+              "quota": 1.85
             },
             {
               "da": 3,
@@ -1319,12 +1628,12 @@
             {
               "da": 4,
               "a": 5,
-              "quota": 8.5
+              "quota": 9
             },
             {
               "da": 4,
               "a": 6,
-              "quota": 8
+              "quota": 8.5
             },
             {
               "da": 4,
@@ -1351,92 +1660,87 @@
             {
               "da": 0,
               "a": 1,
-              "quota": 1.2858
+              "quota": 1.26
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 1.0589
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "quota": 1.01
+              "quota": 1.05
             },
             {
               "da": 1,
               "a": 2,
-              "quota": 1.6364
+              "quota": 1.6667
             },
             {
               "da": 1,
               "a": 3,
+              "quota": 1.5264
+            },
+            {
+              "da": 1,
+              "a": 4,
+              "quota": 1.5
+            },
+            {
+              "da": 1,
+              "a": 5,
               "quota": 1.4879
             },
             {
               "da": 1,
-              "a": 4,
-              "quota": 1.4546
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "quota": 1.4546
-            },
-            {
-              "da": 1,
               "a": 6,
-              "quota": 1.4546
+              "quota": 1.4879
             },
             {
               "da": 1,
               "a": 7,
-              "quota": 1.4445
+              "quota": 1.4879
             },
             {
               "da": 2,
               "a": 3,
+              "quota": 3.45
+            },
+            {
+              "da": 2,
+              "a": 4,
+              "quota": 3.3334
+            },
+            {
+              "da": 2,
+              "a": 5,
               "quota": 3.3
             },
             {
               "da": 2,
-              "a": 4,
-              "quota": 3.15
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 3.1429
-            },
-            {
-              "da": 2,
               "a": 6,
-              "quota": 3.1
+              "quota": 3.3
             },
             {
               "da": 2,
               "a": 7,
-              "quota": 3.1
+              "quota": 3.3
             },
             {
               "da": 3,
               "a": 4,
-              "quota": 9
+              "quota": 9.5
             },
             {
               "da": 3,
               "a": 5,
-              "quota": 8.5
+              "quota": 9.5
             },
             {
               "da": 3,
               "a": 6,
-              "quota": 8.5
+              "quota": 9.5
             },
             {
               "da": 3,
               "a": 7,
-              "quota": 8.5
+              "quota": 9.5
             },
             {
               "da": 4,
@@ -1475,49 +1779,57 @@
         {
           "bersaglio": "fouls",
           "probabilita": {
-            "uno": 0.4404,
-            "x": 0.0747,
-            "due": 0.4849
+            "uno": 0.4594,
+            "x": 0.0748,
+            "due": 0.4658
           },
           "quote": null
         },
         {
           "bersaglio": "total_shots",
           "probabilita": {
-            "uno": 0.6782,
-            "x": 0.0566,
-            "due": 0.2653
+            "uno": 0.7058,
+            "x": 0.054,
+            "due": 0.2401
           },
-          "quote": null
+          "quote": {
+            "1": 1.3847,
+            "2": 2.9,
+            "X": 16
+          }
         },
         {
           "bersaglio": "shots_on_target",
           "probabilita": {
-            "uno": 0.5274,
-            "x": 0.1311,
-            "due": 0.3415
+            "uno": 0.5139,
+            "x": 0.1319,
+            "due": 0.3542
           },
-          "quote": null
+          "quote": {
+            "1": 1.5455,
+            "2": 2.8572,
+            "X": 7.5
+          }
         },
         {
           "bersaglio": "corner_kicks",
           "probabilita": {
-            "uno": 0.5684,
-            "x": 0.1131,
-            "due": 0.3185
+            "uno": 0.5383,
+            "x": 0.1144,
+            "due": 0.3473
           },
           "quote": {
-            "1": 1.375,
-            "2": 3.4,
+            "1": 1.4167,
+            "2": 3.2,
             "X": 7.5
           }
         },
         {
           "bersaglio": "yellow_cards",
           "probabilita": {
-            "uno": 0.2969,
-            "x": 0.1834,
-            "due": 0.5197
+            "uno": 0.3167,
+            "x": 0.1809,
+            "due": 0.5024
           },
           "quote": {
             "1": 2.51,
@@ -1528,9 +1840,9 @@
         {
           "bersaglio": "offsides",
           "probabilita": {
-            "uno": 0.3245,
-            "x": 0.204,
-            "due": 0.4716
+            "uno": 0.2456,
+            "x": 0.1845,
+            "due": 0.5699
           },
           "quote": null
         }
@@ -1545,52 +1857,90 @@
       "legaId": 18,
       "lega": "MLS",
       "kickoff": "2026-10-07T00:30:00+00:00",
-      "consigliato": null,
-      "consigli": [],
-      "famiglie": [
+      "consigliato": {
+        "tipo": "linea",
+        "bersaglio": "total_shots",
+        "lato": "trasferta",
+        "soglia": 12.5,
+        "verso": "Over",
+        "probabilita": 0.6222,
+        "promessa": 0.5366,
+        "base": 39.6,
+        "gareDiBase": 404,
+        "affidabilita": 61,
+        "scarto": 22.6,
+        "atteso": 14.35,
+        "intervallo": {
+          "basso": 9,
+          "alto": 20
+        },
+        "origine": "modello",
+        "pesoDelModello": 1,
+        "cause": [
+          {
+            "nome": "il livello della squadra",
+            "effetto": 0.091
+          },
+          {
+            "nome": "il fattore campo",
+            "effetto": -0.051
+          },
+          {
+            "nome": "l'incrocio fra attacco e difesa",
+            "effetto": 0.049
+          }
+        ],
+        "arbitro": null
+      },
+      "consigli": [
         {
-          "bersaglio": "offsides",
-          "lato": "totale",
-          "soglia": 1.5,
+          "tipo": "linea",
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 12.5,
           "verso": "Over",
-          "probabilita": 0.8604,
-          "promessa": 0.8373,
-          "base": 82.93,
-          "gareDiBase": 369,
-          "affidabilita": 73,
-          "atteso": 3.47,
+          "probabilita": 0.6222,
+          "promessa": 0.5366,
+          "base": 39.6,
+          "gareDiBase": 404,
+          "affidabilita": 61,
+          "scarto": 22.6,
+          "atteso": 14.35,
           "intervallo": {
-            "basso": 2,
-            "alto": 5
+            "basso": 9,
+            "alto": 20
           },
           "origine": "modello",
           "pesoDelModello": 1,
           "cause": [
             {
-              "nome": "quanto concede l'avversario",
-              "effetto": 0.034
+              "nome": "il livello della squadra",
+              "effetto": 0.091
             },
             {
-              "nome": "il livello della squadra",
-              "effetto": -0.011
+              "nome": "il fattore campo",
+              "effetto": -0.051
             },
             {
               "nome": "l'incrocio fra attacco e difesa",
-              "effetto": 0.01
+              "effetto": 0.049
             }
-          ]
-        },
+          ],
+          "arbitro": null
+        }
+      ],
+      "famiglie": [
         {
           "bersaglio": "goalkeeper_saves",
           "lato": "casa",
           "soglia": 1.5,
           "verso": "Over",
-          "probabilita": 0.838,
-          "promessa": 0.7639,
-          "base": 71.58,
-          "gareDiBase": 387,
+          "probabilita": 0.8353,
+          "promessa": 0.7612,
+          "base": 72.21,
+          "gareDiBase": 403,
           "affidabilita": 55,
-          "atteso": 3.46,
+          "atteso": 3.43,
           "intervallo": {
             "basso": 2,
             "alto": 5
@@ -1608,39 +1958,71 @@
             },
             {
               "nome": "il livello della squadra",
-              "effetto": -0.017
+              "effetto": -0.016
             }
           ]
         },
         {
-          "bersaglio": "total_shots",
+          "bersaglio": "offsides",
           "lato": "casa",
-          "soglia": 10.5,
-          "verso": "Over",
-          "probabilita": 0.6114,
-          "promessa": 0.6532,
-          "base": 73.71,
-          "gareDiBase": 388,
-          "affidabilita": 61,
-          "atteso": 12.11,
+          "soglia": 2.5,
+          "verso": "Under",
+          "probabilita": 0.7538,
+          "promessa": 0.7307,
+          "base": 75.32,
+          "gareDiBase": 385,
+          "affidabilita": 73,
+          "atteso": 1.71,
           "intervallo": {
-            "basso": 7,
-            "alto": 17
+            "basso": 1,
+            "alto": 3
           },
           "origine": "modello",
           "pesoDelModello": 1,
           "cause": [
             {
-              "nome": "quanto concede l'avversario",
-              "effetto": -0.204
+              "nome": "quanto produce l'avversario",
+              "effetto": 0.016
+            },
+            {
+              "nome": "quanto subisce la squadra",
+              "effetto": -0.013
             },
             {
               "nome": "il fattore campo",
-              "effetto": 0.062
-            },
+              "effetto": 0.013
+            }
+          ]
+        },
+        {
+          "bersaglio": "total_shots",
+          "lato": "trasferta",
+          "soglia": 12.5,
+          "verso": "Over",
+          "probabilita": 0.6222,
+          "promessa": 0.5366,
+          "base": 39.6,
+          "gareDiBase": 404,
+          "affidabilita": 61,
+          "atteso": 14.35,
+          "intervallo": {
+            "basso": 9,
+            "alto": 20
+          },
+          "origine": "modello",
+          "pesoDelModello": 1,
+          "cause": [
             {
               "nome": "il livello della squadra",
-              "effetto": 0.059
+              "effetto": 0.091
+            },
+            {
+              "nome": "il fattore campo",
+              "effetto": -0.051
+            },
+            {
+              "nome": "l'incrocio fra attacco e difesa",
+              "effetto": 0.049
             }
           ]
         }
@@ -1659,7 +2041,7 @@
           "verso": "Under",
           "quota": 1.6667,
           "probabilita": null,
-          "atteso": 4.63,
+          "atteso": 4.67,
           "fuoriFinestra": false
         },
         {
@@ -1669,7 +2051,7 @@
           "verso": "Over",
           "quota": 1.96,
           "probabilita": null,
-          "atteso": 4.63,
+          "atteso": 4.67,
           "fuoriFinestra": false
         },
         {
@@ -1679,7 +2061,7 @@
           "verso": "Under",
           "quota": 1.9231,
           "probabilita": null,
-          "atteso": 5.64,
+          "atteso": 5.68,
           "fuoriFinestra": false
         },
         {
@@ -1689,7 +2071,7 @@
           "verso": "Over",
           "quota": 1.6924,
           "probabilita": null,
-          "atteso": 5.64,
+          "atteso": 5.68,
           "fuoriFinestra": false
         },
         {
@@ -1699,7 +2081,7 @@
           "verso": "Under",
           "quota": 2.1,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1709,7 +2091,7 @@
           "verso": "Over",
           "quota": 1.5834,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1719,7 +2101,7 @@
           "verso": "Under",
           "quota": 1.6667,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1729,7 +2111,7 @@
           "verso": "Over",
           "quota": 1.96,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1739,7 +2121,7 @@
           "verso": "Under",
           "quota": 1.3847,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1749,7 +2131,7 @@
           "verso": "Over",
           "quota": 2.5715,
           "probabilita": null,
-          "atteso": 10.27,
+          "atteso": 10.36,
           "fuoriFinestra": false
         },
         {
@@ -1776,27 +2158,27 @@
       "attesi": [
         {
           "bersaglio": "total_shots",
-          "casa": 12.11,
-          "trasferta": 14.55,
-          "totale": 26.66
+          "casa": 12.65,
+          "trasferta": 14.35,
+          "totale": 27
         },
         {
           "bersaglio": "shots_on_target",
-          "casa": 5.12,
-          "trasferta": 6.01,
-          "totale": 11.13
+          "casa": 5.25,
+          "trasferta": 6.11,
+          "totale": 11.36
         },
         {
           "bersaglio": "corner_kicks",
-          "casa": 4.63,
-          "trasferta": 5.64,
-          "totale": 10.27
+          "casa": 4.67,
+          "trasferta": 5.68,
+          "totale": 10.36
         },
         {
           "bersaglio": "fouls",
-          "casa": 12.35,
-          "trasferta": 14.46,
-          "totale": 26.8
+          "casa": 12.43,
+          "trasferta": 14.31,
+          "totale": 26.74
         },
         {
           "bersaglio": "yellow_cards",
@@ -1806,15 +2188,15 @@
         },
         {
           "bersaglio": "offsides",
-          "casa": 1.68,
-          "trasferta": 1.78,
-          "totale": 3.47
+          "casa": 1.71,
+          "trasferta": 1.8,
+          "totale": 3.51
         },
         {
           "bersaglio": "goalkeeper_saves",
-          "casa": 3.46,
-          "trasferta": 2.74,
-          "totale": 6.2
+          "casa": 3.43,
+          "trasferta": 2.81,
+          "totale": 6.24
         }
       ],
       "gol": {
@@ -1823,115 +2205,115 @@
           "attesiTrasferta": 1.73,
           "campioneCasa": 12,
           "campioneTrasferta": 11,
-          "campioneLega": 776,
+          "campioneLega": 808,
           "xgCasa": 1.89,
           "xgTrasferta": 2.12,
           "xgLegaCasa": 1.7,
-          "xgLegaTrasferta": 1.34,
+          "xgLegaTrasferta": 1.35,
           "esito": {
-            "uno": 0.28630023062392385,
-            "x": 0.23554069363350302,
-            "due": 0.4781590757425734
+            "uno": 0.2857568479954677,
+            "x": 0.23567681398789236,
+            "due": 0.47856633801664056
           },
           "doppiaChance": {
-            "unoX": 0.5218409242574269,
-            "xDue": 0.7136997693760764,
-            "unoDue": 0.7644593063664973
+            "unoX": 0.52143366198336,
+            "xDue": 0.7142431520045329,
+            "unoDue": 0.7643231860121082
           },
           "overUnder": [
             {
               "linea": 0.5,
-              "sopra": 0.9515,
-              "sotto": 0.0485
+              "sopra": 0.9513,
+              "sotto": 0.0487
             },
             {
               "linea": 1.5,
-              "sopra": 0.8047,
-              "sotto": 0.1953
+              "sopra": 0.8041,
+              "sotto": 0.1959
             },
             {
               "linea": 2.5,
-              "sopra": 0.5827,
-              "sotto": 0.4173
+              "sopra": 0.5817,
+              "sotto": 0.4183
             },
             {
               "linea": 3.5,
-              "sopra": 0.3586,
-              "sotto": 0.6414
+              "sopra": 0.3577,
+              "sotto": 0.6423
             },
             {
               "linea": 4.5,
-              "sopra": 0.1892,
-              "sotto": 0.8108
+              "sopra": 0.1884,
+              "sotto": 0.8116
             },
             {
               "linea": 5.5,
-              "sopra": 0.0866,
-              "sotto": 0.9134
+              "sopra": 0.0861,
+              "sotto": 0.9139
             },
             {
               "linea": 6.5,
-              "sopra": 0.0348,
-              "sotto": 0.9652
+              "sopra": 0.0346,
+              "sotto": 0.9654
             }
           ],
-          "gg": 0.5972923710568128,
-          "ng": 0.40270762894318723,
+          "gg": 0.5964097853951122,
+          "ng": 0.40359021460488775,
           "multigolPartita": [
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.1953
+              "probabilita": 0.1959
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.4173
+              "probabilita": 0.4183
             },
             {
               "da": 0,
               "a": 3,
-              "probabilita": 0.6414
+              "probabilita": 0.6423
             },
             {
               "da": 0,
               "a": 4,
-              "probabilita": 0.8108
+              "probabilita": 0.8116
             },
             {
               "da": 0,
               "a": 5,
-              "probabilita": 0.9134
+              "probabilita": 0.9139
             },
             {
               "da": 0,
               "a": 6,
-              "probabilita": 0.9652
+              "probabilita": 0.9654
             },
             {
               "da": 0,
               "a": 7,
-              "probabilita": 0.9875
+              "probabilita": 0.9876
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.3688
+              "probabilita": 0.3696
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.5929
+              "probabilita": 0.5936
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.7623
+              "probabilita": 0.7629
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.8649
+              "probabilita": 0.8652
             },
             {
               "da": 1,
@@ -1941,204 +2323,204 @@
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.939
+              "probabilita": 0.9389
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.4461
+              "probabilita": 0.4464
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.6156
+              "probabilita": 0.6157
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.7182
+              "probabilita": 0.718
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.7699
+              "probabilita": 0.7695
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.7923
+              "probabilita": 0.7917
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.3935
+              "probabilita": 0.3933
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.4961
+              "probabilita": 0.4955
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.5478
+              "probabilita": 0.5471
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.5702
+              "probabilita": 0.5693
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.2721
+              "probabilita": 0.2715
             },
             {
               "da": 4,
               "a": 6,
-              "probabilita": 0.3238
+              "probabilita": 0.323
             },
             {
               "da": 4,
               "a": 7,
-              "probabilita": 0.3462
+              "probabilita": 0.3453
             },
             {
               "da": 5,
               "a": 6,
-              "probabilita": 0.1543
+              "probabilita": 0.1538
             },
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.1767
+              "probabilita": 0.176
             },
             {
               "da": 6,
               "a": 7,
-              "probabilita": 0.0741
+              "probabilita": 0.0737
             }
           ],
           "multigolCasa": [
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.6295
+              "probabilita": 0.6306
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.8588
+              "probabilita": 0.8596
             },
             {
               "da": 0,
               "a": 3,
-              "probabilita": 0.9576
+              "probabilita": 0.958
             },
             {
               "da": 0,
               "a": 4,
-              "probabilita": 0.9896
+              "probabilita": 0.9897
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.5843
+              "probabilita": 0.5841
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.6831
+              "probabilita": 0.6825
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.715
+              "probabilita": 0.7142
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.7232
+              "probabilita": 0.7224
             },
             {
               "da": 1,
               "a": 6,
-              "probabilita": 0.725
+              "probabilita": 0.7242
             },
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.7254
+              "probabilita": 0.7245
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.3282
+              "probabilita": 0.3274
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.3601
+              "probabilita": 0.3591
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.3684
+              "probabilita": 0.3672
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.3701
+              "probabilita": 0.369
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.3705
+              "probabilita": 0.3693
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.1307
+              "probabilita": 0.1301
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.139
+              "probabilita": 0.1383
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.1408
+              "probabilita": 0.1401
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.1411
+              "probabilita": 0.1404
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.0402
+              "probabilita": 0.0399
             },
             {
               "da": 4,
               "a": 6,
+              "probabilita": 0.0417
+            },
+            {
+              "da": 4,
+              "a": 7,
               "probabilita": 0.042
             },
             {
-              "da": 4,
-              "a": 7,
-              "probabilita": 0.0423
-            },
-            {
               "da": 5,
               "a": 6,
-              "probabilita": 0.01
+              "probabilita": 0.0099
             },
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.0104
+              "probabilita": 0.0103
             },
             {
               "da": 6,
@@ -2150,122 +2532,122 @@
             {
               "da": 0,
               "a": 1,
-              "probabilita": 0.4828
+              "probabilita": 0.4832
             },
             {
               "da": 0,
               "a": 2,
-              "probabilita": 0.7483
+              "probabilita": 0.7486
             },
             {
               "da": 0,
               "a": 3,
-              "probabilita": 0.9017
+              "probabilita": 0.9019
             },
             {
               "da": 0,
               "a": 4,
-              "probabilita": 0.9682
+              "probabilita": 0.9683
             },
             {
               "da": 1,
               "a": 2,
-              "probabilita": 0.5717
+              "probabilita": 0.5718
             },
             {
               "da": 1,
               "a": 3,
-              "probabilita": 0.7251
+              "probabilita": 0.725
             },
             {
               "da": 1,
               "a": 4,
-              "probabilita": 0.7916
+              "probabilita": 0.7914
             },
             {
               "da": 1,
               "a": 5,
-              "probabilita": 0.8146
+              "probabilita": 0.8144
             },
             {
               "da": 1,
               "a": 6,
-              "probabilita": 0.8213
+              "probabilita": 0.8211
             },
             {
               "da": 1,
               "a": 7,
-              "probabilita": 0.8229
+              "probabilita": 0.8227
             },
             {
               "da": 2,
               "a": 3,
-              "probabilita": 0.4189
+              "probabilita": 0.4187
             },
             {
               "da": 2,
               "a": 4,
-              "probabilita": 0.4854
+              "probabilita": 0.485
             },
             {
               "da": 2,
               "a": 5,
-              "probabilita": 0.5084
+              "probabilita": 0.508
             },
             {
               "da": 2,
               "a": 6,
-              "probabilita": 0.5151
+              "probabilita": 0.5147
             },
             {
               "da": 2,
               "a": 7,
-              "probabilita": 0.5167
+              "probabilita": 0.5163
             },
             {
               "da": 3,
               "a": 4,
-              "probabilita": 0.2199
+              "probabilita": 0.2196
             },
             {
               "da": 3,
               "a": 5,
-              "probabilita": 0.243
+              "probabilita": 0.2427
             },
             {
               "da": 3,
               "a": 6,
-              "probabilita": 0.2496
+              "probabilita": 0.2493
             },
             {
               "da": 3,
               "a": 7,
-              "probabilita": 0.2513
+              "probabilita": 0.2509
             },
             {
               "da": 4,
               "a": 5,
-              "probabilita": 0.0895
+              "probabilita": 0.0894
             },
             {
               "da": 4,
               "a": 6,
-              "probabilita": 0.0962
+              "probabilita": 0.096
             },
             {
               "da": 4,
               "a": 7,
-              "probabilita": 0.0979
+              "probabilita": 0.0977
             },
             {
               "da": 5,
               "a": 6,
-              "probabilita": 0.0297
+              "probabilita": 0.0296
             },
             {
               "da": 5,
               "a": 7,
-              "probabilita": 0.0314
+              "probabilita": 0.0313
             },
             {
               "da": 6,
@@ -2770,9 +3152,9 @@
         {
           "bersaglio": "total_shots",
           "probabilita": {
-            "uno": 0.3272,
-            "x": 0.0573,
-            "due": 0.6154
+            "uno": 0.3693,
+            "x": 0.059,
+            "due": 0.5717
           },
           "quote": null
         },
@@ -2802,9 +3184,9 @@
         {
           "bersaglio": "offsides",
           "probabilita": {
-            "uno": 0.3687,
-            "x": 0.2205,
-            "due": 0.4107
+            "uno": 0.3711,
+            "x": 0.219,
+            "due": 0.4098
           },
           "quote": null
         }
