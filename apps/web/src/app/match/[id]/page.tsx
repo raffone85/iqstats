@@ -117,6 +117,10 @@ import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
+import {
+  DOMANDA_MASSIMA, interpreta, leggiRichiesta, NON_DISPONIBILE, rispostaSulleLinee,
+} from "@/server/iqstats/assistente-gara";
+import { AssistenteGara } from "@/components/assistente-scheda";
 import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
 import { causeDellaLettura } from "@/server/iqstats/projection/cause";
@@ -545,6 +549,25 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     readFeatureDecision("engine.read"),
   ]);
   const senzaAccount = !insight.allowed && insight.code === "unauthenticated";
+
+  // **L'assistente della gara.** La domanda arriva dall'indirizzo, il modello la traduce in
+  // una richiesta e i numeri li calcola il motore: vedi `assistente-gara.ts`. Si chiama il
+  // modello solo dove c'e' qualcosa da rispondere - una proiezione, il piano che la
+  // mostra, una gara ancora da giocare - cosi' un indirizzo qualunque non spende richieste.
+  const domandaGrezza = (await searchParams).domanda;
+  const domanda = typeof domandaGrezza === "string"
+    ? domandaGrezza.trim().slice(0, DOMANDA_MASSIMA)
+    : "";
+  const assistenteAttivo = motore.allowed && proiezioni !== null && detail.status !== "finished";
+  const squadreDellaGara = { casa: detail.homeTeam, trasferta: detail.awayTeam };
+  const tradotta = assistenteAttivo && domanda !== ""
+    ? await interpreta(domanda, squadreDellaGara)
+    : null;
+  const rispostaAssistente = !assistenteAttivo || domanda === ""
+    ? null
+    : tradotta === null
+      ? NON_DISPONIBILE
+      : rispostaSulleLinee(leggiRichiesta(tradotta), proiezioni.bersagli, quoteDelBanco, squadreDellaGara);
 
   // **Il modello del confronto e' il nostro, quando c'e'.** Fino al 2 settembre 2026 la
   // colonna «Modello» del pannello del mercato veniva dalla previsione della fonte: un
@@ -1197,6 +1220,15 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             />
             {motore.allowed ? <VerificaSection verifica={verifica} taratura={taratura} /> : null}
           </>
+        ) : null}
+
+        {assistenteAttivo ? (
+          <AssistenteGara
+            gara={eventId}
+            domanda={domanda}
+            risposta={rispostaAssistente}
+            stagione={typeof chiesto === "string" ? chiesto : null}
+          />
         ) : null}
 
         {aree.insight ? (

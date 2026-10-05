@@ -49,3 +49,65 @@ export function AssistenteScheda({ risposta }: Readonly<{ risposta: Risposta }>)
     </section>
   );
 }
+
+/**
+ * L'assistente dentro il dossier: una domanda sulle linee di questa gara.
+ *
+ * **Un modulo normale, come su `/cerca`.** La domanda sta nell'indirizzo, la risposta la
+ * rende il server e la pagina funziona anche senza JavaScript. `#chiedi` riporta chi ha
+ * chiesto davanti alla risposta invece che in cima a un dossier lungo.
+ */
+export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
+  gara: number;
+  domanda: string;
+  risposta: Risposta | null;
+  /** La finestra scelta da chi legge: la domanda non deve farla perdere. */
+  stagione: string | null;
+}>) {
+  return (
+    <section className="assistente" id="chiedi" aria-labelledby="chiedi-title">
+      <p className="dossier-kick">Chiedi</p>
+      <h2 id="chiedi-title" className="squad-section-title">
+        {risposta === null ? "Una domanda sulle linee di questa gara" : risposta.titolo}
+      </h2>
+
+      <form className="cerca-modulo" action={`/match/${gara}#chiedi`} method="get">
+        {stagione === null ? null : <input type="hidden" name="stagione" value={stagione} />}
+        <label className="cerca-etichetta" htmlFor="domanda">Domanda</label>
+        <input
+          id="domanda"
+          name="domanda"
+          type="text"
+          className="cerca-campo"
+          defaultValue={domanda}
+          maxLength={200}
+          placeholder="Conviene l’over 9,5 tiri della squadra ospite?"
+          autoComplete="off"
+          required
+        />
+        <button type="submit" className="cerca-invia">Chiedi</button>
+      </form>
+
+      {risposta === null || risposta.righe.length === 0 ? null : (
+        <span className="squad-player-stats">
+          {risposta.righe.map((riga) => (
+            <span className="squad-stat" key={riga.etichetta}>
+              <em>{riga.etichetta}</em>
+              <b>{riga.valore}</b>
+              {riga.nota === null ? null : <i className="assistente-nota">{riga.nota}</i>}
+            </span>
+          ))}
+        </span>
+      )}
+
+      {risposta === null ? null : <p className="dossier-src">{risposta.spiegazione}</p>}
+
+      <p className="dossier-src">
+        <b>Posso sbagliare, e in un modo solo:</b> capendo male la domanda. La probabilità
+        la calcola il motore, la quota è del banco e il valore è la loro differenza: nessuno
+        di questi numeri lo scrivo io. Controlla che il titolo qui sopra sia quello che
+        volevi chiedere.
+      </p>
+    </section>
+  );
+}
