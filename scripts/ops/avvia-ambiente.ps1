@@ -13,7 +13,10 @@
 # Uso:
 #     & "$PSScriptRoot\..\ops\avvia-ambiente.ps1"
 
-$ErrorActionPreference = 'Stop'
+# Non `Stop`: con `2>$null` PowerShell 5.1 trasforma lo stderr di `docker` in un errore
+# terminante, e a motore spento lo script cadeva prima di avviarlo (4 ottobre 2026).
+# Ci si ferma sui `throw`.
+$ErrorActionPreference = 'Continue'
 
 $container = $env:IQSTATS_PG_CONTAINER
 if ([string]::IsNullOrWhiteSpace($container)) { throw 'IQSTATS_PG_CONTAINER non dichiarata' }
