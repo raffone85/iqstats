@@ -17,6 +17,7 @@ import {
   rispostaSulleFormazioni,
   rispostaSulleLinee,
   rispostaSullArbitro,
+  rispostaSulPerche,
 } from "../src/server/iqstats/assistente-gara.ts";
 import { mercatiGol } from "../src/server/iqstats/projection/gol.ts";
 import type { GolDellaGara } from "../src/server/iqstats/projection-runtime.ts";
@@ -322,4 +323,29 @@ test("un numero intero diventa soglia dalla parola che lo precede, e senza parol
   assert.deepEqual(soglie("più di 4,5 tiri", 4), []);
   // «più di 4» non deve agganciare il 4 di «più di 45».
   assert.deepEqual(soglie("più di 45 falli", 4), []);
+});
+
+test("il perche' mostra le cause col segno, dichiara il ripiego e non spiega un numero che non c'e'", () => {
+  const letta = leggiDomanda({ tema: "perche", bersaglio: "fouls", lato: "trasferta" });
+  assert.ok(letta !== null && letta.tema === "perche");
+  const risposta = rispostaSulPerche(
+    letta, { atteso: 13.4, origine: "ripiego" },
+    [{ nome: "l'arbitro", effetto: 0.08 }, { nome: "quanto concede l'avversario", effetto: -0.05 }],
+    SQUADRE,
+  );
+  assert.equal(risposta.titolo, "Perché falli di Sassuolo");
+  assert.deepEqual(risposta.righe[0], { etichetta: "L'arbitro", valore: "+8%", nota: "alza l'atteso" });
+  assert.deepEqual(risposta.righe[1].valore, "−5%");
+  assert.match(risposta.spiegazione, /attende 13,4 falli di Sassuolo/);
+  assert.match(risposta.spiegazione, /stima di ripiego e non dal modello/);
+
+  assert.match(rispostaSulPerche(letta, { atteso: 13.4, origine: "modello" }, [], SQUADRE).spiegazione,
+    /Nessuna causa sposta il numero/);
+  assert.match(rispostaSulPerche(letta, null, [], SQUADRE).spiegazione, /non c'è un numero da spiegare/);
+
+  // Senza famiglia, o con una che non esiste, risponde su che cosa poggiano le stime.
+  const generica = leggiDomanda({ tema: "perche", bersaglio: "goals" });
+  assert.deepEqual(generica, { tema: "perche", bersaglio: null, lato: "totale" });
+  assert.ok(generica !== null && generica.tema === "perche");
+  assert.match(rispostaSulPerche(generica, null, [], SQUADRE).spiegazione, /Non entrano le quote del banco/);
 });

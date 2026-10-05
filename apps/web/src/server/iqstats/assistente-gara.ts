@@ -129,7 +129,13 @@ export type Domanda =
     readonly lato: Lato;
   }
   | { readonly tema: "formazioni"; readonly indisponibili: boolean; readonly lato: Lato }
-  | { readonly tema: "classifica" | "forma" | "precedenti" };
+  | { readonly tema: "classifica" | "forma" | "precedenti" }
+  | {
+    readonly tema: "perche";
+    /** `null`: «su che cosa si basano le stime?», senza una famiglia precisa. */
+    readonly bersaglio: keyof typeof FAMIGLIE_CHIESTE | null;
+    readonly lato: Lato;
+  };
 
 /** Dal JSON del modello a una domanda, o `null` se non e' fra quelle a cui si risponde. */
 export function leggiDomanda(grezzo: unknown, domanda = ""): Domanda | null {
@@ -144,6 +150,12 @@ export function leggiDomanda(grezzo: unknown, domanda = ""): Domanda | null {
   }
   if (r.tema === "formazioni") {
     return { tema: "formazioni", indisponibili: r.aspetto === "indisponibili", lato };
+  }
+  if (r.tema === "perche") {
+    const bersaglio = typeof r.bersaglio === "string" && r.bersaglio in FAMIGLIE_CHIESTE
+      ? r.bersaglio as keyof typeof FAMIGLIE_CHIESTE
+      : null;
+    return { tema: "perche", bersaglio, lato };
   }
   if (r.tema === "gol") {
     return {
@@ -223,7 +235,8 @@ const NON_CAPITO: Risposta = {
     + "gialli, fuorigioco e parate; i gol, cioè esito, doppia chance, over e under, "
     + "entrambe segnano, multigol e risultato esatto; l'arbitro e quanto pesa sulle stime; "
     + "i giocatori che possono segnare o prendere il giallo, le formazioni e gli assenti; "
-    + "classifica, forma e precedenti; e come si presenta la gara. Per esempio: «conviene "
+    + "classifica, forma e precedenti; da che cosa nasce una stima; e come si presenta la "
+    + "gara. Per esempio: «conviene "
     + "l'over 9,5 tiri della squadra ospite?», «chi è favorito?», «chi può segnare?».",
 };
 
@@ -790,6 +803,66 @@ export function rispostaSuiPrecedenti(
   };
 }
 
+/** Di che cosa sono fatte le stime, detto una volta: sono i gruppi di `cause.ts`. */
+const INGRESSI_DEL_MOTORE =
+  "Ogni stima nasce da quanto la squadra produce e subisce in stagione e nelle ultime gare, "
+  + "da quanto produce e concede l'avversario, dall'incrocio fra l'attacco dell'una e la "
+  + "difesa dell'altra, dal fattore campo, dalla norma del campionato e, dove il modello li "
+  + "usa, dall'arbitro, dagli undici attesi e dalla classifica. Non entrano le quote del "
+  + "banco, il meteo e l'elenco degli assenti.";
+
+/** Da dove viene il valore di un lato: il modello, una miscela col ripiego, o il ripiego. */
+export type OrigineDellaStima = "modello" | "miscela" | "ripiego";
+
+/**
+ * Perche' il motore attende quel numero: le cause che pesano di piu', con il loro segno.
+ *
+ * @param cause  le cause di `causeDellaLettura` sullo stesso lato, dalla piu' grande
+ * @param stima  `null` dove il motore non ha una stima di quella famiglia su quel lato
+ */
+export function rispostaSulPerche(
+  domanda: Extract<Domanda, { tema: "perche" }>,
+  stima: { readonly atteso: number; readonly origine: OrigineDellaStima } | null,
+  cause: readonly { readonly nome: string; readonly effetto: number }[],
+  squadre: { readonly casa: string; readonly trasferta: string },
+): Risposta {
+  if (domanda.bersaglio === null) {
+    return {
+      capito: true, titolo: "Da che cosa nascono le stime", righe: [], collegamento: null,
+      spiegazione: `${INGRESSI_DEL_MOTORE} Chiedi di una famiglia - «perché tanti falli?», `
+        + "«da cosa dipendono i tiri dell'ospite?» - per vedere che cosa pesa in questa gara.",
+    };
+  }
+  const famiglia = FAMIGLIE_CHIESTE[domanda.bersaglio];
+  const diChi = domanda.lato === "totale" ? "in totale" : `di ${squadre[domanda.lato]}`;
+  const titolo = `Perché ${famiglia} ${diChi}`;
+  if (stima === null) {
+    return {
+      capito: true, titolo, righe: [], collegamento: null,
+      spiegazione: `Su questa gara il motore non ha una stima dei ${famiglia} ${diChi}, quindi `
+        + "non c'è un numero da spiegare.",
+    };
+  }
+  const righe = cause.map((c): RigaDiRisposta => ({
+    etichetta: c.nome.charAt(0).toUpperCase() + c.nome.slice(1),
+    valore: `${c.effetto >= 0 ? "+" : "−"}${Math.round(Math.abs(c.effetto) * 100)}%`,
+    nota: c.effetto >= 0 ? "alza l'atteso" : "abbassa l'atteso",
+  }));
+  const daDove = stima.origine === "modello" ? ""
+    : stima.origine === "miscela"
+      ? " Il numero mescola il modello con una stima di ripiego, perché la storia di una delle due squadre è corta."
+      : " Il numero viene da una stima di ripiego e non dal modello: manca un ingresso che gli serve, di solito l'arbitro o abbastanza gare.";
+  return {
+    capito: true, titolo, righe, collegamento: null,
+    spiegazione: `Il motore attende ${numero(stima.atteso)} ${famiglia} ${diChi}.`
+      + (righe.length === 0
+        ? " Nessuna causa sposta il numero di più dell'1%: sta vicino a quello che queste squadre fanno di solito."
+        : " Sono le cause che pesano di più, ognuna con quanto alza o abbassa quel numero "
+          + "rispetto a una gara media: sono già dentro la stima, non vanno sommate.")
+      + daDove,
+  };
+}
+
 /**
  * Le istruzioni al modello, tenute corte di proposito.
  *
@@ -801,8 +874,8 @@ export function rispostaSuiPrecedenti(
 const ISTRUZIONI = `Traduci in JSON la domanda di un utente su una partita di calcio. Scrivi solo il JSON, non rispondere alla domanda. Ometti i campi che non servono.
 
 Campi:
-- tema: linee | gol | arbitro | riassunto | giocatori | formazioni | classifica | forma | precedenti | null
-- bersaglio (solo linee): total_shots (tiri) | shots_on_target (tiri in porta, nello specchio) | corner_kicks (corner, calci d'angolo) | fouls (falli) | yellow_cards (gialli, ammonizioni, cartellini) | offsides (fuorigioco) | goalkeeper_saves (parate)
+- tema: linee | gol | arbitro | riassunto | giocatori | formazioni | classifica | forma | precedenti | perche | null
+- bersaglio (linee e perche): total_shots (tiri) | shots_on_target (tiri in porta, nello specchio) | corner_kicks (corner, calci d'angolo) | fouls (falli) | yellow_cards (gialli, ammonizioni, cartellini) | offsides (fuorigioco) | goalkeeper_saves (parate)
 - mercato (solo gol): esito (chi vince, favorito, pareggio, 1X2) | doppia_chance (1X, X2, 12) | draw_no_bet | over_under (over o under gol) | gol_nogol (entrambe segnano) | multigol | risultato (risultato esatto). Omesso se chiede dei gol in generale.
 - aspetto: marcatori | cartellini (solo giocatori) | indisponibili (solo formazioni: assenti, infortunati, squalificati, chi manca)
 - lato: casa | trasferta (ospite) | totale. Se la domanda nomina una squadra usa i nomi dati sotto.
@@ -817,6 +890,7 @@ Temi:
 - giocatori: chi segna, marcatori, quale giocatore rischia il giallo, giocatori da guardare.
 - formazioni: undici, titolari, modulo, chi gioca, chi manca.
 - classifica: posizione, punti. forma: come arrivano le squadre, ultimi risultati. precedenti: scontri diretti, l'ultima volta fra le due.
+- perche: perche' una stima e' alta o bassa, da cosa dipende, su cosa si basa; col bersaglio se nomina una famiglia.
 - null: meteo, stadio, altre partite, tutto cio' che non riguarda questa gara.
 
 Esempi:
@@ -831,6 +905,7 @@ Esempi:
 "chi puo' segnare nel Monza?" -> {"tema":"giocatori","aspetto":"marcatori","lato":"casa"}
 "chi puo' segnare stasera?" -> {"tema":"giocatori","aspetto":"marcatori"}
 "ci sono infortunati?" -> {"tema":"formazioni","aspetto":"indisponibili"}
+"perche' cosi' tanti falli per il Sassuolo?" -> {"tema":"perche","bersaglio":"fouls","lato":"trasferta"}
 "che tempo fa?" -> {"tema":null}`;
 
 /**

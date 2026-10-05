@@ -121,6 +121,7 @@ import {
   DOMANDA_MASSIMA, interpreta, leggiDomanda, NON_DISPONIBILE, rispostaRiassunto,
   rispostaSuiGiocatori, rispostaSuiGol, rispostaSuiPrecedenti, rispostaSullaClassifica,
   rispostaSullaForma, rispostaSulleFormazioni, rispostaSulleLinee, rispostaSullArbitro,
+  rispostaSulPerche,
 } from "@/server/iqstats/assistente-gara";
 import { frasiDellaGara } from "@/server/iqstats/riassunto-gara";
 import { vociDeiGol } from "@/server/iqstats/voci-dei-gol";
@@ -1020,6 +1021,30 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     if (letta.tema === "classifica") return rispostaSullaClassifica(standings, squadreDellaGara);
     if (letta.tema === "forma") return rispostaSullaForma(homeForm, awayForm, squadreDellaGara);
     if (letta.tema === "precedenti") return rispostaSuiPrecedenti(h2h, squadreDellaGara);
+    if (letta.tema === "perche") {
+      const b = proiezioni.bersagli.find((x) => x.target === letta.bersaglio);
+      const prevista = b !== undefined && b.casa.stato === "prevista" && b.trasferta.stato === "prevista"
+        ? { casa: b.casa, trasferta: b.trasferta, totale: b.totale }
+        : null;
+      const atteso = prevista === null ? null
+        : letta.lato === "totale" ? prevista.totale?.valoreAtteso ?? null
+          : prevista[letta.lato].valoreAtteso;
+      // Sul totale l'origine e' la peggiore dei due lati, come in Expected: un totale che
+      // somma un lato dal modello e uno da un ripiego poggia anche su un ripiego.
+      const origini = prevista === null ? []
+        : letta.lato === "totale"
+          ? [prevista.casa.origineDelValore, prevista.trasferta.origineDelValore]
+          : [prevista[letta.lato].origineDelValore];
+      return rispostaSulPerche(
+        letta,
+        atteso === null ? null : {
+          atteso,
+          origine: origini.includes("ripiego") ? "ripiego" : origini.includes("miscela") ? "miscela" : "modello",
+        },
+        b === undefined ? [] : causeDellaLettura(letta.lato, b.casa, b.trasferta, 5),
+        squadreDellaGara,
+      );
+    }
     const c = garaExpected?.consigliato ?? null;
     return rispostaRiassunto(garaExpected === null ? [] : frasiDellaGara(
       garaExpected,
