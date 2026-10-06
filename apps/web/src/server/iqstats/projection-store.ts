@@ -450,7 +450,15 @@ export class ProjectionObservationStore {
       quando,
       lato,
       stagione: gara.seasonId,
-      turno: gara.roundNumber,
+      // **Dove la fonte non dichiara il turno, lo si ricava: l'ennesima gara della squadra
+      // nella stagione.** La MLS non lo dichiara mai, unica lega su 29, e senza turno corner
+      // e tiri in porta restavano sempre in ripiego. Misurato il 6 ottobre 2026 con
+      // `scripts/projection/models/turno_ricavato.py`: dove la fonte lo dichiara le due
+      // previsioni differiscono dello 0,011% e dello 0,12% in media, e in MLS il modello
+      // batte il ripiego su una stagione mai vista (corner 2,142 contro 2,234, tiri in
+      // porta 1,836 contro 1,880). Il turno della fonte, quando c'e', vince sempre.
+      turno: gara.roundNumber
+        ?? storiaSquadra.filter((riga) => riga.stagione === gara.seasonId).length + 1,
       derby: gara.isDerby === null ? null : (gara.isDerby ? 1 : 0),
       squadra: storiaSquadra,
       avversario: prima(loroSoltanto, quando, gara.matchId),
