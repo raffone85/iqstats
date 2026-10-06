@@ -876,9 +876,9 @@ const ISTRUZIONI = `Traduci in JSON la domanda di un utente su una partita di ca
 Campi:
 - tema: linee | gol | arbitro | riassunto | giocatori | formazioni | classifica | forma | precedenti | perche | null
 - bersaglio (linee e perche): total_shots (tiri) | shots_on_target (tiri in porta, nello specchio) | corner_kicks (corner, calci d'angolo) | fouls (falli) | yellow_cards (gialli, ammonizioni, cartellini) | offsides (fuorigioco) | goalkeeper_saves (parate)
-- mercato (solo gol): esito (chi vince, favorito, pareggio, 1X2) | doppia_chance (1X, X2, 12) | draw_no_bet | over_under (over o under gol) | gol_nogol (entrambe segnano) | multigol | risultato (risultato esatto). Omesso se chiede dei gol in generale.
+- mercato (solo gol): esito (chi vince, favorito, pareggio, 1X2) | doppia_chance (1X, X2, 12) | draw_no_bet | over_under (over o under gol) | gol_nogol (entrambe segnano, gol o no gol, GG, NG) | multigol | risultato (risultato esatto). Omesso se chiede dei gol in generale.
 - aspetto: marcatori | cartellini (solo giocatori) | indisponibili (solo formazioni: assenti, infortunati, squalificati, chi manca)
-- lato: casa | trasferta (ospite) | totale. Se la domanda nomina una squadra usa i nomi dati sotto.
+- lato: casa | trasferta (ospite) | totale. Se la domanda nomina una squadra usa i nomi dati sotto. Se non nomina ne' una squadra ne' casa o ospite, ometti lato: non sceglierne una.
 - verso: over (sopra, piu' di, almeno, oltre) | under (sotto, meno di, al massimo)
 - soglie: tutti i numeri di soglia nominati, anche quelli detti assenti o senza ripetere over/under, COSI' COME SONO DETTI, senza fare conti: "8,5" o "8 e mezzo" -> 8.5; "piu' di 4" -> 4; "almeno 5" -> 5; "under 4,5" -> 4.5.
 
