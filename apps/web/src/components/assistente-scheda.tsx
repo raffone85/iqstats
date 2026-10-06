@@ -10,7 +10,6 @@
 // scheda sbagliata, perche' i numeri non li scrive lui.
 import Link from "next/link";
 
-import { AssistenteModulo } from "@/components/assistente-modulo";
 import type { Risposta } from "@/server/iqstats/assistente";
 
 export function AssistenteScheda({ risposta }: Readonly<{ risposta: Risposta }>) {
@@ -47,66 +46,6 @@ export function AssistenteScheda({ risposta }: Readonly<{ risposta: Risposta }>)
           {risposta.collegamento.testo}
         </Link>
       )}
-    </section>
-  );
-}
-
-/**
- * Le domande pronte sotto il campo. Una per tema fra i piu' chiesti: chi apre la pagina
- * vede subito che cosa si puo' domandare, invece di una casella vuota.
- */
-const DOMANDE_PRONTE = [
-  "Che partita sarà?",
-  "Chi è favorito?",
-  "Chi può segnare?",
-  "Com'è l'arbitro?",
-  "Ci sono infortunati?",
-] as const;
-
-/**
- * L'assistente dentro il dossier: una domanda su questa gara.
- *
- * **Sta in cima, sotto la testata.** Il dossier e' lungo decine di schermate e la risposta
- * a una domanda precisa sta a meta' strada: qui si chiede invece di cercare. La domanda
- * sta nell'indirizzo e la risposta la rende il server, quindi funziona anche senza
- * JavaScript; `#chiedi` riporta chi ha chiesto davanti alla risposta.
- */
-export function AssistenteGara({ gara, domanda, risposta, stagione }: Readonly<{
-  gara: number;
-  domanda: string;
-  risposta: Risposta | null;
-  /** La finestra scelta da chi legge: la domanda non deve farla perdere. */
-  stagione: string | null;
-}>) {
-  return (
-    <section className="assistente" id="chiedi" aria-labelledby="chiedi-title">
-      <p className="dossier-kick">Chiedi</p>
-      <h2 id="chiedi-title" className="squad-section-title">
-        {risposta === null ? "Una domanda su questa gara" : risposta.titolo}
-      </h2>
-
-      <AssistenteModulo gara={gara} domanda={domanda} stagione={stagione} pronte={DOMANDE_PRONTE} />
-
-      {risposta === null || risposta.righe.length === 0 ? null : (
-        <span className="squad-player-stats">
-          {risposta.righe.map((riga) => (
-            <span className="squad-stat" key={riga.etichetta}>
-              <em>{riga.etichetta}</em>
-              <b>{riga.valore}</b>
-              {riga.nota === null ? null : <i className="assistente-nota">{riga.nota}</i>}
-            </span>
-          ))}
-        </span>
-      )}
-
-      {risposta === null ? null : <p className="dossier-src">{risposta.spiegazione}</p>}
-
-      <p className="dossier-src">
-        <b>Posso sbagliare, e in un modo solo:</b> capendo male la domanda. I numeri sono
-        quelli del dossier: le probabilità le calcola il motore, le quote sono del banco, le
-        medie vengono dalle gare osservate. Nessuno lo scrivo io. Controlla che il titolo qui
-        sopra sia quello che volevi chiedere.
-      </p>
     </section>
   );
 }

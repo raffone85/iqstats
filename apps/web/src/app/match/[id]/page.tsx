@@ -117,16 +117,9 @@ import { MatchGiocatoriSection } from "@/components/match-giocatori-section";
 import { getLeaguesIndex } from "@/server/iqstats/matches";
 import { getMatchOdds } from "@/server/iqstats/odds";
 import { proiezioniDellaGara, type SenzaProiezione } from "@/server/iqstats/projection-runtime";
-import {
-  DOMANDA_MASSIMA, interpreta, leggiDomanda, NON_DISPONIBILE, rispostaRiassunto,
-  rispostaSuiGiocatori, rispostaSuiGol, rispostaSuiPrecedenti, rispostaSullaClassifica,
-  rispostaSullaForma, rispostaSulleFormazioni, rispostaSulleLinee, rispostaSullArbitro,
-  rispostaSulPerche,
-} from "@/server/iqstats/assistente-gara";
-import { frasiDellaGara } from "@/server/iqstats/riassunto-gara";
-import { vociDeiGol } from "@/server/iqstats/voci-dei-gol";
-import { AssistenteGara } from "@/components/assistente-scheda";
-import { chiDelConsiglio, consiglio } from "@/components/expected-voce";
+import { DOMANDA_MASSIMA } from "@/server/iqstats/assistente-gara";
+import { rispostaDellaGara } from "@/server/iqstats/assistente-gara-dati";
+import { AssistenteGara } from "@/components/assistente-modulo";
 import { eventiProbabili } from "@/server/iqstats/projection/eventi-probabili";
 import { candidateDiGara, ordinaLetture } from "@/server/iqstats/projection/letture-forti";
 import { causeDellaLettura } from "@/server/iqstats/projection/cause";
@@ -556,10 +549,10 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   ]);
   const senzaAccount = !insight.allowed && insight.code === "unauthenticated";
 
-  // **L'assistente della gara.** La domanda arriva dall'indirizzo, il modello la traduce in
-  // una richiesta e i numeri li calcola il motore: vedi `assistente-gara.ts`. Si chiama il
-  // modello solo dove c'e' qualcosa da rispondere - una proiezione, il piano che la
-  // mostra, una gara ancora da giocare - cosi' un indirizzo qualunque non spende richieste.
+  // **L'assistente della gara.** Chi usa la casella chiede con un'azione server e la pagina
+  // non si rifa'. Qui si risponde solo alla domanda che arriva dall'indirizzo: senza
+  // JavaScript, da un collegamento, dopo un ricarico. In entrambi i casi la risposta la
+  // compone `rispostaDellaGara`, che legge solo cio' che il tema chiede.
   const domandaGrezza = (await searchParams).domanda;
   // Senza JavaScript una domanda pronta arriva accanto al campo scritto, vuoto: due valori
   // con lo stesso nome. Vale l'ultimo che dice qualcosa.
@@ -569,10 +562,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   const domanda = typeof domandaScritta === "string"
     ? domandaScritta.trim().slice(0, DOMANDA_MASSIMA)
     : "";
+  // La casella compare dove c'e' qualcosa da rispondere: una proiezione, il piano che la
+  // mostra, una gara ancora da giocare. Sono le stesse condizioni di `rispostaDellaGara`.
   const assistenteAttivo = motore.allowed && proiezioni !== null && detail.status !== "finished";
-  const squadreDellaGara = { casa: detail.homeTeam, trasferta: detail.awayTeam };
-  const tradotta = assistenteAttivo && domanda !== ""
-    ? await interpreta(domanda, squadreDellaGara)
+  const rispostaAssistente = assistenteAttivo && domanda !== ""
+    ? await rispostaDellaGara(eventId, domanda)
     : null;
 
   // **Il modello del confronto e' il nostro, quando c'e'.** Fino al 2 settembre 2026 la
@@ -980,83 +974,6 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       altro: fuori ? detail.homeTeam : detail.awayTeam,
     });
   };
-  // La risposta dell'assistente si compone qui, dove i capitoli hanno gia' i loro numeri:
-  // ogni tema legge gli stessi oggetti della sezione che ne parla, e non ne calcola altri.
-  const rispostaAssistente = (() => {
-    if (!assistenteAttivo || domanda === "") return null;
-    if (tradotta === null) return NON_DISPONIBILE;
-    const letta = leggiDomanda(tradotta, domanda);
-    if (letta === null || letta.tema === "linee") {
-      return rispostaSulleLinee(letta, proiezioni.bersagli, quoteDelBanco, squadreDellaGara);
-    }
-    if (letta.tema === "gol") {
-      const gol = proiezioni.gol;
-      return rispostaSuiGol(
-        letta, gol,
-        gol === null ? null : vociDeiGol(gol.mercati, odds, quoteGolDiGara(eventId)),
-        squadreDellaGara,
-      );
-    }
-    if (letta.tema === "arbitro") {
-      return rispostaSullArbitro({
-        nome: referee?.name ?? null,
-        profilo: arbitroNostro,
-        giudizio: arbitroGiudizio,
-        // Quanto l'arbitro sposta l'atteso totale, dalle stesse cause che spiegano una
-        // lettura: sotto l'uno per cento `causeDellaLettura` non restituisce la voce.
-        influenza: proiezioni.bersagli.flatMap((b) => {
-          const sua = causeDellaLettura("totale", b.casa, b.trasferta, 99)
-            .find((causa) => causa.nome === "l'arbitro");
-          return sua === undefined ? [] : [{ famiglia: nomeFamiglia(b.target), effetto: sua.effetto }];
-        }),
-      }, squadreDellaGara);
-    }
-    if (letta.tema === "giocatori") return rispostaSuiGiocatori(letta, giocatori, squadreDellaGara);
-    if (letta.tema === "formazioni") {
-      const lato = (l: NonNullable<typeof lineups>["home"]) => (l === null ? null : {
-        modulo: l.formation,
-        titolari: l.starters.map((g) => g.name),
-        indisponibili: l.unavailable,
-      });
-      return rispostaSulleFormazioni(letta, lineups === null ? null : {
-        ufficiali: lineups.confirmed, inProva: lineups.beta,
-        casa: lato(lineups.home), trasferta: lato(lineups.away),
-      }, squadreDellaGara);
-    }
-    if (letta.tema === "classifica") return rispostaSullaClassifica(standings, squadreDellaGara);
-    if (letta.tema === "forma") return rispostaSullaForma(homeForm, awayForm, squadreDellaGara);
-    if (letta.tema === "precedenti") return rispostaSuiPrecedenti(h2h, squadreDellaGara);
-    if (letta.tema === "perche") {
-      const b = proiezioni.bersagli.find((x) => x.target === letta.bersaglio);
-      const prevista = b !== undefined && b.casa.stato === "prevista" && b.trasferta.stato === "prevista"
-        ? { casa: b.casa, trasferta: b.trasferta, totale: b.totale }
-        : null;
-      const atteso = prevista === null ? null
-        : letta.lato === "totale" ? prevista.totale?.valoreAtteso ?? null
-          : prevista[letta.lato].valoreAtteso;
-      // Sul totale l'origine e' la peggiore dei due lati, come in Expected: un totale che
-      // somma un lato dal modello e uno da un ripiego poggia anche su un ripiego.
-      const origini = prevista === null ? []
-        : letta.lato === "totale"
-          ? [prevista.casa.origineDelValore, prevista.trasferta.origineDelValore]
-          : [prevista[letta.lato].origineDelValore];
-      return rispostaSulPerche(
-        letta,
-        atteso === null ? null : {
-          atteso,
-          origine: origini.includes("ripiego") ? "ripiego" : origini.includes("miscela") ? "miscela" : "modello",
-        },
-        b === undefined ? [] : causeDellaLettura(letta.lato, b.casa, b.trasferta, 5),
-        squadreDellaGara,
-      );
-    }
-    const c = garaExpected?.consigliato ?? null;
-    return rispostaRiassunto(garaExpected === null ? [] : frasiDellaGara(
-      garaExpected,
-      c === null ? null : `${consiglio(c)} (${chiDelConsiglio(c, garaExpected.casa, garaExpected.fuori)})`,
-    ));
-  })();
-
   const analisi = analisiFinale({
     favorito: verdictFav?.name ?? null,
     // Una famiglia per lettura, senza ripetizioni, e non piu' di due: oltre e' un elenco.
