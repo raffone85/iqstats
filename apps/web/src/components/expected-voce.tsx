@@ -126,11 +126,18 @@ function righeTarate(g: GaraExpected) {
  * **Informativo**: il consigliato non lo legge. Dal 19 settembre 2026 il consigliato propone
  * solo esiti che il banco quota, e gli 1X2 di falli e tiri non comparivano quasi piu': qui
  * restano visibili, con la nostra probabilita' e senza cambiare il criterio.
+ *
+ * **Dove il modello non gira resta l'atteso, dichiarato preliminare.** Una famiglia in
+ * ripiego - arbitro non designato, o un ingresso che la fonte non porta - non ha una
+ * probabilita', ma l'atteso delle due squadre c'e'. Prima la riga scriveva «stima assente»
+ * e sembrava un guasto; e' la stessa scelta del dossier, decisa il 13 settembre 2026.
  */
-function EsitoInBreve({ e, quote, tarate }: {
+function EsitoInBreve({ e, quote, tarate, attesi }: {
   readonly e: EsitoDiFamigliaInGara;
   readonly quote: GaraExpected["quote"];
   readonly tarate: ReturnType<typeof righeTarate>;
+  /** Gli attesi della famiglia sui due lati: assenti in un artefatto vecchio. */
+  readonly attesi: GaraExpected["attesi"][number] | undefined;
 }) {
   // La linea Under/Over quotata piu' probabile della famiglia, dentro gli stessi confini del
   // consigliato: tetto all'ottanta per cento e niente soglie fuori misura. Informativa anche
@@ -143,11 +150,19 @@ function EsitoInBreve({ e, quote, tarate }: {
   const primo = p === null ? null
     : ([["1", p.uno], ["X", p.x], ["2", p.due]] as const).reduce((m, s) => (s[1] > m[1] ? s : m));
   const quotato = primo === null ? e.quote !== null : (e.quote?.[primo[0]] ?? null) !== null;
+  const unDecimale = (n: number) => n.toFixed(1).replace(".", ",");
+  const preliminare = primo !== null || attesi === undefined || attesi.casa === null
+    || attesi.trasferta === null
+    ? null
+    : `${unDecimale(attesi.casa)} – ${unDecimale(attesi.trasferta)}`;
   return (
     <span className="expected-esito" role="listitem">
       <span>{nomeFamiglia(e.bersaglio)}</span>
       <span>
-        <b>{primo === null ? "stima assente" : `${primo[0]} ${Math.round(primo[1] * 100)}%`}</b>
+        <b>
+          {primo !== null ? `${primo[0]} ${Math.round(primo[1] * 100)}%` : preliminare ?? "stima assente"}
+        </b>
+        {preliminare === null ? null : <span className="engine-obs"> attesi, preliminare</span>}
         {quotato ? <span className="engine-obs"> banco</span> : null}
       </span>
       {migliore === null ? <span className="engine-obs">U/O assente</span> : (
@@ -200,11 +215,18 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
         {g.esiti === undefined ? null : (
           <span className="expected-esiti">
             <span className="engine-obs">
-              Per famiglia, informativo: 1X2 (banco = lo quota) e miglior linea U/O del banco
+              Per famiglia, informativo: 1X2 (banco = lo quota) e miglior linea U/O del banco.
+              Dove il modello non gira, gli attesi casa – ospite come stima preliminare.
             </span>
             <span className="expected-esiti-griglia" role="list">
               {g.esiti.map((e) => (
-                <EsitoInBreve key={e.bersaglio} e={e} quote={g.quote} tarate={righeTarate(g)} />
+                <EsitoInBreve
+                  key={e.bersaglio}
+                  e={e}
+                  quote={g.quote}
+                  tarate={righeTarate(g)}
+                  attesi={g.attesi.find((a) => a.bersaglio === e.bersaglio)}
+                />
               ))}
             </span>
           </span>
