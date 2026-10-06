@@ -1,12 +1,12 @@
 {
   "schema": "expected-famiglie/2",
-  "calcolato_il": "2026-10-06T07:32:08.656Z",
+  "calcolato_il": "2026-10-06T13:32:48.449Z",
   "giorni": 3,
-  "gare_in_arrivo": 69,
+  "gare_in_arrivo": 66,
   "gare_con_proiezione": 8,
   "righe": 46,
   "gare_con_quote": 7,
-  "quote_raccolte_il": "2026-10-06T07:20:19+00:00",
+  "quote_raccolte_il": "2026-10-06T13:19:48+00:00",
   "righe_quotate": 116,
   "come_sono_arrivate_le_quote": "dal palinsesto Fastbet/Altenar raccolto da scripts/quote/fastbet-quote.py. Le soglie le detta il bookmaker e la nostra probabilita' si calcola su quelle, dalla stessa distribuzione calibrata delle cinque soglie del motore: la quota non entra nel calcolo. L'aggancio passa da parole significative piu' data e le gare ambigue si buttano; gli esiti sospesi, con quota a zero, non diventano un prezzo.",
   "come_e_stato_scelto": "le stesse funzioni che disegnano il dossier - candidateDiGara, baseDiLega, arricchisci - su ogni gara in arrivo. Una riga per famiglia, la candidata piu' probabile fra i lati e le soglie di quella famiglia. Non si passa da ordinaLetture: quello e' il criterio della cima, che scarta le letture sopra l'ottanta per cento e i falli, e qui scartare direbbe il falso su una sezione che deve mostrare che cosa dice il motore.",
@@ -333,7 +333,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.4546,
+          "quota": 1.5,
           "probabilita": null,
           "atteso": 2.15,
           "fuoriFinestra": false
@@ -343,7 +343,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 2.4,
+          "quota": 2.25,
           "probabilita": null,
           "atteso": 2.15,
           "fuoriFinestra": false
@@ -351,9 +351,9 @@
         {
           "bersaglio": "yellow_cards",
           "lato": "trasferta",
-          "soglia": 2.5,
+          "soglia": 1.5,
           "verso": "Under",
-          "quota": 1.475,
+          "quota": 2.25,
           "probabilita": null,
           "atteso": 2.05,
           "fuoriFinestra": false
@@ -361,9 +361,9 @@
         {
           "bersaglio": "yellow_cards",
           "lato": "trasferta",
-          "soglia": 2.5,
+          "soglia": 1.5,
           "verso": "Over",
-          "quota": 2.3,
+          "quota": 1.5,
           "probabilita": null,
           "atteso": 2.05,
           "fuoriFinestra": false
@@ -373,7 +373,7 @@
           "lato": "totale",
           "soglia": 3.5,
           "verso": "Under",
-          "quota": 2.25,
+          "quota": 2.1667,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -383,7 +383,7 @@
           "lato": "totale",
           "soglia": 3.5,
           "verso": "Over",
-          "quota": 1.525,
+          "quota": 1.5667,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -393,7 +393,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Under",
-          "quota": 1.6334,
+          "quota": 1.6,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -403,7 +403,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Over",
-          "quota": 2.05,
+          "quota": 2.1,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -413,7 +413,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Under",
-          "quota": 1.32,
+          "quota": 1.3,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -423,7 +423,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Over",
-          "quota": 2.9,
+          "quota": 3,
           "probabilita": null,
           "atteso": 4.2,
           "fuoriFinestra": false
@@ -933,13 +933,13 @@
         "quote": {
           "esito": {
             "uno": 2.9,
-            "x": 3.6667,
-            "due": 2.1429
+            "x": 3.75,
+            "due": 2.1
           },
           "doppiaChance": {
-            "unoX": 1.6452,
+            "unoX": 1.6667,
             "xDue": 1.3572,
-            "unoDue": 1.2
+            "unoDue": 1.1905
           },
           "drawNoBet": {
             "uno": 2.25,
@@ -959,126 +959,126 @@
             {
               "soglia": 1.5,
               "verso": "Over",
-              "quota": 1.125
+              "quota": 1.1
             },
             {
               "soglia": 1.5,
               "verso": "Under",
+              "quota": 5.5
+            },
+            {
+              "soglia": 2.5,
+              "verso": "Over",
+              "quota": 1.3847
+            },
+            {
+              "soglia": 2.5,
+              "verso": "Under",
+              "quota": 2.7143
+            },
+            {
+              "soglia": 3.5,
+              "verso": "Over",
+              "quota": 1.96
+            },
+            {
+              "soglia": 3.5,
+              "verso": "Under",
+              "quota": 1.7273
+            },
+            {
+              "soglia": 4.5,
+              "verso": "Over",
+              "quota": 3.1
+            },
+            {
+              "soglia": 4.5,
+              "verso": "Under",
+              "quota": 1.3
+            },
+            {
+              "soglia": 5.5,
+              "verso": "Over",
               "quota": 5
             },
             {
-              "soglia": 2.5,
-              "verso": "Over",
-              "quota": 1.4445
-            },
-            {
-              "soglia": 2.5,
-              "verso": "Under",
-              "quota": 2.5
-            },
-            {
-              "soglia": 3.5,
-              "verso": "Over",
-              "quota": 2.0834
-            },
-            {
-              "soglia": 3.5,
-              "verso": "Under",
-              "quota": 1.6364
-            },
-            {
-              "soglia": 4.5,
-              "verso": "Over",
-              "quota": 3.4
-            },
-            {
-              "soglia": 4.5,
-              "verso": "Under",
-              "quota": 1.25
-            },
-            {
-              "soglia": 5.5,
-              "verso": "Over",
-              "quota": 5.75
-            },
-            {
               "soglia": 5.5,
               "verso": "Under",
-              "quota": 1.091
+              "quota": 1.125
             },
             {
               "soglia": 6.5,
               "verso": "Over",
-              "quota": 9
+              "quota": 8.5
             },
             {
               "soglia": 6.5,
               "verso": "Under",
-              "quota": 1.02
+              "quota": 1.0304
             }
           ],
-          "gol": 1.4167,
-          "noGol": 2.6,
+          "gol": 1.375,
+          "noGol": 2.75,
           "multigolPartita": [
             {
               "da": 0,
               "a": 1,
-              "quota": 5
+              "quota": 5.5
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 2.4546
+              "quota": 2.65
             },
             {
               "da": 0,
               "a": 3,
-              "quota": 1.6154
+              "quota": 1.7
             },
             {
               "da": 0,
               "a": 4,
-              "quota": 1.2441
+              "quota": 1.2858
             },
             {
               "da": 0,
               "a": 5,
-              "quota": 1.1
+              "quota": 1.1177
             },
             {
               "da": 0,
               "a": 6,
-              "quota": 1.0334
+              "quota": 1.0445
             },
             {
               "da": 0,
               "a": 7,
-              "quota": 1.01
+              "quota": 1.015
             },
             {
               "da": 1,
               "a": 2,
-              "quota": 2.7
+              "quota": 2.9
             },
             {
               "da": 1,
               "a": 3,
-              "quota": 1.72
+              "quota": 1.8
             },
             {
               "da": 1,
               "a": 4,
-              "quota": 1.3077
+              "quota": 1.3449
             },
             {
               "da": 1,
               "a": 5,
-              "quota": 1.1429
+              "quota": 1.1539
             },
             {
               "da": 1,
               "a": 6,
-              "quota": 1.07
+              "quota": 1.075
             },
             {
               "da": 1,
@@ -1088,94 +1088,94 @@
             {
               "da": 2,
               "a": 3,
-              "quota": 2.1429
-            },
-            {
-              "da": 2,
-              "a": 4,
-              "quota": 1.5295
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 1.2942
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "quota": 1.1905
-            },
-            {
-              "da": 2,
-              "a": 7,
-              "quota": 1.1539
-            },
-            {
-              "da": 3,
-              "a": 4,
               "quota": 2.2223
             },
             {
+              "da": 2,
+              "a": 4,
+              "quota": 1.5556
+            },
+            {
+              "da": 2,
+              "a": 5,
+              "quota": 1.3
+            },
+            {
+              "da": 2,
+              "a": 6,
+              "quota": 1.1819
+            },
+            {
+              "da": 2,
+              "a": 7,
+              "quota": 1.1429
+            },
+            {
+              "da": 3,
+              "a": 4,
+              "quota": 2.2
+            },
+            {
               "da": 3,
               "a": 5,
-              "quota": 1.75
+              "quota": 1.72
             },
             {
               "da": 3,
               "a": 6,
-              "quota": 1.5667
+              "quota": 1.52
             },
             {
               "da": 3,
               "a": 7,
-              "quota": 1.4879
+              "quota": 1.4445
             },
             {
               "da": 4,
               "a": 5,
-              "quota": 2.8
+              "quota": 2.667
             },
             {
               "da": 4,
               "a": 6,
-              "quota": 2.3334
+              "quota": 2.2223
             },
             {
               "da": 4,
               "a": 7,
-              "quota": 2.1667
+              "quota": 2.05
             },
             {
               "da": 5,
               "a": 6,
-              "quota": 4.1
+              "quota": 3.8
             },
             {
               "da": 5,
               "a": 7,
-              "quota": 3.65
+              "quota": 3.35
             },
             {
               "da": 6,
               "a": 7,
-              "quota": 7
+              "quota": 6.3334
             }
           ],
           "multigolCasa": [
             {
               "da": 0,
               "a": 1,
-              "quota": 1.6667
+              "quota": 1.72
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 1.175
+              "quota": 1.2
             },
             {
               "da": 0,
               "a": 3,
-              "quota": 1.0455
+              "quota": 1.0556
             },
             {
               "da": 0,
@@ -1185,102 +1185,102 @@
             {
               "da": 1,
               "a": 2,
-              "quota": 1.5667
+              "quota": 1.5716
             },
             {
               "da": 1,
               "a": 3,
-              "quota": 1.3077
+              "quota": 1.3
             },
             {
               "da": 1,
               "a": 4,
-              "quota": 1.2353
+              "quota": 1.2223
             },
             {
               "da": 1,
               "a": 5,
-              "quota": 1.2106
+              "quota": 1.2
             },
             {
               "da": 1,
               "a": 6,
-              "quota": 1.2106
+              "quota": 1.1905
             },
             {
               "da": 1,
               "a": 7,
-              "quota": 1.2106
+              "quota": 1.1905
             },
             {
               "da": 2,
               "a": 3,
-              "quota": 2.3
+              "quota": 2.25
             },
             {
               "da": 2,
               "a": 4,
-              "quota": 2.0834
-            },
-            {
-              "da": 2,
-              "a": 5,
-              "quota": 2.0304
-            },
-            {
-              "da": 2,
-              "a": 6,
-              "quota": 2.025
-            },
-            {
-              "da": 2,
-              "a": 7,
               "quota": 2
             },
             {
+              "da": 2,
+              "a": 5,
+              "quota": 1.95
+            },
+            {
+              "da": 2,
+              "a": 6,
+              "quota": 1.9334
+            },
+            {
+              "da": 2,
+              "a": 7,
+              "quota": 1.926
+            },
+            {
               "da": 3,
               "a": 4,
-              "quota": 4.4
+              "quota": 4.2
             },
             {
               "da": 3,
               "a": 5,
-              "quota": 4.1
+              "quota": 3.9
             },
             {
               "da": 3,
               "a": 6,
-              "quota": 4.1
+              "quota": 3.8
             },
             {
               "da": 3,
               "a": 7,
-              "quota": 4.1
+              "quota": 3.8
             },
             {
               "da": 4,
               "a": 5,
-              "quota": 10.5
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "quota": 10.5
-            },
-            {
-              "da": 4,
-              "a": 7,
               "quota": 10
             },
             {
+              "da": 4,
+              "a": 6,
+              "quota": 9.5
+            },
+            {
+              "da": 4,
+              "a": 7,
+              "quota": 9
+            },
+            {
               "da": 5,
               "a": 6,
-              "quota": 26
+              "quota": 21
             },
             {
               "da": 5,
               "a": 7,
-              "quota": 26
+              "quota": 21
             },
             {
               "da": 6,
@@ -1292,127 +1292,127 @@
             {
               "da": 0,
               "a": 1,
-              "quota": 1.975
-            },
-            {
-              "da": 0,
-              "a": 2,
-              "quota": 1.2942
-            },
-            {
-              "da": 0,
-              "a": 3,
-              "quota": 1.091
-            },
-            {
-              "da": 0,
-              "a": 4,
-              "quota": 1.025
-            },
-            {
-              "da": 1,
-              "a": 2,
-              "quota": 1.625
-            },
-            {
-              "da": 1,
-              "a": 3,
-              "quota": 1.2858
-            },
-            {
-              "da": 1,
-              "a": 4,
-              "quota": 1.1819
-            },
-            {
-              "da": 1,
-              "a": 5,
-              "quota": 1.1539
-            },
-            {
-              "da": 1,
-              "a": 6,
-              "quota": 1.1429
-            },
-            {
-              "da": 1,
-              "a": 7,
-              "quota": 1.1334
-            },
-            {
-              "da": 2,
-              "a": 3,
               "quota": 2.075
             },
             {
+              "da": 0,
+              "a": 2,
+              "quota": 1.3334
+            },
+            {
+              "da": 0,
+              "a": 3,
+              "quota": 1.1
+            },
+            {
+              "da": 0,
+              "a": 4,
+              "quota": 1.03
+            },
+            {
+              "da": 1,
+              "a": 2,
+              "quota": 1.6471
+            },
+            {
+              "da": 1,
+              "a": 3,
+              "quota": 1.2942
+            },
+            {
+              "da": 1,
+              "a": 4,
+              "quota": 1.174
+            },
+            {
+              "da": 1,
+              "a": 5,
+              "quota": 1.1334
+            },
+            {
+              "da": 1,
+              "a": 6,
+              "quota": 1.125
+            },
+            {
+              "da": 1,
+              "a": 7,
+              "quota": 1.125
+            },
+            {
+              "da": 2,
+              "a": 3,
+              "quota": 2.025
+            },
+            {
               "da": 2,
               "a": 4,
-              "quota": 1.8
+              "quota": 1.7408
             },
             {
               "da": 2,
               "a": 5,
-              "quota": 1.72
+              "quota": 1.6471
             },
             {
               "da": 2,
               "a": 6,
-              "quota": 1.6924
+              "quota": 1.625
             },
             {
               "da": 2,
               "a": 7,
-              "quota": 1.6897
+              "quota": 1.625
             },
             {
               "da": 3,
               "a": 4,
-              "quota": 3.45
+              "quota": 3.25
             },
             {
               "da": 3,
               "a": 5,
-              "quota": 3.15
+              "quota": 2.95
             },
             {
               "da": 3,
               "a": 6,
-              "quota": 3.1
+              "quota": 2.9
             },
             {
               "da": 3,
               "a": 7,
-              "quota": 3.05
+              "quota": 2.8572
             },
             {
               "da": 4,
               "a": 5,
-              "quota": 7
-            },
-            {
-              "da": 4,
-              "a": 6,
-              "quota": 6.6667
-            },
-            {
-              "da": 4,
-              "a": 7,
               "quota": 6.5
             },
             {
+              "da": 4,
+              "a": 6,
+              "quota": 6
+            },
+            {
+              "da": 4,
+              "a": 7,
+              "quota": 6
+            },
+            {
               "da": 5,
               "a": 6,
-              "quota": 17
+              "quota": 15
             },
             {
               "da": 5,
               "a": 7,
-              "quota": 16
+              "quota": 14
             },
             {
               "da": 6,
               "a": 7,
-              "quota": 36
+              "quota": 31
             }
           ]
         }
@@ -1454,8 +1454,8 @@
           "bersaglio": "yellow_cards",
           "probabilita": null,
           "quote": {
-            "1": 2.35,
-            "2": 2.2858,
+            "1": 2.1,
+            "2": 2.6,
             "X": 3.35
           }
         },
@@ -1784,7 +1784,7 @@
           "lato": "casa",
           "soglia": 5.5,
           "verso": "Under",
-          "quota": 2.0834,
+          "quota": 2,
           "probabilita": 0.5556,
           "atteso": 5.42,
           "fuoriFinestra": false
@@ -1794,7 +1794,7 @@
           "lato": "casa",
           "soglia": 5.5,
           "verso": "Over",
-          "quota": 1.5834,
+          "quota": 1.6364,
           "probabilita": 0.4444,
           "atteso": 5.42,
           "fuoriFinestra": false
@@ -1802,21 +1802,41 @@
         {
           "bersaglio": "corner_kicks",
           "lato": "trasferta",
-          "soglia": 5.5,
+          "soglia": 4.5,
           "verso": "Under",
-          "quota": 1.5834,
-          "probabilita": 0.7163,
+          "quota": 1.9231,
+          "probabilita": 0.5768,
           "atteso": 4.33,
           "fuoriFinestra": false
         },
         {
           "bersaglio": "corner_kicks",
           "lato": "trasferta",
-          "soglia": 5.5,
+          "soglia": 4.5,
           "verso": "Over",
-          "quota": 2.0834,
-          "probabilita": 0.2837,
+          "quota": 1.6924,
+          "probabilita": 0.4232,
           "atteso": 4.33,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Under",
+          "quota": 2.4286,
+          "probabilita": 0.4963,
+          "atteso": 9.75,
+          "fuoriFinestra": false
+        },
+        {
+          "bersaglio": "corner_kicks",
+          "lato": "totale",
+          "soglia": 9.5,
+          "verso": "Over",
+          "quota": 1.4286,
+          "probabilita": 0.5037,
+          "atteso": 9.75,
           "fuoriFinestra": false
         },
         {
@@ -1824,7 +1844,7 @@
           "lato": "totale",
           "soglia": 10.5,
           "verso": "Under",
-          "quota": 2.1,
+          "quota": 1.9,
           "probabilita": 0.6127,
           "atteso": 9.75,
           "fuoriFinestra": false
@@ -1834,7 +1854,7 @@
           "lato": "totale",
           "soglia": 10.5,
           "verso": "Over",
-          "quota": 1.5834,
+          "quota": 1.7143,
           "probabilita": 0.3873,
           "atteso": 9.75,
           "fuoriFinestra": false
@@ -1844,7 +1864,7 @@
           "lato": "totale",
           "soglia": 11.5,
           "verso": "Under",
-          "quota": 1.68,
+          "quota": 1.5385,
           "probabilita": 0.7163,
           "atteso": 9.75,
           "fuoriFinestra": false
@@ -1854,37 +1874,17 @@
           "lato": "totale",
           "soglia": 11.5,
           "verso": "Over",
-          "quota": 1.9412,
+          "quota": 2.1667,
           "probabilita": 0.2837,
           "atteso": 9.75,
           "fuoriFinestra": false
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 12.5,
-          "verso": "Under",
-          "quota": 1.4286,
-          "probabilita": 0.8018,
-          "atteso": 9.75,
-          "fuoriFinestra": true
-        },
-        {
-          "bersaglio": "corner_kicks",
-          "lato": "totale",
-          "soglia": 12.5,
-          "verso": "Over",
-          "quota": 2.4546,
-          "probabilita": 0.1982,
-          "atteso": 9.75,
-          "fuoriFinestra": true
         },
         {
           "bersaglio": "yellow_cards",
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.88,
+          "quota": 1.76,
           "probabilita": 0.5979,
           "atteso": 2.29,
           "fuoriFinestra": false
@@ -1894,7 +1894,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 1.76,
+          "quota": 1.88,
           "probabilita": 0.4021,
           "atteso": 2.29,
           "fuoriFinestra": false
@@ -1902,20 +1902,20 @@
         {
           "bersaglio": "yellow_cards",
           "lato": "trasferta",
-          "soglia": 3.5,
+          "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.575,
-          "probabilita": 0.7505,
+          "quota": 2.25,
+          "probabilita": 0.5354,
           "atteso": 2.53,
           "fuoriFinestra": false
         },
         {
           "bersaglio": "yellow_cards",
           "lato": "trasferta",
-          "soglia": 3.5,
+          "soglia": 2.5,
           "verso": "Over",
-          "quota": 2.15,
-          "probabilita": 0.2495,
+          "quota": 1.525,
+          "probabilita": 0.4646,
           "atteso": 2.53,
           "fuoriFinestra": false
         },
@@ -1924,7 +1924,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Under",
-          "quota": 1.9231,
+          "quota": 1.7778,
           "probabilita": 0.6464,
           "atteso": 4.83,
           "fuoriFinestra": false
@@ -1934,7 +1934,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Over",
-          "quota": 1.6667,
+          "quota": 1.8,
           "probabilita": 0.3536,
           "atteso": 4.83,
           "fuoriFinestra": false
@@ -2919,8 +2919,8 @@
             "due": 0.3296
           },
           "quote": {
-            "1": 1.6154,
-            "2": 2.5,
+            "1": 1.5556,
+            "2": 2.6667,
             "X": 7.5
           }
         },
@@ -2934,7 +2934,7 @@
           "quote": {
             "1": 2.9,
             "2": 1.7858,
-            "X": 4.1
+            "X": 4
           }
         },
         {
@@ -3246,7 +3246,7 @@
           "lato": "casa",
           "soglia": 6.5,
           "verso": "Under",
-          "quota": 1.7273,
+          "quota": 1.75,
           "probabilita": 0.642,
           "atteso": 5.75,
           "fuoriFinestra": false
@@ -3256,7 +3256,7 @@
           "lato": "casa",
           "soglia": 6.5,
           "verso": "Over",
-          "quota": 1.8889,
+          "quota": 1.8572,
           "probabilita": 0.358,
           "atteso": 5.75,
           "fuoriFinestra": false
@@ -3266,7 +3266,7 @@
           "lato": "trasferta",
           "soglia": 3.5,
           "verso": "Under",
-          "quota": 2.0834,
+          "quota": 2.1429,
           "probabilita": 0.4524,
           "atteso": 4.08,
           "fuoriFinestra": false
@@ -3276,7 +3276,7 @@
           "lato": "trasferta",
           "soglia": 3.5,
           "verso": "Over",
-          "quota": 1.5834,
+          "quota": 1.5556,
           "probabilita": 0.5476,
           "atteso": 4.08,
           "fuoriFinestra": false
@@ -3286,7 +3286,7 @@
           "lato": "totale",
           "soglia": 9.5,
           "verso": "Under",
-          "quota": 2.25,
+          "quota": 2.3,
           "probabilita": 0.4864,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3296,7 +3296,7 @@
           "lato": "totale",
           "soglia": 9.5,
           "verso": "Over",
-          "quota": 1.5,
+          "quota": 1.48,
           "probabilita": 0.5136,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3306,7 +3306,7 @@
           "lato": "totale",
           "soglia": 10.5,
           "verso": "Under",
-          "quota": 1.76,
+          "quota": 1.8,
           "probabilita": 0.6031,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3316,7 +3316,7 @@
           "lato": "totale",
           "soglia": 10.5,
           "verso": "Over",
-          "quota": 1.8462,
+          "quota": 1.8,
           "probabilita": 0.3969,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3326,7 +3326,7 @@
           "lato": "totale",
           "soglia": 11.5,
           "verso": "Under",
-          "quota": 1.4546,
+          "quota": 1.48,
           "probabilita": 0.7077,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3336,7 +3336,7 @@
           "lato": "totale",
           "soglia": 11.5,
           "verso": "Over",
-          "quota": 2.3637,
+          "quota": 2.3,
           "probabilita": 0.2923,
           "atteso": 9.83,
           "fuoriFinestra": false
@@ -3344,20 +3344,20 @@
         {
           "bersaglio": "yellow_cards",
           "lato": "casa",
-          "soglia": 1.5,
+          "soglia": 2.5,
           "verso": "Under",
-          "quota": 2.25,
-          "probabilita": 0.4115,
+          "quota": 1.5,
+          "probabilita": 0.6821,
           "atteso": 1.98,
           "fuoriFinestra": false
         },
         {
           "bersaglio": "yellow_cards",
           "lato": "casa",
-          "soglia": 1.5,
+          "soglia": 2.5,
           "verso": "Over",
-          "quota": 1.525,
-          "probabilita": 0.5885,
+          "quota": 2.3,
+          "probabilita": 0.3179,
           "atteso": 1.98,
           "fuoriFinestra": false
         },
@@ -3366,7 +3366,7 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.5667,
+          "quota": 1.6667,
           "probabilita": 0.589,
           "atteso": 2.33,
           "fuoriFinestra": false
@@ -3376,7 +3376,7 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 2.1667,
+          "quota": 2,
           "probabilita": 0.411,
           "atteso": 2.33,
           "fuoriFinestra": false
@@ -3386,7 +3386,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Under",
-          "quota": 1.6154,
+          "quota": 1.75,
           "probabilita": 0.5692,
           "atteso": 4.31,
           "fuoriFinestra": false
@@ -3396,7 +3396,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Over",
-          "quota": 2,
+          "quota": 1.8182,
           "probabilita": 0.4308,
           "atteso": 4.31,
           "fuoriFinestra": false
@@ -4392,7 +4392,7 @@
           },
           "quote": {
             "1": 1.26,
-            "2": 4.2,
+            "2": 4.1,
             "X": 8.5
           }
         },
@@ -4404,9 +4404,9 @@
             "due": 0.4661
           },
           "quote": {
-            "1": 2.7143,
-            "2": 2.0304,
-            "X": 3.45
+            "1": 2.7,
+            "2": 2,
+            "X": 3.5
           }
         },
         {
@@ -4756,7 +4756,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.95,
+          "quota": 1.975,
           "probabilita": null,
           "atteso": 2.36,
           "fuoriFinestra": false
@@ -4766,7 +4766,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 1.7,
+          "quota": 1.68,
           "probabilita": null,
           "atteso": 2.36,
           "fuoriFinestra": false
@@ -4776,7 +4776,7 @@
           "lato": "trasferta",
           "soglia": 3.5,
           "verso": "Under",
-          "quota": 1.5556,
+          "quota": 1.5667,
           "probabilita": 0.7407,
           "atteso": 2.58,
           "fuoriFinestra": false
@@ -4786,7 +4786,7 @@
           "lato": "trasferta",
           "soglia": 3.5,
           "verso": "Over",
-          "quota": 2.2,
+          "quota": 2.1667,
           "probabilita": 0.2593,
           "atteso": 2.58,
           "fuoriFinestra": false
@@ -4796,7 +4796,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Under",
-          "quota": 1.9231,
+          "quota": 1.96,
           "probabilita": null,
           "atteso": 4.93,
           "fuoriFinestra": false
@@ -4806,7 +4806,7 @@
           "lato": "totale",
           "soglia": 5.5,
           "verso": "Over",
-          "quota": 1.6667,
+          "quota": 1.6364,
           "probabilita": null,
           "atteso": 4.93,
           "fuoriFinestra": false
@@ -5787,7 +5787,7 @@
           "probabilita": null,
           "quote": {
             "1": 2.667,
-            "2": 1.8889,
+            "2": 1.88,
             "X": 4.1
           }
         },
@@ -6228,7 +6228,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.6667,
+          "quota": 1.575,
           "probabilita": 0.6963,
           "atteso": 1.93,
           "fuoriFinestra": false
@@ -6238,7 +6238,7 @@
           "lato": "casa",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 2,
+          "quota": 2.15,
           "probabilita": 0.3037,
           "atteso": 1.93,
           "fuoriFinestra": false
@@ -6248,7 +6248,7 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Under",
-          "quota": 1.825,
+          "quota": 1.72,
           "probabilita": 0.5273,
           "atteso": 2.56,
           "fuoriFinestra": false
@@ -6258,7 +6258,7 @@
           "lato": "trasferta",
           "soglia": 2.5,
           "verso": "Over",
-          "quota": 1.825,
+          "quota": 1.92,
           "probabilita": 0.4727,
           "atteso": 2.56,
           "fuoriFinestra": false
@@ -6268,7 +6268,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Under",
-          "quota": 2,
+          "quota": 1.8667,
           "probabilita": 0.5336,
           "atteso": 4.49,
           "fuoriFinestra": false
@@ -6278,7 +6278,7 @@
           "lato": "totale",
           "soglia": 4.5,
           "verso": "Over",
-          "quota": 1.6154,
+          "quota": 1.7143,
           "probabilita": 0.4664,
           "atteso": 4.49,
           "fuoriFinestra": false
@@ -6767,14 +6767,14 @@
         },
         "quote": {
           "esito": {
-            "uno": 1.6364,
-            "x": 3.6667,
-            "due": 5
+            "uno": 1.6471,
+            "x": 3.75,
+            "due": 4.75
           },
           "doppiaChance": {
             "unoX": 1.1667,
-            "xDue": 2.1667,
-            "unoDue": 1.2353
+            "xDue": 2.15,
+            "unoDue": 1.2441
           },
           "drawNoBet": {
             "uno": 1.26,
@@ -6804,12 +6804,12 @@
             {
               "soglia": 2.5,
               "verso": "Over",
-              "quota": 1.7858
+              "quota": 1.8
             },
             {
               "soglia": 2.5,
               "verso": "Under",
-              "quota": 1.8889
+              "quota": 1.875
             },
             {
               "soglia": 3.5,
@@ -6824,22 +6824,22 @@
             {
               "soglia": 4.5,
               "verso": "Over",
-              "quota": 5
+              "quota": 5.3334
             },
             {
               "soglia": 4.5,
               "verso": "Under",
-              "quota": 1.125
+              "quota": 1.1112
             },
             {
               "soglia": 5.5,
               "verso": "Over",
-              "quota": 8.5
+              "quota": 9
             },
             {
               "soglia": 5.5,
               "verso": "Under",
-              "quota": 1.0304
+              "quota": 1.02
             }
           ],
           "gol": 1.8182,
@@ -6853,12 +6853,12 @@
             {
               "da": 0,
               "a": 2,
-              "quota": 1.8572
+              "quota": 1.85
             },
             {
               "da": 0,
               "a": 3,
-              "quota": 1.3226
+              "quota": 1.32
             },
             {
               "da": 0,
@@ -6938,17 +6938,17 @@
             {
               "da": 3,
               "a": 5,
-              "quota": 1.975
+              "quota": 2
             },
             {
               "da": 3,
               "a": 6,
-              "quota": 1.85
+              "quota": 1.8572
             },
             {
               "da": 3,
               "a": 7,
-              "quota": 1.8
+              "quota": 1.8182
             },
             {
               "da": 4,
@@ -6963,7 +6963,7 @@
             {
               "da": 4,
               "a": 7,
-              "quota": 2.95
+              "quota": 3
             },
             {
               "da": 5,
@@ -6978,19 +6978,19 @@
             {
               "da": 6,
               "a": 7,
-              "quota": 12
+              "quota": 13
             }
           ],
           "multigolCasa": [
             {
               "da": 0,
               "a": 1,
-              "quota": 1.96
+              "quota": 1.9412
             },
             {
               "da": 0,
               "a": 2,
-              "quota": 1.2942
+              "quota": 1.2858
             },
             {
               "da": 0,
@@ -7000,12 +7000,12 @@
             {
               "da": 0,
               "a": 4,
-              "quota": 1.025
+              "quota": 1.02
             },
             {
               "da": 1,
               "a": 2,
-              "quota": 1.6334
+              "quota": 1.625
             },
             {
               "da": 1,
@@ -7035,32 +7035,32 @@
             {
               "da": 2,
               "a": 3,
-              "quota": 2.0834
+              "quota": 2.1
             },
             {
               "da": 2,
               "a": 4,
-              "quota": 1.8182
+              "quota": 1.825
             },
             {
               "da": 2,
               "a": 5,
-              "quota": 1.7273
+              "quota": 1.7408
             },
             {
               "da": 2,
               "a": 6,
-              "quota": 1.7
+              "quota": 1.72
             },
             {
               "da": 2,
               "a": 7,
-              "quota": 1.7
+              "quota": 1.7143
             },
             {
               "da": 3,
               "a": 4,
-              "quota": 3.45
+              "quota": 3.5
             },
             {
               "da": 3,
@@ -7070,7 +7070,7 @@
             {
               "da": 3,
               "a": 6,
-              "quota": 3.1
+              "quota": 3.1429
             },
             {
               "da": 3,
@@ -7080,7 +7080,7 @@
             {
               "da": 4,
               "a": 5,
-              "quota": 7
+              "quota": 7.5
             },
             {
               "da": 4,
@@ -7090,7 +7090,7 @@
             {
               "da": 4,
               "a": 7,
-              "quota": 6.6667
+              "quota": 6.75
             },
             {
               "da": 5,
@@ -7100,12 +7100,12 @@
             {
               "da": 5,
               "a": 7,
-              "quota": 16
+              "quota": 17
             },
             {
               "da": 6,
               "a": 7,
-              "quota": 36
+              "quota": 41
             }
           ],
           "multigolTrasferta": [
@@ -7117,37 +7117,37 @@
             {
               "da": 0,
               "a": 2,
-              "quota": 1.0445
+              "quota": 1.0455
             },
             {
               "da": 1,
               "a": 2,
-              "quota": 1.7143
+              "quota": 1.7
             },
             {
               "da": 1,
               "a": 3,
-              "quota": 1.575
+              "quota": 1.5715
             },
             {
               "da": 1,
               "a": 4,
-              "quota": 1.5455
+              "quota": 1.5406
             },
             {
               "da": 1,
               "a": 5,
-              "quota": 1.5406
+              "quota": 1.5385
             },
             {
               "da": 1,
               "a": 6,
-              "quota": 1.5406
+              "quota": 1.5385
             },
             {
               "da": 1,
               "a": 7,
-              "quota": 1.5406
+              "quota": 1.5385
             },
             {
               "da": 2,
@@ -7276,9 +7276,9 @@
             "due": 0.5217
           },
           "quote": {
-            "1": 2.5455,
+            "1": 2.5715,
             "2": 2.05,
-            "X": 3.7
+            "X": 3.65
           }
         },
         {
