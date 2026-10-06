@@ -1,0 +1,859 @@
+{
+  "generato_il": "2026-10-06T17:39:46.328Z",
+  "gare_chiuse_nel_periodo": 597,
+  "gare_misurate": 411,
+  "letture": 16968,
+  "taglio_dei_periodi": "2026-09-18T18:30:00.000Z",
+  "tutte": [
+    {
+      "fascia": "<= -11",
+      "letture": 2654,
+      "gare": 326,
+      "restituite": 0,
+      "uscite": 1147,
+      "frequenza": 43.2,
+      "frequenza_95": [
+        41.3,
+        45.1
+      ],
+      "nostra": 31.7,
+      "implicita": 48,
+      "quota_media": 2.1,
+      "resa": -19.5,
+      "resa_95": [
+        -26.2,
+        -12.3
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 2390,
+      "gare": 357,
+      "restituite": 0,
+      "uscite": 1069,
+      "frequenza": 44.7,
+      "frequenza_95": [
+        42.7,
+        46.7
+      ],
+      "nostra": 39.2,
+      "implicita": 47,
+      "quota_media": 2.28,
+      "resa": -14.8,
+      "resa_95": [
+        -21.3,
+        -8.1
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 3988,
+      "gare": 388,
+      "restituite": 0,
+      "uscite": 1902,
+      "frequenza": 47.7,
+      "frequenza_95": [
+        46.1,
+        49.2
+      ],
+      "nostra": 45.4,
+      "implicita": 47.8,
+      "quota_media": 2.26,
+      "resa": -10.6,
+      "resa_95": [
+        -14.7,
+        -6.4
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 3241,
+      "gare": 386,
+      "restituite": 0,
+      "uscite": 1741,
+      "frequenza": 53.7,
+      "frequenza_95": [
+        52,
+        55.4
+      ],
+      "nostra": 56.5,
+      "implicita": 53.6,
+      "quota_media": 1.91,
+      "resa": -9.8,
+      "resa_95": [
+        -14.2,
+        -5.2
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 2261,
+      "gare": 356,
+      "restituite": 0,
+      "uscite": 1272,
+      "frequenza": 56.3,
+      "frequenza_95": [
+        54.2,
+        58.3
+      ],
+      "nostra": 61.9,
+      "implicita": 54.1,
+      "quota_media": 1.85,
+      "resa": -6.2,
+      "resa_95": [
+        -11.9,
+        -0.9
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 1374,
+      "gare": 300,
+      "restituite": 0,
+      "uscite": 803,
+      "frequenza": 58.4,
+      "frequenza_95": [
+        55.8,
+        61
+      ],
+      "nostra": 67.4,
+      "implicita": 54.6,
+      "quota_media": 1.8,
+      "resa": -3.6,
+      "resa_95": [
+        -10,
+        3.3
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 1060,
+      "gare": 200,
+      "restituite": 0,
+      "uscite": 601,
+      "frequenza": 56.7,
+      "frequenza_95": [
+        53.7,
+        59.7
+      ],
+      "nostra": 72.5,
+      "implicita": 52,
+      "quota_media": 1.87,
+      "resa": 0.3,
+      "resa_95": [
+        -9.5,
+        10.1
+      ]
+    }
+  ],
+  "periodo_1": [
+    {
+      "fascia": "<= -11",
+      "letture": 1174,
+      "gare": 158,
+      "restituite": 0,
+      "uscite": 484,
+      "frequenza": 41.2,
+      "frequenza_95": [
+        38.4,
+        44.1
+      ],
+      "nostra": 31.3,
+      "implicita": 47.9,
+      "quota_media": 2.1,
+      "resa": -22.9,
+      "resa_95": [
+        -32.4,
+        -12.6
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 957,
+      "gare": 167,
+      "restituite": 0,
+      "uscite": 429,
+      "frequenza": 44.8,
+      "frequenza_95": [
+        41.7,
+        48
+      ],
+      "nostra": 39.3,
+      "implicita": 47.1,
+      "quota_media": 2.28,
+      "resa": -15.1,
+      "resa_95": [
+        -24.6,
+        -5.6
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 1645,
+      "gare": 191,
+      "restituite": 0,
+      "uscite": 837,
+      "frequenza": 50.9,
+      "frequenza_95": [
+        48.5,
+        53.3
+      ],
+      "nostra": 45.7,
+      "implicita": 48.2,
+      "quota_media": 2.25,
+      "resa": -5.6,
+      "resa_95": [
+        -11.8,
+        0.9
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 1361,
+      "gare": 189,
+      "restituite": 0,
+      "uscite": 680,
+      "frequenza": 50,
+      "frequenza_95": [
+        47.3,
+        52.6
+      ],
+      "nostra": 55.9,
+      "implicita": 53,
+      "quota_media": 1.95,
+      "resa": -16.6,
+      "resa_95": [
+        -23.9,
+        -8.9
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 932,
+      "gare": 167,
+      "restituite": 0,
+      "uscite": 516,
+      "frequenza": 55.4,
+      "frequenza_95": [
+        52.2,
+        58.5
+      ],
+      "nostra": 61.5,
+      "implicita": 53.6,
+      "quota_media": 1.89,
+      "resa": -6.7,
+      "resa_95": [
+        -14.3,
+        1
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 614,
+      "gare": 146,
+      "restituite": 0,
+      "uscite": 373,
+      "frequenza": 60.7,
+      "frequenza_95": [
+        56.8,
+        64.5
+      ],
+      "nostra": 67,
+      "implicita": 54.3,
+      "quota_media": 1.82,
+      "resa": 1.7,
+      "resa_95": [
+        -7.6,
+        11.4
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 511,
+      "gare": 93,
+      "restituite": 0,
+      "uscite": 283,
+      "frequenza": 55.4,
+      "frequenza_95": [
+        51,
+        59.6
+      ],
+      "nostra": 72.6,
+      "implicita": 51.9,
+      "quota_media": 1.87,
+      "resa": -1.3,
+      "resa_95": [
+        -15,
+        12.6
+      ]
+    }
+  ],
+  "periodo_2": [
+    {
+      "fascia": "<= -11",
+      "letture": 1480,
+      "gare": 168,
+      "restituite": 0,
+      "uscite": 663,
+      "frequenza": 44.8,
+      "frequenza_95": [
+        42.3,
+        47.3
+      ],
+      "nostra": 32,
+      "implicita": 48.1,
+      "quota_media": 2.1,
+      "resa": -16.7,
+      "resa_95": [
+        -26,
+        -7.3
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 1433,
+      "gare": 190,
+      "restituite": 0,
+      "uscite": 640,
+      "frequenza": 44.7,
+      "frequenza_95": [
+        42.1,
+        47.2
+      ],
+      "nostra": 39.1,
+      "implicita": 46.9,
+      "quota_media": 2.27,
+      "resa": -14.6,
+      "resa_95": [
+        -23.1,
+        -6.2
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 2343,
+      "gare": 197,
+      "restituite": 0,
+      "uscite": 1065,
+      "frequenza": 45.5,
+      "frequenza_95": [
+        43.4,
+        47.5
+      ],
+      "nostra": 45.2,
+      "implicita": 47.6,
+      "quota_media": 2.27,
+      "resa": -14.1,
+      "resa_95": [
+        -19.3,
+        -9
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 1880,
+      "gare": 197,
+      "restituite": 0,
+      "uscite": 1061,
+      "frequenza": 56.4,
+      "frequenza_95": [
+        54.2,
+        58.7
+      ],
+      "nostra": 56.9,
+      "implicita": 53.9,
+      "quota_media": 1.88,
+      "resa": -4.8,
+      "resa_95": [
+        -10.8,
+        1.1
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 1329,
+      "gare": 189,
+      "restituite": 0,
+      "uscite": 756,
+      "frequenza": 56.9,
+      "frequenza_95": [
+        54.2,
+        59.5
+      ],
+      "nostra": 62.3,
+      "implicita": 54.5,
+      "quota_media": 1.83,
+      "resa": -5.9,
+      "resa_95": [
+        -13.6,
+        1.5
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 760,
+      "gare": 154,
+      "restituite": 0,
+      "uscite": 430,
+      "frequenza": 56.6,
+      "frequenza_95": [
+        53,
+        60.1
+      ],
+      "nostra": 67.6,
+      "implicita": 55,
+      "quota_media": 1.78,
+      "resa": -7.9,
+      "resa_95": [
+        -16.8,
+        1.7
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 549,
+      "gare": 107,
+      "restituite": 0,
+      "uscite": 318,
+      "frequenza": 57.9,
+      "frequenza_95": [
+        53.8,
+        62
+      ],
+      "nostra": 72.5,
+      "implicita": 52.1,
+      "quota_media": 1.86,
+      "resa": 1.7,
+      "resa_95": [
+        -11.3,
+        15.3
+      ]
+    }
+  ],
+  "dentro_finestra": [
+    {
+      "fascia": "<= -11",
+      "letture": 2163,
+      "gare": 325,
+      "restituite": 0,
+      "uscite": 1016,
+      "frequenza": 47,
+      "frequenza_95": [
+        44.9,
+        49.1
+      ],
+      "nostra": 35.4,
+      "implicita": 51,
+      "quota_media": 1.9,
+      "resa": -16.6,
+      "resa_95": [
+        -23,
+        -10.2
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 2125,
+      "gare": 356,
+      "restituite": 0,
+      "uscite": 1015,
+      "frequenza": 47.8,
+      "frequenza_95": [
+        45.6,
+        49.9
+      ],
+      "nostra": 42.1,
+      "implicita": 50,
+      "quota_media": 1.96,
+      "resa": -13.5,
+      "resa_95": [
+        -18.7,
+        -7.7
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 3538,
+      "gare": 388,
+      "restituite": 0,
+      "uscite": 1772,
+      "frequenza": 50.1,
+      "frequenza_95": [
+        48.4,
+        51.7
+      ],
+      "nostra": 47.6,
+      "implicita": 50,
+      "quota_media": 1.98,
+      "resa": -9.2,
+      "resa_95": [
+        -12.8,
+        -5.4
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 2838,
+      "gare": 386,
+      "restituite": 0,
+      "uscite": 1441,
+      "frequenza": 50.8,
+      "frequenza_95": [
+        48.9,
+        52.6
+      ],
+      "nostra": 53.8,
+      "implicita": 50.9,
+      "quota_media": 1.94,
+      "resa": -9.8,
+      "resa_95": [
+        -14.6,
+        -4.8
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 1970,
+      "gare": 355,
+      "restituite": 0,
+      "uscite": 1047,
+      "frequenza": 53.1,
+      "frequenza_95": [
+        50.9,
+        55.3
+      ],
+      "nostra": 58.7,
+      "implicita": 50.9,
+      "quota_media": 1.92,
+      "resa": -5.5,
+      "resa_95": [
+        -11.1,
+        0
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 1160,
+      "gare": 295,
+      "restituite": 0,
+      "uscite": 631,
+      "frequenza": 54.4,
+      "frequenza_95": [
+        51.5,
+        57.2
+      ],
+      "nostra": 63.9,
+      "implicita": 51.3,
+      "quota_media": 1.89,
+      "resa": -4.5,
+      "resa_95": [
+        -11.9,
+        3.3
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 771,
+      "gare": 195,
+      "restituite": 0,
+      "uscite": 406,
+      "frequenza": 52.7,
+      "frequenza_95": [
+        49.1,
+        56.2
+      ],
+      "nostra": 68.1,
+      "implicita": 48,
+      "quota_media": 2,
+      "resa": 0.7,
+      "resa_95": [
+        -10.5,
+        11.6
+      ]
+    }
+  ],
+  "due_lati": [
+    {
+      "fascia": "<= -11",
+      "letture": 2270,
+      "gare": 318,
+      "restituite": 0,
+      "uscite": 954,
+      "frequenza": 42,
+      "frequenza_95": [
+        40,
+        44.1
+      ],
+      "nostra": 30.6,
+      "implicita": 46.6,
+      "quota_media": 2.15,
+      "resa": -20.9,
+      "resa_95": [
+        -27.7,
+        -13.5
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 2141,
+      "gare": 356,
+      "restituite": 0,
+      "uscite": 926,
+      "frequenza": 43.3,
+      "frequenza_95": [
+        41.2,
+        45.4
+      ],
+      "nostra": 38.2,
+      "implicita": 46,
+      "quota_media": 2.33,
+      "resa": -16.9,
+      "resa_95": [
+        -23.8,
+        -9.4
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 3710,
+      "gare": 388,
+      "restituite": 0,
+      "uscite": 1753,
+      "frequenza": 47.3,
+      "frequenza_95": [
+        45.6,
+        48.9
+      ],
+      "nostra": 44.8,
+      "implicita": 47.2,
+      "quota_media": 2.3,
+      "resa": -11,
+      "resa_95": [
+        -15.2,
+        -6.6
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 3060,
+      "gare": 386,
+      "restituite": 0,
+      "uscite": 1632,
+      "frequenza": 53.3,
+      "frequenza_95": [
+        51.6,
+        55.1
+      ],
+      "nostra": 56.3,
+      "implicita": 53.4,
+      "quota_media": 1.92,
+      "resa": -10.7,
+      "resa_95": [
+        -15.2,
+        -6
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 2141,
+      "gare": 356,
+      "restituite": 0,
+      "uscite": 1215,
+      "frequenza": 56.7,
+      "frequenza_95": [
+        54.6,
+        58.8
+      ],
+      "nostra": 61.8,
+      "implicita": 54,
+      "quota_media": 1.85,
+      "resa": -5.8,
+      "resa_95": [
+        -11.2,
+        -0.5
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 1302,
+      "gare": 297,
+      "restituite": 0,
+      "uscite": 759,
+      "frequenza": 58.3,
+      "frequenza_95": [
+        55.6,
+        60.9
+      ],
+      "nostra": 67.3,
+      "implicita": 54.6,
+      "quota_media": 1.8,
+      "resa": -4.4,
+      "resa_95": [
+        -11.3,
+        2.3
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 968,
+      "gare": 197,
+      "restituite": 0,
+      "uscite": 557,
+      "frequenza": 57.5,
+      "frequenza_95": [
+        54.4,
+        60.6
+      ],
+      "nostra": 72.3,
+      "implicita": 51.7,
+      "quota_media": 1.87,
+      "resa": 1.6,
+      "resa_95": [
+        -8.6,
+        11.8
+      ]
+    }
+  ],
+  "un_lato": [
+    {
+      "fascia": "<= -11",
+      "letture": 384,
+      "gare": 118,
+      "restituite": 0,
+      "uscite": 193,
+      "frequenza": 50.3,
+      "frequenza_95": [
+        45.3,
+        55.2
+      ],
+      "nostra": 38.4,
+      "implicita": 56.1,
+      "quota_media": 1.81,
+      "resa": -10.9,
+      "resa_95": [
+        -25.6,
+        4.2
+      ]
+    },
+    {
+      "fascia": "-10..-6",
+      "letture": 249,
+      "gare": 91,
+      "restituite": 0,
+      "uscite": 143,
+      "frequenza": 57.4,
+      "frequenza_95": [
+        51.2,
+        63.4
+      ],
+      "nostra": 47.7,
+      "implicita": 55.6,
+      "quota_media": 1.82,
+      "resa": 3,
+      "resa_95": [
+        -14.8,
+        22.4
+      ]
+    },
+    {
+      "fascia": "-5..0",
+      "letture": 278,
+      "gare": 107,
+      "restituite": 0,
+      "uscite": 149,
+      "frequenza": 53.6,
+      "frequenza_95": [
+        47.7,
+        59.4
+      ],
+      "nostra": 53.9,
+      "implicita": 56.5,
+      "quota_media": 1.81,
+      "resa": -5.4,
+      "resa_95": [
+        -22.1,
+        11.6
+      ]
+    },
+    {
+      "fascia": "+1..+5",
+      "letture": 181,
+      "gare": 66,
+      "restituite": 0,
+      "uscite": 109,
+      "frequenza": 60.2,
+      "frequenza_95": [
+        52.9,
+        67.1
+      ],
+      "nostra": 59,
+      "implicita": 56.2,
+      "quota_media": 1.81,
+      "resa": 6.3,
+      "resa_95": [
+        -14.1,
+        27
+      ]
+    },
+    {
+      "fascia": "+6..+10",
+      "letture": 120,
+      "gare": 47,
+      "restituite": 0,
+      "uscite": 57,
+      "frequenza": 47.5,
+      "frequenza_95": [
+        38.8,
+        56.4
+      ],
+      "nostra": 63.9,
+      "implicita": 56,
+      "quota_media": 1.81,
+      "resa": -14.5,
+      "resa_95": [
+        -39.8,
+        10.3
+      ]
+    },
+    {
+      "fascia": "+11..+15",
+      "letture": 72,
+      "gare": 33,
+      "restituite": 0,
+      "uscite": 44,
+      "frequenza": 61.1,
+      "frequenza_95": [
+        49.6,
+        71.5
+      ],
+      "nostra": 69.1,
+      "implicita": 55.9,
+      "quota_media": 1.82,
+      "resa": 10.3,
+      "resa_95": [
+        -23.5,
+        43.6
+      ]
+    },
+    {
+      "fascia": "> tetto",
+      "letture": 92,
+      "gare": 31,
+      "restituite": 0,
+      "uscite": 44,
+      "frequenza": 47.8,
+      "frequenza_95": [
+        37.9,
+        57.9
+      ],
+      "nostra": 74.4,
+      "implicita": 54.7,
+      "quota_media": 1.86,
+      "resa": -13.5,
+      "resa_95": [
+        -43.5,
+        17.1
+      ]
+    }
+  ]
+}
