@@ -11,7 +11,6 @@ import { MatchCombinazione } from "./match-combinazione";
 import type { MatchOdds } from "@/server/iqstats/odds";
 import type { GolDellaGara } from "@/server/iqstats/projection-runtime";
 import type { CellaMatrice } from "@/server/iqstats/projection/gol";
-import { TETTO_VALORE, testoValore } from "@/server/iqstats/projection/valore";
 import { type QuoteFastbet, type Voce, vociDeiGol } from "@/server/iqstats/voci-dei-gol";
 
 function valore(numero: number): string {
@@ -51,11 +50,6 @@ function Scala({ voci, titolo }: { readonly voci: readonly Voce[]; readonly tito
             {percento(voce.probabilita)}
             {voce.quota == null ? null : <i className="engine-prezzo">{prezzo(voce.quota)}</i>}
           </span>
-          {voce.valore == null ? null : (
-            <span className={voce.valore > 0 && voce.valore <= TETTO_VALORE ? "engine-valore is-valore" : "engine-valore"}>
-              {testoValore(voce.valore)}
-            </span>
-          )}
         </li>
       ))}
     </ul>

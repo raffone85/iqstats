@@ -155,11 +155,12 @@ test("il tema decide chi risponde, e senza tema una famiglia vera resta una line
   );
 });
 
-test("l'esito porta le stesse probabilita' dei mercati, con quota e valore dove c'e' il prezzo", () => {
+test("l'esito porta le stesse probabilita' dei mercati, con la quota e senza valore", () => {
   const risposta = gol("esito");
   assert.deepEqual(risposta.righe.map((r) => r.etichetta), ["1 · Monza", "X · pareggio", "2 · Sassuolo"]);
   assert.equal(risposta.righe[0].valore, `${Math.round(GOL.mercati.esito.uno * 100)}%`);
-  assert.match(risposta.righe[0].nota ?? "", /^quota 2,10 · /);
+  // Sui gol il valore non si dichiara: misurato l'8 ottobre 2026, vedi `voci-dei-gol.ts`.
+  assert.equal(risposta.righe[0].nota, "quota 2,10");
   assert.match(risposta.spiegazione, /4 gare in casa di Monza e 5 fuori casa di Sassuolo/);
 });
 

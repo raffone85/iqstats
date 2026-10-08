@@ -1,4 +1,11 @@
-// Le voci dei mercati dei gol, ognuna con la sua probabilita', il suo prezzo e il suo valore.
+// Le voci dei mercati dei gol, ognuna con la sua probabilita' e il suo prezzo.
+//
+// **Senza valore, per misura.** Fino all'8 ottobre 2026 ogni voce portava anche «valore +N».
+// `scripts/consuntivo-valore.ts` su 243 gare chiuse e 4.299 voci quotate: il prezzo prevede
+// meglio della nostra probabilita' (Brier 0,1624 contro 0,1718) e combinarle non aggiunge
+// niente (peso della nostra -0,05). Oltre +15 le voci uscivano il 34,9% contro il 65%
+// promesso. Il valore sui gol era rumore presentato come segnale: si mostra il prezzo, non
+// un verdetto.
 //
 // **Un posto solo, perche' le leggono in due.** Stavano dentro la sezione Gol del dossier;
 // dal 5 ottobre 2026 le chiede anche l'assistente della gara, e due copie della regola che
@@ -6,33 +13,28 @@
 import type { GolDiGara } from "./expected-famiglie.ts";
 import type { MatchOdds } from "./odds.ts";
 import type { Intervallo, MercatiGol } from "./projection/gol.ts";
-import { valoreInGruppo } from "./projection/valore.ts";
 
 export interface Voce {
   readonly etichetta: string;
   readonly probabilita: number;
   /** La quota dell'esito, dove una delle due fonti la apre. */
   readonly quota?: number | null;
-  readonly valore?: number | null;
 }
 
 export type QuoteFastbet = NonNullable<GolDiGara["quote"]>;
 
 /**
- * Il prezzo di un esito e il suo valore, da **una** fonte sola per gruppo.
+ * Il prezzo di un esito, da **una** fonte sola per gruppo.
  *
- * Prima la quota di consenso; dove il consenso non ha quell'esito, Fastbet. Il gruppo con
- * cui si toglie il margine viene dalla stessa fonte del prezzo: mescolare due banchi nella
- * stessa somma darebbe una probabilità che non è di nessuno dei due.
+ * Prima la quota di consenso; dove il consenso non ha quell'esito, Fastbet.
  */
 function conPrezzo(
   etichetta: string,
   probabilita: number,
-  consenso: { readonly quota: number | null; readonly gruppo: readonly (number | null)[] },
-  fastbet: { readonly quota: number | null; readonly gruppo: readonly (number | null)[] },
+  consenso: { readonly quota: number | null },
+  fastbet: { readonly quota: number | null },
   daFastbet: Set<string>,
   mercato: string,
-  copertura = 1,
 ): Voce {
   const fonte = consenso.quota !== null ? consenso : fastbet;
   if (fonte === fastbet && fastbet.quota !== null) daFastbet.add(mercato);
@@ -40,13 +42,11 @@ function conPrezzo(
     etichetta,
     probabilita,
     quota: fonte.quota,
-    valore: valoreInGruppo(probabilita, fonte.quota, fonte.gruppo, copertura),
   };
 }
 
 /**
  * I multigol: la quota di consenso non li copre, quindi il prezzo è di Fastbet. Un
- * intervallo non ha un lato opposto, e il valore si legge sulla quota grezza, prudente.
  */
 function daIntervalli(
   intervalli: readonly Intervallo[],
@@ -60,7 +60,6 @@ function daIntervalli(
       etichetta: `${i.da}-${i.a}`,
       probabilita: i.probabilita,
       quota,
-      valore: valoreInGruppo(i.probabilita, quota, [quota]),
     };
   });
 }
@@ -88,17 +87,17 @@ export function vociDeiGol(
   fastbet: QuoteFastbet | null,
 ): VociDeiGol {
   const daFastbet = new Set<string>();
-  const consenso = (mercato: string, chiavi: readonly string[], chiave: string) => {
+  const consenso = (mercato: string, chiave: string) => {
     const esiti = odds?.markets[mercato];
     const quota = (k: string) => esiti?.find((o) => o.key === k)?.consensusOdds ?? null;
-    return { quota: quota(chiave), gruppo: chiavi.map(quota) };
+    return { quota: quota(chiave) };
   };
-  const banco = (quote: readonly (number | null)[], i: number) => ({ quota: quote[i], gruppo: quote });
+  const banco = (quote: readonly (number | null)[], i: number) => ({ quota: quote[i] });
 
   const esitoFb = [fastbet?.esito?.uno ?? null, fastbet?.esito?.x ?? null, fastbet?.esito?.due ?? null];
   const esito: Voce[] = ([["1", m.esito.uno, "HOME"], ["X", m.esito.x, "DRAW"], ["2", m.esito.due, "AWAY"]] as const)
     .map(([etichetta, p, chiave], i) => conPrezzo(
-      etichetta, p, consenso("1x2", ["HOME", "DRAW", "AWAY"], chiave), banco(esitoFb, i), daFastbet, "esito",
+      etichetta, p, consenso("1x2", chiave), banco(esitoFb, i), daFastbet, "esito",
     ));
 
   const over: Voce[] = m.overUnder.map((linea) => {
@@ -107,24 +106,23 @@ export function vociDeiGol(
       fastbet?.overUnder.find((q) => q.soglia === linea.linea && q.verso === verso)?.quota ?? null;
     return conPrezzo(
       `Over ${soglia.replace(".", ",")}`, linea.sopra,
-      consenso(`over_under_${soglia.replace(".", "")}`, [`over@${soglia}`, `under@${soglia}`], `over@${soglia}`),
+      consenso(`over_under_${soglia.replace(".", "")}`, `over@${soglia}`),
       banco([fb("Over"), fb("Under")], 0), daFastbet, "gol totali",
     );
   });
 
   const ggFb = [fastbet?.gol ?? null, fastbet?.noGol ?? null];
   const entrambe: Voce[] = [
-    conPrezzo("Sì", m.gg, consenso("btts", ["yes", "no"], "yes"), banco(ggFb, 0), daFastbet, "gol/nogol"),
-    conPrezzo("No", m.ng, consenso("btts", ["yes", "no"], "no"), banco(ggFb, 1), daFastbet, "gol/nogol"),
+    conPrezzo("Sì", m.gg, consenso("btts", "yes"), banco(ggFb, 0), daFastbet, "gol/nogol"),
+    conPrezzo("No", m.ng, consenso("btts", "no"), banco(ggFb, 1), daFastbet, "gol/nogol"),
   ];
 
-  // Ogni risultato cade in due doppie chance su tre: le probabilità sommano a due, e il
-  // margine si toglie riportando a due la somma delle inverse.
+  // Ogni risultato cade in due doppie chance su tre: le probabilità sommano a due.
   const dcFb = [fastbet?.doppiaChance?.unoX ?? null, fastbet?.doppiaChance?.xDue ?? null, fastbet?.doppiaChance?.unoDue ?? null];
   const doppia: Voce[] = ([["1X", m.doppiaChance.unoX], ["X2", m.doppiaChance.xDue], ["12", m.doppiaChance.unoDue]] as const)
     .map(([etichetta, p], i) => conPrezzo(
-      etichetta, p, consenso("double_chance", ["1X", "X2", "12"], etichetta), banco(dcFb, i), daFastbet,
-      "doppia chance", 2,
+      etichetta, p, consenso("double_chance", etichetta), banco(dcFb, i), daFastbet,
+      "doppia chance",
     ));
 
   // Draw no bet: il pareggio restituisce la posta, quindi resta 1 contro 2 riportato a uno.
@@ -133,7 +131,7 @@ export function vociDeiGol(
   const senzaPari = m.esito.uno + m.esito.due;
   const drawNoBet: Voce[] = senzaPari <= 0 ? [] : ([["1", m.esito.uno], ["2", m.esito.due]] as const)
     .map(([etichetta, p], i) => conPrezzo(
-      etichetta, p / senzaPari, { quota: null, gruppo: [] }, banco(dnbFb, i), daFastbet, "draw no bet",
+      etichetta, p / senzaPari, { quota: null }, banco(dnbFb, i), daFastbet, "draw no bet",
     ));
 
   return {
