@@ -268,6 +268,14 @@ function main(): number {
     correzione: {
       stimata_su_periodo_1: { globale_a_b: coeff(su2.globale), con_prezzo_a_b_c: coeff(su2.conPrezzo) },
       stimata_su_periodo_2: { globale_a_b: coeff(su1.globale), con_prezzo_a_b_c: coeff(su1.conPrezzo) },
+      // Quella che usa `valoreSoglia`: tutto il campione, nessuna prova fuori campione.
+      stimata_su_tutte: {
+        con_prezzo_a_b_c: coeff(logistica(
+          tutte.filter((l) => l.presa !== null)
+            .map((l) => [1, logit(l.probabilita), logit(l.implicita)]),
+          tutte.filter((l) => l.presa !== null).map((l) => l.presa as number),
+        )),
+      },
     },
     punteggi: { periodo_1: punteggi(su1.righe), periodo_2: punteggi(su2.righe), tutte: punteggi(insieme) },
     fasce_corretto_globale: {
