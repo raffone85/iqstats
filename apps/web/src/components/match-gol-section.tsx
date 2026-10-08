@@ -202,7 +202,7 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet
               <span className="engine-who">{homeTeam}</span>
               <span className="engine-exp">{valore(m.casa.attesi)}</span>
               <span className="engine-dettaglio">
-                fra {m.casa.minimo} e {m.casa.massimo} gol · {gare(gol.campioneCasa, "in casa")}
+                fra {m.casa.minimo} e {m.casa.massimo} gol · {gare(gol.campioneCasa, "in stagione")}
               </span>
             </li>
             <li className="engine-split">
@@ -210,7 +210,7 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet
               <span className="engine-exp">{valore(m.trasferta.attesi)}</span>
               <span className="engine-dettaglio">
                 fra {m.trasferta.minimo} e {m.trasferta.massimo} gol ·{" "}
-                {gare(gol.campioneTrasferta, "fuori casa")}
+                {gare(gol.campioneTrasferta, "in stagione")}
               </span>
             </li>
             <li className="engine-split">
@@ -347,12 +347,12 @@ export function MatchGolSection({ gol, homeTeam, awayTeam, ultima, odds, fastbet
       <details className="dossier-spiega">
         <summary>Come nascono questi numeri</summary>
       <p className="dossier-src">
-        I gol attesi nascono dai <b>gol attesi osservati</b> nelle gare già giocate in questa
-        stagione: quanto ciascuna squadra ne produce dal suo lato del campo, per quanto
-        l&apos;avversaria ne concede dal proprio, misurati contro la media della competizione
-        &mdash; {gol.campioneLega} righe di lega, {gare(gol.campioneCasa, "in casa")} e{" "}
-        {gol.campioneTrasferta} fuori. Il vantaggio del campo non è un coefficiente aggiunto a
-        mano: sta nelle due medie di lega, che sono diverse perché misurate sui due lati.{" "}
+        I gol attesi nascono dalle <b>reti</b> delle gare già giocate in questa stagione:
+        quanto ciascuna squadra segna, per quanto l&apos;avversaria subisce, su tutte le loro
+        gare e misurati contro la media della competizione &mdash; {gol.campioneLega} righe di
+        lega, {gol.campioneCasa} e {gol.campioneTrasferta} gare delle due squadre. Il vantaggio
+        del campo non è un coefficiente aggiunto a mano: sta nelle due medie di lega, che sono
+        diverse perché misurate sui due lati.{" "}
         La storia di queste due squadre arriva{" "}
         {ultima === null ? "a una data non disponibile" : `al ${giorno(ultima)}`}.
       </p>

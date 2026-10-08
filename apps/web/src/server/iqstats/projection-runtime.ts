@@ -238,13 +238,14 @@ export interface ProiezioniDellaGara {
 function mediaGol(
   righe: readonly OsservazioneSquadraGara[],
   verso: "prodotte" | "concesse",
-  lato: Lato,
+  /** `null` = i due lati insieme: le forze delle squadre, da `attesiDellaGara`. */
+  lato: Lato | null,
   stagione: number,
 ): { media: number; campione: number } | null {
   let somma = 0;
   let campione = 0;
   for (const riga of righe) {
-    if (riga.lato !== lato || riga.stagione !== stagione) continue;
+    if ((lato !== null && riga.lato !== lato) || riga.stagione !== stagione) continue;
     const valore = verso === "prodotte" ? riga.retiFatte : riga.retiSubite;
     if (valore === null || valore === undefined) continue;
     somma += valore;
@@ -301,10 +302,10 @@ function golDellaGara(
   materialeTrasferta: MaterialeDellaGara,
   stagione: number,
 ): GolDellaGara | null {
-  const attaccoCasa = mediaGol(materialeCasa.squadra, "prodotte", "home", stagione);
-  const difesaCasa = mediaGol(materialeCasa.squadra, "concesse", "home", stagione);
-  const attaccoTrasferta = mediaGol(materialeTrasferta.squadra, "prodotte", "away", stagione);
-  const difesaTrasferta = mediaGol(materialeTrasferta.squadra, "concesse", "away", stagione);
+  const attaccoCasa = mediaGol(materialeCasa.squadra, "prodotte", null, stagione);
+  const difesaCasa = mediaGol(materialeCasa.squadra, "concesse", null, stagione);
+  const attaccoTrasferta = mediaGol(materialeTrasferta.squadra, "prodotte", null, stagione);
+  const difesaTrasferta = mediaGol(materialeTrasferta.squadra, "concesse", null, stagione);
   const legaCasa = mediaGol(materialeCasa.lega, "prodotte", "home", stagione);
   const legaTrasferta = mediaGol(materialeCasa.lega, "prodotte", "away", stagione);
   if (
@@ -313,9 +314,13 @@ function golDellaGara(
   ) return null;
   // Sotto il minimo la sezione non compare: una media su due gare non e' una forza, e un
   // numero fragile accanto a una quota vera pesa piu' di una sezione che manca.
+  // Il minimo resta per lato, come quando le forze erano per lato: e' il perimetro su cui
+  // `sperimenta-gol.ts` ha misurato il modello, e allargarlo sarebbe pubblicare un caso mai
+  // provato.
   if (
-    attaccoCasa.campione < GARE_MINIME_PER_LATO
-    || attaccoTrasferta.campione < GARE_MINIME_PER_LATO
+    (mediaGol(materialeCasa.squadra, "prodotte", "home", stagione)?.campione ?? 0) < GARE_MINIME_PER_LATO
+    || (mediaGol(materialeTrasferta.squadra, "prodotte", "away", stagione)?.campione ?? 0)
+      < GARE_MINIME_PER_LATO
   ) return null;
 
   const attesi = attesiDellaGara({

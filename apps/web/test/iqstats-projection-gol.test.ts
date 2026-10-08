@@ -92,11 +92,12 @@ test("un pareggio simmetrico resta simmetrico", () => {
 });
 
 test("attesiDellaGara pesa attacco e difesa contro il metro di lega", () => {
-  // Con un campione lungo l'ancoraggio pesa poco e il conto e' quello classico.
-  const lungo = { campione: 200 };
+  // Con un campione lungo l'ancoraggio pesa poco e il conto e' quello classico. Le forze
+  // stanno su tutte le gare: una squadra nella media segna e subisce 1,3, la media dei lati.
+  const lungo = { campione: 2000 };
   const media = attesiDellaGara({
-    attaccoCasa: { media: 1.5, ...lungo }, difesaCasa: { media: 1.1, ...lungo },
-    attaccoTrasferta: { media: 1.1, ...lungo }, difesaTrasferta: { media: 1.5, ...lungo },
+    attaccoCasa: { media: 1.3, ...lungo }, difesaCasa: { media: 1.3, ...lungo },
+    attaccoTrasferta: { media: 1.3, ...lungo }, difesaTrasferta: { media: 1.3, ...lungo },
     legaCasa: 1.5, legaTrasferta: 1.1,
   });
   assert.ok(media !== null);
@@ -107,8 +108,8 @@ test("attesiDellaGara pesa attacco e difesa contro il metro di lega", () => {
   assert.ok(media.casa > media.trasferta);
 
   const forte = attesiDellaGara({
-    attaccoCasa: { media: 3.0, ...lungo }, difesaCasa: { media: 1.1, ...lungo },
-    attaccoTrasferta: { media: 1.1, ...lungo }, difesaTrasferta: { media: 1.5, ...lungo },
+    attaccoCasa: { media: 3.0, ...lungo }, difesaCasa: { media: 1.3, ...lungo },
+    attaccoTrasferta: { media: 1.3, ...lungo }, difesaTrasferta: { media: 1.3, ...lungo },
     legaCasa: 1.5, legaTrasferta: 1.1,
   });
   assert.ok(forte !== null);

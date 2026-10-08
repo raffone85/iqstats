@@ -86,8 +86,8 @@ export function frasiDellaGara(g: GaraExpected, letturaConsigliata: string | nul
 
   if (nostri !== null) {
     frasi.push(
-      `Un limite da tenere presente: le forze poggiano su ${nostri.campioneCasa} gare in casa`
-      + ` e ${nostri.campioneTrasferta} fuori.`,
+      `Un limite da tenere presente: le forze poggiano su ${nostri.campioneCasa} e`
+      + ` ${nostri.campioneTrasferta} gare in stagione.`,
     );
   }
   return frasi;

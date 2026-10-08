@@ -1,56 +1,56 @@
 {
-  "generato_il": "2026-10-08T20:31:41.280Z",
+  "generato_il": "2026-10-08T20:55:50.561Z",
   "letture": 4299,
   "gare": 243,
   "taglio_dei_periodi": "2026-09-19T14:00:00.000Z",
   "correzione": {
     "stimata_su_periodo_1": {
       "globale_a_b": [
-        -0.012,
-        0.92
+        0,
+        1.006
       ],
       "con_prezzo_a_b_c": [
-        0.029,
-        0.113,
-        1.116
+        0.028,
+        0.186,
+        1.03
       ]
     },
     "stimata_su_periodo_2": {
       "globale_a_b": [
-        -0.03,
-        0.821
+        -0.009,
+        0.973
       ],
       "con_prezzo_a_b_c": [
-        0.026,
-        -0.197,
-        1.471
+        0.019,
+        0.185,
+        1.002
       ]
     },
     "stimata_su_tutte": {
       "con_prezzo_a_b_c": [
-        0.027,
-        -0.054,
-        1.302
+        0.023,
+        0.185,
+        1.016
       ]
     }
   },
   "punteggi": {
     "periodo_1": {
       "nostra": {
-        "brier": 0.16736,
-        "logloss": 0.50748
+        "brier": 0.1641,
+        "logloss": 0.49374
       },
       "globale": {
-        "brier": 0.16801,
-        "logloss": 0.50802
+        "brier": 0.16412,
+        "logloss": 0.49386
       },
       "famiglia": {
-        "brier": 0.16805,
-        "logloss": 0.50792
+        "brier": 0.16439,
+        "logloss": 0.49442
       },
       "conPrezzo": {
-        "brier": 0.16189,
-        "logloss": 0.48904
+        "brier": 0.16102,
+        "logloss": 0.48646
       },
       "implicita": {
         "brier": 0.16202,
@@ -59,20 +59,20 @@
     },
     "periodo_2": {
       "nostra": {
-        "brier": 0.17598,
-        "logloss": 0.52918
+        "brier": 0.16589,
+        "logloss": 0.49742
       },
       "globale": {
-        "brier": 0.17539,
-        "logloss": 0.52619
+        "brier": 0.16591,
+        "logloss": 0.49747
       },
       "famiglia": {
-        "brier": 0.17538,
-        "logloss": 0.52639
+        "brier": 0.16613,
+        "logloss": 0.49796
       },
       "conPrezzo": {
-        "brier": 0.16294,
-        "logloss": 0.49134
+        "brier": 0.16228,
+        "logloss": 0.48924
       },
       "implicita": {
         "brier": 0.1628,
@@ -81,20 +81,20 @@
     },
     "tutte": {
       "nostra": {
-        "brier": 0.17177,
-        "logloss": 0.51858
+        "brier": 0.16502,
+        "logloss": 0.49562
       },
       "globale": {
-        "brier": 0.17178,
-        "logloss": 0.51731
+        "brier": 0.16504,
+        "logloss": 0.4957
       },
       "famiglia": {
-        "brier": 0.1718,
-        "logloss": 0.51736
+        "brier": 0.16528,
+        "logloss": 0.49623
       },
       "conPrezzo": {
-        "brier": 0.16243,
-        "logloss": 0.49022
+        "brier": 0.16166,
+        "logloss": 0.48788
       },
       "implicita": {
         "brier": 0.16242,
@@ -106,330 +106,330 @@
     "tutte": [
       {
         "fascia": "<= -6",
-        "letture": 1020,
-        "gare": 207,
-        "frequenza": 46,
+        "letture": 826,
+        "gare": 215,
+        "frequenza": 32.6,
         "frequenza_95": [
-          42.9,
-          49
+          29.5,
+          35.8
         ],
-        "nostra": 35.3,
-        "implicita": 46.7,
-        "quota": 3.08,
-        "resa": -16.2,
+        "nostra": 26.2,
+        "implicita": 34.9,
+        "quota": 4.28,
+        "resa": -29.3,
         "resa_95": [
-          -26.9,
-          -4.8
+          -40.5,
+          -17.5
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 1285,
-        "gare": 228,
-        "frequenza": 39.8,
+        "letture": 1508,
+        "gare": 240,
+        "frequenza": 35.5,
         "frequenza_95": [
-          37.1,
-          42.5
+          33.1,
+          37.9
         ],
-        "nostra": 38.7,
-        "implicita": 41.1,
-        "quota": 3.85,
-        "resa": -22.7,
+        "nostra": 33.9,
+        "implicita": 36.5,
+        "quota": 3.93,
+        "resa": -19.6,
         "resa_95": [
-          -30.4,
-          -14.7
+          -26.1,
+          -12.7
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 647,
-        "gare": 201,
-        "frequenza": 52.7,
+        "letture": 659,
+        "gare": 225,
+        "frequenza": 53.9,
         "frequenza_95": [
-          48.9,
-          56.5
+          50.1,
+          57.6
         ],
-        "nostra": 52.6,
-        "implicita": 50.7,
-        "quota": 2.91,
-        "resa": -10.5,
+        "nostra": 56.1,
+        "implicita": 54.1,
+        "quota": 2.26,
+        "resa": -6.2,
         "resa_95": [
-          -21,
-          -0.3
+          -15.1,
+          2.9
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 487,
-        "gare": 194,
-        "frequenza": 59.1,
+        "letture": 739,
+        "gare": 232,
+        "frequenza": 72,
         "frequenza_95": [
-          54.7,
-          63.4
+          68.6,
+          75.1
         ],
-        "nostra": 62.2,
-        "implicita": 57.2,
-        "quota": 2.39,
-        "resa": -13.2,
+        "nostra": 72.6,
+        "implicita": 67.6,
+        "quota": 1.74,
+        "resa": -3.7,
         "resa_95": [
-          -23.9,
-          -2.6
+          -10.5,
+          3
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 424,
-        "gare": 172,
-        "frequenza": 55,
+        "letture": 401,
+        "gare": 151,
+        "frequenza": 61.8,
         "frequenza_95": [
-          50.2,
-          59.6
+          57,
+          66.5
         ],
-        "nostra": 59.6,
-        "implicita": 51.3,
-        "quota": 2.6,
-        "resa": -3.2,
+        "nostra": 67.8,
+        "implicita": 59.7,
+        "quota": 2.11,
+        "resa": -10,
         "resa_95": [
-          -16,
-          10.2
+          -19.6,
+          0.1
         ]
       },
       {
         "fascia": "> +10",
-        "letture": 436,
-        "gare": 144,
-        "frequenza": 37.6,
+        "letture": 166,
+        "gare": 85,
+        "frequenza": 40.4,
         "frequenza_95": [
           33.2,
-          42.3
+          48
         ],
-        "nostra": 57.7,
-        "implicita": 41.8,
-        "quota": 2.98,
-        "resa": -17.4,
+        "nostra": 59.9,
+        "implicita": 45.5,
+        "quota": 2.79,
+        "resa": -19.8,
         "resa_95": [
-          -33.3,
-          -0.8
+          -41.6,
+          1.4
         ]
       }
     ],
     "periodo_1": [
       {
         "fascia": "<= -6",
-        "letture": 504,
-        "gare": 106,
-        "frequenza": 49.6,
+        "letture": 371,
+        "gare": 101,
+        "frequenza": 33.4,
         "frequenza_95": [
-          45.3,
-          54
+          28.8,
+          38.4
         ],
-        "nostra": 40.2,
-        "implicita": 51.3,
-        "quota": 2.61,
-        "resa": -16.2,
+        "nostra": 27.8,
+        "implicita": 36.3,
+        "quota": 4.08,
+        "resa": -32.5,
         "resa_95": [
-          -30.6,
-          -1.4
+          -47.4,
+          -16.3
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 600,
-        "gare": 112,
-        "frequenza": 43.7,
+        "letture": 780,
+        "gare": 118,
+        "frequenza": 36.2,
         "frequenza_95": [
-          39.8,
-          47.7
+          32.9,
+          39.6
         ],
-        "nostra": 40.9,
-        "implicita": 43.4,
-        "quota": 3.79,
-        "resa": -18.1,
+        "nostra": 34.6,
+        "implicita": 37.1,
+        "quota": 3.89,
+        "resa": -17.8,
         "resa_95": [
-          -29.6,
-          -6.3
+          -27.5,
+          -6.8
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 324,
-        "gare": 96,
-        "frequenza": 45.1,
+        "letture": 329,
+        "gare": 111,
+        "frequenza": 53.8,
         "frequenza_95": [
-          39.7,
-          50.5
+          48.4,
+          59.1
         ],
-        "nostra": 49.2,
-        "implicita": 47.1,
-        "quota": 3.22,
-        "resa": -21.8,
+        "nostra": 55.8,
+        "implicita": 53.9,
+        "quota": 2.33,
+        "resa": -6.5,
         "resa_95": [
-          -35.3,
-          -6.5
+          -18.9,
+          6.6
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 271,
-        "gare": 102,
-        "frequenza": 58.7,
+        "letture": 384,
+        "gare": 115,
+        "frequenza": 71.6,
         "frequenza_95": [
-          52.7,
-          64.4
+          66.9,
+          75.9
         ],
-        "nostra": 59.7,
-        "implicita": 54.8,
-        "quota": 2.52,
-        "resa": -11.1,
+        "nostra": 72.7,
+        "implicita": 67.7,
+        "quota": 1.71,
+        "resa": -4.6,
         "resa_95": [
-          -26.5,
-          5.1
+          -14.3,
+          4.9
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 208,
-        "gare": 86,
-        "frequenza": 46.2,
+        "letture": 167,
+        "gare": 65,
+        "frequenza": 61.7,
         "frequenza_95": [
-          39.5,
-          52.9
+          54.1,
+          68.7
         ],
-        "nostra": 53.4,
-        "implicita": 45.1,
-        "quota": 2.89,
-        "resa": -10,
+        "nostra": 64.9,
+        "implicita": 56.8,
+        "quota": 2.29,
+        "resa": -10.3,
         "resa_95": [
-          -30.7,
-          11.6
+          -24.7,
+          3.6
         ]
       },
       {
         "fascia": "> +10",
-        "letture": 194,
-        "gare": 68,
-        "frequenza": 37.1,
+        "letture": 70,
+        "gare": 41,
+        "frequenza": 34.3,
         "frequenza_95": [
-          30.6,
-          44.1
+          24.2,
+          46
         ],
-        "nostra": 52.9,
-        "implicita": 37.2,
-        "quota": 3.31,
-        "resa": -12.2,
+        "nostra": 56.5,
+        "implicita": 42.2,
+        "quota": 2.86,
+        "resa": -28.8,
         "resa_95": [
-          -39.2,
-          13.4
+          -57.5,
+          1.9
         ]
       }
     ],
     "periodo_2": [
       {
         "fascia": "<= -6",
-        "letture": 516,
-        "gare": 101,
-        "frequenza": 42.4,
+        "letture": 455,
+        "gare": 114,
+        "frequenza": 31.9,
         "frequenza_95": [
-          38.2,
-          46.7
+          27.8,
+          36.3
         ],
-        "nostra": 30.6,
-        "implicita": 42.2,
-        "quota": 3.54,
-        "resa": -16.2,
+        "nostra": 25,
+        "implicita": 33.8,
+        "quota": 4.43,
+        "resa": -26.7,
         "resa_95": [
-          -30.9,
-          0.2
+          -42.8,
+          -8.5
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 685,
-        "gare": 116,
-        "frequenza": 36.4,
+        "letture": 728,
+        "gare": 122,
+        "frequenza": 34.8,
         "frequenza_95": [
-          32.8,
-          40
+          31.4,
+          38.3
         ],
-        "nostra": 36.8,
-        "implicita": 39.1,
-        "quota": 3.91,
-        "resa": -26.7,
+        "nostra": 33.2,
+        "implicita": 35.8,
+        "quota": 3.97,
+        "resa": -21.5,
         "resa_95": [
-          -36,
-          -16.7
+          -30,
+          -12.1
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 323,
-        "gare": 105,
-        "frequenza": 60.4,
+        "letture": 330,
+        "gare": 114,
+        "frequenza": 53.9,
         "frequenza_95": [
-          54.9,
-          65.6
+          48.5,
+          59.2
         ],
-        "nostra": 56.1,
-        "implicita": 54.2,
-        "quota": 2.6,
-        "resa": 0.9,
+        "nostra": 56.4,
+        "implicita": 54.4,
+        "quota": 2.2,
+        "resa": -5.9,
         "resa_95": [
-          -13.1,
-          16
+          -17.7,
+          6.8
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 216,
-        "gare": 92,
-        "frequenza": 59.7,
+        "letture": 355,
+        "gare": 117,
+        "frequenza": 72.4,
         "frequenza_95": [
-          53.1,
-          66
+          67.5,
+          76.8
         ],
-        "nostra": 65.2,
-        "implicita": 60.3,
-        "quota": 2.23,
-        "resa": -15.9,
+        "nostra": 72.6,
+        "implicita": 67.5,
+        "quota": 1.77,
+        "resa": -2.8,
         "resa_95": [
-          -29.1,
-          -3
+          -12,
+          6.5
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 216,
+        "letture": 234,
         "gare": 86,
-        "frequenza": 63.4,
+        "frequenza": 62,
         "frequenza_95": [
-          56.8,
-          69.6
+          55.6,
+          67.9
         ],
-        "nostra": 65.6,
-        "implicita": 57.3,
-        "quota": 2.32,
-        "resa": 3.4,
+        "nostra": 69.8,
+        "implicita": 61.8,
+        "quota": 1.98,
+        "resa": -9.8,
         "resa_95": [
-          -12,
-          19.8
+          -23,
+          4.4
         ]
       },
       {
         "fascia": "> +10",
-        "letture": 242,
-        "gare": 76,
-        "frequenza": 38,
+        "letture": 96,
+        "gare": 44,
+        "frequenza": 44.8,
         "frequenza_95": [
-          32.1,
-          44.3
+          35.2,
+          54.7
         ],
-        "nostra": 61.6,
-        "implicita": 45.4,
-        "quota": 2.72,
-        "resa": -21.5,
+        "nostra": 62.4,
+        "implicita": 47.8,
+        "quota": 2.75,
+        "resa": -13.3,
         "resa_95": [
-          -40.7,
-          -0.6
+          -44.2,
+          15.2
         ]
       }
     ]
@@ -438,312 +438,284 @@
     "tutte": [
       {
         "fascia": "<= -6",
-        "letture": 205,
-        "gare": 112,
-        "frequenza": 27.8,
+        "letture": 55,
+        "gare": 35,
+        "frequenza": 23.6,
         "frequenza_95": [
-          22.1,
-          34.3
+          14.4,
+          36.3
         ],
-        "nostra": 18.3,
-        "implicita": 24.6,
-        "quota": 4.12,
-        "resa": 2.8,
+        "nostra": 14.7,
+        "implicita": 20.7,
+        "quota": 4.9,
+        "resa": -0.7,
         "resa_95": [
-          -23.5,
-          32.6
+          -52.9,
+          57.7
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 2173,
+        "letture": 2375,
         "gare": 243,
-        "frequenza": 24.5,
+        "frequenza": 24.6,
         "frequenza_95": [
-          22.7,
-          26.3
+          22.9,
+          26.4
         ],
-        "nostra": 24.1,
-        "implicita": 27.2,
-        "quota": 4.63,
-        "resa": -26.7,
+        "nostra": 24.5,
+        "implicita": 27.4,
+        "quota": 4.54,
+        "resa": -25.4,
         "resa_95": [
-          -32.9,
-          -20
+          -31.8,
+          -19
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 719,
+        "letture": 685,
         "gare": 243,
-        "frequenza": 63.3,
+        "frequenza": 59.3,
         "frequenza_95": [
-          59.7,
-          66.7
+          55.5,
+          62.9
         ],
-        "nostra": 62.8,
-        "implicita": 60.8,
-        "quota": 1.63,
+        "nostra": 59.2,
+        "implicita": 57.3,
+        "quota": 1.65,
         "resa": -4.8,
         "resa_95": [
-          -10,
-          0.4
+          -10.9,
+          1.4
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 1084,
-        "gare": 240,
-        "frequenza": 81.8,
+        "letture": 1157,
+        "gare": 243,
+        "frequenza": 85.3,
         "frequenza_95": [
-          79.4,
-          84
+          83.1,
+          87.2
         ],
-        "nostra": 82.9,
-        "implicita": 78.1,
-        "quota": 1.21,
-        "resa": -4.3,
+        "nostra": 85.4,
+        "implicita": 80.8,
+        "quota": 1.16,
+        "resa": -2.9,
         "resa_95": [
-          -7.5,
-          -1.2
+          -5.6,
+          -0.2
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 116,
-        "gare": 79,
-        "frequenza": 62.9,
+        "letture": 27,
+        "gare": 19,
+        "frequenza": 59.3,
         "frequenza_95": [
-          53.9,
-          71.2
+          40.7,
+          75.5
         ],
-        "nostra": 79.7,
-        "implicita": 72.4,
-        "quota": 1.29,
-        "resa": -20,
+        "nostra": 82.4,
+        "implicita": 75.4,
+        "quota": 1.23,
+        "resa": -28.5,
         "resa_95": [
-          -33.3,
-          -6.3
+          -53.9,
+          -2.6
         ]
       },
       {
         "fascia": "> +10",
-        "letture": 2,
-        "gare": 2,
-        "frequenza": 100,
-        "frequenza_95": [
-          34.2,
-          100
-        ],
-        "nostra": 68.7,
-        "implicita": 57.9,
-        "quota": 1.61,
-        "resa": 60.9,
-        "resa_95": [
-          40,
-          81.8
-        ]
+        "letture": 0
       }
     ],
     "periodo_1": [
       {
         "fascia": "<= -6",
-        "letture": 158,
-        "gare": 85,
-        "frequenza": 25.3,
+        "letture": 14,
+        "gare": 10,
+        "frequenza": 28.6,
         "frequenza_95": [
-          19.2,
-          32.6
+          11.7,
+          54.6
         ],
-        "nostra": 19.1,
-        "implicita": 25.4,
-        "quota": 3.94,
-        "resa": -11.8,
+        "nostra": 17.1,
+        "implicita": 23.1,
+        "quota": 4.27,
+        "resa": 17.2,
         "resa_95": [
-          -38.5,
-          17.9
+          -80,
+          154.9
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 1000,
+        "letture": 1179,
         "gare": 120,
-        "frequenza": 25.2,
+        "frequenza": 25.3,
         "frequenza_95": [
-          22.6,
-          28
+          22.9,
+          27.8
         ],
-        "nostra": 24.9,
+        "nostra": 25,
         "implicita": 27.8,
-        "quota": 4.62,
-        "resa": -27,
+        "quota": 4.48,
+        "resa": -25.3,
         "resa_95": [
-          -36.4,
-          -16.5
+          -34.6,
+          -15.4
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 402,
+        "letture": 367,
         "gare": 120,
-        "frequenza": 66.9,
+        "frequenza": 59.7,
         "frequenza_95": [
-          62.2,
-          71.3
+          54.6,
+          64.6
         ],
-        "nostra": 66.9,
-        "implicita": 64.7,
-        "quota": 1.58,
-        "resa": -5.6,
+        "nostra": 60.5,
+        "implicita": 58.6,
+        "quota": 1.62,
+        "resa": -6.5,
         "resa_95": [
-          -12.8,
-          2
+          -14.9,
+          2.7
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 454,
-        "gare": 118,
-        "frequenza": 80.4,
+        "letture": 535,
+        "gare": 120,
+        "frequenza": 86.2,
         "frequenza_95": [
-          76.5,
-          83.8
+          83,
+          88.8
         ],
-        "nostra": 80.8,
-        "implicita": 76.1,
-        "quota": 1.25,
-        "resa": -3,
+        "nostra": 85.9,
+        "implicita": 81.5,
+        "quota": 1.14,
+        "resa": -2.7,
         "resa_95": [
-          -8.4,
-          2.6
+          -6.7,
+          1
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 85,
-        "gare": 59,
-        "frequenza": 67.1,
+        "letture": 6,
+        "gare": 4,
+        "frequenza": 50,
         "frequenza_95": [
-          56.5,
-          76.1
+          18.8,
+          81.2
         ],
-        "nostra": 79,
-        "implicita": 71.6,
-        "quota": 1.31,
-        "resa": -14.4,
+        "nostra": 82.5,
+        "implicita": 75.5,
+        "quota": 1.22,
+        "resa": -37.3,
         "resa_95": [
-          -29,
-          0.1
+          -100,
+          25.4
         ]
       },
       {
         "fascia": "> +10",
-        "letture": 2,
-        "gare": 2,
-        "frequenza": 100,
-        "frequenza_95": [
-          34.2,
-          100
-        ],
-        "nostra": 68.7,
-        "implicita": 57.9,
-        "quota": 1.61,
-        "resa": 60.9,
-        "resa_95": [
-          40,
-          81.8
-        ]
+        "letture": 0
       }
     ],
     "periodo_2": [
       {
         "fascia": "<= -6",
-        "letture": 47,
-        "gare": 27,
-        "frequenza": 36.2,
+        "letture": 41,
+        "gare": 25,
+        "frequenza": 22,
         "frequenza_95": [
-          24,
-          50.5
+          12,
+          36.7
         ],
-        "nostra": 15.7,
-        "implicita": 21.9,
-        "quota": 4.71,
-        "resa": 52,
+        "nostra": 13.9,
+        "implicita": 19.8,
+        "quota": 5.11,
+        "resa": -6.9,
         "resa_95": [
-          -19.2,
-          135.1
+          -67.6,
+          63.5
         ]
       },
       {
         "fascia": "-5..0",
-        "letture": 1173,
+        "letture": 1196,
         "gare": 123,
         "frequenza": 23.9,
         "frequenza_95": [
-          21.5,
+          21.6,
           26.4
         ],
-        "nostra": 23.5,
-        "implicita": 26.6,
-        "quota": 4.65,
-        "resa": -26.5,
+        "nostra": 24,
+        "implicita": 27.1,
+        "quota": 4.59,
+        "resa": -25.6,
         "resa_95": [
-          -34.4,
-          -17.7
+          -33.9,
+          -16.3
         ]
       },
       {
         "fascia": "+1..+3",
-        "letture": 317,
+        "letture": 318,
         "gare": 123,
-        "frequenza": 58.7,
+        "frequenza": 58.8,
         "frequenza_95": [
-          53.2,
-          64
+          53.3,
+          64.1
         ],
-        "nostra": 57.7,
-        "implicita": 55.8,
+        "nostra": 57.8,
+        "implicita": 55.9,
         "quota": 1.69,
-        "resa": -3.9,
+        "resa": -2.9,
         "resa_95": [
-          -11.5,
-          3.9
+          -11.9,
+          5.6
         ]
       },
       {
         "fascia": "+4..+6",
-        "letture": 630,
-        "gare": 122,
-        "frequenza": 82.9,
+        "letture": 622,
+        "gare": 123,
+        "frequenza": 84.6,
         "frequenza_95": [
-          79.7,
-          85.6
+          81.5,
+          87.2
         ],
-        "nostra": 84.4,
-        "implicita": 79.6,
-        "quota": 1.18,
-        "resa": -5.2,
+        "nostra": 85,
+        "implicita": 80.1,
+        "quota": 1.17,
+        "resa": -3.1,
         "resa_95": [
-          -9,
-          -1.6
+          -7.1,
+          0.5
         ]
       },
       {
         "fascia": "+7..+10",
-        "letture": 31,
-        "gare": 20,
-        "frequenza": 51.6,
+        "letture": 21,
+        "gare": 15,
+        "frequenza": 61.9,
         "frequenza_95": [
-          34.8,
-          68
+          40.9,
+          79.2
         ],
-        "nostra": 81.6,
-        "implicita": 74.4,
-        "quota": 1.25,
-        "resa": -35.4,
+        "nostra": 82.4,
+        "implicita": 75.4,
+        "quota": 1.23,
+        "resa": -26,
         "resa_95": [
-          -63.6,
-          -8.4
+          -54.1,
+          1.9
         ]
       },
       {
@@ -757,86 +729,86 @@
       "valore grezzo max (1..15)": {
         "letture": 243,
         "gare": 243,
-        "frequenza": 59.7,
+        "frequenza": 52.3,
         "frequenza_95": [
-          53.4,
-          65.6
+          46,
+          58.5
         ],
         "nostra": null,
-        "implicita": 57,
-        "quota": 2.02,
-        "resa": -1.2,
+        "implicita": 53.9,
+        "quota": 2.33,
+        "resa": -17.4,
         "resa_95": [
-          -13.2,
-          11.6
+          -29.6,
+          -4.5
         ]
       },
       "valore corretto globale max (>0)": {
         "letture": 243,
         "gare": 243,
-        "frequenza": 35,
+        "frequenza": 47.7,
         "frequenza_95": [
-          29.3,
-          41.2
+          41.5,
+          54
         ],
         "nostra": null,
-        "implicita": 37.2,
-        "quota": 3.04,
-        "resa": -19.4,
+        "implicita": 48.8,
+        "quota": 2.71,
+        "resa": -22.2,
         "resa_95": [
-          -34.6,
-          -4.1
+          -33.4,
+          -10.1
         ]
       },
       "valore corretto famiglia max (>0)": {
         "letture": 243,
         "gare": 243,
-        "frequenza": 37.9,
+        "frequenza": 49,
         "frequenza_95": [
-          32,
-          44.1
+          42.8,
+          55.2
         ],
         "nostra": null,
-        "implicita": 39.8,
-        "quota": 2.94,
-        "resa": -18.3,
+        "implicita": 49.5,
+        "quota": 2.74,
+        "resa": -21.6,
         "resa_95": [
-          -33,
-          -2.4
+          -33.3,
+          -9.5
         ]
       },
       "valore con prezzo max (>0)": {
         "letture": 243,
         "gare": 243,
-        "frequenza": 79.8,
+        "frequenza": 81.1,
         "frequenza_95": [
-          74.3,
-          84.4
+          75.7,
+          85.5
         ],
         "nostra": null,
-        "implicita": 76,
-        "quota": 1.22,
-        "resa": -3.2,
+        "implicita": 78.3,
+        "quota": 1.18,
+        "resa": -4.7,
         "resa_95": [
-          -9.6,
-          2.8
+          -10.5,
+          1.1
         ]
       },
       "probabilita' corretta max": {
         "letture": 243,
         "gare": 243,
-        "frequenza": 95.5,
+        "frequenza": 96.3,
         "frequenza_95": [
-          92.1,
-          97.5
+          93.1,
+          98
         ],
         "nostra": null,
-        "implicita": 88.3,
-        "quota": 1.05,
-        "resa": -0.3,
+        "implicita": 88.6,
+        "quota": 1.04,
+        "resa": 0.2,
         "resa_95": [
-          -3.3,
-          2.4
+          -2.4,
+          2.6
         ]
       },
       "probabilita' implicita max": {
@@ -861,86 +833,86 @@
       "valore grezzo max (1..15)": {
         "letture": 120,
         "gare": 120,
-        "frequenza": 65.8,
+        "frequenza": 50.8,
         "frequenza_95": [
-          57,
-          73.7
+          42,
+          59.6
         ],
         "nostra": null,
-        "implicita": 57.1,
-        "quota": 1.93,
-        "resa": 6.8,
+        "implicita": 52.2,
+        "quota": 2.45,
+        "resa": -18.7,
         "resa_95": [
-          -8.3,
-          23.5
+          -34.7,
+          0.1
         ]
       },
       "valore corretto globale max (>0)": {
         "letture": 120,
         "gare": 120,
-        "frequenza": 29.2,
+        "frequenza": 45,
         "frequenza_95": [
-          21.8,
-          37.8
+          36.4,
+          53.9
         ],
         "nostra": null,
-        "implicita": 31.6,
-        "quota": 3.37,
-        "resa": -23,
+        "implicita": 45.6,
+        "quota": 2.78,
+        "resa": -21.1,
         "resa_95": [
-          -44.5,
-          0.2
+          -38.2,
+          -2.1
         ]
       },
       "valore corretto famiglia max (>0)": {
         "letture": 120,
         "gare": 120,
-        "frequenza": 31.7,
+        "frequenza": 48.3,
         "frequenza_95": [
-          24,
-          40.4
+          39.6,
+          57.2
         ],
         "nostra": null,
-        "implicita": 34.4,
-        "quota": 3.32,
-        "resa": -24.6,
+        "implicita": 48.3,
+        "quota": 2.9,
+        "resa": -22.3,
         "resa_95": [
-          -46.4,
-          -1.9
+          -38.6,
+          -4.1
         ]
       },
       "valore con prezzo max (>0)": {
         "letture": 120,
         "gare": 120,
-        "frequenza": 75.8,
+        "frequenza": 82.5,
         "frequenza_95": [
-          67.4,
-          82.6
+          74.7,
+          88.3
         ],
         "nostra": null,
-        "implicita": 74.3,
-        "quota": 1.25,
-        "resa": -6.1,
+        "implicita": 78.6,
+        "quota": 1.18,
+        "resa": -3.4,
         "resa_95": [
-          -16,
-          3.2
+          -12.2,
+          4.7
         ]
       },
       "probabilita' corretta max": {
         "letture": 120,
         "gare": 120,
-        "frequenza": 95,
+        "frequenza": 97.5,
         "frequenza_95": [
-          89.5,
-          97.7
+          92.9,
+          99.1
         ],
         "nostra": null,
-        "implicita": 88,
+        "implicita": 88.4,
         "quota": 1.05,
-        "resa": -0.4,
+        "resa": 1.9,
         "resa_95": [
-          -4.9,
-          3.8
+          -1.5,
+          4.8
         ]
       },
       "probabilita' implicita max": {
@@ -971,80 +943,80 @@
           62.2
         ],
         "nostra": null,
-        "implicita": 56.9,
-        "quota": 2.11,
-        "resa": -9.1,
+        "implicita": 55.5,
+        "quota": 2.21,
+        "resa": -16.1,
         "resa_95": [
-          -27.9,
-          10.6
+          -32.4,
+          2.1
         ]
       },
       "valore corretto globale max (>0)": {
         "letture": 123,
         "gare": 123,
-        "frequenza": 40.7,
+        "frequenza": 50.4,
         "frequenza_95": [
-          32.4,
-          49.5
+          41.7,
+          59.1
         ],
         "nostra": null,
-        "implicita": 42.6,
-        "quota": 2.72,
-        "resa": -15.8,
+        "implicita": 52,
+        "quota": 2.63,
+        "resa": -23.2,
         "resa_95": [
-          -35.8,
-          5.9
+          -38.9,
+          -5.9
         ]
       },
       "valore corretto famiglia max (>0)": {
         "letture": 123,
         "gare": 123,
-        "frequenza": 43.9,
+        "frequenza": 49.6,
         "frequenza_95": [
-          35.4,
-          52.7
+          40.9,
+          58.3
         ],
         "nostra": null,
-        "implicita": 45,
-        "quota": 2.56,
-        "resa": -12.1,
+        "implicita": 50.7,
+        "quota": 2.58,
+        "resa": -20.8,
         "resa_95": [
-          -31.8,
-          8.6
+          -37.5,
+          -3.3
         ]
       },
       "valore con prezzo max (>0)": {
         "letture": 123,
         "gare": 123,
-        "frequenza": 83.7,
+        "frequenza": 79.7,
         "frequenza_95": [
-          76.2,
-          89.2
+          71.7,
+          85.8
         ],
         "nostra": null,
-        "implicita": 77.7,
-        "quota": 1.19,
-        "resa": -0.5,
+        "implicita": 78,
+        "quota": 1.18,
+        "resa": -6,
         "resa_95": [
-          -8.9,
-          6.6
+          -15.1,
+          2.1
         ]
       },
       "probabilita' corretta max": {
         "letture": 123,
         "gare": 123,
-        "frequenza": 95.9,
+        "frequenza": 95.1,
         "frequenza_95": [
-          90.8,
-          98.3
+          89.8,
+          97.7
         ],
         "nostra": null,
-        "implicita": 88.7,
+        "implicita": 88.8,
         "quota": 1.04,
-        "resa": -0.2,
+        "resa": -1.4,
         "resa_95": [
-          -4.5,
-          3.2
+          -5.8,
+          2.4
         ]
       },
       "probabilita' implicita max": {

@@ -161,7 +161,7 @@ test("l'esito porta le stesse probabilita' dei mercati, con la quota e senza val
   assert.equal(risposta.righe[0].valore, `${Math.round(GOL.mercati.esito.uno * 100)}%`);
   // Sui gol il valore non si dichiara: misurato l'8 ottobre 2026, vedi `voci-dei-gol.ts`.
   assert.equal(risposta.righe[0].nota, "quota 2,10");
-  assert.match(risposta.spiegazione, /4 gare in casa di Monza e 5 fuori casa di Sassuolo/);
+  assert.match(risposta.spiegazione, /4 gare di Monza e 5 di Sassuolo in stagione/);
 });
 
 test("senza prezzo lo dice, e una linea che il motore non calcola non si inventa", () => {

@@ -36,5 +36,5 @@ test("equilibrio, tono dei gol e assenze seguono le soglie dichiarate", () => {
   assert.match(frasi[2], /^Tiri attesi in equilibrio: 12 contro 12\.$/);
   // Falli e gialli assenti: la frase disciplinare non si scrive, nessuno zero al suo posto.
   assert.equal(frasi.some((f) => f.includes("disciplinare")), false);
-  assert.match(frasi.at(-1) ?? "", /4 gare in casa e 5 fuori/);
+  assert.match(frasi.at(-1) ?? "", /4 e 5 gare in stagione/);
 });

@@ -421,8 +421,8 @@ function MercatoDeiGol({ g, casa, fuori }: {
           qualita' delle occasioni - e perche' senza quel confronto uno 0,00 sembra una
           squadra che non tira invece di un campo vuoto. */}
       <p className="quota-assenza">
-        Forze dalle reti di {nostri.campioneCasa} gare in casa e{" "}
-        {nostri.campioneTrasferta} in trasferta, sulle {nostri.campioneLega} del campionato.
+        Forze dalle reti di {nostri.campioneCasa} e {nostri.campioneTrasferta} gare in
+        stagione, sulle {nostri.campioneLega} del campionato.
         {nostri.xgCasa === null || nostri.xgTrasferta === null ? "" : (
           ` Gli expected goals delle stesse gare dicono ${virgola(nostri.xgCasa)} e `
           + `${virgola(nostri.xgTrasferta)}`

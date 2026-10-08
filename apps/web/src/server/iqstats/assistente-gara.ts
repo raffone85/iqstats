@@ -377,8 +377,8 @@ export function rispostaSuiGol(
     };
   }
   const m = gol.mercati;
-  const campione = `Poggia su ${gol.campioneCasa} gare in casa di ${squadre.casa} e `
-    + `${gol.campioneTrasferta} fuori casa di ${squadre.trasferta}.`;
+  const campione = `Poggia su ${gol.campioneCasa} gare di ${squadre.casa} e `
+    + `${gol.campioneTrasferta} di ${squadre.trasferta} in stagione.`;
   const risposta = (titolo: string, righe: readonly RigaDiRisposta[], testo: string): Risposta => ({
     capito: true, titolo, righe, collegamento: null, spiegazione: `${testo} ${campione}`,
   });

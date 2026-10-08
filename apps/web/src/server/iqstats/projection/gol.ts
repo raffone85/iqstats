@@ -349,16 +349,21 @@ export function combinazione(
 /**
  * Quante gare fittizie alla media di lega si sommano al campione vero.
  *
+ * **Sedici, misurato.** Erano quattro. `scripts/sperimenta-gol.ts` l'8 ottobre 2026, su
+ * 8.437 gare chiuse lette in ordine di tempo con le sole reti anteriori: scelte fra 2 e 48
+ * sul primo periodo, 16 vince e regge sul secondo; insieme alla forza su tutte le gare la
+ * log-loss di 1X2, Over 2,5 e Gol/NoGol scende da 0,8167 a 0,7992 e il Brier contro il
+ * banco da 0,2348 a 0,2275 (banco 0,2226). Le medie di poche gare valgono meno di quanto
+ * sembrava: a dieci gare la squadra pesa per il 38%.
+ *
  * Senza questo peso il conto moltiplicativo esplode sui campioni minuscoli: misurato su
  * Go Ahead Eagles - ADO Den Haag il 23 agosto, con **una gara per lato**, dava 4,55 gol
  * attesi alla squadra di casa, vittoria al 95% e Over 4,5 al 59%. Non era una previsione
  * ardita: era una gara sola moltiplicata per un'altra gara sola.
  *
- * Con quattro, una squadra che ha giocato una volta pesa per un quinto e la lega per
- * quattro quinti; a dieci gare la squadra pesa per il 71%. Il numero cresce con la
- * stagione invece di sparare dal primo turno.
+ * Il numero cresce con la stagione invece di sparare dal primo turno.
  */
-const GARE_DI_ANCORAGGIO = 4;
+const GARE_DI_ANCORAGGIO = 16;
 
 export interface Forza {
   readonly media: number;
@@ -366,9 +371,9 @@ export interface Forza {
 }
 
 export interface ForzeDellaGara {
-  /** Gol attesi prodotti dalla casa, nelle sue gare in casa. */
+  /** Gol segnati dalla casa, in **tutte** le sue gare della stagione, sui due lati. */
   readonly attaccoCasa: Forza;
-  /** Gol attesi concessi dalla casa, nelle sue gare in casa. */
+  /** Gol subiti dalla casa, in tutte le sue gare della stagione. */
   readonly difesaCasa: Forza;
   readonly attaccoTrasferta: Forza;
   readonly difesaTrasferta: Forza;
@@ -393,25 +398,23 @@ function ancorata(forza: Forza, metro: number): number {
  * I gol attesi della gara, dalle forze delle due squadre misurate contro il metro di lega.
  *
  * Il conto e' quello classico: quanto una squadra produce sopra o sotto la media, per
- * quanto l'avversaria concede sopra o sotto la media, riportato alla media stessa. Il
- * vantaggio del campo non e' un coefficiente aggiunto a mano: sta gia' dentro `legaCasa` e
- * `legaTrasferta`, che sono due numeri diversi perche' misurati sui due lati.
+ * quanto l'avversaria concede sopra o sotto la media, riportato al metro del lato. Le forze
+ * si misurano su tutte le gare contro la media dei due lati - con lo stesso lato soltanto il
+ * campione si dimezzava, e la misura dell'8 ottobre 2026 lo ha bocciato - e il vantaggio del
+ * campo entra una volta sola, dal metro: `legaCasa` e `legaTrasferta` sono diversi perche'
+ * misurati sui due lati.
  *
  * Restituisce `null` se il metro non esiste: senza una media di lega positiva il rapporto
  * non e' definito, e un'assenza non diventa zero.
  */
 export function attesiDellaGara(forze: ForzeDellaGara): { casa: number; trasferta: number } | null {
   if (!(forze.legaCasa > 0) || !(forze.legaTrasferta > 0)) return null;
-  // Ogni forza passa prima dall'ancoraggio: e' li' che un campione di una gara smette di
-  // pesare come una stagione intera.
-  const attaccoCasa = ancorata(forze.attaccoCasa, forze.legaCasa);
-  const difesaTrasferta = ancorata(forze.difesaTrasferta, forze.legaCasa);
-  const attaccoTrasferta = ancorata(forze.attaccoTrasferta, forze.legaTrasferta);
-  const difesaCasa = ancorata(forze.difesaCasa, forze.legaTrasferta);
-  // (attacco / metro) x (difesa avversaria / metro) x metro, semplificato: i due rapporti
-  // sono forze relative al metro dello **stesso lato**, e il metro torna una volta sola.
+  // Ogni forza passa prima dall'ancoraggio - e' li' che un campione di una gara smette di
+  // pesare come una stagione intera - e diventa un rapporto con la media dei due lati.
+  const metro = (forze.legaCasa + forze.legaTrasferta) / 2;
+  const relativa = (forza: Forza) => ancorata(forza, metro) / metro;
   return {
-    casa: (attaccoCasa * difesaTrasferta) / forze.legaCasa,
-    trasferta: (attaccoTrasferta * difesaCasa) / forze.legaTrasferta,
+    casa: relativa(forze.attaccoCasa) * relativa(forze.difesaTrasferta) * forze.legaCasa,
+    trasferta: relativa(forze.attaccoTrasferta) * relativa(forze.difesaCasa) * forze.legaTrasferta,
   };
 }
