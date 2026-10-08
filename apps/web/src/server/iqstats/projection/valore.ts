@@ -1,6 +1,29 @@
 /**
- * Il valore di un lato quotato, in punti: quanto la nostra probabilità di quel lato sta
- * sopra la probabilità implicita nel suo prezzo.
+ * La nostra probabilità combinata con quella del prezzo: logit(p') = a + b·logit(p) + c·logit(i).
+ *
+ * **Perché non la probabilità del motore da sola.** Misurato l'8 ottobre 2026 su 411 gare
+ * chiuse e 16.978 linee quotate (`scripts/consuntivo-valore-corretto.ts`): sulle soglie del
+ * banco il motore è sovraconfidente - promette 67,4% dove esce 58,4% - e il «valore» grezzo
+ * era in gran parte quella sovraconfidenza. Fuori campione il prezzo prevede meglio del
+ * motore (Brier 0,2216 contro 0,2260) e la combinazione meglio di entrambi (0,2206), in tutti
+ * e due i periodi: il motore aggiunge informazione al prezzo, per circa un quarto. Con la
+ * combinata la promessa torna alla frequenza vera; un valore positivo non è un guadagno
+ * provato (resa da -0,3 a +1,1 sopra +4 punti, intervalli che contengono lo zero).
+ * Coefficienti stimati sull'intero campione: rifarli quando il campione cresce.
+ */
+const COMBINATA = { a: -0.006, b: 0.279, c: 0.796 } as const;
+
+export function probabilitaCombinata(prob: number, implicita: number): number {
+  const logit = (p: number) => {
+    const q = Math.min(Math.max(p, 1e-4), 1 - 1e-4);
+    return Math.log(q / (1 - q));
+  };
+  return 1 / (1 + Math.exp(-(COMBINATA.a + COMBINATA.b * logit(prob) + COMBINATA.c * logit(implicita))));
+}
+
+/**
+ * Il valore di un lato quotato, in punti: quanto la nostra probabilità combinata di quel
+ * lato (`probabilitaCombinata`) sta sopra la probabilità implicita nel suo prezzo.
  *
  * **Due lati → si toglie il margine; un lato solo → quota grezza.** Il margine sta nella
  * coppia Over/Under: quando ci sono entrambe le quote, normalizzare le due inverse lo
@@ -20,7 +43,7 @@ export function valoreSoglia(
 ): number | null {
   const implicita = implicitaSoglia(quotaLato, quotaAltro);
   if (implicita === null || !Number.isFinite(prob)) return null;
-  return Math.round((prob - implicita) * 100);
+  return Math.round((probabilitaCombinata(prob, implicita) - implicita) * 100);
 }
 
 /**
