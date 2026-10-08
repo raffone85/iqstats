@@ -53,7 +53,7 @@ function EventoDiValore(
       <b className="valore-titolo">{titolo(evento, casa, trasferta)}</b>
       <span className="valore-verdetto">diamo {evento.valore} punti più del prezzo</span>
       <span className="valore-numeri">
-        noi {Math.round(evento.nostra)}% · quota {euro(evento.quota)} · il prezzo ne dà{" "}
+        noi, corretti sul prezzo, {Math.round(evento.nostra)}% · quota {euro(evento.quota)} · il prezzo ne dà{" "}
         {Math.round(evento.implicita)}%
       </span>
       {evento.perche === null ? null : <span className="valore-verdetto">{evento.perche}</span>}

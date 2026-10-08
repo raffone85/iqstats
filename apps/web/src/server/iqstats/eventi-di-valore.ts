@@ -3,7 +3,7 @@ import "server-only";
 import type { LatoDiRiga, RigaQuotata } from "./expected-famiglie.ts";
 import { soglieReali } from "./projection/linea-scelta.ts";
 import type { Linea, ProiezioneDiGara } from "./projection/match.ts";
-import { implicitaSoglia, TETTO_VALORE, valoreSoglia } from "./projection/valore.ts";
+import { implicitaSoglia, probabilitaCombinata, TETTO_VALORE, valoreSoglia } from "./projection/valore.ts";
 
 /**
  * Gli eventi di valore per l'analisi finale: le poche soglie dove la nostra probabilità
@@ -29,7 +29,10 @@ export interface EventoValore {
   readonly lato: LatoDiRiga;
   readonly soglia: number;
   readonly verso: "Over" | "Under";
-  /** La nostra probabilità del lato, da 0 a 100. */
+  /**
+   * La nostra probabilità del lato combinata con il prezzo, da 0 a 100: è quella su cui
+   * nasce `valore`, così i tre numeri della riga tornano (`probabilitaCombinata`).
+   */
   readonly nostra: number;
   readonly quota: number;
   /** La probabilità implicita nel prezzo, ripulita dal margine, da 0 a 100. */
@@ -91,7 +94,7 @@ export function eventiDiValore(
           lato,
           soglia: linea.soglia,
           verso,
-          nostra: prob * 100,
+          nostra: probabilitaCombinata(prob, implicita) * 100,
           quota: quotaLato,
           implicita: implicita * 100,
           valore,
