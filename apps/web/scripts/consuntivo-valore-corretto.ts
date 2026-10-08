@@ -16,7 +16,8 @@
 // di una linea per gara, che e' quello che farebbe la home.
 //
 // Uso, dopo `consuntivo-valore.ts --letture letture.json`:
-//   node --experimental-strip-types scripts/consuntivo-valore-corretto.ts letture.json
+//   node --experimental-strip-types scripts/consuntivo-valore-corretto.ts letture.json [--gol]
+// Senza `--gol` le sette famiglie, con `--gol` solo i mercati dei gol: due rapporti distinti.
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
@@ -249,7 +250,9 @@ function main(): number {
     console.error("serve il file delle letture di consuntivo-valore.ts --letture");
     return 1;
   }
-  const tutte = JSON.parse(readFileSync(file, "utf8")) as Lettura[];
+  const gol = process.argv.includes("--gol");
+  const tutte = (JSON.parse(readFileSync(file, "utf8")) as Lettura[])
+    .filter((l) => l.bersaglio.startsWith("gol-") === gol);
   const gare = [...new Set(tutte.map((l) => `${l.kickoff}|${l.gara}`))].sort();
   const taglio = gare[Math.floor(gare.length / 2)].split("|")[0];
   const p1 = tutte.filter((l) => l.kickoff < taglio);
@@ -287,7 +290,7 @@ function main(): number {
     una_per_gara: { tutte: scelte(insieme), periodo_1: scelte(su1.righe), periodo_2: scelte(su2.righe) },
   };
   const uscita = path.join(import.meta.dirname, "..", "..", "..", "scripts", "projection",
-    "dataset", "output", "consuntivo-valore-corretto.json");
+    "dataset", "output", gol ? "consuntivo-valore-corretto-gol.json" : "consuntivo-valore-corretto.json");
   writeFileSync(uscita, `${JSON.stringify(rapporto, null, 2)}\n`, "utf8");
   console.log(JSON.stringify(rapporto, null, 1));
   return 0;

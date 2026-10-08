@@ -9,7 +9,8 @@
 // l'**ultima lettura del palinsesto anteriore al calcio d'inizio**, si ricostruisce la
 // proiezione con le sole righe anteriori - lo stesso taglio di `consuntivo-soglie.ts` - e
 // per ogni linea quotata delle sette famiglie si calcola la nostra probabilita' come
-// `quoteDellaGara` e il valore come `valoreSoglia`. Accanto: che cosa e' successo e quanto
+// `quoteDellaGara` e il valore grezzo, nostra meno l'implicita di `valoreSoglia`; per i gol le
+// tre voci della sezione Gol (1X2, Over/Under, Gol/NoGol). Accanto: che cosa e' successo e quanto
 // avrebbe reso una puntata da 1 alla quota del banco.
 //
 // L'incertezza: frequenza con l'intervallo di Wilson al 95%; resa con un bootstrap che
@@ -26,6 +27,7 @@ import { constants, gunzipSync } from "node:zlib";
 import { connessione } from "../src/server/iqstats/lettura.ts";
 import { ARTEFATTI_DI_PRODUZIONE } from "../src/server/iqstats/projection-artefatti.ts";
 import { proiezioniDellaGara } from "../src/server/iqstats/projection-runtime.ts";
+import { distribuzioniDeiGol, quotaFra } from "../src/server/iqstats/projection/gol.ts";
 import { type ProiezioneDiGara, soglieDi } from "../src/server/iqstats/projection/match.ts";
 import { probabilitaSopra } from "../src/server/iqstats/projection/predictor.ts";
 import {
@@ -35,7 +37,7 @@ import {
   type EventoGrezzo,
   type EventoQuotato,
 } from "../src/server/iqstats/projection/quote.ts";
-import { TETTO_VALORE, implicitaSoglia, valoreSoglia } from "../src/server/iqstats/projection/valore.ts";
+import { TETTO_VALORE, implicitaInGruppo, implicitaSoglia } from "../src/server/iqstats/projection/valore.ts";
 import { realeDellaGara } from "../src/server/iqstats/verifica.ts";
 
 type Lato = "casa" | "trasferta" | "totale";
@@ -63,6 +65,8 @@ interface RigaDiGara {
   readonly allenatore_fuori: string | null;
   readonly giornata: string | null;
   readonly derby: boolean | null;
+  readonly gol_casa: number | null;
+  readonly gol_fuori: number | null;
 }
 
 interface Lettura {
@@ -71,12 +75,18 @@ interface Lettura {
   readonly bersaglio: string;
   readonly lato: Lato;
   readonly soglia: number;
-  readonly verso: "Over" | "Under";
+  /** «Over»/«Under» sulle linee; l'esito («1», «Sì», …) sui mercati dei gol. */
+  readonly verso: string;
   readonly quota: number;
   readonly dueLati: boolean;
   readonly fuoriFinestra: boolean;
   readonly probabilita: number;
   readonly implicita: number;
+  /**
+   * Il valore **grezzo**, nostra meno implicita: e' la grandezza che questa misura giudica.
+   * Dall'8 ottobre 2026 il dossier mostra quello sulla probabilita' combinata
+   * (`valoreSoglia`), nato da qui; rimisurarlo con `valoreSoglia` sarebbe circolare.
+   */
   readonly valore: number;
   /** 1 presa, 0 persa, `null` restituita (soglia intera colpita in pieno). */
   readonly presa: 1 | 0 | null;
@@ -196,9 +206,9 @@ async function lettureDi(riga: RigaDiGara, eventi: readonly EventoQuotato[]): Pr
         if (sopra === null) continue;
         const probabilita = esito.verso === "Over" ? sopra : 1 - sopra;
         const altro = esiti.find((e) => e.soglia === esito.soglia && e.verso !== esito.verso)?.quota ?? null;
-        const valore = valoreSoglia(probabilita, esito.quota, altro);
         const implicita = implicitaSoglia(esito.quota, altro);
-        if (valore === null || implicita === null) continue;
+        if (implicita === null) continue;
+        const valore = Math.round((probabilita - implicita) * 100);
         const presa = vero === esito.soglia
           ? null
           : (esito.verso === "Over" ? vero > esito.soglia : vero < esito.soglia) ? 1 : 0;
@@ -219,6 +229,48 @@ async function lettureDi(riga: RigaDiGara, eventi: readonly EventoQuotato[]): Pr
           resa: presa === null ? 0 : presa === 1 ? esito.quota - 1 : -1,
         });
       }
+    }
+  }
+
+  // I mercati dei gol, come la sezione Gol del dossier sul prezzo Fastbet (`voci-dei-gol.ts`):
+  // il margine si toglie dentro il gruppo dello stesso banco.
+  const gol = proiezioni.gol;
+  if (gol !== null && riga.gol_casa !== null && riga.gol_fuori !== null) {
+    const c = riga.gol_casa;
+    const f = riga.gol_fuori;
+    const g = evento.gol;
+    const voce = (mercato: string, verso: string, soglia: number, prob: number,
+      quota: number | null, gruppo: readonly (number | null)[], presa: 1 | 0 | null) => {
+      if (quota === null) return;
+      const implicita = implicitaInGruppo(quota, gruppo);
+      if (implicita === null) return;
+      letture.push({
+        gara: riga.gara, kickoff: riga.kickoff, bersaglio: mercato, lato: "totale", soglia, verso,
+        quota, dueLati: gruppo.every((q) => q !== null), fuoriFinestra: false,
+        probabilita: prob, implicita, valore: Math.round((prob - implicita) * 100), presa,
+        resa: presa === null ? 0 : presa === 1 ? quota - 1 : -1,
+      });
+    };
+    const m = gol.mercati;
+    if (g.esito !== null) {
+      const q = [g.esito.uno, g.esito.x, g.esito.due];
+      const vero = c > f ? 0 : c === f ? 1 : 2;
+      [["1", m.esito.uno], ["X", m.esito.x], ["2", m.esito.due]].forEach(([e, p], i) =>
+        voce("gol-1x2", e as string, 0, p as number, q[i], q, vero === i ? 1 : 0));
+    }
+    const ggq = [g.gol, g.noGol];
+    const entrambe = c > 0 && f > 0;
+    voce("gol-gg-ng", "Sì", 0, m.gg, g.gol, ggq, entrambe ? 1 : 0);
+    voce("gol-gg-ng", "No", 0, m.ng, g.noGol, ggq, entrambe ? 0 : 1);
+    const p = distribuzioniDeiGol(m.casa.attesi, m.trasferta.attesi);
+    for (const linea of new Set(g.overUnder.map((q) => q.soglia))) {
+      const sopra = quotaFra(p.totale, Math.ceil(linea), p.totale.length - 1);
+      const qOver = g.overUnder.find((q) => q.soglia === linea && q.verso === "Over")?.quota ?? null;
+      const qUnder = g.overUnder.find((q) => q.soglia === linea && q.verso === "Under")?.quota ?? null;
+      const tot = c + f;
+      const presa = (over: boolean) => (tot === linea ? null : (over ? tot > linea : tot < linea) ? 1 : 0);
+      voce("gol-over-under", "Over", linea, sopra, qOver, [qOver, qUnder], presa(true));
+      voce("gol-over-under", "Under", linea, 1 - sopra, qUnder, [qOver, qUnder], presa(false));
     }
   }
   return letture;
@@ -344,7 +396,10 @@ async function main(): Promise<number> {
            o.coach_source_id::text as allenatore_casa,
            o.opponent_coach_source_id::text as allenatore_fuori,
            o.round_number::text as giornata,
-           o.is_derby as derby
+           o.is_derby as derby,
+           -- Il punteggio in football.matches manca su 498 gare su 603 (8 ottobre 2026): l'osservazione
+           -- di casa lo porta sempre, e dove ci sono entrambi coincidono.
+           o.goals_for::int as gol_casa, o.goals_against::int as gol_fuori
     from football.team_match_observations o
     join football.matches g on g.id = o.match_id
     join football.teams th on th.id = o.team_id
@@ -379,36 +434,52 @@ async function main(): Promise<number> {
   }
 
   // Due periodi con lo stesso numero di gare, tagliati sul calcio d'inizio.
-  const giorni = [...new Set(tutte.map((l) => `${l.kickoff}|${l.gara}`))].sort();
+  // Le tabelle di sempre restano sulle sette famiglie; i gol hanno le loro, in fondo.
+  const sonoGol = (l: Lettura) => l.bersaglio.startsWith("gol-");
+  const deiGol = tutte.filter(sonoGol);
+  const famiglie = tutte.filter((l) => !sonoGol(l));
+  const giorni = [...new Set(famiglie.map((l) => `${l.kickoff}|${l.gara}`))].sort();
   const taglio = giorni[Math.floor(giorni.length / 2)].split("|")[0];
-  const prima = tutte.filter((l) => l.kickoff < taglio);
-  const dopo = tutte.filter((l) => l.kickoff >= taglio);
-  const dentroFinestra = tutte.filter((l) => !l.fuoriFinestra);
+  const prima = famiglie.filter((l) => l.kickoff < taglio);
+  const dopo = famiglie.filter((l) => l.kickoff >= taglio);
+  const dentroFinestra = famiglie.filter((l) => !l.fuoriFinestra);
 
   const rapporto = {
     generato_il: new Date().toISOString(),
     gare_chiuse_nel_periodo: righe.length,
     gare_misurate: agganciate,
-    letture: tutte.length,
+    letture: famiglie.length,
     taglio_dei_periodi: taglio,
-    tutte: tabella(tutte),
+    tutte: tabella(famiglie),
     periodo_1: tabella(prima),
     periodo_2: tabella(dopo),
     dentro_finestra: tabella(dentroFinestra),
-    due_lati: tabella(tutte.filter((l) => l.dueLati)),
-    un_lato: tabella(tutte.filter((l) => !l.dueLati)),
+    due_lati: tabella(famiglie.filter((l) => l.dueLati)),
+    un_lato: tabella(famiglie.filter((l) => !l.dueLati)),
+    gol: {
+      letture: deiGol.length,
+      tutte: tabella(deiGol),
+      periodo_1: tabella(deiGol.filter((l) => l.kickoff < taglio)),
+      periodo_2: tabella(deiGol.filter((l) => l.kickoff >= taglio)),
+      per_mercato: Object.fromEntries([...new Set(deiGol.map((l) => l.bersaglio))]
+        .map((m) => [m, tabella(deiGol.filter((l) => l.bersaglio === m))])),
+    },
   };
   const uscita = path.join(import.meta.dirname, "..", "..", "..", "scripts", "projection",
     "dataset", "output", "consuntivo-valore.json");
   writeFileSync(uscita, `${JSON.stringify(rapporto, null, 2)}\n`, "utf8");
 
-  console.log(`${righe.length} gare chiuse · ${agganciate} misurate · ${tutte.length} letture · taglio ${taglio}`);
+  console.log(`${righe.length} gare chiuse · ${agganciate} misurate · ${famiglie.length} letture · taglio ${taglio}`);
   stampa("TUTTE", rapporto.tutte);
   stampa(`PERIODO 1 (< ${taglio})`, rapporto.periodo_1);
   stampa(`PERIODO 2 (>= ${taglio})`, rapporto.periodo_2);
   stampa("DENTRO LA FINESTRA DELLE CINQUE", rapporto.dentro_finestra);
   stampa("DUE LATI (margine tolto)", rapporto.due_lati);
   stampa("UN LATO (1/quota)", rapporto.un_lato);
+  stampa(`GOL (${deiGol.length} letture)`, rapporto.gol.tutte);
+  stampa(`GOL PERIODO 1 (< ${taglio})`, rapporto.gol.periodo_1);
+  stampa(`GOL PERIODO 2 (>= ${taglio})`, rapporto.gol.periodo_2);
+  for (const [m, righeM] of Object.entries(rapporto.gol.per_mercato)) stampa(m.toUpperCase(), righeM);
   console.log(uscita);
   return 0;
 }
