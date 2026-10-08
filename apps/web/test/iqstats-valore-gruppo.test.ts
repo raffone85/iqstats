@@ -7,7 +7,6 @@ import {
   implicitaInGruppo,
   implicitaSoglia,
   testoValore,
-  valoreInGruppo,
 } from "../src/server/iqstats/projection/valore.ts";
 
 test("su una coppia coincide con la soglia delle famiglie", () => {
@@ -25,9 +24,9 @@ test("la doppia chance somma a due, non a uno", () => {
   assert.ok(Math.abs(somma - 2) < 1e-9);
 });
 
-test("il multigol da solo usa la quota grezza, e senza quota non c'e' valore", () => {
-  assert.equal(valoreInGruppo(0.5, 2.5, [2.5]), 10);
-  assert.equal(valoreInGruppo(0.5, null, [null]), null);
+test("il multigol da solo usa la quota grezza, e senza quota non c'e' implicita", () => {
+  assert.equal(implicitaInGruppo(2.5, [2.5]), 0.4);
+  assert.equal(implicitaInGruppo(null, [null]), null);
 });
 
 test("il verdetto ha una frase sola", () => {

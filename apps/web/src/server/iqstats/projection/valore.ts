@@ -80,18 +80,6 @@ export function implicitaInGruppo(
   return (copertura / quota) / somma;
 }
 
-/** Il valore in punti di un esito nel suo gruppo, come `valoreSoglia`. */
-export function valoreInGruppo(
-  prob: number,
-  quota: number | null,
-  gruppo: readonly (number | null)[],
-  copertura = 1,
-): number | null {
-  const implicita = implicitaInGruppo(quota, gruppo, copertura);
-  if (implicita === null || !Number.isFinite(prob)) return null;
-  return Math.round((prob - implicita) * 100);
-}
-
 /** Il verdetto scritto accanto a un prezzo: una sola frase per tutto il dossier. */
 export function testoValore(valore: number): string {
   return valore > TETTO_VALORE

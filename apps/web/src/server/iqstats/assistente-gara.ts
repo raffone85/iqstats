@@ -340,15 +340,14 @@ function percento(probabilita: number): string {
   return `${Math.round(probabilita * 100)}%`;
 }
 
-/** Una voce dei gol come riga: la probabilita' e' nostra, prezzo e valore sono del dossier. */
+/** Una voce dei gol come riga: la probabilita' e' nostra, il prezzo e' del dossier. Niente valore: vedi `voci-dei-gol.ts`. */
 function rigaDiVoce(voce: Voce, etichetta = voce.etichetta): RigaDiRisposta {
   return {
     etichetta,
     valore: percento(voce.probabilita),
     nota: voce.quota == null
       ? "senza prezzo"
-      : [`quota ${numero(voce.quota, 2)}`, voce.valore == null ? null : testoValore(voce.valore)]
-        .filter((x) => x !== null).join(" · "),
+      : `quota ${numero(voce.quota, 2)}`,
   };
 }
 
