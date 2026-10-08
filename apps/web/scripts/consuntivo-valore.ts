@@ -18,7 +18,7 @@
 //
 // Uso, con il livello dati in ascolto:
 //   node --env-file=.env.local --conditions=react-server --import ./test/risolutore-ts.mjs \
-//     --experimental-strip-types scripts/consuntivo-valore.ts [--insieme 8]
+//     --experimental-strip-types scripts/consuntivo-valore.ts [--insieme 8] [--letture file.json]
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { constants, gunzipSync } from "node:zlib";
@@ -371,6 +371,11 @@ async function main(): Promise<number> {
   if (tutte.length === 0) {
     console.error("nessuna lettura: niente da misurare");
     return 1;
+  }
+  // Le letture una per una, per `consuntivo-valore-corretto.ts`: fuori da Git, sono MB.
+  const dove = process.argv.indexOf("--letture");
+  if (dove >= 0 && process.argv[dove + 1] !== undefined) {
+    writeFileSync(process.argv[dove + 1], JSON.stringify(tutte), "utf8");
   }
 
   // Due periodi con lo stesso numero di gare, tagliati sul calcio d'inizio.
