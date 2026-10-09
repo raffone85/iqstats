@@ -2429,7 +2429,7 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .salvati-titolo a { color: var(--card-ink); text-decoration: underline; text-underline-offset: 3px; }
 .salvati-righe { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .salvati-riga { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--card-ink-2); overflow-wrap: anywhere; }
-.salvati-riga b { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
+.salvati-riga b { flex: none; white-space: nowrap; font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
 .salvati-riga.is-pronostico { padding-bottom: 8px; border-bottom: 1px solid var(--card-stroke); color: var(--card-brand-strong); font-weight: 650; }
 .salvati-riga.is-pronostico b { font-size: 16px; }
 .salvati-quando { margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }

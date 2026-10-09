@@ -12,10 +12,10 @@ import {
  * Salvare i pronostici di una gara: un'immagine sul telefono, e la stessa scheda in
  * «Salvati».
  *
- * **L'immagine si disegna qui, nel browser, dai numeri che la pagina ha gia' mostrato.** Una
- * rotta del server che la genera avrebbe dovuto o rifare tutto il conto della gara, o
- * fidarsi di numeri passati nell'indirizzo: e allora chiunque avrebbe potuto farsi
- * stampare una scheda con il nostro nome e le percentuali che voleva.
+ * **L'immagine e' la foto del riquadro, fatta qui nel browser.** Una rotta del server che
+ * la genera avrebbe dovuto o rifare tutto il conto della gara, o fidarsi di numeri passati
+ * nell'indirizzo: e allora chiunque avrebbe potuto farsi stampare una scheda con il nostro
+ * nome e le percentuali che voleva.
  *
  * **La memoria del browser si legge come in `campionati-preferiti.tsx`:** stato esterno,
  * `useSyncExternalStore`, il server rende l'elenco vuoto.
@@ -65,137 +65,74 @@ function quando(iso: string): string {
 
 // --- L'immagine ---------------------------------------------------------------------
 
-const LARGA = 1080;
-const BORDO = 72;
-// Gli stessi verdi di `globals.css` (`--brand-deep`, `--brand`, `--brand-soft`): un canvas
-// non legge le variabili CSS.
-const FONDO = "#05301F";
-const RIQUADRO = "#0B4F35";
-const TENUE = "#A9C3B5";
-const CHIARO = "#FFFFFF";
+/** Quello che in pagina serve a chi tocca e in una foto no: il pulsante, le note di metodo. */
+const FUORI = "fuoriImmagine";
 
-/** Il testo spezzato sulle parole perche' stia in `larga` pixel, col carattere gia' scelto. */
-function aCapo(ctx: CanvasRenderingContext2D, testo: string, larga: number): string[] {
-  const righe: string[] = [];
-  let corrente = "";
-  for (const parola of testo.split(/\s+/)) {
-    const prova = corrente === "" ? parola : corrente + " " + parola;
-    if (corrente !== "" && ctx.measureText(prova).width > larga) {
-      righe.push(corrente);
-      corrente = parola;
-    } else {
-      corrente = prova;
-    }
-  }
-  if (corrente !== "") righe.push(corrente);
-  return righe;
-}
+/**
+ * La foto di un riquadro **cosi' com'e' in pagina**, piu' una riga in fondo.
+ *
+ * Dal 9 ottobre 2026 l'immagine non e' piu' una scheda ridisegnata: chi salva vuole
+ * ritrovare quello che stava guardando, con gli stemmi, la griglia e i colori della
+ * pagina, e una seconda grafica accanto alla prima erano due cose da tenere uguali.
+ *
+ * **La riga in fondo e' l'unica aggiunta**, e c'e' perche' la pagina non la porta: l'ora
+ * della lettura. Le probabilita' cambiano fino al calcio d'inizio, e una foto girata il
+ * giorno dopo passerebbe per la lettura di oggi.
+ */
+async function fotografa(riquadro: HTMLElement, salvata: string): Promise<HTMLCanvasElement> {
+  const { toCanvas } = await import("html-to-image");
+  const fondo = getComputedStyle(document.body).backgroundColor;
+  // Quello che resta fuori sta **in fondo** al riquadro, e la foto finisce dove comincia:
+  // togliere un nodo non accorcia il riquadro, e al suo posto resterebbe un vuoto.
+  const primo = riquadro.querySelector("[data-fuori-immagine]");
+  const opzioni = {
+    height: primo === null ? undefined : primo.getBoundingClientRect().top
+      - riquadro.getBoundingClientRect().top
+      + Number.parseFloat(getComputedStyle(riquadro).paddingBottom),
+    // Il margine del riquadro e' spazio della pagina, non suo: nella foto lo sposterebbe
+    // in basso e gli taglierebbe il bordo di sotto.
+    style: { margin: "0" },
+    pixelRatio: 2,
+    backgroundColor: fondo,
+    filter: (nodo: HTMLElement) => nodo.dataset?.[FUORI] === undefined,
+  };
+  // ponytail: Safari alla prima passata lascia spesso fuori stemmi e caratteri, e la
+  // seconda li trova in memoria. Se non basta, la strada e' disegnare gli stemmi a mano.
+  if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) await toCanvas(riquadro, opzioni);
+  const foto = await toCanvas(riquadro, opzioni);
 
-function disegna(scheda: SchedaSalvata): HTMLCanvasElement {
-  const famiglia = getComputedStyle(document.body).fontFamily;
-  // Si disegna su una tela alta e si ritaglia a quanto e' servito: l'altezza dipende da
-  // quante righe vanno a capo, e si sa solo dopo averle misurate.
+  const bordo = 32;
+  const riga = 26;
   const tela = document.createElement("canvas");
-  tela.width = LARGA;
-  tela.height = 4200;
+  tela.width = foto.width + bordo * 2;
   const ctx = tela.getContext("2d");
   if (ctx === null) throw new Error("canvas non disponibile");
-  ctx.fillStyle = FONDO;
+  const piede = [
+    "IQstatS · lettura del " + quando(salvata) + ".",
+    "Le probabilità cambiano fino al calcio d’inizio. Non è un consiglio di gioco.",
+  ];
+  tela.height = foto.height + bordo * 3 + riga * 1.5 * piede.length;
+  ctx.fillStyle = fondo;
   ctx.fillRect(0, 0, tela.width, tela.height);
+  ctx.drawImage(foto, bordo, bordo);
+  ctx.font = "500 " + riga + "px " + getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle = getComputedStyle(document.body).color;
+  ctx.globalAlpha = 0.7;
   ctx.textBaseline = "top";
-
-  let y = BORDO;
-  const testo = (
-    cosa: string, corpo: number, peso: number, colore: string, larga = LARGA - BORDO * 2,
-    x = BORDO,
-  ) => {
-    ctx.font = [peso, corpo + "px", famiglia].join(" ");
-    ctx.fillStyle = colore;
-    ctx.textAlign = "left";
-    for (const riga of aCapo(ctx, cosa, larga)) {
-      ctx.fillText(riga, x, y);
-      y += Math.round(corpo * 1.25);
-    }
-  };
-  const numero = (percento: number, corpo: number, yNumero: number, x = LARGA - BORDO) => {
-    ctx.font = ["800", corpo + "px", famiglia].join(" ");
-    ctx.fillStyle = CHIARO;
-    ctx.textAlign = "right";
-    ctx.fillText(Math.round(percento) + "%", x, yNumero);
-  };
-
-  testo("IQstatS", 44, 800, CHIARO);
-  y += 36;
-  if (scheda.lega !== null) testo(scheda.lega.toUpperCase(), 28, 700, TENUE);
-  y += 8;
-  testo(scheda.casa + " – " + scheda.trasferta, 68, 800, CHIARO);
-  y += 8;
-  testo(quando(scheda.inizio), 32, 500, TENUE);
-  y += 48;
-
-  if (scheda.pronostico !== null) {
-    const p = scheda.pronostico;
-    const alto = y;
-    const dentro = LARGA - BORDO * 2 - 320;
-    // Il riquadro si colora quando si sa quanto e' alto: il testo passa due volte, la
-    // prima per misurare e la seconda sopra il fondo.
-    const corpo = () => {
-      y = alto + 40;
-      testo("IL PRONOSTICO", 26, 700, TENUE, dentro, BORDO + 40);
-      y += 10;
-      testo(p.titolo, 50, 800, CHIARO, dentro, BORDO + 40);
-      if (p.chi !== null) testo(p.chi, 30, 500, TENUE, dentro, BORDO + 40);
-      y += 40;
-    };
-    corpo();
-    ctx.fillStyle = RIQUADRO;
-    ctx.fillRect(BORDO, alto, LARGA - BORDO * 2, y - alto);
-    corpo();
-    numero(p.percento, 96, alto + 76, LARGA - BORDO - 40);
-    y += 48;
-  }
-
-  if (scheda.eventi.length > 0) {
-    testo(scheda.elenco.toUpperCase(), 26, 700, TENUE);
-    y += 16;
-    for (const evento of scheda.eventi) {
-      const alto = y;
-      testo(evento.titolo, 38, 700, CHIARO, LARGA - BORDO * 2 - 190);
-      if (evento.chi !== null) testo(evento.chi, 28, 500, TENUE, LARGA - BORDO * 2 - 190);
-      numero(evento.percento, 46, alto);
-      y += 18;
-      ctx.fillStyle = RIQUADRO;
-      ctx.fillRect(BORDO, y, LARGA - BORDO * 2, 2);
-      y += 20;
-    }
-    y += 20;
-  }
-
-  testo(
-    "Lettura del " + quando(scheda.salvata)
-      + ". Le probabilità cambiano fino al calcio d’inizio.",
-    26, 500, TENUE,
-  );
-  y += 6;
-  testo(
-    "Probabilità del modello, non un consiglio di gioco. " + window.location.host,
-    26, 500, TENUE,
-  );
-  y += BORDO;
-
-  const ritaglio = document.createElement("canvas");
-  ritaglio.width = LARGA;
-  ritaglio.height = Math.min(y, tela.height);
-  ritaglio.getContext("2d")?.drawImage(tela, 0, 0);
-  return ritaglio;
+  // Il piede si stringe sulla larghezza della foto invece di andare a capo: sono due
+  // righe note, e su una scheda stretta un terzo a capo le farebbe pesare piu' della gara.
+  piede.forEach((testo, i) => {
+    ctx.fillText(testo, bordo, foto.height + bordo * 2 + i * riga * 1.5, foto.width);
+  });
+  return tela;
 }
 
 /**
  * Consegna l'immagine: sul telefono il foglio di condivisione del sistema - da li' si
  * salva in galleria o si gira a qualcuno - e altrove un file scaricato.
  */
-async function consegna(scheda: SchedaSalvata): Promise<void> {
-  const tela = disegna(scheda);
+async function consegna(riquadro: HTMLElement, scheda: SchedaSalvata): Promise<void> {
+  const tela = await fotografa(riquadro, scheda.salvata);
   const blob = await new Promise<Blob | null>((fatto) => tela.toBlob(fatto, "image/png"));
   if (blob === null) throw new Error("immagine non generata");
   const nome = ["iqstats", scheda.casa, scheda.trasferta].join("-")
@@ -227,18 +164,24 @@ async function consegna(scheda: SchedaSalvata): Promise<void> {
 
 type Esito = "fermo" | "salvata" | "senza-memoria" | "errore" | "iniziata";
 
-export function SalvaPronostici({ scheda, compatto = false }: {
+export function SalvaPronostici({ scheda, riquadro, compatto = false }: {
   readonly scheda: SchedaDaSalvare;
+  /** Il riquadro da fotografare: il selettore dell'antenato piu' vicino al pulsante. */
+  readonly riquadro: string;
   /** In un elenco di gare: senza la riga che spiega il pulsante, ripetuta a ogni scheda. */
   readonly compatto?: boolean;
 }) {
   const [esito, setEsito] = useState<Esito>("fermo");
   return (
-    <div className={compatto ? "salva-pronostici is-compatto" : "salva-pronostici"}>
+    <div
+      className={compatto ? "salva-pronostici is-compatto" : "salva-pronostici"}
+      data-fuori-immagine
+    >
       <button
         type="button"
         className="button-link salva-bottone"
-        onClick={async () => {
+        onClick={async (evento) => {
+          const dove = evento.currentTarget.closest<HTMLElement>(riquadro);
           // L'ora si guarda al tocco e non quando la pagina e' stata resa: un elenco puo'
           // restare aperto oltre il fischio, e una scheda con l'ora di dopo passerebbe
           // per un pronostico fatto a risultato noto.
@@ -249,7 +192,8 @@ export function SalvaPronostici({ scheda, compatto = false }: {
           const completa: SchedaSalvata = { ...scheda, salvata: new Date().toISOString() };
           const tenuta = scrivi(conScheda(schedeSalvate(istantanea()), completa));
           try {
-            await consegna(completa);
+            if (dove === null) throw new Error("riquadro non trovato");
+            await consegna(dove, completa);
             setEsito(tenuta ? "salvata" : "senza-memoria");
           } catch {
             setEsito("errore");
@@ -261,7 +205,7 @@ export function SalvaPronostici({ scheda, compatto = false }: {
       <p className="salva-esito" role="status">
         {esito === "fermo" ? (
           compatto ? null
-            : "Un’immagine per il telefono, con il pronostico e gli eventi più probabili di questa gara."
+            : "Un’immagine per il telefono di questo riquadro, così come lo vedi."
         ) : esito === "iniziata" ? (
           "La gara è già iniziata: un pronostico non si salva a partita in corso."
         ) : esito === "errore" ? (
@@ -326,11 +270,14 @@ export function PronosticiSalvati() {
             <p className="salvati-quando">
               Lettura del {quando(s.salvata)}. Le probabilità di oggi stanno nella gara.
             </p>
-            <div className="salvati-azioni">
+            <div className="salvati-azioni" data-fuori-immagine>
               <button
                 type="button"
                 className="button-link salva-bottone"
-                onClick={() => { void consegna(s).catch(() => undefined); }}
+                onClick={(evento) => {
+                  const dove = evento.currentTarget.closest<HTMLElement>("li");
+                  if (dove !== null) void consegna(dove, s).catch(() => undefined);
+                }}
               >
                 Scarica l’immagine
               </button>

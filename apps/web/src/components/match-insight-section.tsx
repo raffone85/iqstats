@@ -608,12 +608,14 @@ export function MatchInsightSection(
         </>
       )}
 
-      {azione}
-
       {/* La riserva del quadro e i limiti delle letture: un'assenza si dichiara assenza. */}
       {contesto === null ? null : <p className="insight-riserva">{contesto.riserva}</p>}
 
-      <p className="dossier-src">
+      {/* Sotto la riserva e non sopra: la foto del riquadro finisce dove comincia il
+          pulsante, e la riserva e' una frase che deve restarci dentro. */}
+      {azione}
+
+      <p className="dossier-src" data-fuori-immagine>
         In cima c&apos;è la lettura più probabile <b>dentro la fascia fino all&apos;ottanta
         per cento</b>, dove promesso e reso quasi coincidono: 74,6% promesso contro 73,8%
         reso su 2.204 letture. Sopra quella soglia il modello promette 82,4% e rende 78,9% su

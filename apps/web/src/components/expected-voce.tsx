@@ -263,7 +263,7 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
       </Link>
       {/* Fuori dal collegamento: un pulsante dentro un link non e' HTML valido, e il tocco
           aprirebbe la gara invece di salvarla. */}
-      {daSalvare === null ? null : <SalvaPronostici scheda={daSalvare} compatto />}
+      {daSalvare === null ? null : <SalvaPronostici scheda={daSalvare} riquadro="li" compatto />}
     </li>
   );
 }

@@ -1273,7 +1273,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             // passerebbe per un pronostico fatto a risultato noto.
             azione={played || inCorso || daSalvare === null
               ? null
-              : <SalvaPronostici scheda={daSalvare} />}
+              : <SalvaPronostici scheda={daSalvare} riquadro=".insight-panel" />}
           />
         ) : (
           <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />
