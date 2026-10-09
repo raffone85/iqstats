@@ -18,6 +18,8 @@ type ProductSection =
    *  nella barra non c'e' piu': non accendeva nulla per coincidenza, non per intenzione. */
   | "match"
   | "predictions"
+  /** Le schede dei pronostici salvate dalle gare: stanno sul dispositivo, in `/salvati`. */
+  | "saved"
   /** Il banco di prova - accostare due squadre che non si incontrano - si chiamava
    *  «expected» fino al 10 settembre 2026, e il nome serve altrove: «Expected» da noi sono
    *  i pronostici statistici delle sette famiglie, non un simulatore di accoppiamenti. */
@@ -66,6 +68,7 @@ const MENU: ReadonlyArray<{
   { label: "Oggi", href: "/", section: "home" },
   { label: "Expected", href: "/expected", section: "expected" },
   { label: "Pronostici", href: "/pronostici", section: "predictions" },
+  { label: "Salvati", href: "/salvati", section: "saved" },
   {
     label: "Partite",
     voci: [

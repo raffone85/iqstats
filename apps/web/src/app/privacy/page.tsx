@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  * Le fonti, per chi la rivede:
  *  - i dati dell'account e dell'abbonamento: `src/server/supabase/database.types.ts`
  *    (`profiles`, `billing_customers`, `subscriptions`, `entitlements`, `billing_events`);
- *  - i tre valori tenuti nel browser: cercati in `src` come chiavi di `localStorage`;
+ *  - i quattro valori tenuti nel browser: cercati in `src` come chiavi di `localStorage`;
  *  - la regione del database: progetto Supabase `iqStats`, `eu-west-1` (Irlanda);
  *  - il luogo di esecuzione del server: intestazione `X-Vercel-Id` della produzione,
  *    `fra1::iad1`, cioe' funzioni eseguite a Washington (Stati Uniti);
@@ -137,9 +137,10 @@ export default function PrivacyPage() {
 
         <h2>Che cosa resta nel tuo browser</h2>
         <p>
-          Tre valori sono salvati sul tuo dispositivo e <b>non arrivano mai a noi</b>: i
-          campionati che hai messo tra i preferiti, il fatto che tu abbia già visto la guida
-          del calendario e il fatto che tu abbia chiuso l&apos;invito a installare l&apos;app.
+          Quattro valori sono salvati sul tuo dispositivo e <b>non arrivano mai a noi</b>: i
+          campionati che hai messo tra i preferiti, le schede dei pronostici che hai salvato
+          dalle gare, il fatto che tu abbia già visto la guida del calendario e il fatto che
+          tu abbia chiuso l&apos;invito a installare l&apos;app.
           Si cancellano svuotando i dati del sito dal browser.
         </p>
 

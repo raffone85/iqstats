@@ -23,7 +23,10 @@ import {
 } from "@/server/iqstats/match-context";
 import { MatchFinishedSection } from "@/components/match-finished-section";
 import { MatchGolSection } from "@/components/match-gol-section";
-import { MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto } from "@/components/match-insight-section";
+import {
+  MatchInsightSection, MatchSenzaVerdetto, insightHaContenuto, schedaDaSalvare,
+} from "@/components/match-insight-section";
+import { SalvaPronostici } from "@/components/pronostici-salvati";
 import { FAMIGLIE, MatchProjectionSection } from "@/components/match-projection-section";
 import {
   expectedDelleGare, motivoSenzaQuote, quoteCoperteFino, quoteDiGara, quoteGolDiGara, quoteRaccolteIl,
@@ -910,6 +913,13 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   // 2026 dopo `consuntivo-gol.ts`: tetto all'80% e una riga per famiglia. Niente si ricalcola
   // qui, si compone quello che `ordinaLetture` e `mercatiGol` hanno gia' prodotto.
   const eventi = eventiProbabili(forti?.letture ?? [], proiezioni?.gol?.mercati ?? null);
+  const daSalvare = schedaDaSalvare({
+    gara: eventId,
+    casa: detail.homeTeam,
+    trasferta: detail.awayTeam,
+    lega: league?.name ?? null,
+    inizio: detail.kickoff,
+  }, forti, eventi);
   // Le due squadre contro gli stessi avversari: toglie dal confronto la parte di differenza
   // che e' calendario. Una lettura sola, e non si chiede se il piano non la fa vedere.
   const comuni = !insight.allowed || lega === null || idCasa === null || idFuori === null
@@ -1259,6 +1269,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
             gareDelConsuntivo={GARE_DEL_CONSUNTIVO}
             eventi={eventi}
             campioneGol={campioneGol}
+            // A gara iniziata non si salva: una scheda con l'ora di dopo il fischio
+            // passerebbe per un pronostico fatto a risultato noto.
+            azione={played || inCorso || daSalvare === null
+              ? null
+              : <SalvaPronostici scheda={daSalvare} />}
           />
         ) : (
           <MatchSenzaVerdetto motivi={motiviSenzaVerdetto} />

@@ -2411,3 +2411,27 @@ a.oggi-hero-ref:focus-visible { outline: 2px solid var(--card-ink); outline-offs
 .filtro-riga .uomini-nota a:focus-visible { outline: 2px solid var(--card-brand-strong); outline-offset: 2px; border-radius: 4px; }
 .filtro-perche { grid-area: perche; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-2); }
 .filtro-perche b { color: var(--card-ink); }
+
+/* Salvare i pronostici di una gara, e la sezione /salvati che li tiene. */
+.salva-pronostici { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 16px; }
+.salva-pronostici.is-compatto { margin: 8px 0 6px; }
+.salva-pronostici.is-compatto .salva-esito:empty { display: none; }
+/* In elenco il pulsante si ripete a ogni gara: contorno e non pieno, perche' la cosa da leggere resta la scheda. */
+.salva-pronostici.is-compatto .salva-bottone { min-height: 44px; background: transparent; color: var(--product-action); font-size: 13px; }
+.salva-pronostici.is-compatto .salva-bottone:hover { background: var(--product-action-hover); color: white; }
+.salva-bottone { cursor: pointer; font-family: inherit; }
+.salva-bottone:focus-visible, .salvati-togli:focus-visible { outline: 2px solid var(--card-brand); outline-offset: 2px; }
+.salva-esito { flex: 1 1 220px; margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
+.salva-esito a { color: var(--card-brand-strong); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.salvati-vuoto { max-width: 640px; margin-top: 28px; color: var(--product-muted); line-height: 1.65; }
+.salvati-elenco { display: grid; gap: 0; max-width: 760px; margin: 28px 0 0; padding: 0; list-style: none; }
+.salvati-titolo { margin: 0 0 12px; font-size: clamp(1.15rem, 3.4vw, 1.45rem); letter-spacing: -.03em; line-height: 1.2; overflow-wrap: anywhere; }
+.salvati-titolo a { color: var(--card-ink); text-decoration: underline; text-underline-offset: 3px; }
+.salvati-righe { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.salvati-riga { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--card-ink-2); overflow-wrap: anywhere; }
+.salvati-riga b { font-family: var(--font-mono, monospace); font-size: 13px; color: var(--card-ink); }
+.salvati-riga.is-pronostico { padding-bottom: 8px; border-bottom: 1px solid var(--card-stroke); color: var(--card-brand-strong); font-weight: 650; }
+.salvati-riga.is-pronostico b { font-size: 16px; }
+.salvati-quando { margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--card-ink-3); }
+.salvati-azioni { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.salvati-togli { min-height: var(--h-action); padding: 0 16px; border: 1px solid var(--card-stroke); border-radius: var(--r-control); background: transparent; color: var(--card-ink-2); font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }

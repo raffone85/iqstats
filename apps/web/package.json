@@ -78,6 +78,7 @@
     "test:dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-dossier.test.ts",
     "test:quote": "node --experimental-strip-types --test test/iqstats-quote.test.ts",
     "test:quote-dossier": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-quote-dossier.test.ts",
+    "test:pronostici-salvati": "node --experimental-strip-types --test test/pronostici-salvati.test.ts",
     "test:eventi-probabili": "node --conditions=react-server --import ./test/risolutore-ts.mjs --experimental-strip-types --test test/iqstats-eventi-probabili.test.ts"
   },
   "dependencies": {

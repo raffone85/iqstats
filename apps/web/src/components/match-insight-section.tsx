@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { articoloDiPercentuale } from "@/lib/italiano";
 import type { CSSProperties } from "react";
@@ -12,6 +13,7 @@ import {
 import type { LetturaForte, LettureDellaGara } from "@/server/iqstats/projection/letture-forti";
 import { FAMIGLIE } from "./match-projection-section";
 import { campioneDellaTaratura } from "@/server/iqstats/projection/taratura-promessa";
+import type { RigaSalvata, SchedaDaSalvare } from "@/lib/pronostici-salvati";
 
 /**
  * Che cosa vede IQstatS in questa gara, in un blocco solo.
@@ -227,6 +229,39 @@ function EventoDiGol({ evento, massima, homeTeam, awayTeam, campione }: {
   );
 }
 
+/**
+ * Quello che «Salva i pronostici» si porta via: il pronostico e gli eventi piu' probabili,
+ * **gli stessi numeri e le stesse parole** che questa sezione scrive in pagina. Sta qui per
+ * questo: una scheda composta altrove potrebbe dire una cosa diversa dalla gara.
+ * `null` quando non c'e' niente da salvare.
+ */
+export function schedaDaSalvare(
+  gara: Pick<SchedaDaSalvare, "gara" | "casa" | "trasferta" | "lega" | "inizio">,
+  forti: LettureDellaGara | null,
+  eventi: readonly EventoProbabile[],
+): SchedaDaSalvare | null {
+  const diFamiglia = (l: LetturaForte): RigaSalvata => ({
+    titolo: `${l.verso} ${soglia(l.soglia)} ${(FAMIGLIE[l.bersaglio]?.nome ?? l.bersaglio).toLowerCase()}`,
+    chi: l.lato === "casa" ? gara.casa : l.lato === "trasferta" ? gara.trasferta : "Totale gara",
+    percento: Math.round(l.promessa * 100),
+  });
+  const pronostico = forti?.consigliato == null ? null : diFamiglia(forti.consigliato);
+  if (pronostico === null && eventi.length === 0) return null;
+  const righe = eventi.map((e): RigaSalvata => e.da === "famiglia" ? diFamiglia(e) : {
+    titolo: `${e.voce.replace(".", ",")} · ${MERCATI_DI_GOL[e.mercato]}`,
+    chi: e.lato === null ? null : e.lato === "casa" ? gara.casa : gara.trasferta,
+    percento: Math.round(e.probabilita * 100),
+  });
+  return {
+    ...gara,
+    pronostico,
+    elenco: "Gli eventi più probabili",
+    // In pagina il pronostico torna anche fra gli eventi, in due riquadri distinti; in una
+    // scheda sola sarebbe la stessa riga scritta due volte.
+    eventi: righe.filter((r) => r.titolo !== pronostico?.titolo || r.chi !== pronostico.chi),
+  };
+}
+
 /** La chiave di riga: il bersaglio con il suo lato e la sua soglia, o il mercato con la voce. */
 function chiaveDiEvento(evento: EventoProbabile): string {
   return evento.da === "famiglia"
@@ -332,6 +367,8 @@ type Props = Readonly<{
   awayTeam: string;
   /** Quanto ha reso finora la famiglia della lettura in cima, dal consuntivo. */
   resa: ContoDelleLetture | null;
+  /** Il pulsante che salva pronostico ed eventi; assente a gara iniziata. */
+  azione?: ReactNode;
   /** Su quante gare chiuse poggia quella resa. */
   gareDelConsuntivo: number;
   /** Le letture e i mercati dei gol ammessi, gia' ordinati da `eventiProbabili`. */
@@ -343,7 +380,7 @@ type Props = Readonly<{
 export function MatchInsightSection(
   {
     contesto, dossier, forti, homeTeam, awayTeam, resa, gareDelConsuntivo, eventi,
-    campioneGol,
+    campioneGol, azione,
   }: Props,
 ) {
   if (!insightHaContenuto({ contesto, dossier, forti })) return null;
@@ -570,6 +607,8 @@ export function MatchInsightSection(
           ) : null}
         </>
       )}
+
+      {azione}
 
       {/* La riserva del quadro e i limiti delle letture: un'assenza si dichiara assenza. */}
       {contesto === null ? null : <p className="insight-riserva">{contesto.riserva}</p>}

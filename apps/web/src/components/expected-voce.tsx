@@ -10,6 +10,7 @@
 // esiste **una** scrittura di «Over 2,5 corner» e non due che possono divergere.
 import Link from "next/link";
 
+import { SalvaPronostici } from "@/components/pronostici-salvati";
 import { TeamCrest } from "@/components/team-crest";
 import { FAMIGLIE } from "@/components/match-projection-section";
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "@/server/iqstats/expected-famiglie";
 import type { TendenzaArbitro } from "@/server/iqstats/projection/letture-forti";
 import { promessaDi } from "@/server/iqstats/expected-famiglie";
+import type { RigaSalvata, SchedaDaSalvare } from "@/lib/pronostici-salvati";
 
 /** Dentro un giorno la data e' gia' scritta nella testata: resta l'ora. */
 const ORA: Intl.DateTimeFormatOptions = {
@@ -178,8 +180,35 @@ function EsitoInBreve({ e, quote, tarate, attesi }: {
   );
 }
 
+/**
+ * Quello che si salva da questa scheda: il consigliato e gli altri consigli della gara, con
+ * le stesse parole e gli stessi numeri scritti qui sopra. La griglia per famiglia resta
+ * fuori: e' dichiarata informativa, e in una scheda da girare starebbe accanto ai consigli
+ * come se lo fosse anche lei. `null` senza consigliato.
+ */
+function schedaDiExpected(g: GaraExpected): SchedaDaSalvare | null {
+  if (g.consigliato === null) return null;
+  const riga = (c: Consigliato): RigaSalvata => ({
+    titolo: consiglio(c),
+    chi: chiDelConsiglio(c, g.casa, g.fuori),
+    percento: Math.round(promessaDi(c) * 100),
+  });
+  return {
+    gara: g.gara,
+    casa: g.casa,
+    trasferta: g.fuori,
+    lega: g.lega,
+    inizio: g.kickoff,
+    pronostico: riga(g.consigliato),
+    elenco: "Gli altri consigli",
+    // Il primo dei consigli e' il consigliato stesso.
+    eventi: (g.consigli ?? []).slice(1).map(riga),
+  };
+}
+
 /** La riga di una gara: chi gioca, quando, e la lettura consigliata con la sua probabilita'. */
 export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
+  const daSalvare = schedaDiExpected(g);
   return (
     <li>
       <Link className="expected-voce" href={indirizzoDi(g)}>
@@ -232,6 +261,9 @@ export function VoceDiGara({ g }: { readonly g: GaraExpected }) {
           </span>
         )}
       </Link>
+      {/* Fuori dal collegamento: un pulsante dentro un link non e' HTML valido, e il tocco
+          aprirebbe la gara invece di salvarla. */}
+      {daSalvare === null ? null : <SalvaPronostici scheda={daSalvare} compatto />}
     </li>
   );
 }
